@@ -21,18 +21,12 @@ gulp.task('generate-assets', gulp.series(
   'sass-extensions',
   gulp.parallel(
     'sass',
-    'copy-assets',
-    'sass-documentation',
-    'copy-assets-documentation',
-    'sass-v6',
-    'copy-assets-v6'
+    'copy-assets'
   )
 ))
 gulp.task('watch', gulp.parallel(
   'watch-sass',
-  'watch-assets',
-  'watch-sass-v6',
-  'watch-assets-v6'
+  'watch-assets'
 ))
 gulp.task('default', gulp.series(
   'generate-assets',
