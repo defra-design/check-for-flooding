@@ -20,18 +20,15 @@ gulp.task('generate-assets', gulp.series(
   'clean',
   'sass-extensions',
   gulp.parallel(
+    'webpack',
+    'nunjucks',
     'sass',
     'copy-assets'
   )
 ))
-gulp.task('watch', gulp.parallel(
-  'watch-sass',
-  'watch-assets'
-))
 gulp.task('default', gulp.series(
   'generate-assets',
   gulp.parallel(
-    'watch',
     'server'
   )
 ))
