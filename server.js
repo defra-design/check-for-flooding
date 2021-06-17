@@ -134,6 +134,7 @@ app.get('/robots.txt', function (req, res) {
 // Load routes (found in app/routes)
 app.use('/', require('./app/routes/start'))
 app.use('/', require('./app/routes/find-location'))
+app.use('/', require('./app/routes/location'))
 
 // Load routes (found in api/routes)
 app.use('/', require('./api/routes/test'))
