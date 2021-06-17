@@ -20,6 +20,7 @@ const middleware = [
 const config = require('./app/config.js')
 const packageJson = require('./package.json')
 const routes = require('./app/routes.js')
+const apiRoutes = require('./api/routes.js')
 const utils = require('./lib/utils.js')
 const extensions = require('./lib/extensions/extensions.js')
 
@@ -29,7 +30,6 @@ const app = express()
 var releaseVersion = packageJson.version
 var glitchEnv = (process.env.PROJECT_REMIX_CHAIN) ? 'production' : false // glitch.com
 var env = (process.env.NODE_ENV || glitchEnv || 'development').toLowerCase()
-var useAutoStoreData = process.env.USE_AUTO_STORE_DATA || config.useAutoStoreData
 var useCookieSessionStore = process.env.USE_COOKIE_SESSION_STORE || config.useCookieSessionStore
 var useHttps = process.env.USE_HTTPS || config.useHttps
 
@@ -89,7 +89,6 @@ app.use(bodyParser.urlencoded({
 
 // Add variables that are available in all views
 app.locals.asset_path = '/public/'
-app.locals.useAutoStoreData = (useAutoStoreData === 'true')
 app.locals.useCookieSessionStore = (useCookieSessionStore === 'true')
 app.locals.promoMode = promoMode
 app.locals.releaseVersion = 'v' + releaseVersion
@@ -120,12 +119,6 @@ if (useCookieSessionStore === 'true') {
     resave: false,
     saveUninitialized: false
   })))
-}
-
-// Automatically store all data users enter
-if (useAutoStoreData === 'true') {
-  app.use(utils.autoStoreData)
-  utils.addCheckedFunction(nunjucksAppEnv)
 }
 
 // Clear all data in session if you open /prototype-admin/clear-data
@@ -168,6 +161,14 @@ if (typeof (routes) !== 'function') {
   routes.bind(app)
 } else {
   app.use('/', routes)
+}
+
+// Load routes (found in api/routes.js)
+if (typeof (apiRoutes) !== 'function') {
+  console.log(apiRoutes.bind)
+  apiRoutes.bind(app)
+} else {
+  app.use('/api', apiRoutes)
 }
 
 // Strip .html and .htm if provided
