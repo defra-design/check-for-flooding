@@ -6,11 +6,11 @@ router.get('/find-location', (req, res) => {
 })
 
 router.post('/find-location', (req, res) => {
-  const location = req.body.location
-  if (location) {
-    res.redirect(`/location/${location}`)
+  const model = { location: req.body.location }
+  if (model.location) {
+    res.redirect(`/location/${model.location}`)
   } else {
-    const model = { error: true }
+    model.error = true
     res.render('find-location', { model })
   }
 })

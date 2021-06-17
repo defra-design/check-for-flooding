@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-Error: Find location - Check for flooding - GOV.UK
+{% if model.error %}Error: {% endif %}Find location - Check for flooding - GOV.UK
 {% endblock %}
 
 {% block beforeContent %}

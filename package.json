@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.13.10",
     "acorn": "^7.1.1",
     "ansi-colors": "^4.1.1",
+    "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
     "basic-auth": "^2.0.0",
     "basic-auth-connect": "^1.0.0",
