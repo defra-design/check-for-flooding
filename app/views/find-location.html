@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+Error: Find location - Check for flooding - GOV.UK
+{% endblock %}
+
+{% block beforeContent %}
+<div class="govuk-phase-banner">
+	<p class="govuk-phase-banner__content">
+		<strong class="govuk-tag govuk-phase-banner__content__tag">
+			beta
+		</strong>
+		<span class="govuk-phase-banner__text">
+			This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.
+		</span>
+	</p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		{% if model.error %}
+			{{ govukErrorSummary({
+				titleText: "There is a problem",
+				errorList: [
+				{
+					text: "Enter where do you want to check",
+					href: "#location"
+				}
+				]
+			})}}
+		{% endif %}
+	</div>
+</div>
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<form method="post">
+			{% if model.error %}
+				{{ govukInput({
+					label: {
+						text: "Where do you want to check?",
+						classes: "govuk-label--l",
+						isPageHeading: true
+					},
+					hint: {
+						text: "Postcode, town or river in England"
+					},
+					id: "location",
+					name: "location",
+					errorMessage: {
+						text: "Enter where do you want to check"
+					}
+				})}}
+			{% else %}
+				{{ govukInput({
+					label: {
+						text: "Where do you want to check?",
+						classes: "govuk-label--l",
+						isPageHeading: true
+					},
+					hint: {
+						text: "Postcode, town or river in England"
+					},
+					id: "location",
+					name: "location"
+				})}}
+			{% endif %}
+			<button type="submit" class="govuk-button">Continue</button>
+		</form>
+		<p><a href="/">See all flooding in England</a></p>
+	</div>
+</div>
+{% endblock %}

@@ -19,8 +19,6 @@ const middleware = [
 ]
 const config = require('./app/config.js')
 const packageJson = require('./package.json')
-const routes = require('./app/routes.js')
-const apiRoutes = require('./api/routes.js')
 const utils = require('./lib/utils.js')
 const extensions = require('./lib/extensions/extensions.js')
 
@@ -121,55 +119,24 @@ if (useCookieSessionStore === 'true') {
   })))
 }
 
-// Clear all data in session if you open /prototype-admin/clear-data
-app.post('/prototype-admin/clear-data', function (req, res) {
-  req.session.data = {}
-  res.render('prototype-admin/clear-data-success')
+// Prevent search indexing
+app.use(function (req, res, next) {
+  // Setting headers stops pages being indexed even if indexed pages link to them.
+  res.setHeader('X-Robots-Tag', 'noindex')
+  next()
 })
 
-// Redirect root to /docs when in promo mode.
-if (promoMode === 'true') {
-  console.log('Prototype Kit running in promo mode')
+app.get('/robots.txt', function (req, res) {
+  res.type('text/plain')
+  res.send('User-agent: *\nDisallow: /')
+})
 
-  app.get('/', function (req, res) {
-    res.redirect('/docs')
-  })
+// Load routes (found in app/routes)
+app.use('/', require('./app/routes/start'))
+app.use('/', require('./app/routes/find-location'))
 
-  // Allow search engines to index the Prototype Kit promo site
-  app.get('/robots.txt', function (req, res) {
-    res.type('text/plain')
-    res.send('User-agent: *\nAllow: /')
-  })
-} else {
-  // Prevent search indexing
-  app.use(function (req, res, next) {
-    // Setting headers stops pages being indexed even if indexed pages link to them.
-    res.setHeader('X-Robots-Tag', 'noindex')
-    next()
-  })
-
-  app.get('/robots.txt', function (req, res) {
-    res.type('text/plain')
-    res.send('User-agent: *\nDisallow: /')
-  })
-}
-
-// Load routes (found in app/routes.js)
-if (typeof (routes) !== 'function') {
-  console.log(routes.bind)
-  console.log('Warning: the use of bind in routes is deprecated - please check the Prototype Kit documentation for writing routes.')
-  routes.bind(app)
-} else {
-  app.use('/', routes)
-}
-
-// Load routes (found in api/routes.js)
-if (typeof (apiRoutes) !== 'function') {
-  console.log(apiRoutes.bind)
-  apiRoutes.bind(app)
-} else {
-  app.use('/api', apiRoutes)
-}
+// Load routes (found in api/routes)
+app.use('/', require('./api/routes/test'))
 
 // Strip .html and .htm if provided
 app.get(/\.html?$/i, function (req, res) {
