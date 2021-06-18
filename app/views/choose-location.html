@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.isError %}Error: {% endif %}Find location - Check for flooding - GOV.UK
+{% if model.isError %}Error: {% endif %}Choose a location - Check for flooding - GOV.UK
 {% endblock %}
 
 {% block beforeContent %}
@@ -25,7 +25,7 @@
 				titleText: "There is a problem",
 				errorList: [
 				{
-					text: "Enter where do you want to check",
+					text: "Choose a location",
 					href: "#location"
 				}
 				]
@@ -36,39 +36,37 @@
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<form method="post">
-			{% if model.isError %}
-				{{ govukInput({
-					label: {
-						text: "Where do you want to check?",
-						classes: "govuk-label--l",
-						isPageHeading: true
-					},
-					hint: {
-						text: "Postcode, town or river in England"
-					},
-					id: "location",
-					name: "location",
-					errorMessage: {
-						text: "Enter where do you want to check"
-					}
-				})}}
-			{% else %}
-				{{ govukInput({
-					label: {
-						text: "Where do you want to check?",
-						classes: "govuk-label--l",
-						isPageHeading: true
-					},
-					hint: {
-						text: "Postcode, town or river in England"
-					},
-					id: "location",
-					name: "location"
-				})}}
-			{% endif %}
+			{{ govukRadios({
+        idPrefix: "location",
+        name: "location",
+        fieldset: {
+          legend: {
+            text: "Choose a location",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "england",
+            text: "England"
+          },
+          {
+            value: "scotland",
+            text: "Scotland"
+          },
+          {
+            value: "wales",
+            text: "Wales"
+          },
+          {
+            value: "northern-ireland",
+            text: "Northern Ireland"
+          }
+        ]
+      })}}
 			<button type="submit" class="govuk-button">Continue</button>
 		</form>
-		<p><a href="/">See all flooding in England</a></p>
 	</div>
 </div>
 {% endblock %}
