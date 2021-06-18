@@ -136,8 +136,8 @@ app.use('/', require('./app/routes/start'))
 app.use('/', require('./app/routes/find-location'))
 app.use('/', require('./app/routes/location'))
 
-// Load routes (found in api/routes)
-app.use('/', require('./api/routes/test'))
+// Load routes (found in service/routes)
+app.use('/', require('./service/routes/test'))
 
 // Strip .html and .htm if provided
 app.get(/\.html?$/i, function (req, res) {
