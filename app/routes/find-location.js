@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const apiKey = process.env.OS_NAMES_KEY
+const Location = require('../models/location')
 
 router.get('/find-location', (req, res) => {
   res.render('find-location')
@@ -9,7 +10,6 @@ router.get('/find-location', (req, res) => {
 
 router.post('/find-location', async (req, res) => {
   const model = { query: req.body.location }
-  const locations = []
   if (model.query === '') {
     model.isError = true
     return res.render('find-location', { model })
@@ -20,42 +20,40 @@ router.post('/find-location', async (req, res) => {
     return response
   })
   if (response.status === 200) {
-    // Filter results to remove non England and where names dont match
+    // Filter results to remove non England and where names don't match
     const results = response.data.results && response.data.results.filter(result =>
       result.GAZETTEER_ENTRY.COUNTRY === 'England' && result.GAZETTEER_ENTRY.NAME1 === response.data.results[0].GAZETTEER_ENTRY.NAME1)
     // We have some matches
     if (results.length) {
+      const locations = []
       results.forEach(result => {
-        const gazetteerEntry = result.GAZETTEER_ENTRY
-        const localType = gazetteerEntry.LOCAL_TYPE
-        const name = gazetteerEntry.NAME1
-        const countyUnity = gazetteerEntry.COUNTY_UNITARY
-        const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
-        // Construct the slug
-        const location = {}
-        if (localType === 'Postcode') {
-          location.slug = name.replace(/\s+/g, '-').toLowerCase()
-          location.name = `${name}, ${(countyUnity || districtBorough)}`
-        } else if (localType === 'City' || name === countyUnity || name === districtBorough) {
-          location.slug = name.replace(/\s+/g, '-').toLowerCase()
-          location.name = name
-        } else if (countyUnity || districtBorough) {
-          location.slug = `${name.replace(/\s+/g, '-').toLowerCase()}-${(countyUnity || districtBorough).replace(/\s+/g, '-').toLowerCase()}`
-          location.name = `${name}, ${(countyUnity || districtBorough)}`
-        }
-        locations.push(location)
+        locations.push(new Location(result.GAZETTEER_ENTRY))
       })
       model.locations = locations
-      console.log(model)
-      if (results.length === 1) {
-        res.redirect(`/location/${model.locations[0].slug}`)
+      if (locations.length === 1) {
+        // We have a single match
+        res.redirect(`/location/${locations[0].slug}`)
       } else {
+        // We have multiple matches
         res.render('choose-location', { model })
       }
+    } else {
+      // We have no matches
+      res.render('location-not-found', { model })
     }
   } else {
-    // Return 500 eror
+    // Return 500 error
     console.log('500 error')
+  }
+})
+
+router.post('/choose-location', (req, res) => {
+  if (req.body.place) {
+    res.redirect(`/location/${req.body.place}`)
+  } else {
+    const model = JSON.parse(req.body.model)
+    model.isError = true
+    return res.render('choose-location', { model })
   }
 })
 
