@@ -16,6 +16,8 @@ class Location {
       this.slug = `${slug}-${(countyUnity || districtBorough).replace(/\s+/g, '-').toLowerCase()}`
       this.name = `${name}, ${(countyUnity || districtBorough)}`
     }
+    // Add location type
+    this.type = localType.toLowerCase()
   }
 }
 module.exports = Location
