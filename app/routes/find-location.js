@@ -37,8 +37,7 @@ router.post('/find-location', async (req, res) => {
       if (locations.length === 1) {
         // We have a single match
         res.redirect(`/location/${locations[0].slug}`)
-      } else if (locations.filter(location => location.type !== 'postcode').length) {
-        console.log(locations)
+      } else if (locations.filter(location => location.type !== 'postcode').length === 0) {
         // We have multiple postcodes
         model.isError = true
         model.isErrorPostcode = true
