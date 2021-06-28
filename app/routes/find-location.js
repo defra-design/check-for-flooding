@@ -12,6 +12,7 @@ router.post('/find-location', async (req, res) => {
   const model = { query: req.body.location }
   if (model.query === '') {
     model.isError = true
+    model.isErrorEmpty = true
     return res.render('find-location', { model })
   }
   const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
@@ -20,9 +21,12 @@ router.post('/find-location', async (req, res) => {
     return response
   })
   if (response.status === 200) {
-    // Filter results to remove non England and where names don't match
-    const results = response.data.results && response.data.results.filter(result =>
-      result.GAZETTEER_ENTRY.COUNTRY === 'England' && result.GAZETTEER_ENTRY.NAME1 === response.data.results[0].GAZETTEER_ENTRY.NAME1)
+    // Remove non-England results
+    let results = response.data.results && response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
+    // Remove fuzzy matches
+    results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(model.query.toLowerCase()))
+    // Remove duplicates (OS API bug?)
+    results = Array.from(new Map(results.map(result => [result.GAZETTEER_ENTRY.ID, result])).values())
     // We have some matches
     if (results.length) {
       const locations = []
@@ -33,6 +37,11 @@ router.post('/find-location', async (req, res) => {
       if (locations.length === 1) {
         // We have a single match
         res.redirect(`/location/${locations[0].slug}`)
+      } else if (locations.filter(location => location.LOCAL_TYPE !== 'Postcode').length) {
+        // We have multiple postcodes
+        model.isError = true
+        model.isErrorPostcode = true
+        res.render('find-location', { model })
       } else {
         // We have multiple matches
         res.render('choose-location', { model })

@@ -4,15 +4,16 @@ class Location {
     const name = gazetteerEntry.NAME1
     const countyUnity = gazetteerEntry.COUNTY_UNITARY
     const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
+    const slug = name.replace(/\s+/g, '-').replace(/'/g, '').toLowerCase()
     // Construct the slug and name
     if (localType === 'Postcode') {
-      this.slug = name.replace(/\s+/g, '-').toLowerCase()
+      this.slug = slug
       this.name = `${name}, ${(countyUnity || districtBorough)}`
     } else if (localType === 'City' || name === countyUnity || name === districtBorough) {
-      this.slug = name.replace(/\s+/g, '-').toLowerCase()
+      this.slug = slug
       this.name = name
     } else if (countyUnity || districtBorough) {
-      this.slug = `${name.replace(/\s+/g, '-').toLowerCase()}-${(countyUnity || districtBorough).replace(/\s+/g, '-').toLowerCase()}`
+      this.slug = `${slug}-${(countyUnity || districtBorough).replace(/\s+/g, '-').toLowerCase()}`
       this.name = `${name}, ${(countyUnity || districtBorough)}`
     }
   }
