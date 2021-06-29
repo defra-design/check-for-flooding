@@ -56,14 +56,4 @@ router.post('/find-location', async (req, res) => {
   }
 })
 
-router.post('/choose-location', (req, res) => {
-  if (req.body.place) {
-    res.redirect(`/location/${req.body.place}`)
-  } else {
-    const model = JSON.parse(req.body.model)
-    model.isError = true
-    return res.render('choose-location', { model })
-  }
-})
-
 module.exports = router

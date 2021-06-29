@@ -19,51 +19,15 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-full">
-    <p>{{ model | dump }}</p>
-		{% if model.isError %}
-			{{ govukErrorSummary({
-				titleText: "There is a problem",
-				errorList: [
-				{
-					text: "Choose a location",
-					href: "#location"
-				}
-				]
-			})}}
-		{% endif %}
-	</div>
-</div>
-<div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<form action="/choose-location" method="post">
-      <input type="hidden" value="{{ model | dump | escape }}" name="model"/>
-			<div class="govuk-form-group {% if model.isError %}govuk-form-group--error{% endif %}">
-        <fieldset class="govuk-fieldset">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-            <h1 class="govuk-fieldset__heading">
-              Which location?
-            </h1>
-          </legend>
-          {% if model.isError %}
-          <span id="location-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Choose a location
-          </span>
-          {% endif %}
-          <div class="govuk-radios">
-            {% for location in model.locations %}
-            <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="place-{{loop.index}}" name="place" type="radio" value="{{ location.slug }}">
-              <label class="govuk-label govuk-radios__label" for="place-{{loop.index}}">
-                {{ location.name }}
-              </label>
-            </div>
-            {% endfor %}
-          </div>
-        </fieldset>
-      </div>
-			<button type="submit" class="govuk-button">Continue</button>
-		</form>
+		<h1 class="govuk-heading-l">Locations matching '{{ model.query }}'</h1>
+		<p>Several matches found for your location. Choose the correct location from the following options:</p>
+		<ul class="govuk-list">
+		{% for location in model.locations %}
+			<li><a href="/location/{{ location.slug }}">{{ location.name | marked(model.query) | safe }}</a></li>
+		{% endfor %}
+		</ul>
+		<p>Alternatively, <a href="/find-location">try searching again</a></p>
 	</div>
 </div>
 {% endblock %}
