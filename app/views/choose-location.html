@@ -21,7 +21,7 @@
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<h1 class="govuk-heading-l">Locations matching '{{ model.query }}'</h1>
-		<p>Several matches found for your location. Choose the correct location from the following options:</p>
+		<p>Several matches were found for your location. Choose the correct location from the following options:</p>
 		<ul class="govuk-list">
 		{% for location in model.locations %}
 			<li><a href="/location/{{ location.slug }}">{{ location.name | marked(model.query) | safe }}</a></li>
