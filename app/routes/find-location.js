@@ -38,15 +38,15 @@ router.post('/find-location', async (req, res) => {
     }
     if (results.length) {
       // We have some matches
-      const locations = []
+      const places = []
       results.forEach(result => {
-        locations.push(new Location(result.GAZETTEER_ENTRY))
+        places.push(new Location(result.GAZETTEER_ENTRY))
       })
-      model.locations = locations
-      if (locations.length === 1) {
+      model.places = places
+      if (places.length === 1) {
         // We have a single match
-        res.redirect(`/location/${locations[0].slug}`)
-      } else if (locations.filter(location => location.type !== 'postcode').length === 0) {
+        res.redirect(`/location/${places[0].slug}`)
+      } else if (places.filter(place => place.type !== 'postcode').length === 0) {
         // We have multiple postcodes
         model.isError = true
         model.isErrorPostcode = true
