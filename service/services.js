@@ -12,7 +12,6 @@ module.exports = {
   },
 
   getRiversLikeSlug: async (slug) => {
-    console.log(slug)
     const response = await db.query('SELECT * FROM river WHERE slug LIKE $1', [`%${slug}%`])
     return response.rows
   }
