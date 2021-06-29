@@ -10,7 +10,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
-        Check for flooding in {{ name }}
+        Check for flooding {% if model.type === 'city' %}in{% else %}near{% endif%} {{ model.name }}
       </h1>
 
       

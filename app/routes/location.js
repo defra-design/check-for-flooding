@@ -22,7 +22,7 @@ router.get('/location/:location', async (req, res) => {
         const model = new Location(gazetteerEntry)
         // We have a valid url and region
         if (gazetteerEntry.COUNTRY === 'England' && query === model.slug) {
-          return res.render('location', model)
+          return res.render('location', { model })
         }
       }
       // Return 404 error
