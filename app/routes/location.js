@@ -9,6 +9,7 @@ router.get('/location', (req, res) => {
 })
 
 router.get('/location/:location', async (req, res) => {
+  // Check place
   const query = req.params.location.toLowerCase()
   const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
   const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&maxresults=1&key=${apiKey}`
