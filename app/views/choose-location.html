@@ -23,9 +23,12 @@ Locations matching {{ model.query }} - Check for flooding - GOV.UK
 		<h1 class="govuk-heading-l">Locations matching '{{ model.query }}'</h1>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		<ul class="govuk-list">
-		{% for location in model.locations %}
+			{% for location in model.locations %}
 			<li><a href="/location/{{ location.slug }}">{{ location.name | marked(model.query) | safe }}</a></li>
-		{% endfor %}
+			{% endfor %}
+			{% for location in model.rivers %}
+			<li><a href="/{{ river.slug }}">{{ river.name | marked(model.query) | safe }}</a></li>
+			{% endfor %}
 		</ul>
 		<p>Alternatively, <a href="/find-location">try searching again</a></p>
 	</div>

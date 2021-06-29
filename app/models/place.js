@@ -1,4 +1,4 @@
-class Location {
+class Place {
   constructor (gazetteerEntry) {
     const localType = gazetteerEntry.LOCAL_TYPE
     const name = gazetteerEntry.NAME1
@@ -20,4 +20,4 @@ class Location {
     this.type = localType.toLowerCase()
   }
 }
-module.exports = Location
+module.exports = Place

@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const apiKey = process.env.OS_NAMES_KEY
-const Location = require('../models/location')
+const Location = require('../models/place')
 
 router.get('/find-location', (req, res) => {
   res.render('find-location')
@@ -15,6 +15,12 @@ router.post('/find-location', async (req, res) => {
     model.isErrorEmpty = true
     return res.render('find-location', { model })
   }
+  // Check rivers
+  // const river = new Location({
+  //   NAME1: 'River Eden',
+  //   LOCAL_TYPE: 'River'
+  // })
+  // Check places
   const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
   const uri = `https://api.os.uk/search/names/v1/find?query=${model.query}&fq=${types}&key=${apiKey}`
   const response = await axios.get(uri).then((response) => {

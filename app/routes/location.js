@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 const apiKey = process.env.OS_NAMES_KEY
-const Location = require('../models/location')
+const Place = require('../models/place')
 
 router.get('/location', (req, res) => {
   res.redirect('/find-location')
@@ -19,7 +19,7 @@ router.get('/location/:location', async (req, res) => {
       if (response.data.header.totalresults > 0) {
         // Select first choice
         const gazetteerEntry = response.data.results[0].GAZETTEER_ENTRY
-        const model = new Location(gazetteerEntry)
+        const model = new Place(gazetteerEntry)
         // We have a valid url and region
         if (gazetteerEntry.COUNTRY === 'England' && query === model.slug) {
           return res.render('location', { model })
