@@ -21,14 +21,17 @@ router.post('/find-location', async (req, res) => {
     return response
   })
   if (response.status === 200) {
-    // Remove non-England results
-    let results = response.data.results && response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
-    // Remove fuzzy matches
-    results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(model.query.toLowerCase()))
-    // Remove duplicates (OS API bug?)
-    results = Array.from(new Map(results.map(result => [result.GAZETTEER_ENTRY.ID, result])).values())
-    // We have some matches
+    let results = []
+    if (response.data && response.data.results) {
+      // Remove non-England results
+      results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
+      // Remove fuzzy matches
+      results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(model.query.toLowerCase()))
+      // Remove duplicates (OS API bug?)
+      results = Array.from(new Map(results.map(result => [result.GAZETTEER_ENTRY.ID, result])).values())
+    }
     if (results.length) {
+      // We have some matches
       const locations = []
       results.forEach(result => {
         locations.push(new Location(result.GAZETTEER_ENTRY))

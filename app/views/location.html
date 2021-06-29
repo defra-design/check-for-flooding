@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-  Location - GOV.UK
+Check for flooding {% if model.type === 'city' %}in{% else %}near{% endif%} {{ model.name }} - GOV.UK
 {% endblock %}
 
 {% block content %}
