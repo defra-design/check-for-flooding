@@ -31,7 +31,7 @@ module.exports = {
         results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
         // Remove fuzzy matches
         results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()))
-        // Remove 'very similar' places
+        // Remove 'very similar' places - eg. Charlton, Wiltshire
         const seen = Object.create(null)
         results = results.filter(result => {
           const key = ['NAME1', 'LOCAL_TYPE', 'COUNTY_UNITARY', 'DISTRICT_BOROUGH'].map(k => result.GAZETTEER_ENTRY[k]).join('|')

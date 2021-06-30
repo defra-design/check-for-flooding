@@ -10,7 +10,7 @@ const getSlugFromGazetteerEntry = (gazetteerEntry) => {
   let slug = getSlug(name)
   if (localType !== 'City' && (countyUnity || districtBorough)) {
     const qaulifier = countyUnity || districtBorough
-    if (name !== qaulifier) { // Example: Bury
+    if (name !== qaulifier) { // eg Bury
       // Make a 'unique' slug
       slug = `${slug}-${getSlug(qaulifier)}`
     }
