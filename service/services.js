@@ -8,7 +8,7 @@ module.exports = {
 
   getRiverBySlug: async (slug) => {
     const response = await db.query('SELECT * FROM river WHERE slug = $1', [slug])
-    return response.rows[0]
+    return response.rows[0] || {}
   },
 
   getRiversLikeSlug: async (slug) => {
