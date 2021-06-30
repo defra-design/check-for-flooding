@@ -9,8 +9,11 @@ const getSlugFromGazetteerEntry = (gazetteerEntry) => {
   const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
   let slug = getSlug(name)
   if (localType !== 'City' && (countyUnity || districtBorough)) {
-    // Make a unique slug
-    slug = `${slug}-${getSlug(countyUnity || districtBorough)}`
+    const suffix = countyUnity || districtBorough
+    if (name !== suffix) { // Example: Bury
+      // Make a unique slug
+      slug = `${slug}-${getSlug(countyUnity || districtBorough)}`
+    }
   }
   return slug
 }
