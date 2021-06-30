@@ -1,10 +1,12 @@
+const utils = require('../utils')
+
 class Place {
   constructor (gazetteerEntry) {
     const localType = gazetteerEntry.LOCAL_TYPE
     const name = gazetteerEntry.NAME1
     const countyUnity = gazetteerEntry.COUNTY_UNITARY
     const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
-    const slug = name.replace(/\s+/g, '-').replace(/'/g, '').toLowerCase()
+    const slug = utils.getSlug(name)
     // Construct the slug and name
     if (localType === 'Postcode') {
       this.slug = slug
@@ -13,7 +15,7 @@ class Place {
       this.slug = slug
       this.name = name
     } else if (countyUnity || districtBorough) {
-      this.slug = `${slug}-${(countyUnity || districtBorough).replace(/\s+/g, '-').toLowerCase()}`
+      this.slug = `${slug}-${utils.getSlug(countyUnity || districtBorough)}`
       this.name = `${name}, ${(countyUnity || districtBorough)}`
     }
     // Add location type

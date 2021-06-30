@@ -1,7 +1,5 @@
-const sample = () => {
-  return ''
-}
-
 module.exports = {
-  sample
+  getSlug: (string) => {
+    return string.replace(/\s+/g, '-').replace(/'/g, '').toLowerCase()
+  }
 }
