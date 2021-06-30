@@ -1,9 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const axios = require('axios')
-const apiKey = process.env.OS_NAMES_KEY
 const locationServices = require('../services/location')
-const Location = require('../models/place')
+const Place = require('../models/place')
 
 router.get('/find-location', (req, res) => {
   res.render('find-location')
@@ -22,12 +20,12 @@ router.post('/find-location', async (req, res) => {
   //   LOCAL_TYPE: 'River'
   // })
   // Check places
-  const response = await locationServices.getLocation(model.query)
+  const response = await locationServices.getLocations(model.query)
   if (response.status === 200) {
     if (response.data.results.length) {
       // We have some matches
       const places = []
-      response.data.results.forEach(result => { places.push(new Location(result.GAZETTEER_ENTRY)) })
+      response.data.results.forEach(result => { places.push(new Place(result.GAZETTEER_ENTRY)) })
       model.places = places
       if (places.length === 1) {
         // We have a single match
