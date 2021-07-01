@@ -9,11 +9,15 @@ module.exports = {
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data.header.totalresults > 0) {
-        // We have at least one potential result
-        const gazetteerEntry = response.data.results[0].GAZETTEER_ENTRY
-        if (gazetteerEntry.COUNTRY === 'England' && query === utils.getSlugFromGazetteerEntry(gazetteerEntry)) {
-          // We have a valid region
-          response.data.result = gazetteerEntry
+        // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
+        response.data.results = utils.setIsSimilar(response.data.results)
+        // Remove places outside England or that dont match slug
+        response.data.results = response.data.results.filter(result =>
+          query === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) &&
+          result.GAZETTEER_ENTRY.COUNTRY === 'England')
+        if (response.data.results.length) {
+          // We have a valid result
+          response.data.result = response.data.results[0].GAZETTEER_ENTRY
         }
         delete response.data.results
       }
@@ -31,15 +35,8 @@ module.exports = {
         results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
         // Remove fuzzy matches
         results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()))
-        // Remove 'very similar' places - eg. Charlton, Wiltshire
-        const seen = Object.create(null)
-        results = results.filter(result => {
-          const key = ['NAME1', 'LOCAL_TYPE', 'COUNTY_UNITARY', 'DISTRICT_BOROUGH'].map(k => result.GAZETTEER_ENTRY[k]).join('|')
-          if (!seen[key]) {
-            seen[key] = true
-            return true
-          }
-        })
+        // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
+        results = utils.setIsSimilar(results)
         // Remove duplicates (OS API bug?)
         results = Array.from(new Map(results.map(result => [result.GAZETTEER_ENTRY.ID, result])).values())
         // Replace results with filtered set
