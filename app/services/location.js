@@ -3,7 +3,8 @@ const apiKey = process.env.OS_NAMES_KEY
 const utils = require('../utils')
 
 module.exports = {
-  getLocation: async (query) => {
+  getLocation: async (slug) => {
+    const query = slug.replace(/-/g, ' ')
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
     const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
     const response = await axios.get(uri).then((response) => { return response })
@@ -13,7 +14,7 @@ module.exports = {
         response.data.results = utils.setIsSimilar(response.data.results)
         // Remove places outside of England or that don't match slug
         response.data.results = response.data.results.filter(result =>
-          query === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) &&
+          slug === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) &&
           result.GAZETTEER_ENTRY.COUNTRY === 'England')
         if (response.data.results.length) {
           // We have a valid result
