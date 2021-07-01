@@ -11,7 +11,7 @@ module.exports = {
       if (response.data.header.totalresults > 0) {
         // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
         response.data.results = utils.setIsSimilar(response.data.results)
-        // Remove places outside England or that dont match slug
+        // Remove places outside of England or that don't match slug
         response.data.results = response.data.results.filter(result =>
           query === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) &&
           result.GAZETTEER_ENTRY.COUNTRY === 'England')
@@ -31,7 +31,7 @@ module.exports = {
     if (response.status === 200) {
       if (response.data && response.data.results) {
         let results = []
-        // Remove non-England results
+        // Remove places outside of England
         results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
         // Remove fuzzy matches
         results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()))
