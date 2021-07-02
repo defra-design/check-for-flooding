@@ -24,10 +24,16 @@ const getSlugFromGazetteerEntry = (gazetteerEntry) => {
 }
 
 const setIsSimilar = (results) => {
-  const seen = Object.create(null)
+  const places = Object.create(null)
   results.forEach(result => {
     const key = ['NAME1', 'LOCAL_TYPE', 'COUNTY_UNITARY', 'DISTRICT_BOROUGH'].map(k => result.GAZETTEER_ENTRY[k]).join('|')
-    seen[key] ? result.GAZETTEER_ENTRY.IS_SIMILAR = true : seen[key] = true
+    if (places[key]) {
+      result.GAZETTEER_ENTRY.IS_SIMILAR = true
+      const original = results.find(o => o.GAZETTEER_ENTRY.ID === places[key])
+      original.GAZETTEER_ENTRY.IS_SIMILAR = true
+    } else {
+      places[key] = result.GAZETTEER_ENTRY.ID
+    }
   })
   return results
 }
