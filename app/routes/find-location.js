@@ -18,13 +18,13 @@ router.post('/find-location', async (req, res) => {
 
   // Check rivers
   let rivers = []
-  // const riverResponse = await riverServices.getRivers(model.query)
-  // if (riverResponse.status === 200) {
-  //   rivers = riverResponse.data
-  // } else {
-  //   // Log 500 error
-  //   console.log('500 error: Rivers')
-  // }
+  const riverResponse = await riverServices.getRivers(model.query)
+  if (riverResponse.status === 200) {
+    rivers = riverResponse.data
+  } else {
+    // Log 500 error
+    console.log('500 error: Rivers')
+  }
   model.rivers = rivers
 
   // Check places
