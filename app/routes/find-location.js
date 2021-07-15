@@ -3,7 +3,6 @@ const router = express.Router()
 const locationServices = require('../services/location')
 const riverServices = require('../services/river')
 const Place = require('../models/place')
-const river = require('../services/river')
 
 router.get('/find-location', (req, res) => {
   res.render('find-location')
@@ -19,13 +18,13 @@ router.post('/find-location', async (req, res) => {
 
   // Check rivers
   let rivers = []
-  const riverResponse = await riverServices.getRivers(model.query)
-  if (riverResponse.status === 200) {
-    rivers = riverResponse.data
-  } else {
-    // Return 500 error
-    console.log('500 error: Rivers')
-  }
+  // const riverResponse = await riverServices.getRivers(model.query)
+  // if (riverResponse.status === 200) {
+  //   rivers = riverResponse.data
+  // } else {
+  //   // Log 500 error
+  //   console.log('500 error: Rivers')
+  // }
   model.rivers = rivers
 
   // Check places
@@ -37,7 +36,7 @@ router.post('/find-location', async (req, res) => {
       locationResponse.data.results.forEach(result => { places.push(new Place(result.GAZETTEER_ENTRY)) })
     }
   } else {
-    // Return 500 error
+    // Log 500 error
     console.log('500 error: Location')
   }
   model.places = places
