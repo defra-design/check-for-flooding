@@ -12,7 +12,7 @@ module.exports = {
   },
 
   getRiversLikeSlug: async (slug) => {
-    const response = await db.query('SELECT * FROM river WHERE slug LIKE $1', [`%${slug}%`])
+    const response = await db.query('SELECT * FROM river WHERE slug LIKE $1 OR slug LIKE $2 OR slug = $3', [`%-${slug}%`, `%${slug}-%`, slug])
     return response.rows
   }
 }
