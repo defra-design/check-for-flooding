@@ -7,7 +7,7 @@ axios.defaults.baseURL = serviceUrl
 module.exports = {
   getRivers: async (query) => {
     const slug = utils.getSlug(query)
-    const uri = `/rivers/${slug}`
+    const uri = `${serviceUrl}/rivers/${slug}`
     console.log(uri)
     const response = await axios.get(uri).then((response) => { return response })
     return response
