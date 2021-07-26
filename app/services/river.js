@@ -5,10 +5,11 @@ const serviceUrl = process.env.SERVICE_URL
 module.exports = {
   getRivers: async (query) => {
     const slug = utils.getSlug(query)
-    const uri = `/rivers/${slug}`
+    const url = `/rivers/${slug}`
     try {
-      const response = await axios.get(uri, {
+      const response = await axios({
         method: 'get',
+        url: url,
         baseURL: serviceUrl
       })
       return response
