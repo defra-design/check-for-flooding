@@ -9,7 +9,12 @@ module.exports = {
     const slug = utils.getSlug(query)
     const uri = `${serviceUrl}/rivers/${slug}`
     console.log(uri)
-    const response = await axios.get(uri).then((response) => { return response })
-    return response
+    let response
+    try {
+      response = await axios.get(uri).then((response) => { return response })
+      return response
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
