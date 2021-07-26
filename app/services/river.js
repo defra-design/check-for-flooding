@@ -7,9 +7,11 @@ module.exports = {
     const slug = utils.getSlug(query)
     const url = `/rivers/${slug}`
     try {
-      const response = await axios({
-        method: 'get',
-        url: url,
+      const response = await axios.get(url, {
+        transformRequest: (data, headers) => {
+          delete headers.common.Authorization
+          return data
+        },
         baseURL: serviceUrl
       })
       return response
