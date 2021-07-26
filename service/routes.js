@@ -25,7 +25,7 @@ router.get('/service/river/:slug', async (req, res, next) => {
 // Get all rivers that contain slug
 router.get('/service/rivers/:slug', async (req, res, next) => {
   // We dont want long lists of rivers, brooks etc
-  const broadSearches = ['river', 'brook']
+  const broadSearches = ['river', 'brook', 'stream']
   if (broadSearches.includes(req.params.slug)) {
     res.status(200).json([])
   } else {
