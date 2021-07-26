@@ -3,6 +3,7 @@ const utils = require('../utils')
 const serviceUrl = process.env.SERVICE_URL
 
 axios.defaults.baseURL = serviceUrl
+axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
 
 module.exports = {
   getRivers: async (query) => {
