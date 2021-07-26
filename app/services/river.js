@@ -2,6 +2,8 @@ const axios = require('axios')
 const utils = require('../utils')
 const serviceUrl = process.env.SERVICE_URL
 
+axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'GET'
+
 module.exports = {
   getRivers: async (query) => {
     const slug = utils.getSlug(query)
