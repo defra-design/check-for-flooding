@@ -8,10 +8,6 @@ module.exports = {
     const url = `/rivers/${slug}`
     try {
       const response = await axios.get(url, {
-        transformRequest: (data, headers) => {
-          delete headers.common.Authorization
-          return data
-        },
         baseURL: serviceUrl
       })
       return response
