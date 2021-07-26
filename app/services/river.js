@@ -8,6 +8,10 @@ module.exports = {
     const url = `/rivers/${slug}`
     try {
       const response = await axios.get(url, {
+        auth: {
+          username: process.env.USERNAME,
+          password: process.env.PASSWORD
+        },
         baseURL: serviceUrl
       })
       return response
