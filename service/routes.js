@@ -48,4 +48,15 @@ router.get('/service/river-detail/:slug', async (req, res, next) => {
   }
 })
 
+// Get stations within
+router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) => {
+  try {
+    const { x1, y1, x2, y2 } = req.params
+    res.status(200).json(await services.getStationsWithinBbox([x1, y1, x2, y2]))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
 module.exports = router

@@ -33,5 +33,20 @@ module.exports = {
     } catch (error) {
       console.log(error)
     }
+  },
+  getRiverDetail: async (slug) => {
+    const url = `/river-detail/${slug}`
+    try {
+      const response = await axios.get(url, {
+        auth: {
+          username: process.env.USERNAME,
+          password: process.env.PASSWORD
+        },
+        baseURL: serviceUrl
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

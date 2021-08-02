@@ -10,10 +10,9 @@ Check for flooding along {{ model.name }} - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">
-        Current levels on the {{ model.displayName }}
+        Current levels on the {{ model.name }}
       </h1>
-
-      
+      <pre style="white-space: pre-wrap">{{ model | dump }}</pre>      
     </div>
   </div>
 

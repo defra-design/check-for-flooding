@@ -2,7 +2,8 @@ class River {
   constructor (data) {
     this.slug = data.slug
     this.name = data.name
-    this.displayName = data.display
+    this.bbox = data.bbox
+    this.levels = data.levels
   }
 }
 module.exports = River
