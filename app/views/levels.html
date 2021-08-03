@@ -1,0 +1,28 @@
+
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+{% if model.type === 'river' %}
+Current levels of the {{ model.name }}
+{% else %}
+River, sea, groundwater and rainfall levels near {{ model.name }}
+{% endif%}
+- GOV.UK
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">
+        {% if model.type === 'river' %}
+        Current levels of the {{ model.name }}
+        {% else %}
+        River, sea, groundwater and rainfall levels near {{ model.name }}
+        {% endif%}
+      </h1>
+      <pre style="white-space: pre-wrap">{{ model | dump }}</pre>      
+    </div>
+  </div>
+
+{% endblock %}
