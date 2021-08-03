@@ -26,12 +26,12 @@ module.exports = {
   // Used on list pages
   getRiverDetailBySlug: async (slug) => {
     const response = await db.query(`
-    (SELECT river.display AS name, river.slug AS id, null AS state, null AS value, null AS value_date,
+    (SELECT river.display AS name, river.slug AS id, null AS state, null AS type, null AS value, null AS value_date,
     replace(substring(left(ST_Extent(station.geom) :: text, -1), 5),' ',',') AS bbox
     FROM river
     INNER JOIN river_station ON river_station.slug = river.slug
     INNER JOIN station ON river_station.station_id = station.id
-    WHERE river.slug = $1
+    WHERE river.slug = 'river-eden-cumbria'
     GROUP BY river.display, river.slug)
     UNION ALL
     (SELECT station.name AS name, CAST(station.id AS text) AS id,
@@ -39,6 +39,10 @@ module.exports = {
     WHEN station.value >= station.percentile_5 THEN 'high'
     ELSE 'normal'
     END as state,
+    CASE WHEN station.type = 'c' THEN 'tide'
+    WHEN station.type = 'g' THEN 'groundwater'
+    ELSE 'river'
+    END AS type,
     round(station.value, 2), station.value_date, null AS bbox
     FROM station
     INNER JOIN river_station ON river_station.station_id = station.id

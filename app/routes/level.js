@@ -53,7 +53,6 @@ router.get('/levels/:river', async (req, res) => {
       response.data.forEach((item, index) => {
         if (index >= 1) {
           const level = new Level(item)
-          level.type = 'river'
           levels.push(level)
         }
       })
