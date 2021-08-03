@@ -9,10 +9,11 @@ class Place {
     const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
     const postcodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
     const isSimilar = gazetteerEntry.IS_SIMILAR
-    const lon1 = gazetteerEntry.MBR_XMIN
-    const lat1 = gazetteerEntry.MBR_YMIN
-    const lon2 = gazetteerEntry.MBR_XMAX
-    const lat2 = gazetteerEntry.MBR_YMAX
+    // Postcodes return a point so we approximate to a 1km2 area
+    const lon1 = gazetteerEntry.MBR_XMIN || gazetteerEntry.GEOMETRY_X - 500
+    const lat1 = gazetteerEntry.MBR_YMIN || gazetteerEntry.GEOMETRY_Y - 500
+    const lon2 = gazetteerEntry.MBR_XMAX || gazetteerEntry.GEOMETRY_X + 500
+    const lat2 = gazetteerEntry.MBR_YMAX || gazetteerEntry.GEOMETRY_Y + 500
 
     // Construct the name
     if (localType === 'Postcode') {

@@ -48,16 +48,20 @@ router.get('/levels/:river', async (req, res) => {
   if (response.status === 200) {
     if (response.data) {
       // We have a valid route
-      const model = new River(response.data[0])
+      const river = new River(response.data[0])
       const levels = []
       response.data.forEach((item, index) => {
         if (index >= 1) {
-          levels.push(new Level(item))
+          const level = new Level(item)
+          level.type = 'river'
+          levels.push(level)
         }
       })
-      model.levels = levels
-      model.type = 'river'
-      return res.render('levels', { model })
+      const model = {
+        river: river,
+        levels: levels
+      }
+      return res.render('river', { model })
     } else {
       // Return 404
       return res.status(404).render('404')

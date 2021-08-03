@@ -26,15 +26,14 @@ River, sea, groundwater and rainfall levels
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <pre style="white-space: pre-wrap">{{ model.place | dump }}</pre>
-    <pre style="white-space: pre-wrap">{{ model.levels | dump }}</pre>
+    <pre style="white-space: pre-wrap">{{ model | dump }}</pre>
     <div id="search-results">
       <div class="defra-search-summary" id="searchSummary">
           <h2 class="defra-search-summary__count" aria-live="polite">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
           <span id="map"></span>
       </div>
       {% if model.levels | length %}
-      <ul class="defra-flood-list">
+      <ul class="defra-flood-list{% if model.river %}-river{% endif %}">
         {% for group, items in model.levels %}
           {% if items[0].type == 'river' %}
           <li>
