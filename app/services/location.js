@@ -34,8 +34,11 @@ module.exports = {
         let results = []
         // Remove places outside of England
         results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
-        // Remove fuzzy matches
-        results = results.filter(result => result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()))
+        // Remove fuzzy matches but not postcodes whithout spaces
+        results = results.filter(result =>
+          result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()) ||
+          result.GAZETTEER_ENTRY.ID.toLowerCase().includes(query.toLowerCase())
+        )
         // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
         results = utils.setIsSimilar(results)
         // Remove duplicates (OS API bug?)

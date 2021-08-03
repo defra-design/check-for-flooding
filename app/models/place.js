@@ -35,14 +35,14 @@ class Place {
     this.type = localType.toLowerCase()
 
     // Add lon/lat
-    const latlon1 = OsGridRef.osGridToLatLong(new OsGridRef(lon1, lat1))
-    const latlon2 = OsGridRef.osGridToLatLong(new OsGridRef(lon2, lat2))
-    this.bbox = [
-      latlon1._lon.toFixed(6),
-      latlon1._lat.toFixed(6),
-      latlon2._lon.toFixed(6),
-      latlon2._lat.toFixed(6)
-    ]
+    let latlon1 = OsGridRef.osGridToLatLong(new OsGridRef(lon1, lat1))
+    let latlon2 = OsGridRef.osGridToLatLong(new OsGridRef(lon2, lat2))
+    this.bbox = [latlon1._lon, latlon1._lat, latlon2._lon, latlon2._lat]
+
+    // Add lon/lat with 8km buffer
+    latlon1 = OsGridRef.osGridToLatLong(new OsGridRef(lon1 - 8000, lat1 - 8000))
+    latlon2 = OsGridRef.osGridToLatLong(new OsGridRef(lon2 + 8000, lat2 + 8000))
+    this.bboxBuffered = [latlon1._lon, latlon1._lat, latlon2._lon, latlon2._lat]
   }
 }
 module.exports = Place

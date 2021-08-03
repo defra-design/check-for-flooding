@@ -10,7 +10,7 @@ const getSlugFromGazetteerEntry = (gazetteerEntry) => {
   const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
   const isSimilar = gazetteerEntry.IS_SIMILAR
   let slug = getSlug(name)
-  if (localType !== 'City' && (countyUnity || districtBorough)) {
+  if (localType !== 'City' && localType !== 'Postcode' && (countyUnity || districtBorough)) {
     let qaulifier = getSlug(countyUnity || districtBorough) // eg Bury, bury
     if (name !== qaulifier) {
       // eg Charlton, Wiltshire
@@ -38,8 +38,20 @@ const setIsSimilar = (results) => {
   return results
 }
 
+const groupBy = (items, key) => items.reduce(
+  (result, item) => ({
+    ...result,
+    [item[key]]: [
+      ...(result[item[key]] || []),
+      item
+    ]
+  }),
+  {}
+)
+
 module.exports = {
   getSlug,
   getSlugFromGazetteerEntry,
-  setIsSimilar
+  setIsSimilar,
+  groupBy
 }

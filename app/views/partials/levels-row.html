@@ -1,0 +1,40 @@
+<li class="defra-flood-list-item defra-flood-list-item--{{ item.type }}{% if item.state %}-{{ item.state }}{% endif %}">
+  <div class="defra-flood-list__title-column">
+    <span class="defra-flood-list-item__title">
+      <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
+        {{ item.name }}
+        {{ station.external_name }}
+        {% if item.iswales === true %}
+        (Natural Resources Wales)
+        {% endif %}
+        {% if item.isDownstream == true %}
+        (downstream)
+        {% endif %}
+      </a>
+      <span class="defra-flood-list-data__description">1 minute ago</span>
+    </span>
+  </div>
+  <div class="defra-flood-list__data-column">
+    <dl class="defra-flood-list-data">
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">State</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">{{ item.state }}</span>
+        </dd>
+      </div>
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">Height</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">{{ item.value }}m</span>
+        </dd>
+      </div>
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">Trend</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">N/A</span>
+          <span class="defra-flood-list-data__description" aria-hidden="true">N/A</span>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</li>

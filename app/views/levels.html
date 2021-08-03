@@ -3,26 +3,75 @@
 
 {% block pageTitle %}
 {% if model.type === 'river' %}
-Current levels of the {{ model.name }}
+Current levels of the {{ model.place.name }}
 {% else %}
-River, sea, groundwater and rainfall levels near {{ model.name }}
+River, sea, groundwater and rainfall levels
 {% endif%}
 - GOV.UK
 {% endblock %}
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">
-        {% if model.type === 'river' %}
-        Current levels of the {{ model.name }}
-        {% else %}
-        River, sea, groundwater and rainfall levels near {{ model.name }}
-        {% endif%}
-      </h1>
-      <pre style="white-space: pre-wrap">{{ model | dump }}</pre>      
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+      {% if model.type === 'river' %}
+      Current levels of the {{ model.place.name }}
+      {% else %}
+      River, sea, groundwater and rainfall levels
+      {% endif%}
+    </h1>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <pre style="white-space: pre-wrap">{{ model.place | dump }}</pre>
+    <pre style="white-space: pre-wrap">{{ model.levels | dump }}</pre>
+    <div id="search-results">
+      <div class="defra-search-summary" id="searchSummary">
+          <h2 class="defra-search-summary__count" aria-live="polite">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
+          <span id="map"></span>
+      </div>
+      {% if model.levels | length %}
+      <ul class="defra-flood-list">
+        {% for group, items in model.levels %}
+          {% if items[0].type == 'river' %}
+          <li>
+            <h3 class="defra-flood-list__group-title">
+              <a href="/levels/{{ items[0].river_slug }}">{{ group }}</a>
+            </h3>
+            <ul class="defra-flood-list-river">
+              {% for item in items %}
+              {% include "partials/levels-row.html" %}
+              {% endfor %}
+            </ul>
+          </li>
+          {% else %}
+          {% for item in items %}
+          {% include "partials/levels-row.html" %}
+          {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </ul>
+      {% else %}
+      <h2 class="govuk-heading-s govuk-!-margin-top-4">
+      No river, sea or groundwater levels found
+      </h2>
+      <p class="govuk-body">If you searched a place in England, you should:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>check the spelling</li>
+        <li>enter a broader location</li>
+      </ul>
+      <p class="govuk-body">If you searched a place outside England, you should visit:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li><a href="https://www.sepa.org.uk/environment/water/flooding/">Scottish Environment Protection Agency</a></li>
+        <li><a href="https://www.nidirect.gov.uk/articles/check-the-risk-of-flooding-in-your-area">Northern Ireland Direct</a></li>
+        <li><a href="https://naturalresources.wales/flooding">Natural Resources Wales</a></li>
+      </ul>         
+      {% endif %}
     </div>
   </div>
+</div>
 
 {% endblock %}
