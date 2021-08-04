@@ -4,6 +4,14 @@
 {% if model.isError %}Error: {% endif %}Find location - Check for flooding - GOV.UK
 {% endblock %}
 
+{% set isPlaceChecked %}
+{% if not model.type or model.type == 'place' %}checked{% endif %}
+{% endset %}
+
+{% set isLevelChecked %}
+{% if model.type == 'level' %}checked{% endif %}
+{% endset %}
+
 {% block beforeContent %}
 <div class="govuk-phase-banner">
 	<p class="govuk-phase-banner__content">
@@ -28,9 +36,11 @@
 				<div class="govuk-error-summary__body">
 					<ul class="govuk-list govuk-error-summary__list">
 						<li>
-							<a href="#location">
-								{% if model.isErrorEmpty %}
-								Enter where do you want to check
+							<a href="#{% if model.type == 'place' %}place{% else %}level{% endif %}">
+								{% if model.isErrorPlaceEmpty %}
+								Enter town or postcode
+								{% elif model.isErrorLevelEmpty %}
+								Enter river, town or postcode
 								{% else %}
 								Enter a full postcode
 								{% endif %}
@@ -42,9 +52,73 @@
 		{% endif %}
 	</div>
 </div>
+
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<form method="post">
+			<div class="govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" aria-describedby="location-hint">
+					<legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+						<h1 class="govuk-fieldset__heading">
+							What do you want to check?
+						</h1>
+					</legend>
+					<div id="location-hint" class="govuk-hint">
+						Select one option
+					</div>
+					<div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="location" name="location" type="radio" value="place" data-aria-controls="conditional-location" {{ isPlaceChecked }}/>
+							<label class="govuk-label govuk-radios__label" for="location">
+								Flood warnings and outlook
+							</label>
+						</div>
+						<div class="govuk-radios__conditional" id="conditional-location">
+							<div class="govuk-form-group">
+								<label class="govuk-label" for="place">
+									Town or postcode
+								</label>
+								{% if model.isError and model.type == 'place' %}
+								<span id="national-insurance-number-error" class="govuk-error-message">
+									<span class="govuk-visually-hidden">Error:</span>
+									{% if model.isErrorPlaceEmpty %}
+									Enter town or postcode
+									{% else %}
+									Enter a full postcode
+									{% endif %}
+								</span>
+								{% endif %}
+								<input class="govuk-input govuk-!-width-two-thirds" id="place" name="place">
+							</div>
+						</div>
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="location-2" name="location" type="radio" value="level" data-aria-controls="conditional-location-2" {{ isLevelChecked }}>
+							<label class="govuk-label govuk-radios__label" for="location-2">
+								A river, sea, groundwater or rainfall level
+							</label>
+						</div>
+						<div class="govuk-radios__conditional" id="conditional-location-2">
+							<div class="govuk-form-group">
+								<label class="govuk-label" for="level">
+									River, town or postcode
+								</label>
+								{% if model.isError and model.type == 'level' %}
+								<span id="national-insurance-number-error" class="govuk-error-message">
+									<span class="govuk-visually-hidden">Error:</span>
+									{% if model.isErrorLevelEmpty %}
+									Enter river, town or postcode
+									{% else %}
+									Enter a full postcode
+									{% endif %}
+								</span>
+								{% endif %}
+								<input class="govuk-input govuk-!-width-two-thirds" id="level" name="level">
+							</div>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<!--
 			<div class="govuk-form-group {% if model.isError %}govuk-form-group--error{% endif %}">
 				<h1 class="govuk-label-wrapper">
 					<label class="govuk-label govuk-label--l" for="location">
@@ -66,6 +140,7 @@
 				{% endif %}
 				<input class="govuk-input {% if model.isError %}govuk-input--error{% endif %}" value="{{ model.query }}" id="location" name="location" type="text" aria-describedby="location-hint">
 			</div>
+			-->
 			<button type="submit" class="govuk-button">Continue</button>
 		</form>
 		<p><a href="/">See all flooding in England</a></p>

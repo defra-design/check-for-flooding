@@ -5,27 +5,20 @@ const riverServices = require('../services/river')
 const Place = require('../models/place')
 
 router.get('/find-location', (req, res) => {
-  res.render('find-location')
+  res.render('find-location', { model: { type: req.query.type } })
 })
 
 router.post('/find-location', async (req, res) => {
-  const model = { query: req.body.location }
-  if (model.query === '') {
+  const type = req.body.location
+  const query = type === 'place' ? req.body.place : req.body.level
+  const model = { type: type, query: query }
+
+  if (query === '') {
     model.isError = true
-    model.isErrorEmpty = true
+    model.isErrorPlaceEmpty = !!(type === 'place')
+    model.isErrorLevelEmpty = !!(type === 'level')
     return res.render('find-location', { model })
   }
-
-  // Check rivers
-  let rivers = []
-  const riverResponse = await riverServices.getRivers(model.query)
-  if (riverResponse.status === 200) {
-    rivers = riverResponse.data
-  } else {
-    // Log 500 error
-    console.log('500 error: Rivers')
-  }
-  model.rivers = rivers
 
   // Check places
   const places = []
@@ -41,28 +34,64 @@ router.post('/find-location', async (req, res) => {
   }
   model.places = places
 
-  // Routing
-  if (!places.length && !rivers.length) {
-    // We have no matches
-    res.render('location-not-found', { model })
-  } else if (places.length === 1 && !rivers.length) {
-    // We have a single location
-    res.redirect(`/location/${places[0].slug}`)
-  } else if (rivers.length === 1 && !places.length) {
-    // We have a single river
-    res.redirect(`/levels/${rivers[0].slug}`)
-  } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
-    // We have too many full postcodes
-    model.isError = true
-    model.isErrorPostcode = true
-    res.render('find-location', { model })
-  } else {
-    // We have multiple matches
-    if (places.filter(place => place.type !== 'postcode').length === 0) {
-      // We dont want to disoplay hundreds of full postcodes
-      model.places = []
+  if (type === 'place') {
+    if (!places.length) {
+      // We have no matches
+      res.render('location-not-found', { model })
+    } else if (places.length === 1) {
+      // We have a single match
+      res.redirect(`/location/${places[0].slug}`)
+    } else if (places.filter(place => place.type !== 'postcode').length === 0) {
+      // We have too many full postcodes
+      model.isError = true
+      model.isErrorPlace = true
+      model.isErrorPostcode = true
+      res.render('find-location', { model })
+    } else {
+      // We have multiple matches
+      if (places.filter(place => place.type !== 'postcode').length === 0) {
+        // We dont want to display hundreds of full postcodes
+        model.places = []
+      }
+      res.render('choose-location', { model })
     }
-    res.render('choose-location', { model })
+  }
+
+  if (type === 'level') {
+    // Check rivers
+    let rivers = []
+    const riverResponse = await riverServices.getRivers(model.query)
+    if (riverResponse.status === 200) {
+      rivers = riverResponse.data
+    } else {
+      // Log 500 error
+      console.log('500 error: Rivers')
+    }
+    model.rivers = rivers
+
+    if (!places.length && !rivers.length) {
+      // We have no matches
+      res.render('location-not-found', { model })
+    } else if (places.length === 1 && !rivers.length) {
+      // We have a single location
+      res.redirect(`/levels/location/${places[0].slug}`)
+    } else if (rivers.length === 1 && !places.length) {
+      // We have a single river
+      res.redirect(`/levels/${rivers[0].slug}`)
+    } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
+      // We have too many full postcodes
+      model.isError = true
+      model.isErrorLevel = true
+      model.isErrorPostcode = true
+      res.render('find-location', { model })
+    } else {
+      // We have multiple matches
+      if (places.filter(place => place.type !== 'postcode').length === 0) {
+        // We dont want to disoplay hundreds of full postcodes
+        model.places = []
+      }
+      res.render('choose-location', { model })
+    }
   }
 })
 

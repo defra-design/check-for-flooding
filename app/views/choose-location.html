@@ -23,21 +23,25 @@ Locations matching {{ model.query }} - Check for flooding - GOV.UK
 		<h1 class="govuk-heading-l">Locations matching '{{ model.query }}'</h1>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
-		<h2 class="govuk-heading-s">Places</h2>
-		{% endif %}
-		<ul class="govuk-list">
-			{% for place in model.places %}
-			<li><a href="/location/{{ place.slug }}">{{ place.name | marked(model.query) | safe }}</a></li>
-			{% endfor %}
-		</ul>
-		{% if model.places.length and model.rivers.length %}
 		<h2 class="govuk-heading-s">Rivers</h2>
 		{% endif %}
+		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
 			<li><a href="/levels/{{ river.slug }}">{{ river.display | marked(model.query) | safe }}</a></li>
 			{% endfor %}
 		</ul>
+		{% endif %}
+		{% if model.places.length and model.rivers.length %}
+		<h2 class="govuk-heading-s">Water levels near</h2>
+		{% endif %}
+		{% if model.places.length %}
+		<ul class="govuk-list">
+			{% for place in model.places %}
+			<li><a href="{% if model.type == 'place' %}/location/{{ place.slug }}{% else %}/levels/location/{{ place.slug }}{% endif %}">{{ place.name | marked(model.query) | safe }}</a></li>
+			{% endfor %}
+		</ul>
+		{% endif %}
 		<p>Alternatively, <a href="/find-location">try searching again</a></p>
 	</div>
 </div>
