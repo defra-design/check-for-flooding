@@ -33,6 +33,11 @@ router.get('/levels/location/:location', async (req, res) => {
     response = await levelServices.getLevelsWithin(model.place.bboxBuffered)
     if (response.data) {
       const levels = utils.groupBy(response.data, 'group_name')
+      Object.entries(levels).forEach(([key, value]) => {
+        value.forEach((item, index) => {
+          levels[key][index] = new Level(item)
+        })
+      })
       model.numLevels = response.data.length
       model.levels = levels
     }

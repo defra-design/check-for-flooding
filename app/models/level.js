@@ -5,11 +5,11 @@ class Level {
     this.state = data.state
     this.value = data.value
     this.velueDate = data.value_date
-    this.expiredTime = data.value_date ? this.formatExpiredTime(data.value_date) : ''
+    this.elapsedTime = data.value_date ? this.formatElaspedTime(data.value_date) : ''
     this.type = data.type
   }
 
-  formatExpiredTime (date) {
+  formatElaspedTime (date) {
     const duration = (new Date() - new Date(date))
     const mins = Math.floor(duration / (1000 * 60))
     const hours = Math.floor(duration / (1000 * 60 * 60))
