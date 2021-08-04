@@ -31,7 +31,7 @@ module.exports = {
     FROM river
     INNER JOIN river_station ON river_station.slug = river.slug
     INNER JOIN station ON river_station.station_id = station.id
-    WHERE river.slug = 'river-eden-cumbria'
+    WHERE river.slug = $1
     GROUP BY river.display, river.slug)
     UNION ALL
     (SELECT station.name AS name, CAST(station.id AS text) AS id,
