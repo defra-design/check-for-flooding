@@ -38,9 +38,9 @@
 						<li>
 							<a href="#{% if model.type == 'place' %}place{% else %}level{% endif %}">
 								{% if model.isErrorPlaceEmpty %}
-								Enter town or postcode
+								Enter town or postcode <span class="govuk-visually-hidden">for flood warnings or forecast</span>
 								{% elif model.isErrorLevelEmpty %}
-								Enter river, town or postcode
+								Enter river, town or postcode <span class="govuk-visually-hidden">for river, sea, groundwater or rainfall levels</span>
 								{% else %}
 								Enter a full postcode
 								{% endif %}
@@ -63,20 +63,24 @@
 							What do you want to check?
 						</h1>
 					</legend>
+					<!-- Add visually hidden class with javascript. We dont need to show visually when js is enabled
 					<div id="location-hint" class="govuk-hint">
 						Select one option
 					</div>
+					-->
 					<div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
 						<div class="govuk-radios__item">
 							<input class="govuk-radios__input" id="location" name="location" type="radio" value="place" data-aria-controls="conditional-location" {{ isPlaceChecked }}/>
 							<label class="govuk-label govuk-radios__label" for="location">
-								Flood warnings and regional forecast
+								Flood warnings and forecast
 							</label>
 						</div>
 						<div class="govuk-radios__conditional" id="conditional-location">
 							<div class="govuk-form-group">
-								<label class="govuk-label" for="place">
-									Town or postcode
+								<label class="govuk-label govuk-visually-hidden" for="place">
+									Where do you want to check flood warnings and forecast
+								</label>
+								<div class="govuk-hint" id="place-hint">Town or postcode</div>
 								</label>
 								{% if model.isError and model.type == 'place' %}
 								<span id="national-insurance-number-error" class="govuk-error-message">
@@ -86,22 +90,25 @@
 									{% else %}
 									Enter a full postcode
 									{% endif %}
+									<span class="govuk-visually-hidden">for flood warnings or forecast</span>
 								</span>
 								{% endif %}
-								<input class="govuk-input govuk-!-width-two-thirds" id="place" name="place">
+								<input class="govuk-input govuk-!-width-two-thirds" id="place" name="place" aria-describedby="place-hint">
 							</div>
 						</div>
+						<!--<div class="govuk-radios__divider">or</div>-->
 						<div class="govuk-radios__item">
 							<input class="govuk-radios__input" id="location-2" name="location" type="radio" value="level" data-aria-controls="conditional-location-2" {{ isLevelChecked }}>
 							<label class="govuk-label govuk-radios__label" for="location-2">
-								A river, sea, groundwater or rainfall level
+								River, sea, groundwater or rainfall levels
 							</label>
 						</div>
 						<div class="govuk-radios__conditional" id="conditional-location-2">
 							<div class="govuk-form-group">
-								<label class="govuk-label" for="level">
-									River, town or postcode
+								<label class="govuk-label govuk-visually-hidden" for="level">
+									Where do you want to check a river, sea, groundwater or rainfall level
 								</label>
+								<div class="govuk-hint">River, town or postcode</div>
 								{% if model.isError and model.type == 'level' %}
 								<span id="national-insurance-number-error" class="govuk-error-message">
 									<span class="govuk-visually-hidden">Error:</span>
@@ -110,6 +117,7 @@
 									{% else %}
 									Enter a full postcode
 									{% endif %}
+									<span class="govuk-visually-hidden">for river, sea, groundwater or rainfall levels</span>
 								</span>
 								{% endif %}
 								<input class="govuk-input govuk-!-width-two-thirds" id="level" name="level">

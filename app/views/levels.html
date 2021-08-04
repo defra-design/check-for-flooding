@@ -2,31 +2,38 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.type === 'river' %}
-Current levels of the {{ model.place.name }}
-{% else %}
-River, sea, groundwater and rainfall levels
-{% endif%}
-- GOV.UK
+River, sea, groundwater and rainfall levels near {{ model.place.name }} - GOV.UK
+{% endblock %}
+
+{% block beforeContent %}
+<div class="govuk-phase-banner">
+	<p class="govuk-phase-banner__content">
+		<strong class="govuk-tag govuk-phase-banner__content__tag">
+			beta
+		</strong>
+		<span class="govuk-phase-banner__text">
+			This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.
+		</span>
+	</p>
+</div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <a href="/find-location?type=level" class="defra-flood-location-link">Check other levels</a>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl">
-      {% if model.type === 'river' %}
-      Current levels of the {{ model.place.name }}
-      {% else %}
-      River, sea, groundwater and rainfall levels
-      {% endif%}
+      River, sea, groundwater and rainfall levels near {{ model.place.name }}
     </h1>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <pre style="white-space: pre-wrap">{{ model | dump }}</pre>
     <div id="search-results">
       <div class="defra-search-summary" id="searchSummary">
           <h2 class="defra-search-summary__count" aria-live="polite">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
@@ -72,5 +79,4 @@ River, sea, groundwater and rainfall levels
     </div>
   </div>
 </div>
-
 {% endblock %}
