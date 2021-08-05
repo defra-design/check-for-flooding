@@ -13,34 +13,30 @@ router.get('/levels', async (req, res) => {
   const query = decodeURI(req.query.river || req.query.place)
   const slug = query ? utils.getSlug(query) : ''
   const queryType = req.query.river ? 'river' : (req.query.place ? 'place' : 'none')
-  console.log(slug)
 
   if (queryType === 'river') {
     // We a river query
     const response = await riverServices.getRiverDetail(slug)
     if (response.status === 200) {
-      if (response.data) {
-        // We have a valid route
-        const river = new River(response.data[0])
-        const levels = []
+      const levels = []
+      let river = {}
+      if (response.data && response.data.length) {
+        river = new River(response.data[0])
         response.data.forEach((item, index) => {
           if (index >= 1) {
             const level = new Level(item)
             levels.push(level)
           }
         })
-        const model = {
-          query: query,
-          numLevels: levels.length,
-          isRiver: true,
-          river: river,
-          levels: levels
-        }
-        return res.render('levels', { model })
-      } else {
-        // Return 404
-        return res.status(404).render('404')
       }
+      const model = {
+        query: query,
+        numLevels: levels.length,
+        isRiver: true,
+        river: river,
+        levels: levels
+      }
+      return res.render('levels', { model })
     } else {
       // Return 500 error
     }
