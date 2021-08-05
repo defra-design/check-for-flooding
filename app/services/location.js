@@ -3,7 +3,8 @@ const apiKey = process.env.OS_NAMES_KEY
 const utils = require('../utils')
 
 module.exports = {
-  getLocation: async (slug) => {
+  // Return a unique results - used for resolving routes
+  getLocationBySlug: async (slug) => {
     const query = slug.replace(/-/g, ' ')
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
     const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
@@ -25,7 +26,31 @@ module.exports = {
     }
     return response
   },
-  getLocations: async (query) => {
+  // Return a unique results, expect postcodes - used for resolving queries
+  getLocationByQuery: async (query) => {
+    const slug = utils.getSlug(query)
+    const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
+    const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
+    const response = await axios.get(uri).then((response) => { return response })
+    if (response.status === 200) {
+      if (response.data.header.totalresults > 0) {
+        // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
+        response.data.results = utils.setIsSimilar(response.data.results)
+        // Remove places outside of England or that don't match slug unless its a postcode
+        response.data.results = response.data.results.filter(result =>
+          (slug === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) ||
+          slug === result.GAZETTEER_ENTRY.ID.toLowerCase()) && result.GAZETTEER_ENTRY.COUNTRY === 'England')
+        if (response.data.results.length) {
+          // We have a valid result
+          response.data.result = response.data.results[0].GAZETTEER_ENTRY
+        }
+        delete response.data.results
+      }
+    }
+    return response
+  },
+  // Return multiple results - used for resolving queries
+  getLocationsByQuery: async (query) => {
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
     const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
     const response = await axios.get(uri).then((response) => { return response })

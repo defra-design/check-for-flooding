@@ -26,48 +26,44 @@
 {% endblock %}
 
 {% block content %}
+{% if model.isError %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
-		{% if model.isError %}
-			<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-				<h2 class="govuk-error-summary__title" id="error-summary-title">
-					There is a problem
-				</h2>
-				<div class="govuk-error-summary__body">
-					<ul class="govuk-list govuk-error-summary__list">
-						<li>
-							<a href="#{% if model.type == 'place' %}place{% else %}level{% endif %}">
-								{% if model.isErrorPlaceEmpty %}
-								Enter town or postcode <span class="govuk-visually-hidden">for flood warnings or forecast</span>
-								{% elif model.isErrorLevelEmpty %}
-								Enter river, town or postcode <span class="govuk-visually-hidden">for river, sea, groundwater or rainfall levels</span>
-								{% else %}
-								Enter a full postcode
-								{% endif %}
-							</a>
-						</li>
-					</ul>
-				</div>
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						<a href="#place">
+							{% if model.isErrorEmpty %}
+							Enter where do you want to check
+							{% else %}
+							Enter a full postcode
+							{% endif %}
+						</a>
+					</li>
+				</ul>
 			</div>
-		{% endif %}
+		</div>
 	</div>
 </div>
+{% endif %}
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<form method="post">
-			<div class="govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
+			<!-- <div class="govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
 				<fieldset class="govuk-fieldset" aria-describedby="location-hint">
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
 						<h1 class="govuk-fieldset__heading">
 							What do you want to check?
 						</h1>
 					</legend>
-					<!-- Add visually hidden class with javascript. We dont need to show visually when js is enabled
 					<div id="location-hint" class="govuk-hint">
 						Select one option
 					</div>
-					-->
 					<div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
 						<div class="govuk-radios__item">
 							<input class="govuk-radios__input" id="location" name="location" type="radio" value="place" data-aria-controls="conditional-location" {{ isPlaceChecked }}/>
@@ -96,7 +92,6 @@
 								<input class="govuk-input govuk-!-width-two-thirds" id="place" name="place" aria-describedby="place-hint">
 							</div>
 						</div>
-						<!--<div class="govuk-radios__divider">or</div>-->
 						<div class="govuk-radios__item">
 							<input class="govuk-radios__input" id="location-2" name="location" type="radio" value="level" data-aria-controls="conditional-location-2" {{ isLevelChecked }}>
 							<label class="govuk-label govuk-radios__label" for="location-2">
@@ -125,19 +120,19 @@
 						</div>
 					</div>
 				</fieldset>
-			</div>
-			<!--
-			<div class="govuk-form-group {% if model.isError %}govuk-form-group--error{% endif %}">
+			</div> -->
+			
+			<div class="govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
 				<h1 class="govuk-label-wrapper">
-					<label class="govuk-label govuk-label--l" for="location">
+					<label class="govuk-label govuk-label--l" for="place">
 						Where do you want to check?
 					</label>
 				</h1>
-				<div id="location-hint" class="govuk-hint">
-					Postcode, town or river in England
+				<div id="place-hint" class="govuk-hint">
+					Postcode or town in England
 				</div>
 				{% if model.isError %}
-				<span id="national-insurance-number-error" class="govuk-error-message">
+				<span class="govuk-error-message">
 					<span class="govuk-visually-hidden">Error:</span>
 					{% if model.isErrorEmpty %}
 					Enter where do you want to check
@@ -146,9 +141,9 @@
 					{% endif %}
 				</span>
 				{% endif %}
-				<input class="govuk-input {% if model.isError %}govuk-input--error{% endif %}" value="{{ model.query }}" id="location" name="location" type="text" aria-describedby="location-hint">
+				<input class="govuk-input {% if model.isError %}govuk-input--error{% endif %}" value="{{ model.query }}" id="place" name="place" type="text" aria-describedby="place-hint">
 			</div>
-			-->
+			
 			<button type="submit" class="govuk-button">Continue</button>
 		</form>
 		<p><a href="/">See all flooding in England</a></p>

@@ -9,7 +9,7 @@ router.get('/location', (req, res) => {
 
 router.get('/location/:location', async (req, res) => {
   const slug = req.params.location.toLowerCase()
-  const response = await locationServices.getLocation(slug)
+  const response = await locationServices.getLocationBySlug(slug)
   if (response.status === 200) {
     if (response.data && response.data.result) {
       // We have a valid route
