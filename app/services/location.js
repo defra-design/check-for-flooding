@@ -28,21 +28,20 @@ module.exports = {
   },
   // Return a unique results, expect postcodes - used for resolving queries
   getLocationByQuery: async (query) => {
-    const slug = utils.getSlug(query)
+    query = encodeURI(query)
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
     const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data.header.totalresults > 0) {
+        let results = response.data.results
         // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
-        response.data.results = utils.setIsSimilar(response.data.results)
+        results = utils.setIsSimilar(results)
         // Remove places outside of England or that don't match slug unless its a postcode
-        response.data.results = response.data.results.filter(result =>
-          (slug === utils.getSlugFromGazetteerEntry(result.GAZETTEER_ENTRY) ||
-          slug === result.GAZETTEER_ENTRY.ID.toLowerCase()) && result.GAZETTEER_ENTRY.COUNTRY === 'England')
-        if (response.data.results.length) {
+        results = results.filter(result => utils.isGazetteerMatch(query, result.GAZETTEER_ENTRY))
+        if (results.length) {
           // We have a valid result
-          response.data.result = response.data.results[0].GAZETTEER_ENTRY
+          response.data.result = results[0].GAZETTEER_ENTRY
         }
         delete response.data.results
       }
@@ -51,19 +50,15 @@ module.exports = {
   },
   // Return multiple results - used for resolving queries
   getLocationsByQuery: async (query) => {
+    query = encodeURI(query)
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
     const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data && response.data.results) {
-        let results = []
-        // Remove places outside of England
-        results = response.data.results.filter(result => result.GAZETTEER_ENTRY.COUNTRY === 'England')
-        // Remove fuzzy matches but not postcodes whithout spaces
-        results = results.filter(result =>
-          result.GAZETTEER_ENTRY.NAME1.toLowerCase().includes(query.toLowerCase()) ||
-          result.GAZETTEER_ENTRY.ID.toLowerCase().includes(query.toLowerCase())
-        )
+        let results = response.data.results
+        // Remove fuzzy matches, non-England results but not postcodes whithout spaces
+        results = results.filter(result => utils.isGazetteerMatch(query, result.GAZETTEER_ENTRY))
         // Flag places that share name, type and qaulfier - eg. Charlton, Wiltshire
         results = utils.setIsSimilar(results)
         // Remove duplicates (OS API bug?)

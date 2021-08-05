@@ -13,6 +13,7 @@ router.get('/levels', async (req, res) => {
   const query = decodeURI(req.query.river || req.query.place)
   const slug = query ? utils.getSlug(query) : ''
   const queryType = req.query.river ? 'river' : (req.query.place ? 'place' : 'none')
+  console.log(slug)
 
   if (queryType === 'river') {
     // We a river query
@@ -158,7 +159,6 @@ router.get('/levels', async (req, res) => {
 router.post('/levels', async (req, res) => {
   const query = req.body.location
   const model = { query: query }
-
   if (query === '') {
     model.isError = true
     return res.render('levels', { model })
@@ -192,6 +192,7 @@ router.post('/levels', async (req, res) => {
   if (!places.length && !rivers.length) {
     // We have no matches
     model.isNoResults = true
+    res.render('levels', { model })
   } else if (places.length === 1 && !rivers.length) {
     // We have a single place
     res.redirect(`/levels?place=${encodeURI(query)}`)

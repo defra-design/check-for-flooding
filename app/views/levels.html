@@ -86,7 +86,7 @@
 		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
-			<li><a href="/levels?river={{ river.slug }}">{{ river.display | marked(model.query) | safe }}</a></li>
+			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.query) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -96,7 +96,7 @@
 		{% if model.places.length %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/levels?place={{ place.slug }}">{{ place.name | marked(model.query) | safe }}</a></li>
+			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.query) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}

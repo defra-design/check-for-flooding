@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const locationServices = require('../services/location')
-const riverServices = require('../services/river')
 const Place = require('../models/place')
 
 router.get('/find-location', (req, res) => {

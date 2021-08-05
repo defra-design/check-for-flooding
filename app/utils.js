@@ -1,5 +1,5 @@
 const getSlug = (string) => {
-  return string.replace(/\s+/g, '-').replace(/'/g, '').toLowerCase()
+  return string.replace(/\s+/g, '-').replace(/'|\(|\)|,/g, '').toLowerCase()
 }
 
 const getSlugFromGazetteerEntry = (gazetteerEntry) => {
@@ -38,6 +38,21 @@ const setIsSimilar = (results) => {
   return results
 }
 
+const isGazetteerMatch = (query, gazetteerEntry) => {
+  query = decodeURI(query)
+  console.log(query)
+  query = query.toLowerCase().replace(/\s+|\(|\)|,/g, '')
+  const name = gazetteerEntry.NAME1.toLowerCase().replace(/\s+/g, '')
+  const id = gazetteerEntry.ID.toLowerCase()
+  const country = gazetteerEntry.COUNTRY
+  const countyUnity = gazetteerEntry.COUNTY_UNITARY
+  const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
+  const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
+  const qaulifiedName = `${name}${(countyUnity || districtBorough || postCodeDistrict).replace(/\s+/g, '').toLowerCase()}`
+  const isMatch = (name.includes(query) || [id, qaulifiedName].some(e => e === query)) && country === 'England'
+  return isMatch
+}
+
 const groupBy = (items, key) => items.reduce(
   (result, item) => ({
     ...result,
@@ -53,5 +68,6 @@ module.exports = {
   getSlug,
   getSlugFromGazetteerEntry,
   setIsSimilar,
+  isGazetteerMatch,
   groupBy
 }
