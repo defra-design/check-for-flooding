@@ -2,7 +2,12 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.location %}{{ model.location }} - r{% else %}R{% endif %}iver, sea, groundwater and rainfall levels - GOV.UK
+{% if model.isPlace or model.isRiver%}{{ model.query }} -
+{% elif model.isError %} Error:
+{% elif model.isMultipleMatch %}
+Choose location -
+{% endif %}
+River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block beforeContent %}
