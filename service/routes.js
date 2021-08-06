@@ -38,7 +38,7 @@ router.get('/service/rivers/:slug', async (req, res, next) => {
   }
 })
 
-// Get single river detail
+// Get a single river and stations that is like the slug
 router.get('/service/river-detail/:slug', async (req, res, next) => {
   try {
     res.status(200).json(await services.getRiverDetailBySlug(req.params.slug))

@@ -40,7 +40,6 @@ const setIsSimilar = (results) => {
 
 const isGazetteerMatch = (query, gazetteerEntry) => {
   query = decodeURI(query)
-  console.log(query)
   query = query.toLowerCase().replace(/\s+|\(|\)|,/g, '')
   const name = gazetteerEntry.NAME1.toLowerCase().replace(/\s+/g, '')
   const id = gazetteerEntry.ID.toLowerCase()

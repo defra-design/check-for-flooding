@@ -27,11 +27,11 @@ module.exports = {
   getRiverDetailBySlug: async (slug) => {
     const response = await db.query(`
     (SELECT river.display AS name, river.slug AS id, null AS state, null AS type, null AS value, null AS value_date,
-    replace(substring(left(ST_Extent(station.geom) :: text, -1), 5),' ',',') AS bbox
+    replace(substring(left(ST_Extent(station.geom) :: text, -1), 5),' ',',') AS bbox, null AS order, river.slug AS river_slug
     FROM river
-    INNER JOIN river_station ON river_station.slug = river.slug
-    INNER JOIN station ON river_station.station_id = station.id
-    WHERE river.slug = $1
+    LEFT JOIN river_station ON river_station.slug = river.slug
+    LEFT JOIN station ON river_station.station_id = station.id
+    WHERE river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3
     GROUP BY river.display, river.slug)
     UNION ALL
     (SELECT station.name AS name, CAST(station.id AS text) AS id,
@@ -43,13 +43,17 @@ module.exports = {
     WHEN station.type = 'g' THEN 'groundwater'
     ELSE 'river'
     END AS type,
-    round(station.value, 2), station.value_date, null AS bbox
+    round(station.value, 2), station.value_date, null AS bbox, river_station.order, '' AS river_slug
     FROM station
     INNER JOIN river_station ON river_station.station_id = station.id
-    WHERE river_station.slug = $1
+    WHERE river_station.slug LIKE $1 OR river_station.slug LIKE $2 OR river_station.slug LIKE $3
     ORDER BY river_station.order)
-    `, [slug])
-    return response.rows || {}
+    `, [`%-${slug}%`, `%${slug}-%`, slug])
+    // Address this in SQL/Materialised view
+    if (response.rows && response.rows.filter((obj) => obj.river_slug !== '').length > 1) {
+      response.rows = []
+    }
+    return response.rows || []
   },
 
   // Used on list pages

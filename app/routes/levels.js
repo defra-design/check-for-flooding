@@ -11,12 +11,11 @@ const Place = require('../models/place')
 // Get levels
 router.get('/levels', async (req, res) => {
   const query = decodeURI(req.query.river || req.query.place)
-  const slug = query ? utils.getSlug(query) : ''
   const queryType = req.query.river ? 'river' : (req.query.place ? 'place' : 'none')
 
   if (queryType === 'river') {
     // We a river query
-    const response = await riverServices.getRiverDetail(slug)
+    const response = await riverServices.getRiverDetail(query)
     if (response.status === 200) {
       const levels = []
       let river = {}
@@ -28,6 +27,8 @@ router.get('/levels', async (req, res) => {
             levels.push(level)
           }
         })
+      } else {
+        return res.render('404')
       }
       const model = {
         query: query,
