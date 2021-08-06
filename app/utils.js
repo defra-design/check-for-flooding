@@ -44,11 +44,12 @@ const isGazetteerMatch = (query, gazetteerEntry) => {
   const name = gazetteerEntry.NAME1.toLowerCase().replace(/\s+/g, '')
   const id = gazetteerEntry.ID.toLowerCase()
   const country = gazetteerEntry.COUNTRY
-  const countyUnity = gazetteerEntry.COUNTY_UNITARY
-  const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
-  const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
-  const qaulifiedName = `${name}${(countyUnity || districtBorough || postCodeDistrict).replace(/\s+/g, '').toLowerCase()}`
-  const isMatch = (name.includes(query) || [id, qaulifiedName].some(e => e === query)) && country === 'England'
+  const countyUnity = gazetteerEntry.COUNTY_UNITARY || ''
+  const districtBorough = gazetteerEntry.DISTRICT_BOROUGH || ''
+  const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT || ''
+  const qaulifiedName = `${name}${(countyUnity || districtBorough).replace(/\s+/g, '').toLowerCase()}`
+  const postcodeQaulifiedName = `${qaulifiedName}${postCodeDistrict.toLowerCase()}`
+  const isMatch = (name.includes(query) || [id, qaulifiedName, postcodeQaulifiedName].some(e => e === query)) && country === 'England'
   return isMatch
 }
 
