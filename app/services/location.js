@@ -116,8 +116,7 @@ const filterQuery = (query, results) => {
     const postcodeQaulifiedName = `${qaulifiedName}${postCodeDistrict.toLowerCase()}`
     const isEngland = country === 'England'
     const isQueryMatch = (name.includes(query) || [id, qaulifiedName, postcodeQaulifiedName].some(e => e === query))
-    const isMatch = isQueryMatch && isEngland
-    return isMatch
+    return isQueryMatch && isEngland
   })
   return results
 }
