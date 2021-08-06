@@ -10,7 +10,6 @@ router.get('/find-location', (req, res) => {
 router.post('/find-location', async (req, res) => {
   const query = req.body.place
   const model = { query: query }
-
   if (query === '') {
     model.isError = true
     model.isErrorEmpty = true
