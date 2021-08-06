@@ -143,7 +143,7 @@
         {% if items[0].type == 'river' %}
         <li>
           <h3 class="defra-flood-list__group-title">
-            <a href="/levels?river={{ items[0].river_slug }}">{{ group }}</a>
+            <a href="/levels?river={{ group | urlencode }}">{{ group }}</a>
           </h3>
           <ul class="defra-flood-list-river">
             {% for item in items %}
