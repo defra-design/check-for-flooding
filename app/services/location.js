@@ -26,7 +26,7 @@ module.exports = {
     return response
   },
 
-  // Return a single result, expect postcodes - used for resolving queries
+  // Return a single result - used for get requests
   getLocationByQuery: async (query) => {
     query = encodeURI(query)
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
@@ -48,7 +48,7 @@ module.exports = {
     return response
   },
 
-  // Return multiple results - used for resolving queries
+  // Return multiple results - used for post requests
   getLocationsByQuery: async (query) => {
     query = encodeURI(query)
     const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
@@ -106,16 +106,17 @@ const filterQuery = (query, results) => {
     query = decodeURI(query)
     query = query.toLowerCase().replace(/\s+|\(|\)|,/g, '')
     const gazetteerEntry = result.GAZETTEER_ENTRY
-    const name = gazetteerEntry.NAME1.toLowerCase().replace(/\s+/g, '')
+    const name1 = gazetteerEntry.NAME1.toLowerCase().replace(/\s+/g, '')
+    const name2 = gazetteerEntry.NAME2 ? gazetteerEntry.NAME2.toLowerCase().replace(/\s+/g, '') : ''
     const id = gazetteerEntry.ID.toLowerCase()
     const country = gazetteerEntry.COUNTRY
     const countyUnity = gazetteerEntry.COUNTY_UNITARY || ''
     const districtBorough = gazetteerEntry.DISTRICT_BOROUGH || ''
     const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT || ''
-    const qaulifiedName = `${name}${(countyUnity || districtBorough).replace(/\s+/g, '').toLowerCase()}`
-    const postcodeQaulifiedName = `${qaulifiedName}${postCodeDistrict.toLowerCase()}`
+    const qaulifiedName1 = `${name1}${(countyUnity || districtBorough).replace(/\s+/g, '').toLowerCase()}`
+    const postcodeQaulifiedName1 = `${qaulifiedName1}${postCodeDistrict.toLowerCase()}`
     const isEngland = country === 'England'
-    const isQueryMatch = (name.includes(query) || [id, qaulifiedName, postcodeQaulifiedName].some(e => e === query))
+    const isQueryMatch = ([name1, name2].some(e => e.includes(query)) || [id, qaulifiedName1, postcodeQaulifiedName1].some(e => e === query))
     return isQueryMatch && isEngland
   })
   return results
