@@ -3,15 +3,8 @@
     padding:0px;
     list-style:none;
     & > li:not(:first-child) {
-        border-top:2px solid $govuk-border-colour;
-        // border-bottom:1px solid $govuk-border-colour;
+        border-top:1px solid govuk-colour('black');
     }
-    // & > li:not(.defra-flood-list-item){
-    //     border-bottom:2px solid $govuk-border-colour;
-    //     &:last-child {
-    //         border-bottom:0px;
-    //     }
-    // }
     ul {
         list-style:none;
         padding: 0px;
@@ -33,6 +26,13 @@
             @include govuk-font($size: 19);
             margin-top: -5px;
             margin-bottom: 0px;
+        }
+    }
+    &__group-title--river {
+        @include govuk-font($size: 16, $weight: normal);
+        & > a {
+            color: $govuk-text-colour;
+            font-weight: normal;
         }
     }
     &__title-column {
@@ -74,9 +74,6 @@
         display: block;
         padding-left:0px;
         @include govuk-font($size: 19, $weight: bold);
-        a {
-            color: $govuk-link-colour;
-        }
     }
     &__title:after {
         position: absolute;

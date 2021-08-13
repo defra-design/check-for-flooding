@@ -147,7 +147,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% for group, items in model.levels %}
         {% if items[0].type == 'river' %}
         <li>
-          <h3 class="defra-flood-list__group-title">
+          <h3 class="defra-flood-list__group-title defra-flood-list__group-title--river">
             <a href="/levels?river={{ group | urlencode }}">{{ group }}</a>
           </h3>
           <ul class="defra-flood-list-river">
