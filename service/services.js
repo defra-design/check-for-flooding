@@ -11,6 +11,7 @@ module.exports = {
     const response = await db.query(`
     SELECT * FROM river
     WHERE slug = $1
+    ORDER BY display
     `, [slug])
     return response.rows[0] || {}
   },
@@ -19,6 +20,7 @@ module.exports = {
     const response = await db.query(`
     SELECT * FROM river
     WHERE slug LIKE $1 OR slug LIKE $2 OR slug = $3
+    ORDER BY display
     `, [`%-${slug}%`, `%${slug}-%`, slug])
     return response.rows
   },

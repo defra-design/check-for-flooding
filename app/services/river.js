@@ -20,21 +20,7 @@ module.exports = {
       console.log(error)
     }
   },
-  // getRiver: async (slug) => {
-  //   const url = `/river/${slug}`
-  //   try {
-  //     const response = await axios.get(url, {
-  //       auth: {
-  //         username: process.env.USERNAME,
-  //         password: process.env.PASSWORD
-  //       },
-  //       baseURL: serviceUrl
-  //     })
-  //     return response
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // },
+
   // Used on list page
   getRiverDetail: async (query) => {
     const slug = utils.getSlug(query)

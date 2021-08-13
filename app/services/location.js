@@ -116,8 +116,9 @@ const filterQuery = (query, results) => {
     const qaulifiedName1 = `${name1}${(countyUnity || districtBorough).replace(/\s+/g, '').toLowerCase()}`
     const postcodeQaulifiedName1 = `${qaulifiedName1}${postCodeDistrict.toLowerCase()}`
     const isEngland = country === 'England'
-    const isQueryMatch = ([name1, name2].some(e => e.includes(query)) || [id, qaulifiedName1, postcodeQaulifiedName1].some(e => e === query))
-    return isQueryMatch && isEngland
+    const isNameMatch = [name1, name2].some(e => e.includes(query))
+    const isQaulifierMatch = [id, qaulifiedName1, postcodeQaulifiedName1].some(e => e === query)
+    return isEngland && (isNameMatch || isQaulifierMatch)
   })
   return results
 }
