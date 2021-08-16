@@ -38,6 +38,11 @@ $govuk-assets-path: '/govuk/assets/';
 @import "components/flood-list";
 @import "components/search";
 @import "components/flood-location-link";
+@import "components/flood-status";
+@import "components/flood-meta";
+@import "components/context-footer";
+@import "components/flood-tabs";
+@import "components/filter";
 
 // Tools
 

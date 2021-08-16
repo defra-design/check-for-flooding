@@ -1,0 +1,75 @@
+.defra-filter {
+  background-color: govuk-colour('light-grey');
+  padding-top: 10px;
+  padding-left: 10px;
+  &__fieldset {
+    @extend .govuk-fieldset;
+  }
+  &__legend {
+    @extend .govuk-fieldset__legend;
+    @include govuk-font($size: 16, $weight: bold);
+    margin-right: 10px;
+    @include mq ($from: tablet) {
+      float: left;
+      line-height: 44px !important;
+    }
+  }
+  &__checkboxes {
+    @extend .govuk-checkboxes !optional;
+    @extend .govuk-checkboxes--small;
+    @include mq ($from: tablet) {
+      float: left;
+    }
+  }
+  &__item {
+    @extend .govuk-checkboxes__item;
+    border: 1px solid govuk-colour('black');
+    clear: none;
+    margin-right: 10px;
+    margin-bottom: 10px !important;
+    padding-left: 0px !important;
+    border-radius: 5px;
+    &:hover .defra-filter__label:before {
+      box-shadow: none !important;
+    }
+  }
+  &__input {
+    @extend .govuk-checkboxes__input;
+    left: 0px !important;
+    top: 0px !important;
+    height: 100% !important;
+    width: 100% !important;
+    &:focus {
+      + .defra-filter__label {
+        content: '';
+        display: block;
+        border: 4px solid govuk-colour('black');
+        line-height: 34px !important;
+        padding-left: 40px !important;
+        padding-right: 6px !important;
+        box-shadow: 0 0 0 3px #ffdd00;
+        border-radius: 5px;
+      }
+      + .defra-filter__label:before {
+        border-width: 2px !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+  &__label {
+    @extend .govuk-label;
+    @extend .govuk-checkboxes__label;
+    @include govuk-font($size: 16);
+    padding: 0px 10px 0px 44px !important;
+    margin-top: 0px !important;
+    line-height: 42px !important;
+    &:before {
+      top: 9px !important;
+      left: 9px !important;
+    }
+    &:after {
+      top: 16px !important;
+      left: 16px !important;
+    }
+  }
+}

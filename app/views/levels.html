@@ -136,6 +136,41 @@ River, sea, groundwater and rainfall levels - GOV.UK
         <h2 class="defra-search-summary__count" aria-live="polite">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
         <span id="map"></span>
     </div>
+    <div class="defra-filter">
+      <form method="post" autocomplete="off">
+        <fieldset class="defra-filter__fieldset">
+          <legend class="defra-filter__legend">
+            Type
+          </legend>
+          <div class="defra-filter__checkboxes" data-module="govuk-checkboxes">
+            <div class="defra-filter__item">
+              <input class="defra-filter__input" id="river" name="type" type="checkbox" value="river" checked>
+              <label class="defra-filter__label" for="river">
+                River
+              </label>
+            </div>
+            <div class="defra-filter__item">
+              <input class="defra-filter__input" id="tide" name="type" type="checkbox" value="tide" checked>
+              <label class="defra-filter__label" for="tide">
+                Tide
+              </label>
+            </div>
+            <div class="defra-filter__item">
+              <input class="defra-filter__input" id="groundwater" name="type" type="checkbox" value="groundwater" checked>
+              <label class="defra-filter__label" for="groundwater">
+                Groundwater
+              </label>
+            </div>
+            <div class="defra-filter__item">
+              <input class="defra-filter__input" id="rainfall" name="type" type="checkbox" value="rainfall" checked>
+              <label class="defra-filter__label" for="rainfall">
+                Rainfall
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
     {% if model.isRiver %}
     <ul class="defra-flood-list{% if model.river %}-river{% endif %}">
       {% for item in model.levels %}

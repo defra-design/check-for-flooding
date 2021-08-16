@@ -67,7 +67,6 @@
 }
 .defra-search-summary {
     position:relative;
-    border-bottom:1px solid govuk-colour('black');
     &__count {
         @include govuk-font($size: 19, $weight: bold);
         margin-top: 0px;
