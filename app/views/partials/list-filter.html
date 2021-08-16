@@ -1,0 +1,19 @@
+<div class="defra-filter" id="filter">
+  <form method="post" autocomplete="off">
+    <fieldset class="defra-filter__fieldset">
+      <legend class="defra-filter__legend">
+        Type<span class="govuk-visually-hidden"> (updates on select)</span>
+      </legend>
+      <div class="defra-filter__checkboxes" data-module="govuk-checkboxes">
+        {% for item in model.types %}
+        <div class="defra-filter__item">
+          <input class="defra-filter__input" id="{{ item }}" name="type" type="checkbox" value="{{ item }}" {% if item in model.selectedTypes %}checked{% endif %}>
+          <label class="defra-filter__label" for="{{ item }}">
+            {{ item | capitalize }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+  </form>
+</div>

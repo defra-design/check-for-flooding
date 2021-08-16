@@ -34,6 +34,8 @@ router.get('/levels', async (req, res) => {
             levels.push(level)
           }
         })
+        // Get types returned from search
+        types = [...new Set(levels.map(item => item.type))]
         numLevels = levels.length
       } else {
         return res.render('404')
