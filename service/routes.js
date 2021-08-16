@@ -48,7 +48,7 @@ router.get('/service/river-detail/:slug', async (req, res, next) => {
   }
 })
 
-// Get stations within
+// Get stations within lon lat bbox
 router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) => {
   try {
     const { x1, y1, x2, y2 } = req.params

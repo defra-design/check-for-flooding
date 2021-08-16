@@ -11,13 +11,20 @@ const Place = require('../models/place')
 // Get levels
 router.get('/levels', async (req, res) => {
   const query = decodeURI(req.query.river || req.query.place)
-  const queryType = req.query.river ? 'river' : (req.query.place ? 'place' : 'none')
+  const querySearchType = req.query.river ? 'river' : (req.query.place ? 'place' : 'none')
+  let levels = []
+  let types = []
+  let numLevels
 
-  if (queryType === 'river') {
+  // Set selected types
+  let selectedTypes = ['river', 'tide', 'groundwater', 'rainfall']
+  selectedTypes = req.query.type ? req.query.type.split(',').filter(item =>
+    selectedTypes.includes(item)) : selectedTypes
+
+  if (querySearchType === 'river') {
     // We a river query
     const response = await riverServices.getRiverDetail(query)
     if (response.status === 200) {
-      const levels = []
       let river = {}
       if (response.data && response.data.length) {
         river = new River(response.data[0])
@@ -27,6 +34,7 @@ router.get('/levels', async (req, res) => {
             levels.push(level)
           }
         })
+        numLevels = levels.length
       } else {
         return res.render('404')
       }
@@ -35,13 +43,15 @@ router.get('/levels', async (req, res) => {
         numLevels: levels.length,
         isRiver: true,
         river: river,
-        levels: levels
+        levels: levels,
+        types: types,
+        selectedTypes: selectedTypes
       }
       return res.render('levels', { model })
     } else {
       // Return 500 error
     }
-  } else if (queryType === 'place') {
+  } else if (querySearchType === 'place') {
     // A place query
     let response = await locationServices.getLocationByQuery(query)
     let place = {}
@@ -60,14 +70,20 @@ router.get('/levels', async (req, res) => {
     }
     // Get levels
     response = await levelServices.getLevelsWithin(place.bboxBuffered)
-    let numLevels
-    let levels
+    const hiddenRivers = []
     if (response.data) {
+      // Get types returned from search
+      types = [...new Set(response.data.map(item => item.type))]
+      // Group levels
       levels = utils.groupBy(response.data, 'group_name')
       Object.entries(levels).forEach(([key, value]) => {
         value.forEach((item, index) => {
           levels[key][index] = new Level(item)
         })
+        // Get rivers that contain no selected types
+        if (!value.filter(item => selectedTypes.includes(item.type)).length) {
+          hiddenRivers.push(key)
+        }
       })
       numLevels = response.data.length
     }
@@ -76,7 +92,10 @@ router.get('/levels', async (req, res) => {
       numLevels: numLevels,
       isPlace: true,
       place: place,
-      levels: levels
+      levels: levels,
+      types: types,
+      selectedTypes: selectedTypes,
+      hiddenRivers: hiddenRivers
     }
     return res.render('levels', { model })
   } else {
