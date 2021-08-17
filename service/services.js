@@ -1,3 +1,4 @@
+const axios = require('axios')
 const db = require('./db')
 
 module.exports = {
@@ -105,5 +106,19 @@ module.exports = {
       response.rows = []
     }
     return response.rows || []
+  },
+
+  // Get latest station values
+  getStationsLatest: async () => {
+    const uri = 'https://environment.data.gov.uk/flood-monitoring/data/readings?latest'
+    const response = await axios.get(uri).then((response) => { return response })
+    if (response.status === 200) {
+      response.data.items.forEach(item => {
+        item.id = item['@id'].split('/').slice(-2).join('/').split('-')[0]
+        delete item['@id']
+        delete item.measure
+      })
+      return response.data.items
+    }
   }
 }

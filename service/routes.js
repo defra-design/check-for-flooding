@@ -69,4 +69,14 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   }
 })
 
+// Update levels
+router.get('/service/stations', async (req, res, next) => {
+  try {
+    res.status(200).json(await services.getStationsLatest())
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
 module.exports = router
