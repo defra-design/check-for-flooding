@@ -5,7 +5,7 @@ class Levels {
   constructor (query, place, river, levels) {
     this.queryTerm = query.term
     this.queryType = query.type
-    this.filterTypes = query.filterTypes || 'river,tide,groundwater,rainfall'
+    this.filterTypes = (query.filterTypes || 'river,tide,groundwater,rainfall').split(',')
     this.numLevels = levels.length
     this.place = place
     this.river = river
