@@ -116,7 +116,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 
-{% elif model.queryTerm !== '' and not model.isError %}
+{% elif model and model.queryTerm !== '' and not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
