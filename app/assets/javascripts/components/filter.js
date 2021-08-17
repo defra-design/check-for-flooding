@@ -1,27 +1,47 @@
-const { forEach } = window.flood.utils
+const { addOrUpdateParameter } = window.flood.utils
 
 // Filter list
 const Filter = (filter) => {
-  const toggleVisibility = (type, isChecked) => {
-    const levels = document.querySelectorAll(`.defra-flood-list-item[data-type="${type}"]`)
-    const groups = document.querySelectorAll('.defra-flood-list-item-group')
-    // Toggle level display
-    forEach(levels, (level) => {
-      level.classList.toggle('defra-flood-list-item--hidden')
-    })
-    // Toggle group display
-    forEach(groups, (group) => {
-      const hasLevels = !!group.querySelectorAll('.defra-flood-list-item:not(.defra-flood-list-item--hidden)').length
-      console.log(hasLevels)
-      hasLevels ? group.classList.remove('defra-flood-list-item--hidden') : group.classList.add('defra-flood-list-item--hidden')
-    })
+  const xhr = new window.XMLHttpRequest()
+
+  const loadContent = () => {
+    const uri = window.location.href
+    console.log(uri)
+    xhr.open('GET', uri)
+    xhr.send(null)
   }
 
-  filter.addEventListener('click', (e) => {
-    if (e.target.type === 'checkbox') {
-      toggleVisibility(e.target.id, e.target.checked)
+  // Update url and replace history state
+  const replaceHistory = (key, value) => {
+    const data = {}
+    const uri = addOrUpdateParameter(window.location.href, key, value)
+    const title = document.title
+    window.history.replaceState(data, title, uri)
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.className === 'defra-filter__input') {
+      const checkboxes = Array.from(document.querySelectorAll('.defra-filter__input[type="checkbox"]'))
+      const selectedTypes = checkboxes.filter(item => item.checked).map(item => item.id).join(',')
+      replaceHistory('type', selectedTypes)
+      loadContent()
     }
   })
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) { // Done
+      if (xhr.status === 200) { // Ok
+        const container = document.implementation.createHTMLDocument().documentElement
+        container.innerHTML = xhr.responseText
+        const targetSearchSummary = document.querySelector('#searchSummary')
+        const targetList = document.querySelector('#list')
+        targetSearchSummary.parentNode.replaceChild(container.querySelector('#searchSummary'), targetSearchSummary)
+        targetList.parentNode.replaceChild(container.querySelector('#list'), targetList)
+      } else {
+        console.log('Error: ' + xhr.status)
+      }
+    }
+  }
 }
 
 window.flood.createFilter = (filter) => {
