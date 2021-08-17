@@ -7,6 +7,7 @@ class Level {
     this.velueDate = data.value_date
     this.elapsedTime = data.value_date ? this.formatElaspedTime(data.value_date) : ''
     this.type = data.type
+    this.riverSlug = data.river_slug || ''
   }
 
   formatElaspedTime (date) {
