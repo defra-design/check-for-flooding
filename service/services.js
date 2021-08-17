@@ -45,6 +45,7 @@ module.exports = {
 
   // Used on list pages
   getStationsWithinBbox: async (bbox) => {
+    // Convert type names to chars
     const response = await db.query(`
     SELECT station.name,
     CAST(station.id AS text) AS id,
@@ -74,6 +75,7 @@ module.exports = {
 
   // Used on list pages
   getStationsByRiverSlug: async (slug) => {
+    // Convert type names to chars
     const response = await db.query(`
     SELECT station.name,
     CAST(station.id AS text) AS id,

@@ -11,18 +11,14 @@ const Levels = require('../models/levels')
 router.get('/levels', async (req, res) => {
   const query = {
     term: decodeURI(req.query.river || req.query.place),
-    type: req.query.river ? 'river' : (req.query.place ? 'place' : '')
+    type: req.query.river ? 'river' : (req.query.place ? 'place' : ''),
+    filterTypes: req.query.type
   }
-  // Set selected types
-  // let selectedTypes = ['river', 'tide', 'groundwater', 'rainfall']
-  // selectedTypes = req.query.type ? req.query.type.split(',').filter(item =>
-  //   selectedTypes.includes(item)) : selectedTypes
 
   if (query.type === 'river') {
     // We have a river query
     let response = await riverServices.getRiverDetail(query.term)
     if (response.status === 200) {
-      console.log(response.data)
       if (!(response.data && Object.keys(response.data).length)) {
         return res.render('404')
       }
