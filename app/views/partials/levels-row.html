@@ -1,4 +1,4 @@
-<li class="defra-flood-list-item defra-flood-list-item--{{ item.type }}{% if item.state %}-{{ item.state }}{% endif %}{% if item.type not in model.selectedTypes %} defra-flood-list-item--hidden{% endif %}" data-type="{{ item.type }}">
+<li class="defra-flood-list-item defra-flood-list-item--{{ item.type }}{% if item.state %}-{{ item.state }}{% endif %}" data-type="{{ item.type }}">
   <div class="defra-flood-list__title-column">
     <span class="defra-flood-list-item__title">
       <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">

@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.isPlace or model.isRiver%}{{ model.query }} -
+{% if model.queryTerm %}{{ model.queryTerm }} -
 {% elif model.isError %} Error:
 {% elif model.isMultipleMatch %}
 Choose location -
@@ -11,6 +11,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block content %}
+<pre style="white-space: pre-wrap">{{ model | dump }}</pre>
 {% if model.isError %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
@@ -56,7 +57,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
           </span>
           {% endif %}
           <div class="defra-search">
-            <input class="defra-search__input{% if model.isError %} defra-search__input--error{% endif %}" id="location" name="location" type="search" spellcheck="false" value="{{ model.query }}">
+            <input class="defra-search__input{% if model.isError %} defra-search__input--error{% endif %}" id="location" name="location" type="search" spellcheck="false" value="{{ model.queryTerm }}">
             <div class="defra-search__submit-container">
               <button class="defra-search__button">Search</button>
             </div>
@@ -70,7 +71,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% if model.isMultipleMatch %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.query }}'</h2>
+		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.Term }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
 		<h3 class="govuk-heading-s">Rivers</h3>
@@ -78,7 +79,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
-			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.query) | safe }}</a></li>
+			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.queryTerm) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -88,7 +89,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.places.length %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.query) | safe }}</a></li>
+			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -116,7 +117,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 
-{% elif model.isRiver or model.isPlace %}
+{% elif model.queryTerm !== '' and not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
@@ -126,17 +127,19 @@ River, sea, groundwater and rainfall levels - GOV.UK
     {% if model.types | length > 1 %}
     {% include "partials/list-filter.html" %}
     {% endif %}
-    {% if model.isRiver %}
-    <ul class="defra-flood-list{% if model.river %}-river{% endif %}">
-      {% for item in model.levels %}
+    {% if model.queryType === 'river' %}
+    <ul class="defra-flood-list-river">
+      {% for river, items in model.levels %}
+      {% for item in items %}
       {% include "partials/levels-row.html" %}
+      {% endfor %}
       {% endfor %}
     </ul>
     {% else %}
-    <ul class="defra-flood-list{% if model.river %}-river{% endif %}">
+    <ul class="defra-flood-list">
       {% for group, items in model.levels %}
         {% if items[0].riverSlug !== '' %}
-        <li class="defra-flood-list-item-group{% if group in model.hiddenRivers %} defra-flood-list-item--hidden{% endif %}">
+        <li class="defra-flood-list-item-group">
           <h3 class="defra-flood-list__group-title defra-flood-list__group-title--river">
             <a href="/levels?river={{ group | urlencode }}">{{ group }}</a>
           </h3>

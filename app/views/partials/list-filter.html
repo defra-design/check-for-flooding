@@ -7,7 +7,7 @@
       <div class="defra-filter__checkboxes" data-module="govuk-checkboxes">
         {% for item in model.types %}
         <div class="defra-filter__item">
-          <input class="defra-filter__input" id="{{ item }}" name="type" type="checkbox" value="{{ item }}" {% if item in model.selectedTypes %}checked{% endif %}>
+          <input class="defra-filter__input" id="{{ item }}" name="type" type="checkbox" value="{{ item }}" checked>
           <label class="defra-filter__label" for="{{ item }}">
             {{ item | capitalize }}
           </label>
