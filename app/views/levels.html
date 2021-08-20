@@ -130,7 +130,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
     <ul class="defra-flood-list-river" id="list">
       {% for river, items in model.levels %}
       {% for item in items %}
-      {% include "partials/levels-row.html" %}
+      {% include "partials/level-row.html" %}
       {% endfor %}
       {% endfor %}
     </ul>
@@ -144,13 +144,13 @@ River, sea, groundwater and rainfall levels - GOV.UK
           </h3>
           <ul class="defra-flood-list-river">
             {% for item in items %}
-            {% include "partials/levels-row.html" %}
+            {% include "partials/level-row.html" %}
             {% endfor %}
           </ul>
         </li>
         {% else %}
         {% for item in items %}
-        {% include "partials/levels-row.html" %}
+        {% include "partials/level-row.html" %}
         {% endfor %}
         {% endif %}
       {% endfor %}
