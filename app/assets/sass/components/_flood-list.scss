@@ -81,7 +81,7 @@
     z-index: -1;
     margin: -1px 0 -1px 0;
     padding: 15px 0px 15px 40px;
-    border-bottom:1px solid $govuk-border-colour;
+    border-bottom:1px solid govuk-tint($govuk-border-colour, 50);
     &:after {
         content: '';
         display: block;
