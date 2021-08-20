@@ -20,7 +20,7 @@ class Level {
     const mins = Math.floor(duration / (1000 * 60))
     const hours = Math.floor(duration / (1000 * 60 * 60))
     const days = parseInt(Math.floor(hours / 24))
-    if (mins < 91) {
+    if (mins < 91 || hours < 2) {
       return `${mins} minutes ago`
     } else {
       if (hours < 48) {

@@ -2,7 +2,7 @@
   <div class="defra-flood-list__title-column">
     <span class="defra-flood-list-item__title">
       {% if item.type == 'rainfall' %}
-      {{ item.name }}
+      {{ item.name }} rainfall
       {% else %}
       <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
         {{ item.name }}
