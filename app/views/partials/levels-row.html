@@ -16,16 +16,36 @@
   </div>
   <div class="defra-flood-list__data-column">
     <dl class="defra-flood-list-data">
+      {% if item.type == 'rainfall' %}
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">Last hour</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">{{ item.value1hr }}mm</span>
+        </dd>
+      </div>
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">Last 6 hours</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">{{ item.value6hr }}mm</span>
+        </dd>
+      </div>
+      <div class="defra-flood-list-data__column">
+        <dt class="govuk-visually-hidden">Last 24 hours</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">{{ item.value24hr }}mm</span>
+        </dd>
+      </div>
+      {% else %}
       <div class="defra-flood-list-data__column">
         <dt class="govuk-visually-hidden">State</dt>
         <dd>
-          <span class="defra-flood-list-data__value">{{ item.state | title }}</span>
+          <span class="defra-flood-list-data__value">{% if item.isDownstream %}---{% else %}{{ item.state | title }}{% endif %}</span>
         </dd>
       </div>
       <div class="defra-flood-list-data__column">
         <dt class="govuk-visually-hidden">Height</dt>
         <dd>
-          <span class="defra-flood-list-data__value">{{ item.value }}m</span>
+          <span class="defra-flood-list-data__value">{% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m</span>
         </dd>
       </div>
       <div class="defra-flood-list-data__column">
@@ -35,6 +55,7 @@
           <!--<span class="defra-flood-list-data__description" aria-hidden="true">N/A</span>-->
         </dd>
       </div>
+      {% endif %}
     </dl>
   </div>
 </li>
