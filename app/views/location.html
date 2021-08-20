@@ -6,6 +6,7 @@ Check for flooding {% if model.type === 'city' %}in{% else %}near{% endif%} {{ m
 {% endblock %}
 
 {% block beforeContent %}
+{{ model | dump }}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <a href="/find-location" class="defra-flood-location-link">Check another location</a>
@@ -56,7 +57,7 @@ Check for flooding {% if model.type === 'city' %}in{% else %}near{% endif%} {{ m
       {% else %}
       <div class="defra-flood-status-item">
         <div class="defra-flood-status-item__text">
-          There are no flood warnings or alerts in this area{% if model.hasHighLevels %} but some <a href="/river-and-sea-levels?q={{ model.q }}">river and sea levels</a> are high{% endif %}.
+          There are no flood warnings or alerts in this area{% if model.hasHighLevels %} but some <a href="/levels?place={{ model.name | urlencode }}">river and sea levels</a> are high{% endif %}.
         </div>
       </div>
       {% endif %}
@@ -88,7 +89,7 @@ Check for flooding {% if model.type === 'city' %}in{% else %}near{% endif%} {{ m
     <!-- River and sea levels -->
     <h2 class="govuk-heading-m">Check river, sea and groundwater levels</h2>
     <p>Most measuring stations are along main rivers and the coast. These levels can help you understand your flood risk now and over the next few days.</p>
-    <p><a href="/river-and-sea-levels?q={{ model.location }}">Find a river, sea or groundwater level in this area</a></p> 
+    <p><a href="/levels?place={{ model.name | urlencode }}">Find a river, sea or groundwater level in this area</a></p> 
     <!-- end river and sea levels -->
     <h2 class="govuk-heading-m">Regional flood forecast</h2>
     {% if model.outOfDate or model.dataError %}
