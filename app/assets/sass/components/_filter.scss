@@ -1,7 +1,8 @@
 .defra-filter {
-  background-color: govuk-colour('light-grey');
+  // background-color: govuk-colour('light-grey');
+  border-top: 1px solid govuk-colour('black');
   padding-top: 10px;
-  padding-left: 10px;
+  // padding-left: 10px;
   &__fieldset {
     @extend .govuk-fieldset;
   }

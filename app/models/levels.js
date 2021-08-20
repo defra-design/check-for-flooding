@@ -8,7 +8,10 @@ class Levels {
     this.filterTypes = (query.filterTypes || 'river,tide,groundwater,rainfall').split(',')
     this.place = place
     this.river = river
-    this.types = [...new Set(levels.map(item => item.type))]
+    // this.types = [...new Set(levels.map(item => item.type))]
+    this.types = [...new Set(levels.map(item => item.type))].map(item => (
+      { type: item, count: levels.filter(level => level.type === item).length }
+    ))
     this.numLevels = levels.filter(level => this.filterTypes.includes(level.type)).length
     this.levels = this.createLevels(levels, this.filterTypes)
   }
