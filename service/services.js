@@ -48,16 +48,11 @@ module.exports = {
     // Convert type names to chars
     const response = await db.query(`
     SELECT station.name,
-    CAST(station.id AS text) AS id,
-    CASE WHEN station.value <= station.percentile_95 THEN 'low'
-    WHEN station.value >= station.percentile_5 THEN 'high'
-    ELSE 'normal'
-    END as state,
-    round(station.value, 2) AS value, station.value_date,
-    CASE WHEN station.type = 'c' THEN 'tide'
-    WHEN station.type = 'g' THEN 'groundwater'
-    ELSE 'river'
-    END AS type,
+    station.id,
+    station.state,
+    station.value,
+    station.value_date,
+    station.type_name AS type,
     CASE WHEN river.display is NOT NULL THEN river.display
     ELSE station.name
     END AS group_name,
@@ -78,16 +73,11 @@ module.exports = {
     // Convert type names to chars
     const response = await db.query(`
     SELECT station.name,
-    CAST(station.id AS text) AS id,
-    CASE WHEN station.value <= station.percentile_95 THEN 'low'
-    WHEN station.value >= station.percentile_5 THEN 'high'
-    ELSE 'normal'
-    END as state,
-    round(station.value, 2) AS value, station.value_date,
-    CASE WHEN station.type = 'c' THEN 'tide'
-    WHEN station.type = 'g' THEN 'groundwater'
-    ELSE 'river'
-    END AS type,
+    station.id,
+    station.state,
+    station.value,
+    station.value_date,
+    station.type_name AS type,
     CASE WHEN river.display is NOT NULL THEN river.display
     ELSE station.name
     END AS group_name,
