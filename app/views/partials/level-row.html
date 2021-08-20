@@ -1,6 +1,9 @@
 <li class="defra-flood-list-item defra-flood-list-item--{{ item.type }}{% if item.state %}-{{ item.state }}{% endif %}" data-type="{{ item.type }}">
   <div class="defra-flood-list__title-column">
     <span class="defra-flood-list-item__title">
+      {% if item.type == 'rainfall' %}
+      {{ item.name }}
+      {% else %}
       <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
         {{ item.name }}
         {{ station.external_name }}
@@ -11,6 +14,7 @@
         (downstream)
         {% endif %}
       </a>
+      {% endif %}
       <span class="defra-flood-list-data__description">{{ item.elapsedTime }}</span>
     </span>
   </div>
