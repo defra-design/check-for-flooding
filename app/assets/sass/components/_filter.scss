@@ -24,12 +24,10 @@
   }
   &__item {
     @extend .govuk-checkboxes__item;
-    border: 1px solid govuk-colour('black');
     clear: none;
     margin-right: 10px;
     margin-bottom: 10px !important;
     padding-left: 0px !important;
-    border-radius: 5px;
     &:hover .defra-filter__label:before {
       box-shadow: none !important;
     }
@@ -46,15 +44,17 @@
         display: block;
         border: 4px solid govuk-colour('black');
         line-height: 34px !important;
-        padding-left: 40px !important;
-        padding-right: 6px !important;
+        padding-left: 41px !important;
+        padding-right: 7px !important;
         box-shadow: 0 0 0 3px #ffdd00;
-        border-radius: 5px;
       }
       + .defra-filter__label:before {
         border-width: 2px !important;
         box-shadow: none !important;
       }
+    }
+    &:checked + .defra-filter__label {
+      background-color: govuk-colour('light-grey');
     }
   }
   &__label {
@@ -63,7 +63,9 @@
     @include govuk-font($size: 16);
     padding: 0px 10px 0px 44px !important;
     margin-top: 0px !important;
-    line-height: 42px !important;
+    line-height: 40px !important;
+    border: 1px solid govuk-colour('black');
+    border-radius: 5px;
     &:before {
       top: 9px !important;
       left: 9px !important;

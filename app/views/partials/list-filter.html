@@ -5,6 +5,7 @@
         Type<span class="govuk-visually-hidden"> (updates on select)</span>
       </legend>
       <div class="defra-filter__checkboxes" data-module="govuk-checkboxes">
+        {{ model.query | dump }}
         {% for item in model.types %}
         <div class="defra-filter__item">
           <input class="defra-filter__input" id="{{ item.type }}" name="type" type="checkbox" value="{{ item.type }}"{% if item.type in model.filterTypes %} checked{% endif %}>
