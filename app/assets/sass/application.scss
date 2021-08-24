@@ -43,6 +43,12 @@ $govuk-assets-path: '/govuk/assets/';
 @import "components/context-footer";
 @import "components/flood-tabs";
 @import "components/filter";
+@import "components/map/ol";
+@import "components/map/map";
+@import "components/map/map-key";
+@import "components/map/map-info";
+@import "components/map/map-overlays";
+@import "components/map/map-days";
 
 // Tools
 

@@ -204,7 +204,7 @@ window.flood.maps.styles = {
     ],
     symbol: {
       symbolType: 'image',
-      src: '/assets/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols-2x.png',
       size: 50,
       rotateWithView: false,
       offset: [0, 0],
@@ -221,7 +221,7 @@ window.flood.maps.styles = {
     filter: ['==', ['get', 'isVisible'], 'true'],
     symbol: {
       symbolType: 'image',
-      src: '/assets/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols-2x.png',
       size: 50,
       rotateWithView: false,
       offset: [0, 0],
@@ -465,7 +465,7 @@ const createIconStyle = (options) => {
   options = Object.assign({}, defaults, options)
   return new Style({
     image: new Icon({
-      src: '/assets/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols-2x.png',
       size: options.size,
       anchor: options.anchor,
       offset: options.offset,

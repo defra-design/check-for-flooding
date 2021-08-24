@@ -1,0 +1,93 @@
+// Day control  
+.defra-map-days {
+  width:100%;
+  @media screen and (min-width: 546px) {
+    position:absolute;
+    bottom:0px;
+    left:0px;
+    max-width:475px;
+  }
+  padding-top:10px;
+  overflow-x: auto;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.defra-map-days__container {
+  width:100%;
+}
+.defra-map-days__button {
+  position: relative;
+  @include govuk-font($size: 14);
+  display: inline-block;
+  width:20%;
+  border:0;
+  margin:0px;
+  padding:0px;
+  box-sizing: border-box;
+  &:last-child {
+    border-right:0px;
+  }
+  cursor:pointer;
+  background-color: white;
+  box-sizing: border-box;
+  &::-moz-focus-inner {
+    border: 0;
+  }
+  text-align:left;
+  strong {
+    display: inline-block;
+    @include govuk-font($size: 19, $weight: bold);
+    text-decoration:underline;
+    margin-bottom: 2px;
+  }
+  &[aria-selected=true] {
+    background-color: white;
+    text-decoration:none;
+    strong {
+      text-decoration:none;
+    }
+  }
+  &:active {
+    color: $govuk-text-colour;
+  }
+  &-container {
+    padding:15px 17% 17px 17%;
+  }
+  &:focus {
+    border-top:0px;
+    border-left:0px;
+    border-bottom:0px;
+    outline:0px;
+  }
+  &[aria-selected=true] .defra-map-days__button-container {
+    padding-bottom: 10px;
+    border-bottom:7px solid govuk-colour('blue');
+  }
+  &:focus strong {
+    outline: 3px solid transparent;
+    color: $govuk-focus-text-colour;
+    background-color: $govuk-focus-colour;
+    -webkit-box-shadow: 0 -2px $govuk-focus-colour,0 4px $govuk-focus-text-colour;
+    box-shadow: 0 -2px $govuk-focus-colour,0 4px $govuk-focus-text-colour;
+    text-decoration: none;
+  }
+}
+.defra-map-days__month {
+  display:none;
+  @include mq ($from: tablet) {
+    display: inline;
+  }
+}
+.defra-map-days__icon {
+  position:absolute;
+  width:18px;
+  height:18px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  right:10%;
+  top:16px;
+  @include mq ($from: tablet) {
+    width:22px;
+    height:22px;
+    right:15%;
+  }
+}

@@ -1,0 +1,97 @@
+// Info panel
+.defra-map-info {
+  z-index: 4;
+  padding:  15px 15px 12px;
+  &__content dd {
+    margin: 0px;
+  }
+  &__name {
+    display: block;
+    @include govuk-font($size: 19, $weight: bold);
+    margin: 0px;
+    a {
+      color: $govuk-text-colour;
+    }
+  }
+  &__name--emphasis {
+    font-weight: bold;
+  }
+  &__description {
+    @extend .govuk-body;
+    margin-bottom: 0px;
+    margin-top: 10px;
+  }
+  &__meta {
+    display: block;
+    @include govuk-font($size: 14);
+    margin-top: 10px;
+    margin-bottom: 0px;
+  }
+  &__buttons {
+    margin-top: 15px;
+    border-top:1px solid $govuk-border-colour;
+  }
+  &__button {
+    @extend .defra-button-map-s;
+    position: relative;
+    color:$govuk-text-colour;
+    text-decoration: underline;
+  }
+  &__button--up {
+    padding-left:16px;
+    margin-top:10px;
+    margin-right:10px;
+  }
+  &__button--down {
+    padding-left:16px;
+    margin-top:10px;
+  }
+  &__button--up:before {
+    content: '';
+    position: absolute;
+    top:1px;
+    left:0px;
+    background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,13L6,13L6,4.828Z" style="fill:#0b0c0c;"/></svg>');
+    background-color:transparent;
+    background-size:14px;
+    background-repeat: no-repeat;
+    background-position: top left;
+    width:14px;
+    height:14px;
+    @include mq ($from: tablet) {
+      top:3px;
+    }
+  }
+  &__button--up:hover:not(:active):not(:focus):before {
+    background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,13L6,13L6,4.828Z" style="fill:#003078;"/></svg>') !important;
+  }
+  &__button--down:before {
+    content: '';
+    position: absolute;
+    top:2px;
+    left:0px;
+    background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M6,9.172L2.414,5.586L1,7L7,13L13,7L11.586,5.586L8,9.172L8,1L6,1L6,9.172Z" style="fill:#0b0c0c;"/></svg>');
+    background-color:transparent;
+    background-size:14px;
+    background-repeat: no-repeat;
+    background-position: top left;
+    width:14px;
+    height:14px;
+    @include mq ($from: tablet) {
+      top:3px;
+    }
+  }
+  &__button--down:hover:not(:active):not(:focus):before {
+    background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M6,9.172L2.414,5.586L1,7L7,13L13,7L11.586,5.586L8,9.172L8,1L6,1L6,9.172Z" style="fill:#003078;"/></svg>') !important;
+  }
+
+  // Attributions
+  ul {
+    @extend .govuk-list;
+    @include govuk-font($size: 14);
+    margin-bottom: 0px;
+  }
+  ul > li {
+    margin-bottom: 0px;
+  }
+}

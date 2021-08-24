@@ -208,7 +208,8 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/api/stations.geojson'
+        // url: '/api/stations.geojson'
+        url: '/service/stations-geojson'
       }),
       style: window.flood.maps.styles.measurementsJSON,
       visible: false,
@@ -223,7 +224,8 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/api/rainfall.geojson'
+        // url: '/api/rainfall.geojson'
+        url: '/service/rainfall-geojson'
       }),
       style: window.flood.maps.styles.measurementsJSON,
       visible: false,
