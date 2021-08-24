@@ -33,9 +33,9 @@ const Filter = (filter) => {
       if (xhr.status === 200) { // Ok
         const container = document.implementation.createHTMLDocument().documentElement
         container.innerHTML = xhr.responseText
-        const targetSearchSummary = document.querySelector('#searchSummary')
+        const targetSearchCount = document.querySelector('#searchCount')
         const targetList = document.querySelector('#list')
-        targetSearchSummary.parentNode.replaceChild(container.querySelector('#searchSummary'), targetSearchSummary)
+        targetSearchCount.parentNode.replaceChild(container.querySelector('#searchCount'), targetSearchCount)
         targetList.parentNode.replaceChild(container.querySelector('#list'), targetList)
       } else {
         console.log('Error: ' + xhr.status)

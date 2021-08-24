@@ -21,6 +21,6 @@ if (document.getElementById('map')) {
     btnText: 'View map',
     btnClasses: 'defra-button-map-s',
     layers: 'mv,ri,ti,gr,rf',
-    extent: window.flood.model.placeBbox
+    extent: window.flood.model.bbox
   })
 }

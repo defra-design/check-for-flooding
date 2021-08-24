@@ -120,7 +120,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
-        <h2 class="defra-search-summary__count" aria-live="polite">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
+        <h2 class="defra-search-summary__count" aria-live="polite" id="searchCount">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
         <span id="map"></span>
     </div>
     {% if model.types | length > 1 %}
@@ -164,7 +164,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% block pageScripts %}
 <script>
   window.flood = {
-    model: { placeBbox: {{ model.place.bbox | dump | safe }} }
+    model: { bbox: {{ model.place.bbox | dump | safe }} }
   }
 </script>
 <script src="/public/javascripts/templates.js"></script>

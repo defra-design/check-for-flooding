@@ -102,7 +102,7 @@ module.exports = {
   // Used with maps
   getStationsGeoJSON: async (type) => {
     const response = await db.query(`
-    SELECT id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, name, river, value, value_date, percentile_5, percentile_95, up, down
+    SELECT id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, name, river, value, value_1hr, value_6hr, value_24hr, value_date, percentile_5, percentile_95, up, down
     FROM station
     WHERE $1 LIKE '%' || type || '%';
     `, [`${type}`])
@@ -110,7 +110,7 @@ module.exports = {
     response.rows.forEach(row => {
       features.push({
         type: 'Feature',
-        id: `${row.type !== 'r' ? 'stations.' : ''}${row.id}`,
+        id: `stations.${row.id.replace(/\s/g, '')}`,
         geometry: {
           type: 'Point',
           coordinates: [row.lon, row.lat]
@@ -123,6 +123,9 @@ module.exports = {
           river: row.river,
           value: row.value,
           value_date: row.value_date,
+          value_1hr: row.value_1hr,
+          value_6hr: row.value_6hr,
+          value_24hr: row.value_24hr,
           percentile_5: row.percentile_5,
           percentile_95: row.percentile_95,
           up: row.up,

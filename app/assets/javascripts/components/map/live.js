@@ -151,15 +151,15 @@ function LiveMap (mapId, options) {
         } else {
           state = 'tide'
         }
-      } else if (feature.getId().startsWith('rainfall_stations')) {
+      } else if (props.type === 'R') {
         // Rainfall
         state = 'rain'
-        if (props.one_hr_total) {
-          if (props.one_hr_total > 4) {
+        if (props.value_1hr) {
+          if (props.value_1hr > 4) {
             state = 'rainHeavy'
-          } else if (props.one_hr_total > 0.5) {
+          } else if (props.value_1hr > 0.5) {
             state = 'rainModerate'
-          } else if (props.one_hr_total > 0) {
+          } else if (props.value_1hr > 0) {
             state = 'rainLight'
           }
         }
@@ -187,7 +187,7 @@ function LiveMap (mapId, options) {
         // Ground
         (ref === 'stations' && props.type === 'G' && lyrCodes.includes('gr')) ||
         // Rainfall
-        (ref === 'rainfall' && feature.getId().startsWith('rainfall_stations') && lyrCodes.includes('rf')) ||
+        (ref === 'rainfall' && props.type === 'R' && lyrCodes.includes('rf')) ||
         // Target area provided
         (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
       )
@@ -417,14 +417,11 @@ function LiveMap (mapId, options) {
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
       model.date = formatExpiredTime(model.value_date)
-    } else if (feature.getId().startsWith('rainfall_stations')) {
-      // Should some of this processing be done upstream?
-      model.date = formatExpiredTime(model.value_timestamp)
-      model.state = feature.get('state')
-      model.name = capitalise(model.station_name)
-      model.one_hr_total = Math.round(model.one_hr_total * 10) / 10
-      model.six_hr_total = Math.round(model.six_hr_total * 10) / 10
-      model.day_total = Math.round(model.day_total * 10) / 10
+      // model.state = feature.get('state')
+      // model.name = capitalise(model.name)
+      // model.value_1hr = Math.round(model.one_hr_total * 10) / 10
+      // model.value_6hr = Math.round(model.six_hr_total * 10) / 10
+      // model.value_24hr = Math.round(model.day_total * 10) / 10
     }
     const html = window.nunjucks.render('info-live.html', { model: model })
     feature.set('html', html)
