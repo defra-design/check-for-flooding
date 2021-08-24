@@ -193,7 +193,8 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/api/warnings.geojson'
+        // url: '/api/warnings.geojson'
+        url: '/service/warnings-geojson'
       }),
       style: window.flood.maps.styles.warningsJSON,
       visible: false,

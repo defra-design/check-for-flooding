@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
 
@@ -64,6 +65,16 @@ router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) =>
 router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationsByRiverSlug(req.params.slug))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+// GeoJSON used with maps
+router.get('/service/warnings-geojson', async (req, res, next) => {
+  try {
+    res.status(200).json(await warningServices.getWarningsGeoJSON())
   } catch (err) {
     res.status(500)
     console.log(err)
