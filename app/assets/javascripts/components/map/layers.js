@@ -2,37 +2,37 @@
 /*
 Initialises the window.flood.maps layers
 */
-import { Tile as TileLayer, Vector as VectorLayer, VectorImage } from 'ol/layer'
-import { BingMaps, XYZ, Vector as VectorSource } from 'ol/source'
+import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
+import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import WebGLPointsLayer from 'ol/layer/WebGLPoints'
-import { GeoJSON } from 'ol/format'
+import { GeoJSON, MVT } from 'ol/format'
 
-const { xhr } = window.flood.utils
+// const { xhr } = window.flood.utils
 
 //
 // Vector source
 //
 
-const targetAreaPolygonsSource = new VectorSource({
-  format: new GeoJSON(),
-  projection: 'EPSG:3857',
-  // Custom loader to only send get request if below resolution cutoff
-  loader: (extent, resolution) => {
-    if (resolution < window.flood.maps.liveMaxBigZoom) {
-      xhr(`/api/ows?service=wfs&version=2.0.0&request=getFeature&typename=flood:flood_warning_alert&outputFormat=application/json&srsname=EPSG:3857&bbox=${extent.join(',')},EPSG:3857`, (err, json) => {
-        if (err) {
-          console.log('Error: ' + err)
-        } else {
-          targetAreaPolygonsSource.addFeatures(new GeoJSON().readFeatures(json))
-        }
-      })
-    }
-  },
-  // Custom strategy to only return extent if below resolution cutoff
-  strategy: (extent, resolution) => {
-    return resolution < window.flood.maps.liveMaxBigZoom ? [extent] : [[0, 0, 0, 0]]
-  }
-})
+// const targetAreaPolygonsSource = new VectorSource({
+//   format: new GeoJSON(),
+//   projection: 'EPSG:3857',
+//   // Custom loader to only send get request if below resolution cutoff
+//   loader: (extent, resolution) => {
+//     if (resolution < window.flood.maps.liveMaxBigZoom) {
+//       xhr(`/api/ows?service=wfs&version=2.0.0&request=getFeature&typename=flood:flood_warning_alert&outputFormat=application/json&srsname=EPSG:3857&bbox=${extent.join(',')},EPSG:3857`, (err, json) => {
+//         if (err) {
+//           console.log('Error: ' + err)
+//         } else {
+//           targetAreaPolygonsSource.addFeatures(new GeoJSON().readFeatures(json))
+//         }
+//       })
+//     }
+//   },
+//   // Custom strategy to only return extent if below resolution cutoff
+//   strategy: (extent, resolution) => {
+//     return resolution < window.flood.maps.liveMaxBigZoom ? [extent] : [[0, 0, 0, 0]]
+//   }
+// })
 
 window.flood.maps.layers = {
 
@@ -81,6 +81,26 @@ window.flood.maps.layers = {
   },
 
   //
+  // Vector tile layers
+  //
+
+  targetAreaPolygons: () => {
+    return new VectorTileLayer({
+      ref: 'targetAreaPolygons',
+      source: new VectorTileSource({
+        format: new MVT({
+          idProperty: 'id'
+        }),
+        url: '/tiles/target-areas/{z}/{x}/{y}.mvt'
+      }),
+      renderMode: 'hybrid',
+      extent: window.flood.maps.extent,
+      style: window.flood.maps.styles.targetAreaPolygons,
+      zIndex: 1
+    })
+  },
+
+  //
   // Vector layers
   //
 
@@ -101,15 +121,15 @@ window.flood.maps.layers = {
     })
   },
 
-  targetAreaPolygons: () => {
-    return new VectorLayer({
-      ref: 'targetAreaPolygons',
-      source: targetAreaPolygonsSource,
-      style: window.flood.maps.styles.targetAreaPolygons,
-      visible: false,
-      zIndex: 2
-    })
-  },
+  // targetAreaPolygons: () => {
+  //   return new VectorLayer({
+  //     ref: 'targetAreaPolygons',
+  //     source: targetAreaPolygonsSource,
+  //     style: window.flood.maps.styles.targetAreaPolygons,
+  //     visible: false,
+  //     zIndex: 2
+  //   })
+  // },
 
   // warnings: () => {
   //   return new VectorLayer({

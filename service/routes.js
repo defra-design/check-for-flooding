@@ -3,6 +3,7 @@ const router = express.Router()
 const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
+const targetAreaServices = require('./target-area')
 
 // Get all rivers
 router.get('/service/rivers', async (req, res, next) => {
@@ -68,6 +69,21 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   } catch (err) {
     res.status(500)
     console.log(err)
+  }
+})
+
+// Vector tiles from Postgres used with maps
+router.get('/tiles/target-areas/:z/:x/:y.mvt', async (req, res, next) => {
+  const { x, y, z } = req.params
+  const response = await targetAreaServices.getTargetAreaMVT(x, y, z)
+  if (response.isError) {
+    res.status(404).send({ error: response.error.toString() })
+  } else {
+    res.setHeader('Content-Type', 'application/x-protobuf')
+    if (response.st_asmvt.length === 0) {
+      res.status(204)
+    }
+    res.send(response.st_asmvt)
   }
 })
 
