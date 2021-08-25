@@ -406,9 +406,9 @@ function LiveMap (mapId, options) {
   }
 
   // Capitalise string
-  const capitalise = (str) => {
-    return str.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-  }
+  // const capitalise = (str) => {
+  //   return str.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+  // }
 
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
@@ -591,7 +591,8 @@ function LiveMap (mapId, options) {
         let id = feature.getId()
         // Transform id for target area polygons
         if (layer.get('ref') === 'targetAreaPolygons') {
-          id = id.includes('flood_warning_alert') ? 'flood' + id.substring(id.indexOf('.')) : 'flood.' + id
+          // id = id.includes('flood_warning_alert') ? 'flood' + id.substring(id.indexOf('.')) : 'flood.' + id
+          id = `flood.${feature.getProperties().fws_tacode}`
         }
         return id
       }

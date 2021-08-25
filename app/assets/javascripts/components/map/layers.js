@@ -91,7 +91,7 @@ window.flood.maps.layers = {
         format: new MVT({
           idProperty: 'id'
         }),
-        url: '/tiles/target-areas/{z}/{x}/{y}.mvt'
+        url: '/tiles/target-areas/{z}/{x}/{y}.pbf'
       }),
       renderMode: 'hybrid',
       extent: window.flood.maps.extent,
