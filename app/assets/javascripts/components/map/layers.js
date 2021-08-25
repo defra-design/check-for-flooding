@@ -93,7 +93,7 @@ window.flood.maps.layers = {
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf'
       }),
-      renderMode: 'hybrid',
+      // renderMode: 'hybrid',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.targetAreaPolygons,
       zIndex: 1
