@@ -16,5 +16,6 @@
         "titleBar.inactiveForeground": "#15202b99"
     },
     "peacock.color": "#42b883",
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "git.ignoreLimitWarning": true
 }
