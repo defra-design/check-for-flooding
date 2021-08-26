@@ -74,8 +74,8 @@ window.flood.maps.layers = {
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
         maxZoom: 12
       }),
-      // renderMode: 'hybrid',
-      renderMode: 'vector',
+      renderMode: 'hybrid',
+      // renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.targetAreaPolygons,
       zIndex: 1
