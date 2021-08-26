@@ -362,40 +362,40 @@ function LiveMap (mapId, options) {
   }
 
   // Time format function
-  // const formatTime = (date) => {
-  //   const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
-  //   const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-  //   const amPm = (date.getHours() > 12) ? 'pm' : 'am'
-  //   return hours + ':' + minutes + amPm
-  // }
+  const formatTime = (date) => {
+    const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
+    const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
+    const amPm = (date.getHours() > 12) ? 'pm' : 'am'
+    return hours + ':' + minutes + amPm
+  }
 
   // Day format function
-  // const formatDay = (date) => {
-  //   const day = date.getDate()
-  //   const nth = (day) => {
-  //     if (day > 3 && day < 21) return 'th'
-  //     switch (day % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th' }
-  //   }
-  //   const shortDay = date.toLocaleString('en-GB', { weekday: 'short' })
-  //   const today = new Date()
-  //   const yesterday = new Date()
-  //   const tomorrow = new Date()
-  //   today.setHours(0, 0, 0, 0)
-  //   yesterday.setDate(yesterday.getDate() - 1)
-  //   yesterday.setHours(0, 0, 0, 0)
-  //   tomorrow.setDate(tomorrow.getDate() + 1)
-  //   tomorrow.setHours(0, 0, 0, 0)
-  //   date.setHours(0, 0, 0, 0)
-  //   if (date.getTime() === today.getTime()) {
-  //     return 'today'
-  //   } else if (date.getTime() === yesterday.getTime()) {
-  //     return 'yesterday'
-  //   } else if (date.getTime() === tomorrow.getTime()) {
-  //     return 'tomorrow'
-  //   } else {
-  //     return ' on ' + shortDay + ' ' + date.getDate() + nth(day)
-  //   }
-  // }
+  const formatDay = (date) => {
+    const day = date.getDate()
+    const nth = (day) => {
+      if (day > 3 && day < 21) return 'th'
+      switch (day % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th' }
+    }
+    const shortDay = date.toLocaleString('en-GB', { weekday: 'short' })
+    const today = new Date()
+    const yesterday = new Date()
+    const tomorrow = new Date()
+    today.setHours(0, 0, 0, 0)
+    yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setHours(0, 0, 0, 0)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setHours(0, 0, 0, 0)
+    date.setHours(0, 0, 0, 0)
+    if (date.getTime() === today.getTime()) {
+      return 'today'
+    } else if (date.getTime() === yesterday.getTime()) {
+      return 'yesterday'
+    } else if (date.getTime() === tomorrow.getTime()) {
+      return 'tomorrow'
+    } else {
+      return ' on ' + shortDay + ' ' + date.getDate() + nth(day)
+    }
+  }
 
   // Format expired time
   const formatExpiredTime = (date) => {
@@ -414,15 +414,13 @@ function LiveMap (mapId, options) {
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
+    console.log(model)
     model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
       model.date = formatExpiredTime(model.valueDate)
-      // model.state = feature.get('state')
-      // model.name = capitalise(model.name)
-      // model.value1hr = Math.round(model.one_hr_total * 10) / 10
-      // model.value6hr = Math.round(model.six_hr_total * 10) / 10
-      // model.value24hr = Math.round(model.day_total * 10) / 10
+    } else if (model.issuedDate) {
+      model.date = `${formatTime(new Date(model.issuedDate))} ${formatDay(new Date(model.issuedDate))}`
     }
     const html = window.nunjucks.render('info-live.html', { model: model })
     feature.set('html', html)
