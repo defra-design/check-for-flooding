@@ -592,7 +592,7 @@ function LiveMap (mapId, options) {
         // Transform id for target area polygons
         if (layer.get('ref') === 'targetAreaPolygons') {
           // id = id.includes('flood_warning_alert') ? 'flood' + id.substring(id.indexOf('.')) : 'flood.' + id
-          id = `flood.${feature.getProperties().fws_tacode}`
+          id = `flood.${feature.getId()}`
         }
         return id
       }

@@ -91,7 +91,7 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
 
 router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
   const { x, y, z } = req.params
-  fs.readFile(`${path.join(__dirname)}/vector-tiles/${z}/${x}/${y}.pbf`, (err, data) => {
+  fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
     if (err) {
       res.status(204)
     } else {

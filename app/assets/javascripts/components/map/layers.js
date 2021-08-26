@@ -2,6 +2,7 @@
 /*
 Initialises the window.flood.maps layers
 */
+import { Feature } from 'ol'
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import WebGLPointsLayer from 'ol/layer/WebGLPoints'
@@ -69,13 +70,13 @@ window.flood.maps.layers = {
       ref: 'targetAreaPolygons',
       source: new VectorTileSource({
         format: new MVT({
-          idProperty: 'id'
+          idProperty: 'fws_tacode'
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
-        maxZoom: 12
+        maxZoom: 14
       }),
-      renderMode: 'hybrid',
-      // renderMode: 'vector',
+      // renderMode: 'hybrid',
+      renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.targetAreaPolygons,
       zIndex: 1
@@ -103,50 +104,53 @@ window.flood.maps.layers = {
     })
   },
 
-  // warnings: () => {
-  //   return new VectorLayer({
-  //     ref: 'warnings',
-  //     featureCodes: 'ts, tw, ta, tr',
-  //     source: new VectorSource({
-  //       format: new GeoJSON(),
-  //       projection: 'EPSG:3857',
-  //       url: '/api/warnings.geojson'
-  //     }),
-  //     style: window.flood.maps.styles.warnings,
-  //     visible: false,
-  //     zIndex: 5
-  //   })
-  // },
+  warnings: () => {
+    return new VectorLayer({
+      ref: 'warnings',
+      featureCodes: 'ts, tw, ta, tr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        // url: '/api/warnings.geojson'
+        url: '/service/warnings-geojson'
+      }),
+      style: window.flood.maps.styles.warnings,
+      visible: false,
+      zIndex: 5
+    })
+  },
 
-  // stations: () => {
-  //   return new VectorLayer({
-  //     ref: 'stations',
-  //     featureCodes: 'ri, ti, gr',
-  //     source: new VectorSource({
-  //       format: new GeoJSON(),
-  //       projection: 'EPSG:3857',
-  //       url: '/api/stations.geojson'
-  //     }),
-  //     style: window.flood.maps.styles.stations,
-  //     visible: false,
-  //     zIndex: 4
-  //   })
-  // },
+  stations: () => {
+    return new VectorLayer({
+      ref: 'stations',
+      featureCodes: 'ri, ti, gr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        // url: '/api/stations.geojson'
+        url: '/service/stations-geojson'
+      }),
+      style: window.flood.maps.styles.stations,
+      visible: false,
+      zIndex: 4
+    })
+  },
 
-  // rainfall: () => {
-  //   return new VectorLayer({
-  //     ref: 'rainfall',
-  //     featureCodes: 'rf',
-  //     source: new VectorSource({
-  //       format: new GeoJSON(),
-  //       projection: 'EPSG:3857',
-  //       url: '/api/rainfall.geojson'
-  //     }),
-  //     style: window.flood.maps.styles.rainfall,
-  //     visible: false,
-  //     zIndex: 3
-  //   })
-  // },
+  rainfall: () => {
+    return new VectorLayer({
+      ref: 'rainfall',
+      featureCodes: 'rf',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        // url: '/api/rainfall.geojson'
+        url: '/service/rainfall-geojson'
+      }),
+      style: window.flood.maps.styles.rainfall,
+      visible: false,
+      zIndex: 3
+    })
+  },
 
   areasOfConcern: () => {
     return new VectorImage({
@@ -178,51 +182,51 @@ window.flood.maps.layers = {
   // WebGL layers
   //
 
-  warnings: () => {
-    return new WebGLPointsLayer({
-      ref: 'warnings',
-      featureCodes: 'ts, tw, ta, tr',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        // url: '/api/warnings.geojson'
-        url: '/service/warnings-geojson'
-      }),
-      style: window.flood.maps.styles.warningsJSON,
-      visible: false,
-      zIndex: 4
-    })
-  },
+  // warnings: () => {
+  //   return new WebGLPointsLayer({
+  //     ref: 'warnings',
+  //     featureCodes: 'ts, tw, ta, tr',
+  //     source: new VectorSource({
+  //       format: new GeoJSON(),
+  //       projection: 'EPSG:3857',
+  //       // url: '/api/warnings.geojson'
+  //       url: '/service/warnings-geojson'
+  //     }),
+  //     style: window.flood.maps.styles.warningsJSON,
+  //     visible: false,
+  //     zIndex: 4
+  //   })
+  // },
 
-  stations: () => {
-    return new WebGLPointsLayer({
-      ref: 'stations',
-      featureCodes: 'ri, ti, gr',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        // url: '/api/stations.geojson'
-        url: '/service/stations-geojson'
-      }),
-      style: window.flood.maps.styles.measurementsJSON,
-      visible: false,
-      zIndex: 3
-    })
-  },
+  // stations: () => {
+  //   return new WebGLPointsLayer({
+  //     ref: 'stations',
+  //     featureCodes: 'ri, ti, gr',
+  //     source: new VectorSource({
+  //       format: new GeoJSON(),
+  //       projection: 'EPSG:3857',
+  //       // url: '/api/stations.geojson'
+  //       url: '/service/stations-geojson'
+  //     }),
+  //     style: window.flood.maps.styles.measurementsJSON,
+  //     visible: false,
+  //     zIndex: 3
+  //   })
+  // },
 
-  rainfall: () => {
-    return new WebGLPointsLayer({
-      ref: 'rainfall',
-      featureCodes: 'rf',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        // url: '/api/rainfall.geojson'
-        url: '/service/rainfall-geojson'
-      }),
-      style: window.flood.maps.styles.measurementsJSON,
-      visible: false,
-      zIndex: 2
-    })
-  }
+  // rainfall: () => {
+  //   return new WebGLPointsLayer({
+  //     ref: 'rainfall',
+  //     featureCodes: 'rf',
+  //     source: new VectorSource({
+  //       format: new GeoJSON(),
+  //       projection: 'EPSG:3857',
+  //       // url: '/api/rainfall.geojson'
+  //       url: '/service/rainfall-geojson'
+  //     }),
+  //     style: window.flood.maps.styles.measurementsJSON,
+  //     visible: false,
+  //     zIndex: 2
+  //   })
+  // }
 }

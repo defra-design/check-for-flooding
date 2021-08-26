@@ -13,7 +13,7 @@ window.flood.maps.styles = {
   targetAreaPolygons: (feature) => {
     // Use corresposnding warning feature propeties for styling
     const warningsSource = window.flood.maps.warningsSource
-    const warningId = `flood.${feature.getProperties().fws_tacode}`
+    const warningId = `flood.${feature.getId()}`
     const warning = warningsSource.getFeatureById(warningId)
     if (!warning || warning.get('isVisible') !== 'true') { return new Style() }
     const severity = warning.get('severity_value')
