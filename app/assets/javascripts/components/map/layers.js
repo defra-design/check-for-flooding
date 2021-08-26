@@ -13,27 +13,6 @@ import { GeoJSON, MVT } from 'ol/format'
 // Vector source
 //
 
-// const targetAreaPolygonsSource = new VectorSource({
-//   format: new GeoJSON(),
-//   projection: 'EPSG:3857',
-//   // Custom loader to only send get request if below resolution cutoff
-//   loader: (extent, resolution) => {
-//     if (resolution < window.flood.maps.liveMaxBigZoom) {
-//       xhr(`/api/ows?service=wfs&version=2.0.0&request=getFeature&typename=flood:flood_warning_alert&outputFormat=application/json&srsname=EPSG:3857&bbox=${extent.join(',')},EPSG:3857`, (err, json) => {
-//         if (err) {
-//           console.log('Error: ' + err)
-//         } else {
-//           targetAreaPolygonsSource.addFeatures(new GeoJSON().readFeatures(json))
-//         }
-//       })
-//     }
-//   },
-//   // Custom strategy to only return extent if below resolution cutoff
-//   strategy: (extent, resolution) => {
-//     return resolution < window.flood.maps.liveMaxBigZoom ? [extent] : [[0, 0, 0, 0]]
-//   }
-// })
-
 window.flood.maps.layers = {
 
   //
@@ -61,7 +40,8 @@ window.flood.maps.layers = {
       // }),
       // source: new OSM(),
       source: new XYZ({
-        url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h'
+        url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
+        attributions: '&copy; Crown copyright and database rights OS 2021'
       }),
       visible: false,
       zIndex: 0
@@ -91,9 +71,11 @@ window.flood.maps.layers = {
         format: new MVT({
           idProperty: 'id'
         }),
-        url: '/tiles/target-areas/{z}/{x}/{y}.pbf'
+        url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
+        maxZoom: 12
       }),
       // renderMode: 'hybrid',
+      renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.targetAreaPolygons,
       zIndex: 1
@@ -120,16 +102,6 @@ window.flood.maps.layers = {
       renderMode: 'hybrid'
     })
   },
-
-  // targetAreaPolygons: () => {
-  //   return new VectorLayer({
-  //     ref: 'targetAreaPolygons',
-  //     source: targetAreaPolygonsSource,
-  //     style: window.flood.maps.styles.targetAreaPolygons,
-  //     visible: false,
-  //     zIndex: 2
-  //   })
-  // },
 
   // warnings: () => {
   //   return new VectorLayer({

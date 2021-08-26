@@ -7,19 +7,16 @@ module.exports = {
     const features = [
       {
         type: 'Feature',
-        id: 'flood.121FWT565',
+        id: 'flood.011WAFLE',
         geometry: {
           type: 'Point',
-          coordinates: [
-            -1.19478166594119,
-            54.61741399306
-          ]
+          coordinates: [-2.92968747130188, 54.9156692345903]
         },
         properties: {
-          ta_code: '121FWT565',
-          ta_name: 'Tees estuary at Greatham Creek',
-          severity_value: 2,
-          severity: 'Flood warning'
+          ta_code: '011WAFLE',
+          ta_name: 'Lower River Eden',
+          severity_value: 1,
+          severity: 'Flood alert'
         }
       }
     ]

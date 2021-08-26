@@ -39,7 +39,7 @@ function LiveMap (mapId, options) {
     minZoom: 6, // Minimum zoom level
     maxZoom: 18,
     center: maps.centre, // Default centre required
-    extent: maps.extentLarge // Constrains extent
+    extent: maps.extent // Constrains extent
   })
 
   // Layers

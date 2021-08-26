@@ -9,7 +9,7 @@ module.exports = {
   //   const bbox = mercator.bbox(x, y, z, false)
   //   const query = `
   //   SELECT ST_AsMVT(q, 'flood_warning_areas', 4096, 'geom') FROM (
-  //     SELECT 
+  //     SELECT
   //       fws_tacode AS id,
   //       ST_AsMVTGeom(
   //         geom,
