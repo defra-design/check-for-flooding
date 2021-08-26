@@ -15,12 +15,21 @@
         {% endif %}
       </a>
       {% endif %}
+      {% if item.state !== 'error' %}
       <span class="defra-flood-list-data__description">{{ item.elapsedTime }}</span>
+      {% endif %}
     </span>
   </div>
   <div class="defra-flood-list__data-column">
     <dl class="defra-flood-list-data">
-      {% if item.type == 'rainfall' %}
+      {% if item.state === 'error' %}
+      <div class="defra-flood-list-data__column-full">
+        <dt class="govuk-visually-hidden">Status</dt>
+        <dd>
+          <span class="defra-flood-list-data__value">Data not available</span>
+        </dd>
+      </div>
+      {% elif item.type == 'rainfall' %}
       <div class="defra-flood-list-data__column">
         <dt class="govuk-visually-hidden">Last hour</dt>
         <dd>

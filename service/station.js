@@ -102,7 +102,7 @@ module.exports = {
   // Used with maps
   getStationsGeoJSON: async (type) => {
     const response = await db.query(`
-    SELECT id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, name, river, value, value_1hr, value_6hr, value_24hr, value_date, percentile_5, percentile_95, up, down
+    SELECT id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, state, name, river, value, value_1hr, value_6hr, value_24hr, value_date, percentile_5, percentile_95, up, down
     FROM station
     WHERE $1 LIKE '%' || type || '%';
     `, [`${type}`])
@@ -119,6 +119,7 @@ module.exports = {
           type: row.type,
           iswales: row.is_wales,
           status: row.status,
+          atrisk: !!(row.state === 'high'),
           name: row.name,
           river: row.river,
           value: row.value,

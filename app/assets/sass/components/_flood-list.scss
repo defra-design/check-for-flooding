@@ -242,8 +242,7 @@
     margin: 10px 0px 0px;
     @include govuk-font($size: 16);
     width: 100%;
-    &__column,
-    &__column-single {
+    &__column {
         display: block;
         dd {
             margin: 0px;
@@ -251,8 +250,12 @@
         float:left;
         width: 33.33%;
     }
-    &__column-single {
-        margin-left:33.33%;
+    &__column-full {
+        display: block;
+        dd {
+            margin: 0px;
+        }
+        float:left;
     }
     &__value {
         display: block;
