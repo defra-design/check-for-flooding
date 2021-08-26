@@ -73,7 +73,7 @@ window.flood.maps.layers = {
           idProperty: 'fws_tacode'
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
-        maxZoom: 14
+        maxZoom: 13
       }),
       // renderMode: 'hybrid',
       renderMode: 'vector',
