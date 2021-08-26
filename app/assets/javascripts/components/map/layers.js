@@ -2,10 +2,10 @@
 /*
 Initialises the window.flood.maps layers
 */
-import { Feature } from 'ol'
+// import { Feature } from 'ol'
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
-import WebGLPointsLayer from 'ol/layer/WebGLPoints'
+// import WebGLPointsLayer from 'ol/layer/WebGLPoints'
 import { GeoJSON, MVT } from 'ol/format'
 
 // const { xhr } = window.flood.utils
@@ -176,7 +176,7 @@ window.flood.maps.layers = {
       }),
       zIndex: 10
     })
-  },
+  }
 
   //
   // WebGL layers
