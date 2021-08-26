@@ -13,10 +13,10 @@ window.flood.maps.styles = {
   targetAreaPolygons: (feature) => {
     // Use corresposnding warning feature propeties for styling
     const warningsSource = window.flood.maps.warningsSource
-    const warningId = `flood.${feature.getId()}`
+    const warningId = feature.getId()
     const warning = warningsSource.getFeatureById(warningId)
-    if (!warning || warning.get('isVisible') !== 'true') { return new Style() }
-    const severity = warning.get('severity_value')
+    if (!warning || !warning.get('isVisible')) { return new Style() }
+    const severity = warning.get('severity')
     const isSelected = warning.get('isSelected')
     const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
 
@@ -26,7 +26,7 @@ window.flood.maps.styles = {
     let zIndex = 1
 
     switch (severity) {
-      case 3: // Severe warning
+      case 1: // Severe warning
         strokeColour = '#D4351C'
         fillColour = targetAreaPolygonPattern('severe')
         zIndex = 11
@@ -36,7 +36,7 @@ window.flood.maps.styles = {
         fillColour = targetAreaPolygonPattern('warning')
         zIndex = 10
         break
-      case 1: // Alert
+      case 3: // Alert
         strokeColour = '#F47738'
         fillColour = targetAreaPolygonPattern('alert')
         zIndex = isGroundwater ? 4 : 7
@@ -57,17 +57,17 @@ window.flood.maps.styles = {
 
   warnings: (feature, resolution) => {
     // Hide warning symbols or hide when polygon is shown
-    if (feature.get('isVisible') !== 'true' || resolution < window.flood.maps.liveMaxBigZoom) {
+    if (!feature.get('isVisible') || resolution < window.flood.maps.liveMaxBigZoom) {
       return
     }
-    const severity = feature.get('severity_value')
+    const severity = feature.get('severity')
     const isSelected = feature.get('isSelected')
     switch (severity) {
-      case 3: // Severe warning
+      case 1: // Severe warning
         return isSelected ? styleCache.severeSelected : styleCache.severe
       case 2: // Warning
         return isSelected ? styleCache.warningSelected : styleCache.warning
-      case 1: // Alert
+      case 3: // Alert
         return isSelected ? styleCache.alertSelected : styleCache.alert
       default: // Removed or inactive
         return isSelected ? styleCache.targetAreaSelected : styleCache.targetArea
@@ -75,7 +75,7 @@ window.flood.maps.styles = {
   },
 
   stations: (feature, resolution) => {
-    if (feature.get('isVisible') !== 'true') {
+    if (!feature.get('isVisible')) {
       return
     }
     const state = feature.get('state')
@@ -105,7 +105,7 @@ window.flood.maps.styles = {
   },
 
   rainfall: (feature, resolution) => {
-    if (feature.get('isVisible') !== 'true') {
+    if (!feature.get('isVisible')) {
       return
     }
     const state = feature.get('state')
@@ -179,62 +179,62 @@ window.flood.maps.styles = {
     textStyle[0].getText().setText(feature.get('n'))
     textStyle[1].getText().setText(feature.get('n'))
     return textStyle
-  },
+  }
 
   //
   // WebGL styles
   //
 
-  warningsJSON: {
-    filter: ['case',
-      ['<', ['resolution'], 100],
-      false,
-      ['case',
-        ['==', ['get', 'isVisible'], 'true'],
-        true,
-        false
-      ]
-    ],
-    symbol: {
-      symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
-      size: 50,
-      rotateWithView: false,
-      offset: [0, 0],
-      textureCoord: ['match', ['get', 'severity_value'],
-        3, [0, 0, 0.5, 0.04761904761],
-        2, [0, 0.04761904761, 0.5, 0.09523809523],
-        1, [0, 0.09523809523, 0.5, 0.14285714285],
-        [0, 0.14285714285, 0.5, 0.19047619047]
-      ]
-    }
-  },
+  // warningsJSON: {
+  //   filter: ['case',
+  //     ['<', ['resolution'], 100],
+  //     false,
+  //     ['case',
+  //       ['==', ['get', 'isVisible'], 'true'],
+  //       true,
+  //       false
+  //     ]
+  //   ],
+  //   symbol: {
+  //     symbolType: 'image',
+  //     src: '/public/images/map-symbols-2x.png',
+  //     size: 50,
+  //     rotateWithView: false,
+  //     offset: [0, 0],
+  //     textureCoord: ['match', ['get', 'severity_value'],
+  //       3, [0, 0, 0.5, 0.04761904761],
+  //       2, [0, 0.04761904761, 0.5, 0.09523809523],
+  //       1, [0, 0.09523809523, 0.5, 0.14285714285],
+  //       [0, 0.14285714285, 0.5, 0.19047619047]
+  //     ]
+  //   }
+  // },
 
-  measurementsJSON: {
-    filter: ['==', ['get', 'isVisible'], 'true'],
-    symbol: {
-      symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
-      size: 50,
-      rotateWithView: false,
-      offset: [0, 0],
-      textureCoord: ['match', ['get', 'state'],
-        'rainHeavy', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.85714285714, 0.5, 0.90476190476]],
-        'rainModerate', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'rainLight', ['case', ['<=', ['resolution'], 100], [0, 0.71428571428, 0.5, 0.7619047619], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'rain', ['case', ['<=', ['resolution'], 100], [0, 0.7619047619, 0.5, 0.80952380952], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'rainError', ['case', ['<=', ['resolution'], 100], [0, 0.80952380952, 0.5, 0.85714285714], [0, 0.95238095238, 0.5, 1]],
-        'tide', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'tideError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
-        'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.85714285714, 0.5, 0.90476190476]],
-        'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.95238095238, 0.5, 1]],
-        'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.85714285714, 0.5, 0.90476190476]],
-        'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.95238095238, 0.5, 1]],
-        ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.90476190476, 0.5, 0.95238095238]]
-      ]
-    }
-  }
+  // measurementsJSON: {
+  //   filter: ['==', ['get', 'isVisible'], 'true'],
+  //   symbol: {
+  //     symbolType: 'image',
+  //     src: '/public/images/map-symbols-2x.png',
+  //     size: 50,
+  //     rotateWithView: false,
+  //     offset: [0, 0],
+  //     textureCoord: ['match', ['get', 'state'],
+  //       'rainHeavy', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.85714285714, 0.5, 0.90476190476]],
+  //       'rainModerate', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'rainLight', ['case', ['<=', ['resolution'], 100], [0, 0.71428571428, 0.5, 0.7619047619], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'rain', ['case', ['<=', ['resolution'], 100], [0, 0.7619047619, 0.5, 0.80952380952], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'rainError', ['case', ['<=', ['resolution'], 100], [0, 0.80952380952, 0.5, 0.85714285714], [0, 0.95238095238, 0.5, 1]],
+  //       'tide', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'tideError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
+  //       'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.85714285714, 0.5, 0.90476190476]],
+  //       'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.95238095238, 0.5, 1]],
+  //       'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.85714285714, 0.5, 0.90476190476]],
+  //       'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.95238095238, 0.5, 1]],
+  //       ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.90476190476, 0.5, 0.95238095238]]
+  //     ]
+  //   }
+  // }
 }
 
 //

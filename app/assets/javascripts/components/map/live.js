@@ -154,12 +154,12 @@ function LiveMap (mapId, options) {
       } else if (props.type === 'R') {
         // Rainfall
         state = 'rain'
-        if (props.value_1hr) {
-          if (props.value_1hr > 4) {
+        if (props.value1hr) {
+          if (props.value1hr > 4) {
             state = 'rainHeavy'
-          } else if (props.value_1hr > 0.5) {
+          } else if (props.value1hr > 0.5) {
             state = 'rainModerate'
-          } else if (props.value_1hr > 0) {
+          } else if (props.value1hr > 0) {
             state = 'rainLight'
           }
         }
@@ -174,12 +174,12 @@ function LiveMap (mapId, options) {
     layer.getSource().forEachFeature((feature) => {
       const ref = layer.get('ref')
       const props = feature.getProperties()
-      const isVisible = (
+      const isVisible = !!(
         // Warnings
-        (props.severity_value && props.severity_value === 3 && lyrCodes.includes('ts')) ||
-        (props.severity_value && props.severity_value === 2 && lyrCodes.includes('tw')) ||
-        (props.severity_value && props.severity_value === 1 && lyrCodes.includes('ta')) ||
-        (props.severity_value && props.severity_value === 4 && lyrCodes.includes('tr')) ||
+        (props.severity && props.severity === 1 && lyrCodes.includes('ts')) ||
+        (props.severity && props.severity === 2 && lyrCodes.includes('tw')) ||
+        (props.severity && props.severity === 3 && lyrCodes.includes('ta')) ||
+        (props.severity && props.severity === 4 && lyrCodes.includes('tr')) ||
         // Rivers
         (ref === 'stations' && ['S', 'M'].includes(props.type) && lyrCodes.includes('ri')) ||
         // Tide
@@ -192,7 +192,8 @@ function LiveMap (mapId, options) {
         (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
       )
       // WebGl: Feature properties must be strings or numbers
-      feature.set('isVisible', Boolean(isVisible).toString())
+      // feature.set('isVisible', isVisible.toString())
+      feature.set('isVisible', isVisible)
     })
   }
 
@@ -416,12 +417,12 @@ function LiveMap (mapId, options) {
     model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
-      model.date = formatExpiredTime(model.value_date)
+      model.date = formatExpiredTime(model.valueDate)
       // model.state = feature.get('state')
       // model.name = capitalise(model.name)
-      // model.value_1hr = Math.round(model.one_hr_total * 10) / 10
-      // model.value_6hr = Math.round(model.six_hr_total * 10) / 10
-      // model.value_24hr = Math.round(model.day_total * 10) / 10
+      // model.value1hr = Math.round(model.one_hr_total * 10) / 10
+      // model.value6hr = Math.round(model.six_hr_total * 10) / 10
+      // model.value24hr = Math.round(model.day_total * 10) / 10
     }
     const html = window.nunjucks.render('info-live.html', { model: model })
     feature.set('html', html)
@@ -451,8 +452,8 @@ function LiveMap (mapId, options) {
       })
       targetArea.pointFeature.setId('flood.' + options.targetArea.id)
       // Transform id
-      const featureId = 'flood_warning_alert.' + options.targetArea.id
-      targetArea.polygonFeature.setId(featureId)
+      // const featureId = 'flood_warning_alert.' + options.targetArea.id
+      // targetArea.polygonFeature.setId(featureId)
     } else if (options.targetArea.centre) { // Vector tile source
       // Create point feature
       targetArea.pointFeature = new Feature({
@@ -588,13 +589,7 @@ function LiveMap (mapId, options) {
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       if (!defaultLayers.includes(layer)) {
-        let id = feature.getId()
-        // Transform id for target area polygons
-        if (layer.get('ref') === 'targetAreaPolygons') {
-          // id = id.includes('flood_warning_alert') ? 'flood' + id.substring(id.indexOf('.')) : 'flood.' + id
-          id = `flood.${feature.getId()}`
-        }
-        return id
+        return feature.getId()
       }
     })
     setSelectedFeature(featureId)

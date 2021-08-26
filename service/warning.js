@@ -1,39 +1,28 @@
-// const db = require('./db')
+const db = require('./db')
 
 module.exports = {
   // Used with maps
-  getWarningsGeoJSON: async (type) => {
-    // const response = await db.query('')
-    const features = [
-      {
+  getWarningsGeoJSON: async () => {
+    const response = await db.query(`
+    SELECT warning_alert.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning_alert.name, warning_alert.severity, warning_alert.raised_date
+    FROM warning_alert JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning_alert.id UNION
+    SELECT warning_alert.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning_alert.name, warning_alert.severity, warning_alert.raised_date
+    FROM warning_alert JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning_alert.id;
+    `)
+    const features = []
+    response.rows.forEach(row => {
+      features.push({
         type: 'Feature',
-        id: 'flood.011WAFLE',
-        geometry: {
-          type: 'Point',
-          coordinates: [-2.929687, 54.915669]
-        },
+        id: row.id,
+        geometry: row.geometry,
         properties: {
-          ta_code: '011WAFLE',
-          ta_name: 'Lower River Eden',
-          severity_value: 1,
-          severity: 'Flood alert'
+          name: row.name,
+          severity: Number(row.severity),
+          issuedDate: row.raised_date,
+          type: 'TA'
         }
-      },
-      {
-        type: 'Feature',
-        id: 'flood.011FWFNC3A',
-        geometry: {
-          type: 'Point',
-          coordinates: [-2.909892, 54.901589]
-        },
-        properties: {
-          ta_code: '011FWFNC3A',
-          ta_name: 'River Eden at Carlisle, Rickerby Park, Swifts and Stoneyholme Golf Courses',
-          severity_value: 2,
-          severity: 'Flood warning'
-        }
-      }
-    ]
+      })
+    })
     const geoJSON = {
       type: 'FeatureCollection',
       features: features

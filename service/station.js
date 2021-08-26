@@ -122,12 +122,12 @@ module.exports = {
           name: row.name,
           river: row.river,
           value: row.value,
-          value_date: row.value_date,
-          value_1hr: row.value_1hr,
-          value_6hr: row.value_6hr,
-          value_24hr: row.value_24hr,
-          percentile_5: row.percentile_5,
-          percentile_95: row.percentile_95,
+          valueDate: row.value_date,
+          value1hr: row.value_1hr,
+          value6hr: row.value_6hr,
+          value24hr: row.value_24hr,
+          percentile5: row.percentile_5,
+          percentile95: row.percentile_95,
           up: row.up,
           down: row.down
         }
