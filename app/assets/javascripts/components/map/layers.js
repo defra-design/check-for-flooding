@@ -3,12 +3,12 @@
 Initialises the window.flood.maps layers
 */
 // import { Feature } from 'ol'
-import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
-import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
+import { Map as MbMap } from 'mapbox-gl'
+import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Layer } from 'ol/layer'
+import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source' // XYZ
 // import WebGLPointsLayer from 'ol/layer/WebGLPoints'
 import { GeoJSON, MVT } from 'ol/format'
-
-// const { xhr } = window.flood.utils
+import { toLonLat } from 'ol/proj'
 
 //
 // Vector source
@@ -32,20 +32,70 @@ window.flood.maps.layers = {
     })
   },
 
+  // Bing maps
+  // road: () => {
+  //   return new TileLayer({
+  //     ref: 'road',
+  //     source: new BingMaps({
+  //       key: window.flood.model.bingMaps,
+  //       imagerySet: 'RoadOnDemand'
+  //     })
+  //   })
+  // },
+
+  // OS Raster
+  // road: () => {
+  //   return new TileLayer({
+  //     ref: 'road',
+  //     source: new XYZ({
+  //       url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
+  //       attributions: '&copy; Crown copyright and database rights OS 2021'
+  //     }),
+  //     visible: false,
+  //     zIndex: 0
+  //   })
+  // },
+
   road: () => {
-    return new TileLayer({
-      ref: 'road',
-      // source: new BingMaps({
-      //   key: window.flood.model.bingMaps,
-      //   imagerySet: 'RoadOnDemand'
-      // }),
-      // source: new OSM(),
-      source: new XYZ({
-        url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
-        attributions: '&copy; Crown copyright and database rights OS 2021'
-      }),
-      visible: false,
-      zIndex: 0
+    // Define mapbox map
+    const mbMap = new MbMap({
+      style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
+      attributionControl: false,
+      boxZoom: false,
+      container: 'viewport',
+      center: [0, 0],
+      doubleClickZoom: false,
+      dragPan: false,
+      dragRotate: false,
+      interactive: false,
+      keyboard: false,
+      pitchWithRotate: false,
+      scrollZoom: false,
+      touchZoomRotate: false
+    })
+    return new Layer({
+      render: (frameState) => {
+        const canvas = mbMap.getCanvas()
+        const viewState = frameState.viewState
+        mbMap.jumpTo({
+          center: toLonLat(viewState.center),
+          zoom: viewState.zoom - 1,
+          animate: false
+        })
+        // cancel the scheduled update & trigger synchronous redraw
+        // see https://github.com/mapbox/mapbox-gl-js/issues/7893#issue-408992184
+        // NOTE: THIS MIGHT BREAK WHEN UPDATING MAPBOX
+        if (mbMap._frame) {
+          mbMap._frame.cancel()
+          mbMap._frame = null
+        }
+        mbMap._render()
+        // Remove unecessaary attributes
+        canvas.removeAttribute('tabindex')
+        canvas.removeAttribute('role')
+        canvas.removeAttribute('aria-label')
+        return canvas
+      }
     })
   },
 
@@ -229,4 +279,5 @@ window.flood.maps.layers = {
   //     zIndex: 2
   //   })
   // }
+
 }

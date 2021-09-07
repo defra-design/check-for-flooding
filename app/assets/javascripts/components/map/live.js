@@ -42,6 +42,36 @@ function LiveMap (mapId, options) {
     extent: maps.extent // Constrains extent
   })
 
+  // Configure default interactions
+  const interactions = defaultInteractions({
+    pinchRotate: false
+  })
+
+  // Options to pass to the MapContainer constructor
+  const containerOptions = {
+    maxBigZoom: maps.liveMaxBigZoom,
+    view: view,
+    // layers: layers,
+    queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
+    interactions: interactions,
+    originalTitle: options.originalTitle,
+    title: options.title,
+    heading: options.heading,
+    keyTemplate: 'key-live.html',
+    isBack: options.isBack
+  }
+
+  // Create MapContainer
+  const container = new MapContainer(mapId, containerOptions)
+  const map = container.map
+  const containerElement = container.containerElement
+  const viewport = container.viewport
+  const viewportDescription = container.viewportDescription
+  const keyElement = container.keyElement
+  const resetButton = container.resetButton
+  const closeInfoButton = container.closeInfoButton
+  const openKeyButton = container.openKeyButton
+
   // Layers
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
@@ -66,35 +96,8 @@ function LiveMap (mapId, options) {
   ]
   const layers = defaultLayers.concat(dataLayers)
 
-  // Configure default interactions
-  const interactions = defaultInteractions({
-    pinchRotate: false
-  })
-
-  // Options to pass to the MapContainer constructor
-  const containerOptions = {
-    maxBigZoom: maps.liveMaxBigZoom,
-    view: view,
-    layers: layers,
-    queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
-    interactions: interactions,
-    originalTitle: options.originalTitle,
-    title: options.title,
-    heading: options.heading,
-    keyTemplate: 'key-live.html',
-    isBack: options.isBack
-  }
-
-  // Create MapContainer
-  const container = new MapContainer(mapId, containerOptions)
-  const map = container.map
-  const containerElement = container.containerElement
-  const viewport = container.viewport
-  const viewportDescription = container.viewportDescription
-  const keyElement = container.keyElement
-  const resetButton = container.resetButton
-  const closeInfoButton = container.closeInfoButton
-  const openKeyButton = container.openKeyButton
+  // Add layers
+  map.getLayers().extend(layers)
 
   //
   // Private methods
@@ -414,7 +417,6 @@ function LiveMap (mapId, options) {
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
-    console.log(model)
     model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {

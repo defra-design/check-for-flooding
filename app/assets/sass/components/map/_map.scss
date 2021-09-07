@@ -526,3 +526,13 @@
     width:360px;
   }
 }
+
+// Mapbox canvas
+.mapboxgl-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: left top; transform: matrix(1, 0, 0, 1, 0, 0);
+  // height: 100% !important;
+  // width: 100% !important;
+}

@@ -74,36 +74,6 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   }
 })
 
-// Vector tiles from Postgres used with maps
-// router.get('/tiles/target-areas/:z/:x/:y.mvt', async (req, res, next) => {
-//   const { x, y, z } = req.params
-//   const response = await targetAreaServices.getTargetAreaMVT(x, y, z)
-//   if (response.isError) {
-//     res.status(404).send({ error: response.error.toString() })
-//   } else {
-//     res.setHeader('Content-Type', 'application/x-protobuf')
-//     if (response.st_asmvt.length === 0) {
-//       res.status(204)
-//     }
-//     res.send(response.st_asmvt)
-//   }
-// })
-
-router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
-  const { x, y, z } = req.params
-  fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
-    if (err) {
-      res.status(204)
-    } else {
-      // set the content type based on the file
-      res.setHeader('Content-Type', 'application/x-protobuf')
-      res.setHeader('Content-Encoding', 'gzip')
-      res.write(data, 'binary')
-    }
-    res.end(null, 'binary')
-  })
-})
-
 // GeoJSON used with maps
 router.get('/service/warnings-geojson', async (req, res, next) => {
   try {
@@ -152,6 +122,40 @@ router.get('/service/target-areas-geojson', async (req, res, next) => {
     res.status(500)
     console.log(err)
   }
+})
+
+//
+// Vector tiles
+//
+
+// Dynamic from postgres used with maps
+// router.get('/tiles/target-areas/:z/:x/:y.mvt', async (req, res, next) => {
+//   const { x, y, z } = req.params
+//   const response = await targetAreaServices.getTargetAreaMVT(x, y, z)
+//   if (response.isError) {
+//     res.status(404).send({ error: response.error.toString() })
+//   } else {
+//     res.setHeader('Content-Type', 'application/x-protobuf')
+//     if (response.st_asmvt.length === 0) {
+//       res.status(204)
+//     }
+//     res.send(response.st_asmvt)
+//   }
+// })
+
+router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
+  const { x, y, z } = req.params
+  fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
+    if (err) {
+      res.status(204)
+    } else {
+      // set the content type based on the file
+      res.setHeader('Content-Type', 'application/x-protobuf')
+      res.setHeader('Content-Encoding', 'gzip')
+      res.write(data, 'binary')
+    }
+    res.end(null, 'binary')
+  })
 })
 
 module.exports = router
