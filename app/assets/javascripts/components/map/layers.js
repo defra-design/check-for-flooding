@@ -56,8 +56,8 @@ window.flood.maps.layers = {
   //   })
   // },
 
+  // Mapbox map (Vector tiles with WebGL rendering)
   road: () => {
-    // Define mapbox map
     const mbMap = new MbMap({
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
       attributionControl: false,

@@ -8,6 +8,7 @@ const express = require('express')
 const nunjucks = require('nunjucks')
 const sessionInCookie = require('client-sessions')
 const sessionInMemory = require('express-session')
+const compression = require('compression')
 
 // Run before other code to make sure variables from .env are available
 dotenv.config()
@@ -23,6 +24,9 @@ const utils = require('./lib/utils.js')
 const extensions = require('./lib/extensions/extensions.js')
 
 const app = express()
+
+// Compress all HTTP responses
+app.use(compression())
 
 // Set up configuration variables
 var releaseVersion = packageJson.version
