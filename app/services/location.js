@@ -1,5 +1,5 @@
 const axios = require('axios')
-const apiKey = process.env.OS_NAMES_KEY
+const apiKey = process.env.OS_API_KEY
 const utils = require('../utils')
 
 module.exports = {
