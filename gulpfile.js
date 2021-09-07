@@ -20,8 +20,8 @@ gulp.task('generate-assets', gulp.series(
   'clean',
   'sass-extensions',
   gulp.parallel(
-    'webpack',
     'nunjucks',
+    'webpack',
     'sass',
     'copy-assets'
   )

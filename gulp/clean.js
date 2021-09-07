@@ -12,5 +12,7 @@ const config = require('./config.json')
 
 gulp.task('clean', function (done) {
   return del([config.paths.public + '*',
-    '.port.tmp'])
+    config.paths.assets + '/javascripts/build',
+    '.port.tmp'
+  ])
 })
