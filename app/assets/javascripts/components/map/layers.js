@@ -59,8 +59,8 @@ window.flood.maps.layers = {
   // Mapbox map (Vector tiles with WebGL rendering)
   road: () => {
     const mbMap = new MbMap({
-      // style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
-      style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
+      style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
+      // style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
       attributionControl: false,
       boxZoom: false,
       container: 'viewport',
@@ -72,13 +72,13 @@ window.flood.maps.layers = {
       keyboard: false,
       pitchWithRotate: false,
       scrollZoom: false,
-      touchZoomRotate: false,
-      transformRequest: url => {
-        url += '&srs=3857'
-        return {
-          url: url
-        }
-      }
+      touchZoomRotate: false
+      // transformRequest: url => {
+      //   url += '&srs=3857'
+      //   return {
+      //     url: url
+      //   }
+      // }
     })
     return new Layer({
       render: (frameState) => {
@@ -101,6 +101,7 @@ window.flood.maps.layers = {
         canvas.removeAttribute('tabindex')
         canvas.removeAttribute('role')
         canvas.removeAttribute('aria-label')
+        canvas.removeAttribute('style')
         return canvas
       }
     })

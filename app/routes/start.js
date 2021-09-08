@@ -7,4 +7,8 @@ router.get('/start', (req, res) => {
   res.render('start')
 })
 
+router.get('/mapbox', (req, res) => {
+  res.render('mapbox')
+})
+
 module.exports = router

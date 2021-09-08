@@ -39,9 +39,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   document.title = options.title
   document.body.classList.add('defra-map-body')
 
-  // Modify viewport meta tag for mobile performance
-  document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
-
   // Create the map container element
   const containerElement = document.createElement('div')
   containerElement.id = mapId
@@ -259,8 +256,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       document.title = options.originalTitle
       // Unlock body scroll
       document.body.classList.remove('defra-map-body')
-      // Reset meta viewport
-      document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, viewport-fit=cover')
       clearAllBodyScrollLocks()
       // Remove map and return focus
       containerElement.parentNode.removeChild(containerElement)
@@ -441,9 +436,11 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Mouse or touch interaction
   containerElement.addEventListener('pointerdown', (e) => {
-    infoElement.blur()
-    keyElement.blur()
     viewport.removeAttribute('keyboard-focus')
+    // Address OpenLayers performance bug when viewport has focus?
+    if (document.activeElement === viewport) {
+      exitMapButtonElement.focus()
+    }
   })
 
   // Disable pinch and double tap zoom
@@ -547,6 +544,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     }
   }
   window.addEventListener('keyup', keyup)
+
+  // ***Focus must be moved when using touch interface on ios
+  // openKeyButtonElement.focus()
 
   // Remove map on popsate change
   const popstate = (e) => {
