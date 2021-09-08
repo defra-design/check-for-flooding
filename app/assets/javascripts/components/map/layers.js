@@ -62,17 +62,8 @@ window.flood.maps.layers = {
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
       // style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
       attributionControl: false,
-      boxZoom: false,
       container: 'viewport',
-      center: [0, 0],
-      doubleClickZoom: false,
-      dragPan: false,
-      dragRotate: false,
-      interactive: false,
-      keyboard: false,
-      pitchWithRotate: false,
-      scrollZoom: false,
-      touchZoomRotate: false
+      interactive: false
       // transformRequest: url => {
       //   url += '&srs=3857'
       //   return {
