@@ -83,11 +83,11 @@ window.flood.maps.layers = {
         // cancel the scheduled update & trigger synchronous redraw
         // see https://github.com/mapbox/mapbox-gl-js/issues/7893#issue-408992184
         // NOTE: THIS MIGHT BREAK WHEN UPDATING MAPBOX
-        if (mbMap._frame) {
-          mbMap._frame.cancel()
-          mbMap._frame = null
-        }
-        mbMap._render()
+        // if (mbMap._frame) {
+        //   mbMap._frame.cancel()
+        //   mbMap._frame = null
+        // }
+        // mbMap._render()
         // Remove unecessaary attributes
         canvas.removeAttribute('tabindex')
         canvas.removeAttribute('role')
