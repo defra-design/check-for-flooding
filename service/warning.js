@@ -5,7 +5,7 @@ module.exports = {
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
     SELECT warning_alert.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning_alert.name, warning_alert.severity, warning_alert.raised_date
-    FROM warning_alert JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning_alert.id UNION
+    FROM warning_alert JOIN flood_warning_areas ON flood_warning_areas.fws_tacode = warning_alert.id UNION
     SELECT warning_alert.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning_alert.name, warning_alert.severity, warning_alert.raised_date
     FROM warning_alert JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning_alert.id;
     `)
