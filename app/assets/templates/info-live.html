@@ -35,9 +35,6 @@
             {% if model.iswales %} (Natural Resources Wales){% endif %}
         </a>
     </strong>
-    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
-    <span class="defra-flood-list-data__description">Measured {{ model.date }}</span>
-    {% endif %}
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
     <p class="defra-flood-list-item__error">
         Closed or temporarily out of service
@@ -103,12 +100,14 @@
         {% endif %}
     </div>
     {% endif %}
+    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
+    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
+    {% endif %}
 </div>
 {% else %}
 <!-- Rainfall -->
 <div id="infoDescription">
     <strong class="defra-map-info__name">Rainfall at {{ model.name }}</strong>
-    <span class="defra-flood-list-data__description">Measured {{ model.date }}</span>
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
     <p class="defra-flood-list-item__error">
         Closed or temporarily out of service
@@ -123,24 +122,25 @@
             <dt class="govuk-visually-hidden">Intensity</dt>
             <dd>
                 <span class="defra-flood-list-data__value">{{ model.value1hr }}mm</span>
-                <span class="defra-flood-list-data__description">1 hour</span>
+                <span class="defra-flood-list-data__description">last hour</span>
             </dd>
         </div>
         <div class="defra-flood-list-data__column">
-            <dt class="govuk-visually-hidden">6 hours</dt>
+            <dt class="govuk-visually-hidden">last 6 hrs</dt>
             <dd>
               <span class="defra-flood-list-data__value">{{ model.value6hr }}mm</span>
-              <span class="defra-flood-list-data__description" aria-hidden="true">6 hours</span>
+              <span class="defra-flood-list-data__description" aria-hidden="true">last 6 hrs</span>
             </dd>
         </div>
         <div class="defra-flood-list-data__column">
-            <dt class="govuk-visually-hidden">24 hours</dt>
+            <dt class="govuk-visually-hidden">last 24 hrs</dt>
             <dd>
               <span class="defra-flood-list-data__value">{{ model.value24hr }}mm</span>
-              <span class="defra-flood-list-data__description" aria-hidden="true">24 hours</span>
+              <span class="defra-flood-list-data__description" aria-hidden="true">last 24 hrs</span>
             </dd>
         </div>
     </dl>
     {% endif %}
+    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
 </div>
 {% endif %}
