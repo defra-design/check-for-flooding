@@ -26,7 +26,7 @@
     @include govuk-font($size: 14);
     margin-top: 10px;
     margin-bottom: 0px;
-    // color: $govuk-secondary-text-colour;
+    color: $govuk-secondary-text-colour;
   }
   // &__buttons {
   //   margin-top: 15px;
@@ -35,7 +35,7 @@
   &__button {
     @extend .defra-button-map-s;
     position: relative;
-    // color:$govuk-text-colour;
+    color:$govuk-text-colour;
     text-decoration: underline;
   }
   &__button--up {

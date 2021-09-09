@@ -271,6 +271,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
+      window.visualViewport.removeEventListener('resize', viewportResize)
     }
   }
 
@@ -552,4 +553,15 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     removeContainer()
   }
   window.addEventListener('popstate', popstate)
+
+  // Rescale both maps on mobile browser zoom (iOS doesn't do this??)
+  let isMobileBrowserZoom = false
+  const viewportResize = (e) => {
+    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
+      map.updateSize()
+      window.flood.maps.mbMap.resize()
+      isMobileBrowserZoom = true
+    }
+  }
+  window.visualViewport.addEventListener('resize', viewportResize)
 }

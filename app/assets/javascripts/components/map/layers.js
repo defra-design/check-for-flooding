@@ -79,6 +79,9 @@ window.flood.maps.layers = {
         mbMap.resize()
       }
     })
+    // We need a referecne to this in container.js
+    window.flood.maps.mbMap = mbMap
+    // Return the layer
     return new Layer({
       render: (frameState) => {
         const canvas = mbMap.getCanvas()
@@ -100,7 +103,6 @@ window.flood.maps.layers = {
         canvas.removeAttribute('tabindex')
         canvas.removeAttribute('role')
         canvas.removeAttribute('aria-label')
-        // canvas.removeAttribute('style')
         return canvas
       }
     })
