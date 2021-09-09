@@ -71,6 +71,14 @@ window.flood.maps.layers = {
       //   }
       // }
     })
+    // Address hiDpi sizing issue? May be a better way to do this
+    let canvasWidth = mbMap.getCanvas().width
+    mbMap.on('zoomstart', (e) => {
+      if (canvasWidth === mbMap.getCanvas().width) {
+        canvasWidth = mbMap.getCanvas().width
+        mbMap.resize()
+      }
+    })
     return new Layer({
       render: (frameState) => {
         const canvas = mbMap.getCanvas()
