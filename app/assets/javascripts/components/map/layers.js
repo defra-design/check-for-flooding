@@ -92,7 +92,7 @@ window.flood.maps.layers = {
         canvas.removeAttribute('tabindex')
         canvas.removeAttribute('role')
         canvas.removeAttribute('aria-label')
-        canvas.removeAttribute('style')
+        // canvas.removeAttribute('style')
         return canvas
       }
     })
