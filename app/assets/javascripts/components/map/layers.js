@@ -5,7 +5,7 @@ Initialises the window.flood.maps layers
 // import { Feature } from 'ol'
 import { Map as MbMap } from 'mapbox-gl'
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Layer } from 'ol/layer'
-import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source' // XYZ
+import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource, XYZ } from 'ol/source'
 // import WebGLPointsLayer from 'ol/layer/WebGLPoints'
 import { GeoJSON, MVT } from 'ol/format'
 import { toLonLat } from 'ol/proj'
@@ -32,7 +32,7 @@ window.flood.maps.layers = {
     })
   },
 
-  // Bing maps
+  // Bing maps road
   // road: () => {
   //   return new TileLayer({
   //     ref: 'road',
@@ -108,17 +108,31 @@ window.flood.maps.layers = {
     })
   },
 
+  // ESRI World Imagery
   satellite: () => {
     return new TileLayer({
       ref: 'satellite',
-      source: new BingMaps({
-        key: window.flood.model.bingMaps,
-        imagerySet: 'AerialWithLabelsOnDemand'
+      source: new XYZ({
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        attributions: '&copy; ***Esri copyright statement***'
       }),
       visible: false,
       zIndex: 0
     })
   },
+
+  // Bing maps aerial
+  // satellite: () => {
+  //   return new TileLayer({
+  //     ref: 'satellite',
+  //     source: new BingMaps({
+  //       key: window.flood.model.bingMaps,
+  //       imagerySet: 'AerialWithLabelsOnDemand'
+  //     }),
+  //     visible: false,
+  //     zIndex: 0
+  //   })
+  // },
 
   //
   // Vector tile layers
