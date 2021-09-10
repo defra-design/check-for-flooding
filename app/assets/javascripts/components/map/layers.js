@@ -5,7 +5,7 @@ Initialises the window.flood.maps layers
 // import { Feature } from 'ol'
 import { Map as MbMap } from 'mapbox-gl'
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Layer } from 'ol/layer'
-import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource, XYZ } from 'ol/source'
+import { Source, BingMaps, Vector as VectorSource, VectorTile as VectorTileSource, XYZ } from 'ol/source'
 // import WebGLPointsLayer from 'ol/layer/WebGLPoints'
 import { GeoJSON, MVT } from 'ol/format'
 import { toLonLat } from 'ol/proj'
@@ -104,7 +104,10 @@ window.flood.maps.layers = {
         canvas.removeAttribute('role')
         canvas.removeAttribute('aria-label')
         return canvas
-      }
+      },
+      source: new Source({
+        attributions: '&copy; ***Ordnance survey copyright statement***'
+      })
     })
   },
 
