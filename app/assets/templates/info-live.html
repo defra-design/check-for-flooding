@@ -86,6 +86,9 @@
         </div>
         {% endif %}
     </dl>
+    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
+    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
+    {% endif %}
     {% if model.up or model.down %}
     <div class="defra-map-info__buttons">
         {% if model.up %}
@@ -99,9 +102,6 @@
         </button>
         {% endif %}
     </div>
-    {% endif %}
-    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
-    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
     {% endif %}
 </div>
 {% else %}
