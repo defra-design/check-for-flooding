@@ -8,7 +8,6 @@
 import { View, Overlay, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
-import { defaults as defaultInteractions } from 'ol/interaction'
 import { Point, MultiPolygon } from 'ol/geom'
 import { buffer, containsExtent, getCenter } from 'ol/extent'
 import { Vector as VectorSource } from 'ol/source'
@@ -43,9 +42,9 @@ function LiveMap (mapId, options) {
   })
 
   // Configure default interactions
-  const interactions = defaultInteractions({
-    pinchRotate: false
-  })
+  // const interactions = defaultInteractions({
+  //   pinchRotate: false
+  // })
 
   // Options to pass to the MapContainer constructor
   const containerOptions = {
@@ -53,7 +52,7 @@ function LiveMap (mapId, options) {
     view: view,
     // layers: layers,
     queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
-    interactions: interactions,
+    // interactions: interactions,
     originalTitle: options.originalTitle,
     title: options.title,
     heading: options.heading,

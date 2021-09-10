@@ -12,6 +12,7 @@
 
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { defaults as defaultControls, Attribution, Zoom, Control } from 'ol/control'
+import { KeyboardZoom } from 'ol/interaction'
 import { Map } from 'ol'
 
 const { addOrUpdateParameter, forEach } = window.flood.utils
@@ -69,8 +70,15 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     target: containerElement,
     layers: options.layers,
     view: options.view,
-    controls: controls,
-    interactions: options.interactions
+    controls: controls
+    // interactions: options.interactions
+  })
+
+  // Remove default keyboardZoom interaction
+  map.getInteractions().forEach((interaction) => {
+    if (interaction instanceof KeyboardZoom) {
+      interaction.setActive(false)
+    }
   })
 
   // Get reference to viewport
@@ -462,10 +470,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Tabrings and regions
   const keydown = (e) => {
-    if (e.key !== 'Tab' && e.key !== 'F6') { return }
+    if (!['Tab', 'F6', '-', '+'].includes(e.key)) { return }
     tabletListener(tabletMediaQuery)
-    // Constrain tab keypress to current dialog
     if (e.key === 'Tab') {
+      // Constrain tab keypress to current dialog
       const tabring = document.activeElement.closest('*[role="dialog"]') || containerElement
       const selectors = [
         'a[href]:not([disabled]):not([hidden])',
@@ -503,9 +511,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
         infoElement.removeAttribute('aria-labelledby')
         infoElement.removeAttribute('aria-describedby')
       }
-    }
-    // Move focus between regions
-    if ((e.ctrlKey || e.metaKey) && e.key === 'F6') {
+    } else if ((e.ctrlKey || e.metaKey) && e.key === 'F6') {
+      // Move focus between regions
       const regionSelector = '.defra-map div[role="dialog"][open="true"], .defra-map div[role="region"], .defra-map div[role="application"]'
       const regions = [].slice.call(document.querySelectorAll(regionSelector))
       const activeRegion = document.activeElement.closest(regionSelector) || viewport
@@ -518,6 +525,13 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       }
       regions[nextIndex].focus()
       document.activeElement.setAttribute('keyboard-focus', '')
+    } else if (!e.ctrlKey && !e.metaKey) {
+      const zoom = map.getView().getZoom()
+      // map.getView().setZoom(e.key === '+' ? (zoom + 1) : (zoom - 1))
+      map.getView().animate({
+        zoom: e.key === '+' ? (zoom + 1) : (zoom - 1),
+        duration: 100
+      })
     }
   }
   window.addEventListener('keydown', keydown)
