@@ -1,0 +1,19 @@
+// Required to depress missing css console warning
+.mapboxgl-map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.mapboxgl-canary {
+  background-color: salmon;
+}
+
+// Canvas
+.mapboxgl-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}

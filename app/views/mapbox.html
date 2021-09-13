@@ -1,53 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>OS Vector Tile API | Basic Map (EPSG:3857) | Mapbox GL JS</title>
-    <link rel="stylesheet" href="https://labs.os.uk/public/os-api-branding/v0.2.0/os-api-branding.css" />
-    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.1/mapbox-gl.css" />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
-</head>
-<body>
+{% extends "layout.html" %}
 
-<div id="map"></div>
+{% block content %}
+{% endblock %}
 
-<script src="https://labs.os.uk/public/os-api-branding/v0.2.0/os-api-branding.js"></script>
-<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.1/mapbox-gl.js"></script>
-<script>
-
-    // Initialize the map object.
-    var map = new mapboxgl.Map({
-        container: 'map',
-        minZoom: 6,
-        maxZoom: 18,
-        style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
-        // style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
-        maxBounds: [
-            [ -10.76418, 49.528423 ],
-            [ 1.9134116, 61.331151 ]
-        ],
-        // center: [ -2.968, 54.425 ],
-        // zoom: 13,
-        transformRequest: url => {
-            return {
-                url: url + '&srs=3857'
-            }
-        }
-    });
-
-    map.dragRotate.disable(); // Disable map rotation using right click + drag.
-    map.touchZoomRotate.disableRotation(); // Disable map rotation using touch rotation gesture.
-
-    // Add navigation control (excluding compass button) to the map.
-    map.addControl(new mapboxgl.NavigationControl({
-        showCompass: false
-    }));
-
-</script>
-
-</body>
-</html>
+{% block pageScripts %}
+<script src="/public/javascripts/mapbox.js"></script>
+{% endblock %}

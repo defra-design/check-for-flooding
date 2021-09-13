@@ -17,6 +17,11 @@ if (!Math.log2) {
 
 // "flood" represents the global namespace for
 // client-side javascript across all our pages
+if (!window.flood) {
+  window.flood = {}
+}
+
+// Flood utilities
 window.flood.utils = {
   xhr: (url, callback) => {
     const xmlhttp = new window.XMLHttpRequest()
