@@ -187,8 +187,7 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        // url: '/api/warnings.geojson'
-        url: '/service/warnings-geojson'
+        url: '/service/geojson/warnings'
       }),
       style: window.flood.maps.styles.warnings,
       visible: false,
@@ -196,15 +195,44 @@ window.flood.maps.layers = {
     })
   },
 
-  stations: () => {
+  river: () => {
     return new VectorLayer({
-      ref: 'stations',
-      featureCodes: 'ri, ti, gr',
+      ref: 'river',
+      featureCodes: 'ri',
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        // url: '/api/stations.geojson'
-        url: '/service/stations-geojson'
+        url: '/service/geojson/river'
+      }),
+      style: window.flood.maps.styles.stations,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  tide: () => {
+    return new VectorLayer({
+      ref: 'tide',
+      featureCodes: 'ti',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/tide'
+      }),
+      style: window.flood.maps.styles.stations,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  groundwater: () => {
+    return new VectorLayer({
+      ref: 'groundwater',
+      featureCodes: 'gr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/groundwater'
       }),
       style: window.flood.maps.styles.stations,
       visible: false,
@@ -219,10 +247,9 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        // url: '/api/rainfall.geojson'
-        url: '/service/rainfall-geojson'
+        url: '/service/geojson/rainfall'
       }),
-      style: window.flood.maps.styles.rainfall,
+      style: window.flood.maps.styles.stations,
       visible: false,
       zIndex: 3
     })

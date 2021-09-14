@@ -76,7 +76,9 @@ function LiveMap (mapId, options) {
   const satellite = maps.layers.satellite()
   const targetAreaPolygons = maps.layers.targetAreaPolygons()
   const warnings = maps.layers.warnings()
-  const stations = maps.layers.stations()
+  const river = maps.layers.river()
+  const tide = maps.layers.tide()
+  const groundwater = maps.layers.groundwater()
   const rainfall = maps.layers.rainfall()
   const selected = maps.layers.selected()
 
@@ -89,7 +91,9 @@ function LiveMap (mapId, options) {
 
   // These layers can be manipulated
   const dataLayers = [
-    stations,
+    river,
+    tide,
+    groundwater,
     rainfall,
     warnings
   ]
@@ -172,9 +176,8 @@ function LiveMap (mapId, options) {
   }
 
   // Show or hide features within layers
-  const setFeatureVisibility = (lyrCodes, layer) => {
-    layer.getSource().forEachFeature((feature) => {
-      const ref = layer.get('ref')
+  const setFeatureVisibility = (lyrCodes) => {
+    warnings.getSource().forEachFeature((feature) => {
       const props = feature.getProperties()
       const isVisible = !!(
         // Warnings
@@ -182,14 +185,6 @@ function LiveMap (mapId, options) {
         (props.severity && props.severity === 2 && lyrCodes.includes('tw')) ||
         (props.severity && props.severity === 3 && lyrCodes.includes('ta')) ||
         (props.severity && props.severity === 4 && lyrCodes.includes('tr')) ||
-        // Rivers
-        (ref === 'stations' && ['S', 'M'].includes(props.type) && lyrCodes.includes('ri')) ||
-        // Tide
-        (ref === 'stations' && props.type === 'C' && lyrCodes.includes('ti')) ||
-        // Ground
-        (ref === 'stations' && props.type === 'G' && lyrCodes.includes('gr')) ||
-        // Rainfall
-        (ref === 'rainfall' && props.type === 'R' && lyrCodes.includes('rf')) ||
         // Target area provided
         (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
       )
@@ -286,7 +281,7 @@ function LiveMap (mapId, options) {
     }
     layers.forEach((layer) => {
       layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
-        if (!feature.get('isVisible')) { return false }
+        if (layer.get('ref') === 'warnings' && !feature.get('isVisible')) { return false }
         features.push({
           id: feature.getId(),
           name: featureName(feature),
@@ -304,9 +299,7 @@ function LiveMap (mapId, options) {
     state.visibleFeatures = getVisibleFeatures()
     const numFeatures = state.visibleFeatures.length
     const numWarnings = state.visibleFeatures.filter((feature) => feature.state === 'warnings').length
-    const numStations = state.visibleFeatures.filter((feature) => feature.state === 'stations').length
-    const numRainfall = state.visibleFeatures.filter((feature) => feature.state === 'rainfall').length
-    const mumMeasurements = numStations + numRainfall
+    const mumMeasurements = numFeatures - numWarnings
     const features = state.visibleFeatures.slice(0, 9)
     // Show visual overlays
     hideOverlays()
@@ -523,14 +516,16 @@ function LiveMap (mapId, options) {
           }
         }
         // WebGL: Limited dynamic styling could be done server side for client performance
-        if (['stations', 'rainfall'].includes(layer.get('ref'))) {
+        if (['river', 'tide', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
           setFeatueState(layer)
         }
         // Set feature visibility after all features have loaded
-        const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-        setFeatureVisibility(lyrs, layer)
+        // const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+        // setFeatureVisibility(lyrs, layer)
         // Store reference to warnings source for use in vector tiles style function
         if (layer.get('ref') === 'warnings') {
+          const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+          setFeatureVisibility(lyrs)
           maps.warningsSource = warnings.getSource()
           map.addLayer(targetAreaPolygons)
         }
@@ -609,9 +604,9 @@ function LiveMap (mapId, options) {
       if (e.target.type === 'checkbox') {
         const checkbox = e.target
         checkbox.checked ? lyrs.push(checkbox.id) : lyrs.splice(lyrs.indexOf(checkbox.id), 1)
-        dataLayers.forEach((layer) => {
-          setFeatureVisibility(lyrs, layer)
-        })
+        if (layer.get('ref') === 'wanrings') {
+          setFeatureVisibility(lyrs)
+        }
       } else if (e.target.type === 'radio') {
         if (lyrs.includes('mv')) { lyrs.splice(lyrs.indexOf('mv'), 1) }
         if (lyrs.includes('sv')) { lyrs.splice(lyrs.indexOf('sv'), 1) }

@@ -75,31 +75,19 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
 })
 
 // GeoJSON used with maps
-router.get('/service/warnings-geojson', async (req, res, next) => {
+router.get('/service/geojson/:type', async (req, res, next) => {
+  const type = req.params.type
   try {
-    res.status(200).json(await warningServices.getWarningsGeoJSON())
+    if (['river', 'tide', 'groundwater', 'rainfall'].includes(type)) {
+      const code = type === 'river' ? 's,m' : type === 'tide' ? 'c' : type === 'groundwater' ? 'g' : 'r'
+      res.status(200).json(await stationServices.getStationsGeoJSON(code))
+    } else if (type === 'warnings') {
+      res.status(200).json(await warningServices.getWarningsGeoJSON())
+    } else {
+      res.sendStatus(404)
+    }
   } catch (err) {
-    res.status(500)
-    console.log(err)
-  }
-})
-
-// GeoJSON used with maps
-router.get('/service/stations-geojson', async (req, res, next) => {
-  try {
-    res.status(200).json(await stationServices.getStationsGeoJSON('s,m,c,g'))
-  } catch (err) {
-    res.status(500)
-    console.log(err)
-  }
-})
-
-// GeoJSON used with maps
-router.get('/service/rainfall-geojson', async (req, res, next) => {
-  try {
-    res.status(200).json(await stationServices.getStationsGeoJSON('r'))
-  } catch (err) {
-    res.status(500)
+    res.sendStatus(500)
     console.log(err)
   }
 })

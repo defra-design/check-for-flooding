@@ -75,9 +75,6 @@ window.flood.maps.styles = {
   },
 
   stations: (feature, resolution) => {
-    if (!feature.get('isVisible')) {
-      return
-    }
     const state = feature.get('state')
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= window.flood.maps.liveMaxBigZoom
@@ -101,17 +98,7 @@ window.flood.maps.styles = {
         return isSelected ? (isSymbol ? styleCache.groundErrorSelected : styleCache.measurementErrorSelected) : (isSymbol ? styleCache.groundError : styleCache.measurementError)
       case 'ground':
         return isSelected ? (isSymbol ? styleCache.groundSelected : styleCache.measurementSelected) : (isSymbol ? styleCache.ground : styleCache.measurement)
-    }
-  },
-
-  rainfall: (feature, resolution) => {
-    if (!feature.get('isVisible')) {
-      return
-    }
-    const state = feature.get('state')
-    const isSelected = feature.get('isSelected')
-    const isSymbol = resolution <= window.flood.maps.liveMaxBigZoom
-    switch (state) {
+      // Rainfall
       case 'rainHeavy':
         return isSelected ? (isSymbol ? styleCache.rainHeavySelected : styleCache.measurementAlertSelected) : (isSymbol ? styleCache.rainHeavy : styleCache.measurementAlert)
       case 'rainModerate':
