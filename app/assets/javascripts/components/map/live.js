@@ -207,7 +207,7 @@ function LiveMap (mapId, options) {
         newFeature.set('isSelected', true)
         setFeatureHtml(newFeature)
         selected.getSource().addFeature(newFeature)
-        selected.setStyle(maps.styles[layer.get('ref')]) // WebGL: layers don't use a style function
+        selected.setStyle(maps.styles[layer.get('ref') === 'warnings' ? 'warnings' : 'stations']) // WebGL: layers don't use a style function
         container.showInfo('Selected feature information', newFeature.get('html'))
       }
       // Refresh target area polygons
@@ -657,7 +657,7 @@ function LiveMap (mapId, options) {
   containerElement.addEventListener('click', (e) => {
     if (e.target.classList.contains('defra-map-info__button')) {
       const newFeatureId = e.target.getAttribute('data-id')
-      const feature = stations.getSource().getFeatureById(newFeatureId)
+      const feature = river.getSource().getFeatureById(newFeatureId) || tide.getSource().getFeatureById(newFeatureId)
       setSelectedFeature(newFeatureId)
       panToFeature(feature)
     }
