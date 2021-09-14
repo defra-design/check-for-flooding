@@ -571,11 +571,13 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   // Rescale map on mobile browser zoom (iOS doesn't do this??)
   let isMobileBrowserZoom = false
   const viewportResize = (e) => {
-    if (window.visualViewport && (window.visualViewport.scale !== 1 || isMobileBrowserZoom)) {
+    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
       map.updateSize()
-      window.flood.maps.mbMap.resize()
+      window.flood.maps.mlMap.resize()
       isMobileBrowserZoom = true
     }
   }
-  window.visualViewport.addEventListener('resize', viewportResize)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', viewportResize)
+  }
 }
