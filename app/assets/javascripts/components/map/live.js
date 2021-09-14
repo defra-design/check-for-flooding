@@ -604,7 +604,7 @@ function LiveMap (mapId, options) {
       if (e.target.type === 'checkbox') {
         const checkbox = e.target
         checkbox.checked ? lyrs.push(checkbox.id) : lyrs.splice(lyrs.indexOf(checkbox.id), 1)
-        if (layer.get('ref') === 'wanrings') {
+        if (['ts', 'tw', 'ta', 'tr'].includes(checkbox.id)) {
           setFeatureVisibility(lyrs)
         }
       } else if (e.target.type === 'radio') {
