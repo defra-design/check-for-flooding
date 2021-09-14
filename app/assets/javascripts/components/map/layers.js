@@ -3,7 +3,7 @@
 Initialises the window.flood.maps layers
 */
 // import { Feature } from 'ol'
-import { Map as MbMap } from 'mapbox-gl'
+import { Map as MlMap } from 'maplibre-gl'
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Layer } from 'ol/layer'
 import { Source, BingMaps, Vector as VectorSource, VectorTile as VectorTileSource, XYZ } from 'ol/source'
 // import WebGLPointsLayer from 'ol/layer/WebGLPoints'
@@ -58,7 +58,7 @@ window.flood.maps.layers = {
 
   // Mapbox map (Vector tiles with WebGL rendering)
   road: () => {
-    const mbMap = new MbMap({
+    const mlMap = new MlMap({
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
       // style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
       attributionControl: false,
@@ -72,21 +72,21 @@ window.flood.maps.layers = {
       // }
     })
     // Address hiDpi sizing issue? May be a better way to do this
-    let canvasWidth = mbMap.getCanvas().width
-    mbMap.on('zoomstart', (e) => {
-      if (canvasWidth === mbMap.getCanvas().width) {
-        canvasWidth = mbMap.getCanvas().width
-        mbMap.resize()
+    let canvasWidth = mlMap.getCanvas().width
+    mlMap.on('zoomstart', (e) => {
+      if (canvasWidth === mlMap.getCanvas().width) {
+        canvasWidth = mlMap.getCanvas().width
+        mlMap.resize()
       }
     })
     // We need a referecne to this in container.js
-    window.flood.maps.mbMap = mbMap
+    window.flood.maps.mlMap = mlMap
     // Return the layer
     return new Layer({
       render: (frameState) => {
-        const canvas = mbMap.getCanvas()
+        const canvas = mlMap.getCanvas()
         const viewState = frameState.viewState
-        mbMap.jumpTo({
+        mlMap.jumpTo({
           center: toLonLat(viewState.center),
           zoom: viewState.zoom - 1,
           animate: false
@@ -94,11 +94,11 @@ window.flood.maps.layers = {
         // cancel the scheduled update & trigger synchronous redraw
         // see https://github.com/mapbox/mapbox-gl-js/issues/7893#issue-408992184
         // NOTE: THIS MIGHT BREAK WHEN UPDATING MAPBOX
-        // if (mbMap._frame) {
-        //   mbMap._frame.cancel()
-        //   mbMap._frame = null
-        // }
-        // mbMap._render()
+        if (mlMap._frame) {
+          mlMap._frame.cancel()
+          mlMap._frame = null
+        }
+        mlMap._render()
         // Remove unecessaary attributes
         canvas.removeAttribute('tabindex')
         canvas.removeAttribute('role')

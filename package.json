@@ -51,7 +51,6 @@
     "gulp-sourcemaps": "^2.6.0",
     "inquirer": "^7.1.0",
     "keypather": "^3.0.0",
-    "mapbox-gl": "^1.13.1",
     "maplibre-gl": "^1.15.2",
     "marked": "^2.0.0",
     "moment-timezone": "^0.5.33",
