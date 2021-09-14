@@ -12,7 +12,7 @@
 
 import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { defaults as defaultControls, Attribution, Zoom, Control } from 'ol/control'
-import { KeyboardZoom } from 'ol/interaction'
+import { KeyboardZoom, PinchRotate } from 'ol/interaction'
 import { Map } from 'ol'
 
 const { addOrUpdateParameter, forEach } = window.flood.utils
@@ -76,7 +76,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Remove default keyboardZoom interaction
   map.getInteractions().forEach((interaction) => {
-    if (interaction instanceof KeyboardZoom) {
+    if (interaction instanceof KeyboardZoom || interaction instanceof PinchRotate) {
       interaction.setActive(false)
     }
   })
