@@ -596,7 +596,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
           layer.setStyle(layer.getStyle())
         }
       })
-      // window.flood.maps.mlMap.resize()
+      map.updateSize()
+      window.flood.maps.mlMap.resize()
       devicePixelRatio = newPixelRatio
     }
   }
