@@ -14,6 +14,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { defaults as defaultControls, Attribution, Zoom, Control } from 'ol/control'
 import { KeyboardZoom, PinchRotate } from 'ol/interaction'
 import { Map } from 'ol'
+import { Vector, VectorTile, VectorImage } from 'ol/layer'
 
 const { addOrUpdateParameter, forEach } = window.flood.utils
 
@@ -71,7 +72,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     layers: options.layers,
     view: options.view,
     controls: controls
-    // interactions: options.interactions
   })
 
   // Remove default keyboardZoom interaction
@@ -279,7 +279,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
-      window.visualViewport.removeEventListener('resize', viewportResize)
+      window.visualViewport.removeEventListener('resize', resize)
     }
   }
 
@@ -569,15 +569,36 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   window.addEventListener('popstate', popstate)
 
   // Rescale map on mobile browser zoom (iOS doesn't do this??)
-  let isMobileBrowserZoom = false
-  const viewportResize = (e) => {
-    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
-      map.updateSize()
-      window.flood.maps.mlMap.resize()
-      isMobileBrowserZoom = true
+  // let isMobileBrowserZoom = false
+  // const viewportResize = (e) => {
+  //   if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
+  //     map.updateSize()
+  //     window.flood.maps.mlMap.resize()
+  //     isMobileBrowserZoom = true
+  //   }
+  // }
+  // if (window.visualViewport) {
+  //   window.visualViewport.addEventListener('resize', viewportResize)
+  // }
+
+  // Redraw map on browser zoom otherise it becomes pixelated
+  // We need to refreh any vector layers as this appears the only way to redraw canvas
+  // Doesnt work in Safari as devicePixelRatio doesn't change on browserZoom
+  let devicePixelRatio = window.devicePixelRatio
+  const resize = (e) => {
+    const newPixelRatio = window.devicePixelRatio
+    if (newPixelRatio !== devicePixelRatio) {
+      map.pixelRatio_ = window.devicePixelRatio
+      const newPixelRatio = window.devicePixelRatio
+      const layers = map.getLayers()
+      layers.forEach((layer) => {
+        if (layer instanceof Vector || layer instanceof VectorTile || layer instanceof VectorImage) {
+          layer.setStyle(layer.getStyle())
+        }
+      })
+      // window.flood.maps.mlMap.resize()
+      devicePixelRatio = newPixelRatio
     }
   }
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', viewportResize)
-  }
+  window.addEventListener('resize', resize)
 }

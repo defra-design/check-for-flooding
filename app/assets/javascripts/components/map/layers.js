@@ -39,7 +39,9 @@ window.flood.maps.layers = {
   //     source: new BingMaps({
   //       key: window.flood.model.bingMaps,
   //       imagerySet: 'RoadOnDemand'
-  //     })
+  //     }),
+  //     visible: false,
+  //     zIndex: 0
   //   })
   // },
 
@@ -71,7 +73,7 @@ window.flood.maps.layers = {
       //   }
       // }
     })
-    // Address hiDpi sizing issue? May be a better way to do this
+    // Address hiDpi margin/size issue? May be a better way to do this
     let canvasWidth = mlMap.getCanvas().width
     mlMap.on('zoomstart', (e) => {
       if (canvasWidth === mlMap.getCanvas().width) {
@@ -82,10 +84,12 @@ window.flood.maps.layers = {
     // We need a referecne to this in container.js
     window.flood.maps.mlMap = mlMap
     // Return the layer
-    return new Layer({
+    const mlLayer = new Layer({
       render: (frameState) => {
         const canvas = mlMap.getCanvas()
         const viewState = frameState.viewState
+        const visible = mlLayer.getVisible()
+        canvas.style.display = visible ? 'block' : 'none'
         mlMap.jumpTo({
           center: toLonLat(viewState.center),
           zoom: viewState.zoom - 1,
@@ -105,10 +109,14 @@ window.flood.maps.layers = {
         canvas.removeAttribute('aria-label')
         return canvas
       },
+      ref: 'road',
       source: new Source({
         attributions: '&copy; ***Ordnance survey copyright statement***'
-      })
+      }),
+      visible: false,
+      zIndex: 0
     })
+    return mlLayer
   },
 
   // ESRI World Imagery

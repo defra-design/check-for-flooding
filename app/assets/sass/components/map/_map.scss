@@ -536,11 +536,12 @@
 //
 
 // Required to depress missing css console warning
+.maplibregl-canvas-container {
+  display:none;
+}
 .mapboxgl-canary {
   background-color: salmon;
 }
-
-// Canvas
 .mapboxgl-canvas {
   position: absolute;
   left: 0;
