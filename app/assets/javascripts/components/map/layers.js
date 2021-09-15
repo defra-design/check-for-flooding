@@ -74,11 +74,12 @@ window.flood.maps.layers = {
       // }
     })
     // Address hiDpi margin/size issue? May be a better way to do this
-    let canvasWidth = mlMap.getCanvas().width
+    mlMap.canvasWidth = mlMap.getCanvas().width
     mlMap.on('zoomstart', (e) => {
-      if (canvasWidth === mlMap.getCanvas().width) {
-        canvasWidth = mlMap.getCanvas().width
+      const newWidth = mlMap.getCanvas().width
+      if (mlMap.canvasWidth === newWidth) {
         mlMap.resize()
+        mlMap.canvasWidth = newWidth
       }
     })
     // We need a referecne to this in container.js

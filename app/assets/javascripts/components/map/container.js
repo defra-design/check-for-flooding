@@ -574,7 +574,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   const viewportResize = (e) => {
     if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
       map.updateSize()
-      window.flood.maps.mlMap.resize()
+      const mlMap = window.flood.maps.mlMap
+      mlMap.resize()
+      mlMap.canvasWidth = mlMap.getCanvas().width
       isMobileBrowserZoom = true
     }
   }
