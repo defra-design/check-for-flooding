@@ -15,6 +15,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus]:after {
     position:absolute;
@@ -84,6 +85,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[open="true"][keyboard-focus]:after {
     position:absolute;
@@ -129,11 +131,13 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
     color: $govuk-text-colour;
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &::-moz-focus-inner {
     border: 0;
@@ -152,6 +156,7 @@
   background-position: 13px;
   &:focus[keyboard-focus] {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
 }
 
@@ -183,6 +188,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -229,6 +235,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -307,6 +314,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -364,6 +372,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -416,6 +425,7 @@
   &-in:focus,
   &-out:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &-in:focus[keyboard-focus],
   &-out:focus[keyboard-focus] {
@@ -449,6 +459,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -471,6 +482,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus]:after {
     position:absolute;
@@ -509,6 +521,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
+    outline-offset: -3px;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
