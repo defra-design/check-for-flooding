@@ -8,7 +8,6 @@ const Filter = () => {
 
   const loadContent = () => {
     const uri = window.location.href
-    console.log(uri)
     xhr.open('GET', uri)
     xhr.send()
   }
@@ -30,7 +29,7 @@ const Filter = () => {
     }
   })
 
-  xhr.onreadystatechange = function () {
+  xhr.onreadystatechange = () => {
     if (xhr.readyState === 4) { // Done
       if (xhr.status === 200) { // Ok
         const container = document.implementation.createHTMLDocument().documentElement
