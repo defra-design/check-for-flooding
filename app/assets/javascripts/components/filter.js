@@ -1,7 +1,9 @@
+'use strict'
+
 const { addOrUpdateParameter } = window.flood.utils
 
 // Filter list
-const Filter = (filter) => {
+const Filter = () => {
   const xhr = new window.XMLHttpRequest()
 
   const loadContent = () => {
@@ -44,6 +46,6 @@ const Filter = (filter) => {
   }
 }
 
-window.flood.createFilter = (filter) => {
-  return new Filter(filter)
+window.flood.createFilter = () => {
+  return new Filter()
 }
