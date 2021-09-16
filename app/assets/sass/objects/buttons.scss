@@ -35,7 +35,7 @@
         outline:3px solid transparent;
         background-color: $govuk-focus-colour;
         color: $govuk-text-colour !important;
-        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+        box-shadow: 0 -2px #ffdd00, 0 4px currentColor;
         text-decoration: none;
     }
     &:active {
@@ -56,12 +56,13 @@
     position:relative;
     display:inline-block;
     padding-left:20px;
+    color: govuk-color('black');
     &:before {
         content: "";
         position: absolute;
         top:0px;
         left:0px;
-        background-image: svg-url('<svg width="15" height="20" viewBox="0 0 15 20"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="#0b0c0c"/></svg>');
+        background-image: svg-url('<svg width="15" height="20" viewBox="0 0 15 20"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="currentColor"/></svg>');
         background-color:transparent;
         background-size:15px 20px;
         background-repeat: no-repeat;
@@ -110,12 +111,13 @@
     position:relative;
     display:inline-block;
     padding-left:21px;
+    color: govuk-color('black');
     &:before {
         content: "";
         position: absolute;
         top:0px;
         left:1px;
-        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:#0b0c0c;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:#0b0c0c;"/></svg>');
+        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:currentColor;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:currentColor;"/></svg>');
         background-color:transparent;
         background-size:13px 17px;
         background-repeat: no-repeat;
@@ -131,7 +133,7 @@
     }
     &:focus:before,
     &:active:before {
-        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:#0b0c0c;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:#0b0c0c;"/></svg>');
+        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:currentColor;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:currentColor;"/></svg>');
     }
     &-s {
         @extend .defra-button-download;
