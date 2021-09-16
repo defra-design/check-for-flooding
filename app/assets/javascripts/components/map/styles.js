@@ -435,22 +435,14 @@ const createTextStyle = (options) => {
 }
 
 const createIconStyle = (options) => {
-  const defaults = {
-    size: [50, 50],
-    imgSize: [50, 50],
-    anchor: [0.5, 0.5],
-    offset: [0, 0],
-    scale: 1,
-    zIndex: 1
-  }
-  options = Object.assign({}, defaults, options)
   return new Style({
     image: new Icon({
       src: 'data:image/svg+xml;base64,' + window.btoa(options.src),
-      size: options.size,
-      anchor: options.anchor,
-      offset: options.offset,
-      scale: options.scale
+      size: [50, 50],
+      imgSize: [50, 50],
+      anchor: [0.5, 0.5],
+      offset: [0, 0],
+      scale: 1
     }),
     zIndex: options.zIndex
   })
