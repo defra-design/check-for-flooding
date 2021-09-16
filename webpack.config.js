@@ -7,8 +7,7 @@ module.exports = (env, argv) => ({
   devtool: !inDev ? false : 'source-map',
   entry: {
     core: './app/assets/javascripts/core',
-    levels: './app/assets/javascripts/pages/levels',
-    mapbox: './app/assets/javascripts/pages/mapbox'
+    levels: './app/assets/javascripts/pages/levels'
   },
   output: {
     path: path.resolve(__dirname, 'public/javascripts')
