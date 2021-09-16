@@ -14,7 +14,7 @@
     padding-right:290px;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus]:after {
     position:absolute;
@@ -83,7 +83,7 @@
     width:100%;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[open="true"][keyboard-focus]:after {
     position:absolute;
@@ -128,12 +128,12 @@
     background-color:$govuk-border-colour;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
     color: $govuk-text-colour;
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &::-moz-focus-inner {
     border: 0;
@@ -151,7 +151,7 @@
   background-size: 14px;
   background-position: 13px;
   &:focus[keyboard-focus] {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
 }
 
@@ -182,7 +182,7 @@
     background-color:$govuk-border-colour;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -228,7 +228,7 @@
     background-color:$govuk-border-colour;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -306,7 +306,7 @@
     background-color: govuk-colour('mid-grey');
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -363,7 +363,7 @@
     background-color: $govuk-border-colour;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -415,7 +415,7 @@
   }
   &-in:focus,
   &-out:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &-in:focus[keyboard-focus],
   &-out:focus[keyboard-focus] {
@@ -448,7 +448,7 @@
     color: $govuk-text-colour;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
@@ -470,7 +470,7 @@
     left:10px;
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus]:after {
     position:absolute;
@@ -508,7 +508,7 @@
     background-color: govuk-colour('mid-grey');
   }
   &:focus {
-    outline: 2px solid transparent;
+    outline: 3px solid transparent;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
