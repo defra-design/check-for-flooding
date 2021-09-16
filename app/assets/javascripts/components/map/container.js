@@ -279,7 +279,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
-      window.visualViewport.removeEventListener('resize', resize)
+      window.addEventListener('resize', windowResize)
+      window.visualViewport.addEventListener('resize', visualViewportResize)
     }
   }
 
@@ -568,27 +569,11 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   }
   window.addEventListener('popstate', popstate)
 
-  // Rescale map on mobile browser zoom
-  // iOS doesn't fire resize event on browser zoom
-  let isMobileBrowserZoom = false
-  const viewportResize = (e) => {
-    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
-      map.updateSize()
-      const mlMap = window.flood.maps.mlMap
-      mlMap.resize()
-      mlMap.canvasWidth = mlMap.getCanvas().width
-      isMobileBrowserZoom = true
-    }
-  }
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', viewportResize)
-  }
-
   // Redraw map on browser zoom otherise it becomes pixelated
   // We need to refreh any vector layers as this appears the only way to redraw canvas
   // Doesnt work in Safari as devicePixelRatio doesn't change on browserZoom
   let devicePixelRatio = window.devicePixelRatio
-  const resize = (e) => {
+  const windowResize = (e) => {
     const newPixelRatio = window.devicePixelRatio
     if (newPixelRatio !== devicePixelRatio) {
       map.pixelRatio_ = window.devicePixelRatio
@@ -602,5 +587,19 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       devicePixelRatio = newPixelRatio
     }
   }
-  window.addEventListener('resize', resize)
+  window.addEventListener('resize', windowResize)
+
+  // Rescale map on mobile browser zoom
+  // iOS doesn't fire resize event on browser zoom
+  let isMobileBrowserZoom = false
+  const visualViewportResize = (e) => {
+    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
+      map.updateSize()
+      const mlMap = window.flood.maps.mlMap
+      mlMap.resize()
+      mlMap.canvasWidth = mlMap.getCanvas().width
+      isMobileBrowserZoom = true
+    }
+  }
+  window.visualViewport.addEventListener('resize', visualViewportResize)
 }

@@ -58,7 +58,8 @@ window.flood.maps.layers = {
   //   })
   // },
 
-  // Mapbox map (Vector tiles with WebGL rendering)
+  // Maplibre map layer (Vector tiles with WebGL rendering)
+  // Without using mapbox/maplibre performance is unusable
   road: () => {
     const mlMap = new MlMap({
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
@@ -82,7 +83,7 @@ window.flood.maps.layers = {
         mlMap.canvasWidth = newWidth
       }
     })
-    // We need a referecne to this in container.js
+    // We need a reference to this in container.js
     window.flood.maps.mlMap = mlMap
     // Return the layer
     const mlLayer = new Layer({
@@ -96,6 +97,7 @@ window.flood.maps.layers = {
           zoom: viewState.zoom - 1,
           animate: false
         })
+        // Removes the small lag between mapbox and openlayers updating
         // cancel the scheduled update & trigger synchronous redraw
         // see https://github.com/mapbox/mapbox-gl-js/issues/7893#issue-408992184
         // NOTE: THIS MIGHT BREAK WHEN UPDATING MAPBOX
