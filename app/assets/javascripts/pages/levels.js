@@ -11,8 +11,7 @@ import '../components/map/container'
 import '../components/map/live'
 
 // Create list filter
-const filter = document.getElementById('filter')
-if (filter) {
+if (document.getElementById('filter')) {
   window.flood.createFilter()
 }
 
