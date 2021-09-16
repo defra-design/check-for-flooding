@@ -96,6 +96,7 @@
     top:3px;
     bottom:3px;
     outline: 3px solid $govuk-focus-colour;
+    outline-offset: 1px;
     z-index: 99;
   }
 }
@@ -482,7 +483,7 @@
   }
   &:focus {
     outline: 3px solid transparent;
-    outline-offset: -4px;
+    outline-offset: -1px;
   }
   &:focus[keyboard-focus]:after {
     position:absolute;
@@ -493,7 +494,7 @@
     top:3px;
     bottom:3px;
     outline: 3px solid $govuk-focus-colour;
-    outline-offset: -4px;
+    outline-offset: -1px;
     z-index: 99;
   }
   &__container {
