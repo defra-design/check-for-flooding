@@ -70,7 +70,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% if model.isMultipleMatch %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.Term }}'</h2>
+		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
 		<h3 class="govuk-heading-s">Rivers</h3>
