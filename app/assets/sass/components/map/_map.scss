@@ -392,16 +392,17 @@
     background-position:5px 5px;
     overflow: hidden;
     text-indent: -5000px;
+    color: govuk-colour('black');
   }
   &-in::-moz-focus-inner,
   &-out::-moz-focus-inner {
     border: 0;
   }
   &-in {
-    background-image: svg-url('<svg width="30" height="30" viewBox="0 0 30 30"><rect width="14" height="2" x="8" y="14" style="fill:#0b0c0c"/><rect width="2" height="14" x="14" y="8" style="fill:#0b0c0c"/></svg>');
+    background-image: svg-url('<svg width="30" height="30" viewBox="0 0 30 30"><rect width="14" height="2" x="8" y="14" style="fill:currentColor"/><rect width="2" height="14" x="14" y="8" style="fill:currentColor"/></svg>');
   }
   &-out {
-    background-image: svg-url('<svg width="30" height="30" viewBox="0 0 30 30"><rect width="14" height="2" x="8" y="14" style="fill:#0b0c0c"/></svg>');
+    background-image: svg-url('<svg width="30" height="30" viewBox="0 0 30 30"><rect width="14" height="2" x="8" y="14" style="fill:currentColor"/></svg>');
   }
   &-in:hover,
   &-out:hover {
