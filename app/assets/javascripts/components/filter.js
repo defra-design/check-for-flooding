@@ -32,12 +32,13 @@ const Filter = () => {
   xhr.onreadystatechange = () => {
     if (xhr.readyState === 4) { // Done
       if (xhr.status === 200) { // Ok
-        const container = document.implementation.createHTMLDocument().documentElement
-        container.innerHTML = xhr.responseText
-        const targetSearchCount = document.querySelector('#searchCount')
-        const targetList = document.querySelector('#list')
-        targetSearchCount.parentNode.replaceChild(container.querySelector('#searchCount'), targetSearchCount)
-        targetList.parentNode.replaceChild(container.querySelector('#list'), targetList)
+        console.log('Success')
+        // const container = document.implementation.createHTMLDocument().documentElement
+        // container.innerHTML = xhr.responseText
+        // const targetSearchCount = document.querySelector('#searchCount')
+        // const targetList = document.querySelector('#list')
+        // targetSearchCount.parentNode.replaceChild(container.querySelector('#searchCount'), targetSearchCount)
+        // targetList.parentNode.replaceChild(container.querySelector('#list'), targetList)
       } else {
         console.log('Error: ' + xhr.status)
       }
