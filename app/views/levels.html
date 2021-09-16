@@ -11,6 +11,8 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block content %}
+<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>
+
 {% if model.isError %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
@@ -162,10 +164,12 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block pageScripts %}
+{% if model and model.bbox %}
 <script>
   window.flood = {
-    model: { bbox: {% if model and model.place.bboxBuffered %}{{ model.place.bboxBuffered | dump | safe }}{% else %}[]{% endif %} }
+    model: { bbox: {{ model.bbox | dump | safe }} }
   }
 </script>
+{% endif %}
 <script src="/public/javascripts/levels.js"></script>
 {% endblock %}

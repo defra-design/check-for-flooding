@@ -15,6 +15,7 @@ class Levels {
       level => this.filterTypes.includes(level.type)
     ).length : levels.length
     this.levels = this.createLevels(levels, this.filterTypes)
+    this.bbox = place.bboxBuffered || river.bbox || []
   }
 
   createLevels (levels, filterTypes) {
