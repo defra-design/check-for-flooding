@@ -279,8 +279,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
-      window.addEventListener('resize', windowResize)
-      window.visualViewport.addEventListener('resize', visualViewportResize)
+      window.removeEventListener('resize', windowResize)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', visualViewportResize)
+      }
     }
   }
 
@@ -601,5 +603,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       isMobileBrowserZoom = true
     }
   }
-  window.visualViewport.addEventListener('resize', visualViewportResize)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', visualViewportResize)
+  }
 }
