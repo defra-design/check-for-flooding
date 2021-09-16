@@ -1,7 +1,5 @@
 'use strict'
 
-// import '../../../node_modules/govuk-frontend/govuk/all'
-
 // Init GOVUK Frontend
 document.onreadystatechange = () => {
   if (document.readyState === 'interactive') {
