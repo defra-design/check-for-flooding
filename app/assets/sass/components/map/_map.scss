@@ -13,21 +13,21 @@
   @include mq ($from: desktop) {
     padding-right:290px;
   }
-  &:focus {
-    outline: 3px solid transparent;
-    outline-offset: -3px;
-  }
-  &:focus[keyboard-focus]:after {
-    position:absolute;
-    content:'';
-    left:3px;
-    right:3px;
-    top:3px;
-    bottom:3px;
-    pointer-events: none;
-    outline: 3px solid $govuk-focus-colour;
-    z-index: 99;
-  }
+  // &:focus {
+  //   outline: 3px solid transparent;
+  //   outline-offset: -3px;
+  // }
+  // &:focus[keyboard-focus]:after {
+  //   position:absolute;
+  //   content:'';
+  //   left:3px;
+  //   right:3px;
+  //   top:3px;
+  //   bottom:3px;
+  //   pointer-events: none;
+  //   outline: 3px solid $govuk-focus-colour;
+  //   z-index: 99;
+  // }
   background-color: #a9ddef;
   &__title {
     @include defra-visually-hidden;
@@ -54,12 +54,14 @@
   &:focus[keyboard-focus]:after {
     position:absolute;
     content:'';
-    left:3px;
-    right:3px;
-    top:3px;
-    bottom:3px;
+    left:0px;
+    right:0px;
+    top:0px;
+    bottom:0px;
+    border: 1px solid govuk-colour('black');
     pointer-events: none;
     outline: 3px solid $govuk-focus-colour;
+    outline-offset: -4px;
     z-index: 99;
   }
 }
@@ -489,12 +491,13 @@
     position:absolute;
     pointer-events: none;
     content:'';
-    left:3px;
-    right:3px;
-    top:3px;
-    bottom:3px;
+    left:0px;
+    right:0px;
+    top:0px;
+    bottom:0px;
+    border: 1px solid govuk-colour('black');
     outline: 3px solid $govuk-focus-colour;
-    outline-offset: -1px;
+    outline-offset: -4px;
     z-index: 99;
   }
   &__container {
