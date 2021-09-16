@@ -437,6 +437,7 @@ const createTextStyle = (options) => {
 const createIconStyle = (options) => {
   const defaults = {
     size: [50, 50],
+    imgSize: [50, 50],
     anchor: [0.5, 0.5],
     offset: [0, 0],
     scale: 1,
