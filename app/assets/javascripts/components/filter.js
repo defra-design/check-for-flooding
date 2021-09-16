@@ -10,7 +10,7 @@ const Filter = () => {
     const uri = window.location.href
     console.log(uri)
     xhr.open('GET', uri)
-    xhr.send(null)
+    xhr.send()
   }
 
   // Update url and replace history state
