@@ -104,8 +104,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Create exit map button
   const exitMapButtonElement = document.createElement('button')
-  exitMapButtonElement.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg><span>Exit map</span>'
-  exitMapButtonElement.className = 'defra-map__' + (state.isBack ? 'back' : 'exit')
+  exitMapButtonElement.innerHTML = state.isBack ? '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg><span>Exit map</span>' : '<svg width="20" height="20" viewBox="0 0 20 20"><path d="M10,8.6L15.6,3L17,4.4L11.4,10L17,15.6L15.6,17L10,11.4L4.4,17L3,15.6L8.6,10L3,4.4L4.4,3L10,8.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px;"/></svg><span>Exit map</span>'
+  // exitMapButtonElement.className = 'defra-map__' + (state.isBack ? 'back' : 'exit')
+  exitMapButtonElement.className = 'defra-map__exit'
   const exitMapButton = new Control({
     element: exitMapButtonElement,
     target: controlsElement

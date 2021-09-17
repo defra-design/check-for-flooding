@@ -115,19 +115,20 @@
   line-height:40px;
   color: govuk-colour('black');
   // background-image: svg-url('<svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
-  background-size: 20px;
-  background-position: 10px 10px;
-  background-repeat: no-repeat;
-  span {
-    @include mq ($until: desktop) {
-      @include defra-visually-hidden;
+  // background-size: 20px;
+  // background-position: 10px 10px;
+  // background-repeat: no-repeat;
+  svg {
+    display: block;
+    margin:10px;
+    @include mq ($from: desktop) {
+      float:left;
     }
   }
   // text-indent:-5000px;
   @include mq ($from: desktop) {
-    text-indent:0px;
     width:auto;
-    padding-left:38px;
+    // padding-left:38px;
     padding-right:11px;
   }
   &:hover {
@@ -149,12 +150,12 @@
   -ms-user-select: none;
   pointer-events: auto;
 }
-.defra-map__exit {
-  color: govuk-colour('black');
-  background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M7,5.6L12.6,0L14,1.4L8.4,7L14,12.6L12.6,14L7,8.4L1.4,14L0,12.6L5.6,7L0,1.4L1.4,0L7,5.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
-  background-size: 14px;
-  background-position: 13px;
-}
+// .defra-map__exit {
+//   color: govuk-colour('black');
+//   background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M7,5.6L12.6,0L14,1.4L8.4,7L14,12.6L12.6,14L7,8.4L1.4,14L0,12.6L5.6,7L0,1.4L1.4,0L7,5.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
+//   background-size: 14px;
+//   background-position: 13px;
+// }
 
 // Map controls - open key
 .defra-map__open-key {
