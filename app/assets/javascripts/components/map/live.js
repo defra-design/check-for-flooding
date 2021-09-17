@@ -634,7 +634,7 @@ function LiveMap (mapId, options) {
   resetButton.addEventListener('click', (e) => {
     setExtentFromLonLat(map, state.initialExt)
     resetButton.setAttribute('disabled', '')
-    containerElement.focus()
+    viewport.focus()
   })
 
   // Handle all liveMap specific key presses
