@@ -114,11 +114,16 @@
   font-size:16px;
   line-height:40px;
   color: govuk-colour('black');
-  background-image: svg-url('<svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
+  // background-image: svg-url('<svg width="20" height="20" viewBox="0 0 20 20"><path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
   background-size: 20px;
   background-position: 10px 10px;
   background-repeat: no-repeat;
-  text-indent:-5000px;
+  span {
+    @include mq ($until: desktop) {
+      @include defra-visually-hidden;
+    }
+  }
+  // text-indent:-5000px;
   @include mq ($from: desktop) {
     text-indent:0px;
     width:auto;
