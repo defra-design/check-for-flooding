@@ -1,3 +1,18 @@
+// Map specific mixins
+@mixin focus {
+  position:absolute;
+  content:'';
+  left:4px;
+  right:4px;
+  top:4px;
+  bottom:4px;
+  box-shadow: 0px 0px 0px 4px govuk-colour('black');
+  outline: 3px solid $govuk-focus-colour;
+  pointer-events: none;
+  z-index: 99;
+}
+
+// Styles
 .defra-map {
   position:fixed !important;
   z-index: 999;
@@ -52,16 +67,7 @@
   -ms-user-select: none;
   user-select: none;
   &:focus[keyboard-focus]:after {
-    position:absolute;
-    content:'';
-    left:4px;
-    right:4px;
-    top:4px;
-    bottom:4px;
-    box-shadow: 0px 0px 0px 4px govuk-colour('black');
-    pointer-events: none;
-    outline: 3px solid $govuk-focus-colour;
-    z-index: 99;
+    @include focus;
   }
 }
 .defra-map-key {
@@ -88,16 +94,7 @@
     outline: none;
   }
   &:focus[open="true"][keyboard-focus]:after {
-    position:absolute;
-    pointer-events: none;
-    content:'';
-    left:4px;
-    right:4px;
-    top:4px;
-    bottom:4px;
-    box-shadow: 0px 0px 0px 4px govuk-colour('black');
-    outline: 3px solid $govuk-focus-colour;
-    z-index: 99;
+    @include focus;
   }
 }
 
@@ -105,6 +102,7 @@
 .defra-map__exit,
 .defra-map__back {
   float:left;
+  position:relative;
   margin:10px 0px 0px 10px;
   border:0;
   padding:0;
@@ -131,14 +129,14 @@
     background-color:$govuk-border-colour;
   }
   &:focus {
-    outline: 3px solid transparent;
-    outline-offset: -4px;
+    outline: none;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
     color: $govuk-text-colour;
-    outline: 3px solid transparent;
-    outline-offset: -4px;
+  }
+  &:focus[keyboard-focus]:after {
+    @include focus;
   }
   &::-moz-focus-inner {
     border: 0;
@@ -155,10 +153,6 @@
   background-image: svg-url('<svg width="14" height="14" viewBox="0 0 14 14"><path d="M7,5.6L12.6,0L14,1.4L8.4,7L14,12.6L12.6,14L7,8.4L1.4,14L0,12.6L5.6,7L0,1.4L1.4,0L7,5.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/></svg>');
   background-size: 14px;
   background-position: 13px;
-  &:focus[keyboard-focus] {
-    outline: 3px solid transparent;
-    outline-offset: -4px;
-  }
 }
 
 // Map controls - open key
@@ -485,16 +479,7 @@
     outline: none;
   }
   &:focus[keyboard-focus]:after {
-    position:absolute;
-    pointer-events: none;
-    content:'';
-    left:4px;
-    right:4px;
-    top:4px;
-    bottom:4px;
-    box-shadow: 0px 0px 0px 4px govuk-colour('black');
-    outline: 3px solid $govuk-focus-colour;
-    z-index: 99;
+    @include focus;
   }
   &__container {
     margin-right:36px;
@@ -521,11 +506,20 @@
     background-color: govuk-colour('mid-grey');
   }
   &:focus {
-    outline: 3px solid transparent;
-    outline-offset: -4px;
+    outline: none;
   }
   &:focus[keyboard-focus] {
     background-color: $govuk-focus-colour;
+  }
+  &:focus[keyboard-focus]:after {
+    content:'';
+    position: absolute;
+    left:4px;
+    right:4px;
+    top:4px;
+    bottom:4px;
+    box-shadow: 0px 0px 0px 4px govuk-colour('black');
+    outline: 3px solid $govuk-focus-colour;
   }
   &::-moz-focus-inner {
     border: 0;
