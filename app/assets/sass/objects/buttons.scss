@@ -79,8 +79,11 @@
         float:left;
         margin-right: 7px;
     }
+    &:hover {
+        background-color: govuk-colour('mid-grey') !important;
+    }
     &:active {
-        top: 0px !important;
+        top: 0px;
     }
 }
 
