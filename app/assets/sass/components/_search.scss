@@ -67,6 +67,10 @@
 }
 .defra-search-summary {
     position:relative;
+    margin-top: 40px;
+    @include mq ($from: tablet) {
+        margin-top: 20px;
+    }
     &__count {
         @include govuk-font($size: 19, $weight: bold);
         margin-top: 0px;
@@ -75,9 +79,9 @@
     .defra-button-map-s {
         position:absolute;
         right:0px;
-        top:2px;
+        top:-8px;
         @include mq ($from: tablet) {
-            top:3px;
+            top:-5px;
         }
     }
 }

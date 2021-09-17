@@ -28,21 +28,6 @@
   @include mq ($from: desktop) {
     padding-right:290px;
   }
-  // &:focus {
-  //   outline: 3px solid transparent;
-  //   outline-offset: -3px;
-  // }
-  // &:focus[keyboard-focus]:after {
-  //   position:absolute;
-  //   content:'';
-  //   left:3px;
-  //   right:3px;
-  //   top:3px;
-  //   bottom:3px;
-  //   pointer-events: none;
-  //   outline: 3px solid $govuk-focus-colour;
-  //   z-index: 99;
-  // }
   background-color: #a9ddef;
   &__title {
     @include defra-visually-hidden;
@@ -125,10 +110,13 @@
     padding-right:11px;
   }
   &:hover {
-    background-color:$govuk-border-colour;
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
@@ -169,10 +157,13 @@
     margin:10px;
   }
   &:hover {
-    background-color:$govuk-border-colour;
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
@@ -213,7 +204,7 @@
     line-height:39px;
   }
   &:hover {
-    background-color:$govuk-border-colour;
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
@@ -288,10 +279,13 @@
     margin: 10px;
   }
   &:hover {
-    background-color: govuk-colour('mid-grey');
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
@@ -345,10 +339,13 @@
     border: 0;
   }
   &:hover {
-    background-color: $govuk-border-colour;
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
@@ -392,11 +389,15 @@
   }
   &-in:hover,
   &-out:hover {
-    background-color: $govuk-border-colour;
+    background-color: #dbdad9;
   }
   &-in:focus,
   &-out:focus {
     outline: none;
+  }
+  &-in:focus[keyboard-focus],
+  &-out:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &-in:focus[keyboard-focus]:after,
   &-out:focus[keyboard-focus]:after {
@@ -425,12 +426,14 @@
   &::-moz-focus-inner {
     border: 0;
   }
-  &:hover, &:active {
-    background-color: $govuk-border-colour;
-    color: $govuk-text-colour;
+  &:hover {
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
@@ -477,10 +480,13 @@
     margin: 10px;
   }
   &:hover {
-    background-color: govuk-colour('mid-grey');
+    background-color: #dbdad9;
   }
   &:focus {
     outline: none;
+  }
+  &:focus[keyboard-focus] {
+    background-color: $govuk-focus-colour;
   }
   &:focus[keyboard-focus]:after {
     @include focus;
