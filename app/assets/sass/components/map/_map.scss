@@ -54,14 +54,13 @@
   &:focus[keyboard-focus]:after {
     position:absolute;
     content:'';
-    left:0px;
-    right:0px;
-    top:0px;
-    bottom:0px;
+    left:3px;
+    right:3px;
+    top:3px;
+    bottom:3px;
     border: 1px solid govuk-colour('black');
     pointer-events: none;
     outline: 3px solid $govuk-focus-colour;
-    outline-offset: -4px;
     z-index: 99;
   }
 }
