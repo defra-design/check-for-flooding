@@ -1,0 +1,26 @@
+.defra-search-filter {
+  &__legend {
+    font-weight: bold;
+  }
+  &__checkbox-item {
+    clear: none;
+    margin-right: 5px;
+  }
+}
+.defra-search-filter-button {
+  @extend .defra-button-text;
+  font-weight: bold;
+  text-decoration: none;
+}
+.js-enabled .defra-search-filter {
+  display: none;
+  &.defra-search-filter--expanded {
+    display: block;
+  }
+  &__heading {
+    @include defra-visually-hidden();
+  }
+  &__results {
+    display: none;
+  }
+}

@@ -35,15 +35,15 @@
   }
   &__button {
     @extend .defra-button-map-s;
+    @include govuk-font($size: 16, $weight: bold);
     position: relative;
-    color:$govuk-text-colour;
-    margin-bottom: 15px !important;
+    margin-bottom: 10px !important;
     svg {
       margin: 2px 5px 0px 0px;
     }
   }
   &__button--up {
-    margin-right:5px;
+    margin-right:10px;
   }
 
   // Attributions

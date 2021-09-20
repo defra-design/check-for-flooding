@@ -1,0 +1,14 @@
+.defra-search-summary {
+  position:relative;
+  margin-top: 30px;
+  &__count {
+      @include govuk-font($size: 19, $weight: bold);
+      margin-top: 0px;
+      margin-bottom: 10px;
+  }
+  .defra-button-map-s {
+      position:absolute;
+      right: 0px;
+      top: -2px;
+  }
+}

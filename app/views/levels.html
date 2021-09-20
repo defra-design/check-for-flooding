@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.queryTerm %}{{ model.queryTerm }} -
+{% if model.term %}{{ model.term }} -
 {% elif model.isError %} Error:
 {% elif model.isMultipleMatch %}
 Choose location -
@@ -11,6 +11,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block content %}
+
 {% if model.isError %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
@@ -41,36 +42,21 @@ River, sea, groundwater and rainfall levels - GOV.UK
     <h1 class="govuk-heading-xl">
       River, sea, groundwater and rainfall levels
     </h1>
-    <div class="govuk-form-group defra-search">
-      <form method="post" autocomplete="off">
-        <div class="govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
-          <label class="govuk-label" for="location">Search river, town or postcode</label>
-          {% if model.isError %}
-          <span class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span>
-            {% if model.isErrorPostcode %}
-            Enter a full postcode
-            {% else %}
-            Enter a river, town or postcode
-            {% endif %}
-          </span>
-          {% endif %}
-          <div class="defra-search">
-            <input class="defra-search__input{% if model.isError %} defra-search__input--error{% endif %}" id="location" name="location" type="search" spellcheck="false" value="{{ model.queryTerm }}">
-            <div class="defra-search__submit-container">
-              <button class="defra-search__button">Search</button>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+    <form method="post" autocomplete="off">
+    {% include "partials/list-search.html" %}
+    </form>
+    {% if model and model.term !== '' and not model.isError and model.filters | length > 1 %}
+    <form method="post" autocomplete="off" action="/filter-levels">
+    {% include "partials/list-filter.html" %}
+    </form>
+    {% endif %}
   </div>
 </div>
 
 {% if model.isMultipleMatch %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
+		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.term }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
 		<h3 class="govuk-heading-s">Rivers</h3>
@@ -78,7 +64,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
-			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.queryTerm) | safe }}</a></li>
+			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.term) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -88,7 +74,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.places.length %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
+			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.term) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -116,17 +102,14 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 
-{% elif model and model.queryTerm !== '' and not model.isError %}
+{% elif model and model.term !== '' and not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
         <h2 class="defra-search-summary__count" aria-live="polite" id="searchCount">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
         <span id="map"></span>
     </div>
-    {% if model.types | length > 1 %}
-    {% include "partials/list-filter.html" %}
-    {% endif %}
-    {% if model.queryType === 'river' %}
+    {% if model.type === 'river' %}
     <ul class="defra-flood-list-river" id="list">
       {% for river, items in model.levels %}
       {% for item in items %}

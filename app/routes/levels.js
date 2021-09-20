@@ -12,7 +12,7 @@ router.get('/levels', async (req, res) => {
   const query = {
     term: decodeURI(req.query.river || req.query.place),
     type: req.query.river ? 'river' : (req.query.place ? 'place' : ''),
-    filterTypes: req.query.type
+    filters: req.query.filters
   }
 
   if (query.type === 'river') {
@@ -55,16 +55,16 @@ router.get('/levels', async (req, res) => {
 
 // Search levels
 router.post('/levels', async (req, res) => {
-  const queryTerm = req.body.location
-  const model = { queryTerm: queryTerm }
+  const term = req.body.location
+  const model = { term: term }
 
   // Empty search
-  if (queryTerm === '') {
+  if (term === '') {
     return res.render('levels', { model })
   }
 
   // Check places
-  const locationResponse = await locationServices.getLocationsByQuery(model.queryTerm)
+  const locationResponse = await locationServices.getLocationsByQuery(model.term)
   const places = []
   if (locationResponse.status === 200) {
     if (locationResponse.data.results && locationResponse.data.results.length) {
@@ -78,7 +78,7 @@ router.post('/levels', async (req, res) => {
   model.places = places
 
   // Check rivers
-  const riverResponse = await riverServices.getRivers(model.queryTerm)
+  const riverResponse = await riverServices.getRivers(model.term)
   let rivers = []
   if (riverResponse.status === 200) {
     rivers = riverResponse.data
@@ -94,10 +94,10 @@ router.post('/levels', async (req, res) => {
     res.render('levels', { model })
   } else if (places.length === 1 && !rivers.length) {
     // We have a single place
-    res.redirect(`/levels?place=${encodeURI(queryTerm)}`)
+    res.redirect(`/levels?place=${encodeURI(term)}`)
   } else if (rivers.length === 1 && !places.length) {
     // We have a single river
-    res.redirect(`/levels?river=${encodeURI(queryTerm)}`)
+    res.redirect(`/levels?river=${encodeURI(term)}`)
   } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
     // We have too many full postcodes
     model.isError = true
@@ -112,6 +112,12 @@ router.post('/levels', async (req, res) => {
     model.isMultipleMatch = true
     res.render('levels', { model })
   }
+})
+
+router.post('/filter-levels', async (req, res) => {
+  const { type, term } = req.body
+  const filters = req.body.filters ? Array.isArray(req.body.filters) ? req.body.filters.join(',') : req.body.filters : ''
+  res.redirect(`/levels?${type}=${term}&filters=${filters}`)
 })
 
 module.exports = router

@@ -3,9 +3,31 @@
 const { addOrUpdateParameter } = window.flood.utils
 
 // Filter list
-const Filter = () => {
-  const xhr = new window.XMLHttpRequest()
+const Filter = (container, listId, summaryId) => {
+  container.setAttribute('role', 'region')
+  const toggleFilters = document.createElement('button')
+  toggleFilters.className = 'defra-search-filter-button'
+  toggleFilters.setAttribute('aria-expanded', false)
+  toggleFilters.setAttribute('aria-controls', container.id)
+  const filterHeading = container.querySelector('.defra-search-filter__heading')
+  filterHeading.innerHTML += ' (Updates on select)'
+  container.parentNode.insertBefore(toggleFilters, container.parentNode.firstChild)
 
+  // Set button text
+  const setToggleFiltersButtonText = (numSelected) => {
+    toggleFilters.innerHTML = numSelected > 0 ? `Filters (${numSelected})` : 'Filters'
+  }
+
+  // Show details on desktop
+  const toggleDetails = () => {
+    toggleFilters.setAttribute('aria-expanded', !(toggleFilters.getAttribute('aria-expanded') === 'true'))
+    container.classList.toggle('defra-search-filter--expanded')
+  }
+
+  const numSelected = parseInt(container.querySelector('input[name="numFiltersSelected"]').value, 10)
+  setToggleFiltersButtonText(numSelected)
+
+  const xhr = new window.XMLHttpRequest()
   const loadContent = () => {
     const uri = window.location.href
     xhr.open('GET', uri)
@@ -20,11 +42,22 @@ const Filter = () => {
     window.history.replaceState(data, title, uri)
   }
 
+  //
+  // Events
+  //
+
+  // Show filters (mobile only)
+  toggleFilters.addEventListener('click', (e) => {
+    e.preventDefault()
+    toggleDetails()
+  })
+
   document.addEventListener('click', (e) => {
-    if (e.target.className === 'defra-filter__input') {
-      const checkboxes = Array.from(document.querySelectorAll('.defra-filter__input[type="checkbox"]'))
+    if (e.target.classList.contains('defra-search-filter__input')) {
+      const checkboxes = Array.from(document.querySelectorAll('.defra-search-filter__input[type="checkbox"]'))
       const selectedTypes = checkboxes.filter(item => item.checked).map(item => item.id).join(',')
-      replaceHistory('type', selectedTypes)
+      setToggleFiltersButtonText(checkboxes.filter(item => item.checked).length)
+      replaceHistory('filters', selectedTypes)
       loadContent()
     }
   })
@@ -33,12 +66,12 @@ const Filter = () => {
     if (xhr.readyState === 4) { // Done
       if (xhr.status === 200) { // Ok
         console.log('Success')
-        const container = document.implementation.createHTMLDocument().documentElement
-        container.innerHTML = xhr.responseText
-        const targetSearchCount = document.querySelector('#searchCount')
-        const targetList = document.querySelector('#list')
-        targetSearchCount.parentNode.replaceChild(container.querySelector('#searchCount'), targetSearchCount)
-        targetList.parentNode.replaceChild(container.querySelector('#list'), targetList)
+        const documentElement = document.implementation.createHTMLDocument().documentElement
+        documentElement.innerHTML = xhr.responseText
+        const targetSearchCount = document.querySelector(`#${summaryId}`)
+        const targetList = document.querySelector(`#${listId}`)
+        targetSearchCount.parentNode.replaceChild(documentElement.querySelector(`#${summaryId}`), targetSearchCount)
+        targetList.parentNode.replaceChild(documentElement.querySelector(`#${listId}`), targetList)
       } else {
         console.log('Error: ' + xhr.status)
       }
@@ -46,6 +79,6 @@ const Filter = () => {
   }
 }
 
-window.flood.createFilter = () => {
-  return new Filter()
+window.flood.createFilter = (container, listId, summaryId) => {
+  return new Filter(container, listId, summaryId)
 }

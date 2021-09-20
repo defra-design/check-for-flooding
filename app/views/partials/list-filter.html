@@ -1,20 +1,24 @@
-<div class="defra-filter" id="filter">
-  <form method="post" autocomplete="off">
-    <fieldset class="defra-filter__fieldset">
-      <legend class="defra-filter__legend govuk-visually-hidden">
-        <span>Filter (updates on select)</span>
-      </legend>
-      <div class="defra-filter__checkboxes" data-module="govuk-checkboxes">
-        {{ model.query | dump }}
-        {% for item in model.types %}
-        <div class="defra-filter__item">
-          <input class="defra-filter__input" id="{{ item.type }}" name="type" type="checkbox" value="{{ item.type }}"{% if item.type in model.filterTypes %} checked{% endif %}>
-          <label class="defra-filter__label" for="{{ item.type }}">
-            {{ item.type | capitalize }} ({{ item.count }})
-          </label>
-        </div>
-        {% endfor %}
+<div class="defra-search-filter" id="filter">
+  <fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend defra-search-filter__legend">
+      <h2 class="govuk-fieldset__heading defra-search-filter__heading">Measurement type</h2>
+    </legend>
+    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+      {{ model.query | dump }}
+      {% for item in model.filters %}
+      <div class="govuk-checkboxes__item defra-search-filter__checkbox-item">
+        <input class="govuk-checkboxes__input defra-search-filter__input" id="{{ item.type }}" name="filters" type="checkbox" value="{{ item.type }}"{% if item.isSelected %} checked{% endif %}>
+        <label class="govuk-checkboxes__label" for="{{ item.type }}">
+          {{ item.type | capitalize }} ({{ item.count }})
+        </label>
       </div>
-    </fieldset>
-  </form>
+      {% endfor %}
+    </div>
+  </fieldset>
+  <input name="numFiltersSelected" value="{{ model.numFilters }}" type="hidden" />
+  <input name="type" value="{{ model.type }}" type="hidden" />
+  <input name="term" value="{{ model.term }}" type="hidden" />
+  <button class="govuk-button govuk-button--secondary defra-search-filter__results" type="submit" data-module="govuk-button">
+    Filter results
+  </button>
 </div>

@@ -3,24 +3,26 @@ const Level = require('../models/level')
 
 class Levels {
   constructor (query, place, river, levels) {
-    this.queryTerm = query.term
-    this.queryType = query.type
-    this.filterTypes = query.filterTypes ? query.filterTypes.split(',') : []
+    this.term = query.term
+    this.type = query.type
     this.place = place
     this.river = river
-    this.types = [...new Set(levels.map(item => item.type))].map(item => (
-      { type: item, count: levels.filter(level => level.type === item).length }
-    ))
-    this.numLevels = this.filterTypes.length ? levels.filter(
-      level => this.filterTypes.includes(level.type)
+    this.filters = [...new Set(levels.map(item => item.type))].map(item => ({
+      type: item,
+      count: levels.filter(level => level.type === item).length,
+      isSelected: query.filters ? query.filters.includes(item) : false
+    }))
+    this.numLevels = this.filters.filter(x => x.isSelected).length ? levels.filter(
+      level => this.filters.filter(x => x.isSelected).map(x => x.type).includes(level.type)
     ).length : levels.length
-    this.levels = this.createLevels(levels, this.filterTypes)
+    this.levels = this.createLevels(levels, this.filters.filter(x => x.isSelected))
+    this.numFilters = this.filters.filter(x => x.isSelected).length
     this.bbox = place.bboxBuffered || river.bbox || []
   }
 
-  createLevels (levels, filterTypes) {
-    if (this.filterTypes.length) {
-      levels = levels.filter(level => filterTypes.includes(level.type))
+  createLevels (levels, selectedFilters) {
+    if (selectedFilters.length) {
+      levels = levels.filter(level => selectedFilters.map(x => x.type).includes(level.type))
     }
     const groups = utils.groupBy(levels, 'group_name')
     Object.entries(groups).forEach(([key, value]) => {
