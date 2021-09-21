@@ -2,7 +2,7 @@
   position:relative;
   margin-top: 30px;
   &__count {
-      @include govuk-font($size: 19, $weight: bold);
+      @include govuk-font($size: 19);
       margin-top: 0px;
       margin-bottom: 10px;
   }
