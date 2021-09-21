@@ -34,12 +34,35 @@
     border-top: 1px solid #dbdad9;
   }
   &__button {
-    @extend .defra-button-map-s;
-    @include govuk-font($size: 16, $weight: bold);
+    @include govuk-font($size: 16);
     position: relative;
+    display: inline-block;
+    height: 38px;
+    line-height: 38px;
+    box-sizing: content-box;
+    border:0;
+    padding:0px 8px;
     margin-bottom: 10px !important;
+    cursor:pointer;
+    background-color: white;
+    border: 1px solid govuk-colour('mid-grey');
+    color: govuk-colour('black');
+    &::-moz-focus-inner {
+      border: 0;
+    }
+    &:hover {
+      background-color: govuk-colour('mid-grey');
+    }
+    &:focus {
+      // background-color: $govuk-focus-colour;
+      outline: 3px solid $govuk-focus-colour;
+      box-shadow: inset 0px 0px 0px 2px govuk-colour('black');
+      border-color: govuk-colour('black');
+    }
     svg {
-      margin: 2px 5px 0px 0px;
+      position:relative;
+      display: inline-block;
+      margin: 2px 3px -1px 0px;
     }
   }
   &__button--up {
