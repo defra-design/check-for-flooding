@@ -13,7 +13,11 @@ import '../components/map/live'
 // Create list filter
 const filter = document.getElementById('filter')
 if (filter) {
-  window.flood.createFilter(filter, 'list', 'searchCount')
+  window.flood.createFilter(filter, {
+    detailsId: 'filter-details',
+    countId: 'search-count',
+    listId: 'list'
+  })
 }
 
 // Create LiveMap
