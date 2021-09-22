@@ -45,7 +45,7 @@
     margin-bottom: 10px !important;
     cursor:pointer;
     background-color: white;
-    border: 1px solid #dbdad9;
+    border: 1px solid $govuk-border-colour;
     color: govuk-colour('black');
     &::-moz-focus-inner {
       border: 0;
