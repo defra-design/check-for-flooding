@@ -5,14 +5,14 @@ const { addOrUpdateParameter } = window.flood.utils
 // Filter list
 const Filter = (btnContainer, settings) => {
   const container = document.getElementById(settings.detailsId)
-  container.setAttribute('role', 'dialog')
+  container.setAttribute('role', 'region')
+  const heading = container.querySelector('.defra-search-filter__heading')
+  heading.innerHTML += ' (Updates on select)'
+  container.setAttribute('aria-labeledby', heading.id)
   const button = document.createElement('button')
   button.className = 'defra-button-filter'
   button.setAttribute('aria-expanded', false)
-  button.setAttribute('aria-haspopup', 'dialog')
   button.setAttribute('aria-controls', settings.detailsId)
-  const filterHeading = container.querySelector('.defra-search-filter__heading')
-  filterHeading.innerHTML += ' (Updates on select)'
   btnContainer.parentNode.replaceChild(button, btnContainer)
   const state = {
     isExpanded: false,
@@ -30,12 +30,17 @@ const Filter = (btnContainer, settings) => {
     button.setAttribute('aria-expanded', state.isExpanded)
     setButtonText()
     container.classList.toggle('defra-search-filter--expanded')
+    // Address focus state https://www.w3.org/WAI/GL/wiki/Using_the_WAI-ARIA_aria-expanded_state_to_mark_expandable_and_collapsible_regions
+    // if (state.isExpanded) {
+    //   container.focus()
+    // }
   }
 
   const xhr = new window.XMLHttpRequest()
   const loadContent = () => {
     const uri = window.location.href
     xhr.open('GET', uri)
+    xhr.responseType = 'document' // Not supported in Opera
     xhr.send()
   }
 
@@ -73,14 +78,12 @@ const Filter = (btnContainer, settings) => {
 
   xhr.onreadystatechange = () => {
     if (xhr.readyState === 4) { // Done
-      if (xhr.status === 200) { // Ok
-        console.log('Success')
-        const documentElement = document.implementation.createHTMLDocument().documentElement
-        documentElement.innerHTML = xhr.responseText
-        const targetSearchCount = document.getElementById(settings.countId)
+      if (xhr.status === 200) { // Success
+        const response = xhr.response
+        const targetCount = document.getElementById(settings.countId)
         const targetList = document.getElementById(settings.listId)
-        targetSearchCount.parentNode.replaceChild(documentElement.getElementById(settings.countId), targetSearchCount)
-        targetList.parentNode.replaceChild(documentElement.getElementById(settings.listId), targetList)
+        targetCount.parentNode.replaceChild(response.getElementById(settings.countId), targetCount)
+        targetList.parentNode.replaceChild(response.getElementById(settings.listId), targetList)
       } else {
         console.log('Error: ' + xhr.status)
       }

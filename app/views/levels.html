@@ -78,8 +78,8 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.isNoResults %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-heading-s govuk-!-margin-top-4">
-    No river, sea, groundwater or rainfall levels found
+    <h2 class="govuk-heading-m govuk-!-margin-top-4">
+      No river, sea, groundwater or rainfall levels found
     </h2>
     <p class="govuk-body">If you searched a place in England, you should:</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -100,7 +100,9 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
         <h2 class="govuk-heading-m" aria-live="polite" id="search-count">{{ model.numLevels }} level{% if model.numLevels != 1 %}s{% endif %}</h2>
+        {% if model and model.term !== '' and not model.isError and model.filters | length > 1 %}
         <span id="filter"></span>
+        {% endif %}
         <span id="map"></span>
         {% if model and model.term !== '' and not model.isError and model.filters | length > 1 %}
         {% include "partials/list-filter.html" %}
