@@ -140,6 +140,7 @@ app.use('/', require('./app/routes/national'))
 app.use('/', require('./app/routes/start'))
 app.use('/', require('./app/routes/find-location'))
 app.use('/', require('./app/routes/location'))
+app.use('/', require('./app/routes/warnings'))
 app.use('/', require('./app/routes/levels'))
 
 // Load routes (found in service/routes)

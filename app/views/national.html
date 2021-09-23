@@ -10,7 +10,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl">
-      Flood warnings in England
+      Check for flooding in England
     </h1>
   </div>
 </div>
@@ -64,7 +64,7 @@
       Check for flooding near you
     </a>
 
-    <h2 class="govuk-heading-m">Latest river, sea and groundwater levels</h2>
+    <h2 class="govuk-heading-m">Latest river, sea, groundwater and rainfall levels</h2>
     <p>There are around 2,500 measuring stations, most along main rivers and the coast. These levels can help you understand your flood risk now and over the next few days.</p>
     <p><a href="/levels">Find a river, sea, groundwater or rainfall level</a></p>
 
@@ -88,45 +88,8 @@
     {% endif %}
     {% include "partials/context-footer.html" %}
   </div>
- 
-
-  <div class="govuk-grid-column-one-third">
-    <div class="defra-related-items">
-      <h2 class="govuk-heading-s" id="subsection-title">
-        Related content
-      </h2>
-      <nav role="navigation" aria-labelledby="subsection-title">
-        <ul class="govuk-list govuk-!-font-size-16">
-          <li>
-            <a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a>
-          </li>
-          <li>
-            <a class="govuk-link" href="/plan-ahead-for-flooding">
-              How to plan ahead for flooding
-            </a>
-          </li>
-          <li>
-            <a class="govuk-link" href="/what-to-do-in-a-flood">
-              What to do in a flood
-            </a>
-          </li>
-          <li>
-            <a class="govuk-link" href="/recovering-after-a-flood">
-              How to recover after a flood
-            </a>
-          </li>
-          <li>
-            <a class="govuk-link" href="https://flood-warning-information.service.gov.uk/long-term-flood-risk">
-              Check your long term flood risk
-            </a>
-          <li>
-            <a class="govuk-link" href="https://www.gov.uk/report-flood-cause">
-              Report a flood
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+   <div class="govuk-grid-column-one-third">
+    {% include "partials/related-content.html" %}
   </div>
 </div>
 

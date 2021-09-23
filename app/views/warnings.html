@@ -1,0 +1,132 @@
+
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+Flood warnings and alerts in England - GOV.UK
+{% endblock %}
+
+{% block content %}
+
+{% if model.isError %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					<li>
+						<a href="#location">
+							{% if model.isErrorPostcode %}
+              Enter a full postcode
+							{% else %}
+							Enter a river, town or postcode
+							{% endif %}
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+      Flood alerts and warnings in England
+    </h1>
+    {% include "partials/list-search.html" %}
+  </div>
+</div>
+
+{% if model.isMultipleMatch %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.term }}'</h2>
+		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
+		{% if model.places.length and model.rivers.length %}
+		<h3 class="govuk-heading-s">Rivers</h3>
+		{% endif %}
+		{% if model.rivers.length %}
+		<ul class="govuk-list">
+			{% for river in model.rivers %}
+			<li><a href="/levels?river={{ river.display }}">{{ river.display | marked(model.term) | safe }}</a></li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% if model.places.length and model.rivers.length %}
+		<h3 class="govuk-heading-s">Levels near</h3>
+		{% endif %}
+		{% if model.places.length %}
+		<ul class="govuk-list">
+			{% for place in model.places %}
+			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.term) | safe }}</a></li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		<p>Alternatively try searching again</p>
+	</div>
+</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="defra-search-summary" id="searchSummary">
+      <button id="map-btn" class="defra-button-map-s"><svg width="15" height="20" viewBox="0 0 15 20"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="currentColor"></path></svg><span>View map</span><span class="govuk-visually-hidden">(Visual only)</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <ul class="defra-flood-list" id="list">
+      <li class="defra-flood-list-item-group">
+        <h3 class="defra-flood-list__group-title">
+          3 flood alerts
+        </h3>
+        <p>Flooding is possible</p>
+        <ul class="defra-flood-list-river">
+          <li class="defra-flood-list-item defra-flood-list-item--alert">
+            <span class="defra-flood-list-item__title">
+              <a href="/target-area/122WAT957">Humber estuary from Spurn Point to Winestead Outfall</a>
+              <span class="defra-flood-list-data__description">Updated <time datetime="">12:00pm on 23 September 2021</time></span>
+            </span>
+          </li>
+          <li class="defra-flood-list-item defra-flood-list-item--alert">
+            <span class="defra-flood-list-item__title">
+              <a href="/target-area/122WAC956">North Sea coast at Withernsea, Easington and Kilnsea</a>
+              <span class="defra-flood-list-data__description">Updated <time datetime="">12:06pm on 23 September 2021</time></span>
+            </span>
+          </li>
+          <li class="defra-flood-list-item defra-flood-list-item--alert">
+            <span class="defra-flood-list-item__title">
+              <a href="/target-area/063WAT23West">Tidal Thames riverside from Putney Bridge to Teddington Weir</a>
+              <span class="defra-flood-list-data__description">Updated <time datetime="">9:25am on 23 September 2021</time></span>
+            </span>
+          </li>
+        </ul>
+      </li>
+      <li class="defra-flood-list-item-group">
+        <h3 class="defra-flood-list__group-title">
+          1 flood warning removed
+        </h3>
+        <p>in the last 24 hours</p>
+        <ul class="defra-flood-list-river">
+          <li class="defra-flood-list-item defra-flood-list-item--removed">
+            <span class="defra-flood-list-item__title">
+              <a href="/target-area/011WACN3">Coast from St Bees Head to Millom</a>
+              <span class="defra-flood-list-data__description">Removed <time datetime="2021-09-23T08:14:00.000Z">9:14am on 23 September 2021</time></span>
+            </span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    {% include "partials/context-footer.html" %}
+  </div>
+  <div class="govuk-grid-column-one-third">
+    {% include "partials/related-content.html" %}
+  </div>
+</div>
+{% endblock %}
