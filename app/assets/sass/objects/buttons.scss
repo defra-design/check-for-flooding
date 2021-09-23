@@ -92,6 +92,10 @@
     @extend .govuk-button--secondary;
     width: auto;
     margin-bottom: 20px;
+    border: 2px solid govuk-colour('black');
+    box-shadow: none;
+    background-color: white;
+    padding-bottom: 8px;
     // color: $govuk-text-colour;
     // font-weight: bold;
     // text-decoration: none;
@@ -166,4 +170,8 @@
     @extend .govuk-button--secondary;
     width: auto;
     margin-bottom: 20px;
+    border: 2px solid govuk-colour('black');
+    box-shadow: none;
+    background-color: white;
+    padding-bottom: 8px;
 }
