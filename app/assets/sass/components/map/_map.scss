@@ -38,9 +38,7 @@
   -ms-user-select: none;
   user-select: none;
   &:focus[keyboard-focus]:after {
-    @include mq ($until: desktop) {
-      @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 1px);
-    }
+    @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 1px);
   }
 }
 .defra-map-key {

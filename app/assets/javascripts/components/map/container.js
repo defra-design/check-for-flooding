@@ -141,7 +141,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Create zoom controls
   const zoomInElement = document.createElement('span')
-  zoomInElement.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" style="fill-rule:evenodd;clip-rule:evenodd;"><rect x="3" y="9" width="14" height="2"/><rect x="9" y="3" width="2" height="14"/></svg><span class="govuk-visually-hidden">Zoom in</span>'
+  zoomInElement.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" style="fill:currentColor;fill-rule:evenodd;clip-rule:evenodd;"><rect x="3" y="9" width="14" height="2"/><rect x="9" y="3" width="2" height="14"/></svg><span class="govuk-visually-hidden">Zoom in</span>'
   zoomInElement.setAttribute('aria-controls', 'viewport')
   const zoomOutElement = document.createElement('span')
   zoomOutElement.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" style="fill:currentColor;fill-rule:evenodd;clip-rule:evenodd;"><rect x="3" y="9" width="14" height="2"/></svg><span class="govuk-visually-hidden">Zoom out</span>'
