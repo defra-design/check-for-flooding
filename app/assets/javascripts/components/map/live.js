@@ -661,7 +661,7 @@ function LiveMap (mapId, options) {
 
   // River level navigation
   containerElement.addEventListener('click', (e) => {
-    if (e.target.classList.contains('defra-map-info__button')) {
+    if (e.target.classList.contains('defra-button-secondary')) {
       const newFeatureId = e.target.getAttribute('data-id')
       const feature = river.getSource().getFeatureById(newFeatureId) || tide.getSource().getFeatureById(newFeatureId)
       setSelectedFeature(newFeatureId)
