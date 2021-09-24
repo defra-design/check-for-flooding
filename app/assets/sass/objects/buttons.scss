@@ -92,15 +92,10 @@
     @extend .govuk-button--secondary;
     width: auto;
     margin-bottom: 20px;
-    border: 2px solid govuk-colour('black');
-    box-shadow: none;
-    background-color: white;
-    padding-bottom: 8px;
-    // color: $govuk-text-colour;
-    // font-weight: bold;
-    // text-decoration: none;
-    // padding-top: 2px;
-    // padding-bottom: 2px;
+    // border: 2px solid govuk-colour('mid-grey');
+    // box-shadow: none;
+    // background-color: white;
+    // padding-bottom: 8px;
     svg {
         float:left;
         margin-right: 5px;
@@ -109,17 +104,6 @@
             margin-right: 6px;
         }
     }
-    // span {
-    //     color: $govuk-link-colour;
-    //     display: inline-block;
-    //     line-height: inherit;
-    // }
-    // &:hover span {
-    //     color: $govuk-link-hover-colour;
-    // }
-    // &:focus span {
-    //     color: $govuk-text-colour;
-    // }
 }
 
 // Download button
@@ -170,8 +154,8 @@
     @extend .govuk-button--secondary;
     width: auto;
     margin-bottom: 20px;
-    border: 2px solid govuk-colour('black');
-    box-shadow: none;
-    background-color: white;
-    padding-bottom: 8px;
+    // border: 2px solid govuk-colour('mid-grey');
+    // box-shadow: none;
+    // background-color: white;
+    // padding-bottom: 8px;
 }
