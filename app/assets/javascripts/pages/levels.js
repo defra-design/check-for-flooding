@@ -24,7 +24,7 @@ if (filter) {
 if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
     btnText: 'View map',
-    btnClasses: 'defra-button-map-s',
+    btnClasses: 'defra-button-secondary defra-button-secondary--map',
     layers: 'mv,ri,ti,gr,rf',
     extent: window.flood.model.bbox
   })

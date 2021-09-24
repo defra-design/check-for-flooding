@@ -10,7 +10,7 @@ const Filter = (btnContainer, settings) => {
   heading.innerHTML += ' (Updates on select)'
   container.setAttribute('aria-labeledby', heading.id)
   const button = document.createElement('button')
-  button.className = 'defra-button-filter'
+  button.className = 'defra-button-secondary'
   button.setAttribute('aria-expanded', false)
   button.setAttribute('aria-controls', settings.detailsId)
   btnContainer.parentNode.replaceChild(button, btnContainer)

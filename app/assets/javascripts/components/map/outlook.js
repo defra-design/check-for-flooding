@@ -423,7 +423,7 @@ maps.createOutlookMap = (mapId, options = {}) => {
   button.id = mapId + '-btn'
   button.innerHTML = options.btnText || 'View map'
   button.innerHTML += '<span class="govuk-visually-hidden">(Visual only)</span>'
-  button.className = options.btnClasses || 'defra-button-map'
+  button.className = options.btnClasses || 'defra-button-secondary defra-button-secondary--map'
   btnContainer.parentNode.replaceChild(button, btnContainer)
 
   // Detect keyboard interaction
