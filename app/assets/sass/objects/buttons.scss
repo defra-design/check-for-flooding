@@ -48,6 +48,7 @@
 
 // Map button
 .defra-button-map {
+    @extend .defra-button-text;
     position:relative;
     display:inline-block;
     color: govuk-color('black');

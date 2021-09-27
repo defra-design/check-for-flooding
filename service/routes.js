@@ -4,6 +4,7 @@ const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
 const targetAreaServices = require('./target-area')
+const outlookServices = require('./outlook')
 const fs = require('fs')
 const path = require('path')
 
@@ -74,7 +75,24 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   }
 })
 
-// GeoJSON used with maps
+//
+// Outlook
+//
+
+router.get('/service/outlook', async (req, res, next) => {
+  try {
+    res.status(200).json(await outlookServices.getOutlook())
+  } catch (err) {
+    res.sendStatus(500)
+    console.log(err)
+  }
+})
+
+//
+// GeoJSON
+//
+
+// Maps
 router.get('/service/geojson/:type', async (req, res, next) => {
   const type = req.params.type
   try {
