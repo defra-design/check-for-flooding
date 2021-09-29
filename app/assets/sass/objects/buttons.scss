@@ -52,9 +52,18 @@
     position:relative;
     display:inline-block;
     color: govuk-color('black');
+    padding-left: 21px;
+    svg {
+        color: $govuk-text-colour;
+        position: absolute;
+        left: 0px;
+        top: 50%;
+        margin-top: -10px;
+    }
     span {
         display: inline-block;
-        border-bottom:1px solid $govuk-text-colour;
+        text-decoration: underline;
+        text-underline-offset: 0.1em;
     }
     &:focus span {
         border:0px;
