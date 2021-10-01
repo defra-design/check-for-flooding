@@ -4,7 +4,6 @@ const locationServices = require('../services/location')
 const outlookServices = require('../services/outlook')
 const Place = require('../models/place')
 const Outlook = require('../models/outlook/outlook-tabs')
-const { response } = require('express')
 
 router.get('/location', (req, res) => {
   res.redirect('/find-location')

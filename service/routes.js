@@ -1,11 +1,37 @@
 const express = require('express')
 const router = express.Router()
+const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
 const outlookServices = require('./outlook')
 const mapServices = require('./map')
 const fs = require('fs')
 const path = require('path')
+
+//
+// Warnings
+//
+
+// Get all warnings
+router.get('/service/warnings', async (req, res, next) => {
+  try {
+    res.status(200).json(await warningServices.getWarnings())
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+// Get warnings that intersect a lon lat bbox
+router.get('/service/warnings/:x1/:y1/:x2/:y2', async (req, res, next) => {
+  try {
+    const { x1, y1, x2, y2 } = req.params
+    res.status(200).json(await warningServices.getWarningsWithinBbox([x1, y1, x2, y2]))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
 
 //
 // Stations
