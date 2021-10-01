@@ -1,7 +1,7 @@
 const db = require('./db')
 
 module.exports = {
-  // Used with maps
+  // Used on natioanl and location page
   getOutlook: async () => {
     const response = await db.query(`
     SELECT * FROM outlook

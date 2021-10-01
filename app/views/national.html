@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-  Flood warnings in England - GOV.UK
+  Check for flooding in England - GOV.UK
 {% endblock %}
 
 {% block content %}
@@ -91,5 +91,15 @@
     {% include "partials/related-content.html" %}
   </div>
 </div>
+{% endblock %}
 
+{% block pageScripts %}
+<script>
+  window.flood = {
+    model: {
+      outlookDays: {{ model.outlook.days | dump | safe }}
+    }
+  }
+</script>
+<script src="/public/javascripts/national.js"></script>
 {% endblock %}

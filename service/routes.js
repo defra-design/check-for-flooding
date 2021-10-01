@@ -1,12 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
-const targetAreaServices = require('./target-area')
 const outlookServices = require('./outlook')
+const mapServices = require('./map')
 const fs = require('fs')
 const path = require('path')
+
+//
+// Stations
+//
 
 // Get all rivers
 router.get('/service/rivers', async (req, res, next) => {
@@ -89,18 +92,22 @@ router.get('/service/outlook', async (req, res, next) => {
 })
 
 //
-// GeoJSON
+// Maps
 //
 
-// Maps
+// GeoJSON layers
 router.get('/service/geojson/:type', async (req, res, next) => {
   const type = req.params.type
   try {
     if (['river', 'tide', 'groundwater', 'rainfall'].includes(type)) {
       const code = type === 'river' ? 's,m' : type === 'tide' ? 'c' : type === 'groundwater' ? 'g' : 'r'
-      res.status(200).json(await stationServices.getStationsGeoJSON(code))
+      res.status(200).json(await mapServices.getStationsGeoJSON(code))
     } else if (type === 'warnings') {
-      res.status(200).json(await warningServices.getWarningsGeoJSON())
+      res.status(200).json(await mapServices.getWarningsGeoJSON())
+    } else if (type === 'outlook') {
+      res.status(200).json(await mapServices.getOutlookGeoJSON())
+    } else if (type === 'places') {
+      res.status(200).json(await mapServices.getPlacesGeoJSON())
     } else {
       res.sendStatus(404)
     }
@@ -113,7 +120,7 @@ router.get('/service/geojson/:type', async (req, res, next) => {
 // GeoJSON warning areas used with TippeCanoe (creating vector tiles)
 router.get('/service/flood-warning-areas-geojson', async (req, res, next) => {
   try {
-    res.status(200).json(await targetAreaServices.getTargetAreasGeoJSON('warning'))
+    res.status(200).json(await mapServices.getTargetAreasGeoJSON('warning'))
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -123,32 +130,14 @@ router.get('/service/flood-warning-areas-geojson', async (req, res, next) => {
 // GeoJSON alert areas used with TippeCanoe (creating vector tiles)
 router.get('/service/target-areas-geojson', async (req, res, next) => {
   try {
-    res.status(200).json(await targetAreaServices.getTargetAreasGeoJSON())
+    res.status(200).json(await mapServices.getTargetAreasGeoJSON())
   } catch (err) {
     res.status(500)
     console.log(err)
   }
 })
 
-//
 // Vector tiles
-//
-
-// Dynamic from postgres used with maps
-// router.get('/tiles/target-areas/:z/:x/:y.mvt', async (req, res, next) => {
-//   const { x, y, z } = req.params
-//   const response = await targetAreaServices.getTargetAreaMVT(x, y, z)
-//   if (response.isError) {
-//     res.status(404).send({ error: response.error.toString() })
-//   } else {
-//     res.setHeader('Content-Type', 'application/x-protobuf')
-//     if (response.st_asmvt.length === 0) {
-//       res.status(204)
-//     }
-//     res.send(response.st_asmvt)
-//   }
-// })
-
 router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
   const { x, y, z } = req.params
   fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {

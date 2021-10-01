@@ -97,47 +97,5 @@ module.exports = {
       response.rows = []
     }
     return response.rows || []
-  },
-
-  // Used with maps
-  getStationsGeoJSON: async (type) => {
-    const response = await db.query(`
-    SELECT id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, state, name, river, value, value_1hr, value_6hr, value_24hr, value_date, percentile_5, percentile_95, up, down
-    FROM station
-    WHERE $1 LIKE '%' || type || '%';
-    `, [`${type}`])
-    const features = []
-    response.rows.forEach(row => {
-      features.push({
-        type: 'Feature',
-        id: `stations.${row.id.replace(/\s/g, '')}`,
-        geometry: {
-          type: 'Point',
-          coordinates: [row.lon, row.lat]
-        },
-        properties: {
-          type: row.type,
-          iswales: row.is_wales,
-          status: row.status,
-          atrisk: !!(row.state === 'high'),
-          name: row.name,
-          river: row.river,
-          value: row.value,
-          valueDate: row.value_date,
-          value1hr: row.value_1hr,
-          value6hr: row.value_6hr,
-          value24hr: row.value_24hr,
-          percentile5: row.percentile_5,
-          percentile95: row.percentile_95,
-          up: row.up,
-          down: row.down
-        }
-      })
-    })
-    const geoJSON = {
-      type: 'FeatureCollection',
-      features: features
-    }
-    return geoJSON
   }
 }

@@ -180,7 +180,7 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/api/places.geojson'
+        url: '/service/geojson/places'
       }),
       style: window.flood.maps.styles.places,
       visible: true,
@@ -272,7 +272,7 @@ window.flood.maps.layers = {
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/api/outlook.geojson'
+        url: '/service/geojson/outlook'
       }),
       renderMode: 'hybrid',
       style: window.flood.maps.styles.outlookPolygons,

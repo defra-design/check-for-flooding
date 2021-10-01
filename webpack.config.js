@@ -8,7 +8,8 @@ module.exports = (env, argv) => ({
   entry: {
     core: './app/assets/javascripts/core',
     levels: './app/assets/javascripts/pages/levels',
-    location: './app/assets/javascripts/pages/location'
+    location: './app/assets/javascripts/pages/location',
+    national: './app/assets/javascripts/pages/national'
   },
   output: {
     path: path.resolve(__dirname, 'public/javascripts')
