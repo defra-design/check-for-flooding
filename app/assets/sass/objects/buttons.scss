@@ -53,6 +53,7 @@
     display:inline-block;
     color: govuk-color('black');
     padding-left: 21px;
+    margin-bottom: 0px !important;
     svg {
         color: $govuk-text-colour;
         position: absolute;
@@ -75,27 +76,6 @@
         border-color: $govuk-text-colour;
     }
 }
-// .defra-button-map-s {
-//     @extend .govuk-button;
-//     @extend .govuk-button--secondary;
-//     @include govuk-font($size: 16);
-//     line-height: 20px;
-//     padding: 6px 8px;
-//     width: auto;
-//     background-color: white;
-//     border: 1px solid govuk-colour('black');
-//     box-shadow: none;
-//     svg {
-//         float:left;
-//         margin-right: 7px;
-//     }
-//     &:hover {
-//         background-color: govuk-colour('mid-grey') !important;
-//     }
-//     &:active {
-//         top: 0px;
-//     }
-// }
 
 .defra-button-secondary {
     position: relative;
