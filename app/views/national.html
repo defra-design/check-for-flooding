@@ -17,7 +17,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <div class="defra-flood-status">
-      {% if not model.hasActiveFloods %}
+      {% if not model.warnings.hasActive %}
       <div class="defra-flood-status-item">
         <div class="defra-flood-status-item__text">
           <strong>
@@ -26,18 +26,19 @@
         </div>
       </div>
       {% endif %}
-      {% for group in model.floods %}
-      {% if group.count > 0 %}
-      {% if group.severity.id < 4 %}
+      {% for group in model.warnings.groups %}
+      {% if group.severity.hash != 'removed' %}
       <div class="defra-flood-status-item defra-flood-status-item--{{ group.severity.hash }}">
-        <span class="defra-flood-status-item__icon"></span>
+        <span class="defra-flood-status-item__icon">
+          {{ group.severity.icon | safe }}
+        </span>
         <div class="defra-flood-status-item__text">
           <strong>
-            <a href="/alerts-and-warnings{% if group.severity.id === model.highestSeverityId %}{% else %}#{{ group.severity.pluralisedHash }}{% endif %}">
+            <a href="/flood-warnings-and-alerts{% if group.severity.id != model.warnings.highestSeverity %}#{{ group.severity.pluralisedHash }}{% endif %}">
               {{ group.title | lower }}
             </a>
           </strong>
-          {% if group.severity.id == 3 %}
+          {% if group.severity.hash == 'severe' %}
           <span class="defra-flood-status-item__text-secondary">There is a danger to life</span>
           {% else %}
           <span class="defra-flood-status-item__text-secondary">{{ group.severity.subTitle }}</span>
@@ -46,17 +47,16 @@
       </div>
       {% else %}
       <p class="defra-flood-status__text">
-        <a href="/alerts-and-warnings#{{ group.severity.pluralisedHash }}">{{ group.title | lower }}</a> {{ group.severity.subTitle }}
+        <a href="/flood-warnings-and-alerts#{{ group.severity.pluralisedHash }}">{{ group.title | lower }}</a> {{ group.severity.subTitle }}
       </p>
-      {% endif %}
       {% endif %}
       {% endfor %}
     </div>
-    {% if model.hasActiveFloods %}
+    {% if model.warnings.hasActive %}
       <span id="map-live"></span>
     {% endif %}
-    <p class="defra-flood-meta {% if model.hasActiveFloods or model.hasWarningsRemoved %} defra-flood-meta--border govuk-!-margin-top-3{% endif %}  govuk-!-margin-bottom-6">
-      Updated at <time datetime="{{model.dateUTC}}">{{model.dateFormatted}}</time>
+    <p class="defra-flood-meta {% if model.warnings.hasActive or model.warnings.hasRemoved %} defra-flood-meta--border{% endif %} govuk-!-margin-bottom-6">
+      Updated at <time datetime="">{{ model.warnings.updated }}</time>
     </p> 
 
     <a href="/find-location" class="defra-button-start govuk-!-margin-bottom-7" data-module="govuk-button">
@@ -81,7 +81,7 @@
       <span id="map-outlook"></span>
       {% endif %}
 
-      <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-6 govuk-!-margin-bottom-4">
+      <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-bottom-4">
         Updated at <time datetime="{{ model.outlook.outlookUTC }}">{{ model.outlook.outlookTimestamp }}</time><br>
         Produced by the Met Office and Environment Agency</p>
     {% endif %}

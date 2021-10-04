@@ -46,42 +46,11 @@
     }
 }
 
-// Map button
-.defra-button-map {
-    @extend .defra-button-text;
-    position:relative;
-    display:inline-block;
-    color: govuk-color('black');
-    padding-left: 21px;
-    margin-bottom: 0px !important;
-    svg {
-        color: $govuk-text-colour;
-        position: absolute;
-        left: 0px;
-        top: 50%;
-        margin-top: -10px;
-    }
-    span {
-        display: inline-block;
-        text-decoration: underline;
-        text-underline-offset: 0.1em;
-    }
-    &:focus span {
-        border:0px;
-    }
-    &:hover span {
-        border-color:$govuk-link-hover-colour;
-    }
-    &:active span {
-        border-color: $govuk-text-colour;
-    }
-}
-
 .defra-button-secondary {
     position: relative;
     @include govuk-font($size: 16);
     width: auto;
-    margin: 0px 0px 10px;
+    margin: 0px;
     border: 1px solid govuk-colour('mid-grey');
     box-shadow: none;
     background-color: white;
