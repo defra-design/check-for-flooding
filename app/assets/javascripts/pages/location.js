@@ -23,7 +23,7 @@ if (document.getElementById('map-live')) {
 if (document.getElementById('map-outlook')) {
   window.flood.maps.createOutlookMap('map-outlook', {
     btnText: 'View map showing flood risk areas',
-    btnClasses: 'defra-button-map govuk-!-margin-bottom-4',
+    btnClasses: 'defra-button-secondary defra-button-secondary--map',
     days: window.flood.model.outlookDays,
     bbox: window.flood.model.bbox
   })

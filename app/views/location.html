@@ -38,7 +38,7 @@ Check for flooding {% if model.place.type === 'city' %}in{% else %}near{% endif%
     {% include "partials/location-banner.html" %}
     <p><a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a></p>
     <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-6 govuk-!-margin-bottom-6">
-      <time datetime="">{{ model.banner.updated }}</time>
+      Up to date as of <time datetime="">{{ model.banner.updated }}</time>
     </p>
 
     <!-- River and sea levels -->
