@@ -1,0 +1,54 @@
+<div class="defra-flood-status govuk-!-margin-bottom-1">
+  {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
+    {% if model.banner.severeMainLink %}
+    <div class="defra-flood-status-item defra-flood-status-item--severe">
+      <span class="defra-flood-status-item__icon">
+        {{ model.banner.icon | safe }}
+      </span>
+      <div class="defra-flood-status-item__text">
+        <strong>
+          <a href="{{ model.banner.severeMainLink }}">{{ model.banner.severeMainText }}</a>
+        </strong>
+        <span class="defra-flood-status-item__text-secondary">{{ model.banner.severeSub }}</span>
+      </div>
+    </div>
+    {% endif %}
+    {% if model.banner.mainLink%}
+    <div class="defra-flood-status-item defra-flood-status-item--{{model.banner.severity}}">
+      <span class="defra-flood-status-item__icon">
+        {{ model.banner.icon | safe }}
+      </span>
+      <div class="defra-flood-status-item__text">
+        <strong>
+          <a href="{{ model.banner.mainLink }}">{{ model.banner.mainText }}</a>
+        </strong>
+        <span class="defra-flood-status-item__text-secondary">{{ model.banner.sub }}</span>
+      </div>
+    </div>
+    {% endif %}
+  {% else %}
+  <div class="defra-flood-status-item">
+    <div class="defra-flood-status-item__text">
+      There are no flood warnings or alerts in this area{% if model.banner.hasHighLevels %} but some <a href="/levels?place={{ model.place.name | urlencode }}">river and sea levels</a> are high{% endif %}.
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts or model.banner.hasRemoved %}
+  {% if (model.banner.hasSevere or model.banner.hasWarnings) and model.banner.hasAlerts  %}
+  <p class="govuk-body">
+    <a href="{{ model.banner.alertsSummaryLink }}">{{ model.banner.alertsSummaryLinkText }}</a> {{ model.banner.alertsSummaryText }} also in the wider area, where some flooding is possible. 
+  </p>
+  {% endif %}
+  {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
+  <span id="map-live"></span>
+  {% endif %}
+  {% if model.banner.hasRemoved  %}
+  <p class="govuk-body">
+    <a href="{{ model.banner.removedLink }}">{{ model.banner.removedLinkText }}</a> {{ model.banner.removedText }}
+  </p>
+  {% endif %}
+{% else %}
+  <p>This service tells you your risk of flooding from rivers, the sea and groundwater. <a href="https://www.gov.uk/find-local-council">Contact your local council about surface water flooding</a> (also known as flash flooding).</p>
+{% endif %}

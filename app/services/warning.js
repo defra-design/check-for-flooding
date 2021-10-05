@@ -17,5 +17,22 @@ module.exports = {
     } catch (error) {
       console.log(error)
     }
+  },
+  // Get warnings that intersect a bbox
+  getWarningsWithin: async (bbox) => {
+    const coords = bbox.join('/')
+    const url = `/warnings/${coords}`
+    try {
+      const response = await axios.get(url, {
+        auth: {
+          username: process.env.USERNAME,
+          password: process.env.PASSWORD
+        },
+        baseURL: serviceUrl
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

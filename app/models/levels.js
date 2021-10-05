@@ -15,6 +15,7 @@ class Levels {
     this.numLevels = this.filters.filter(x => x.isSelected).length ? levels.filter(
       level => this.filters.filter(x => x.isSelected).map(x => x.type).includes(level.type)
     ).length : levels.length
+    this.hasHighLevels = false
     this.levels = this.createLevels(levels, this.filters.filter(x => x.isSelected))
     this.numFilters = this.filters.filter(x => x.isSelected).length
     this.bbox = place.bboxBuffered || river.bbox || []
@@ -28,6 +29,9 @@ class Levels {
     Object.entries(groups).forEach(([key, value]) => {
       value.forEach((item, index) => {
         groups[key][index] = new Level(item)
+        if (item.state === 'high') {
+          this.hasHighLevels = true
+        }
       })
     })
     return groups
