@@ -100,7 +100,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">
         <h2 class="govuk-heading-m" aria-live="polite" id="search-count">
-          {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the{% else %}near{% endif %} {{ model.queryTerm }}
+          {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the {{ model.river.name }}{% else %}near {{ model.place.name }}{% endif %}
         </h2>
         {% if model.levels.filters | length > 1 %}
         <span id="filter"></span>
