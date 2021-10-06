@@ -11,14 +11,16 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
   const queryTerm = req.query.place
   // Get place
   let place = {}
-  const locationResponse = await locationServices.getLocationByQuery(queryTerm)
-  if (locationResponse.status === 200) {
-    if (!(locationResponse.data && locationResponse.data.result)) {
-      return res.status(404).render('404')
+  if (queryTerm && queryTerm !== '') {
+    const locationResponse = await locationServices.getLocationByQuery(queryTerm)
+    if (locationResponse.status === 200) {
+      if (!(locationResponse.data && locationResponse.data.result)) {
+        return res.status(404).render('404')
+      }
+      place = new Place(locationResponse.data.result)
+    } else {
+      // Return 500 error
     }
-    place = new Place(locationResponse.data.result)
-  } else {
-    // Return 500 error
   }
   // Get warnings
   const warningResponse = await warningServices.getWarningsWithin(place.bbox || [])

@@ -69,7 +69,7 @@
 .defra-flood-list-item-group {
     position: relative;
     margin-top: -1px;
-    .defra-flood-list-river {
+    .defra-flood-list-subgroup {
         border: 0px;
     }
 }
@@ -178,7 +178,7 @@
 }
 
 // River variant
-.defra-flood-list-river {
+.defra-flood-list-subgroup {
     position: relative;
     border-top:1px solid $govuk-border-colour;
     border-bottom:1px solid $govuk-border-colour;
@@ -313,6 +313,6 @@
 }
 
 // Overides
-.defra-search-summary + .defra-flood-list-river__name {
+.defra-search-summary + .defra-flood-list-subgroup__name {
     border-top: 0px;
 }

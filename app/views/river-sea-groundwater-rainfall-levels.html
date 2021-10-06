@@ -109,7 +109,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
         {% endif %}
     </div>
     {% if model.queryType === 'river' %}
-    <ul class="defra-flood-list-river" id="list">
+    <ul class="defra-flood-list-subgroup" id="list">
       {% for river, items in model.levels.items %}
       {% for item in items %}
       {% include "partials/level-row.html" %}
@@ -124,7 +124,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
           <h3 class="defra-flood-list__group-title defra-flood-list__group-title--river">
             <a href="/river-sea-groundwater-rainfall-levels?river={{ group | urlencode }}">{{ group }}</a>
           </h3>
-          <ul class="defra-flood-list-river">
+          <ul class="defra-flood-list-subgroup">
             {% for item in items %}
             {% include "partials/level-row.html" %}
             {% endfor %}
@@ -147,7 +147,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% if model and model.levels.bbox %}
 <script>
   window.flood = {
-    model: { bbox: {{ model.levels.bbox | dump | safe }} }
+    model: { bbox: {{ model.bbox | dump | safe }} }
   }
 </script>
 {% endif %}

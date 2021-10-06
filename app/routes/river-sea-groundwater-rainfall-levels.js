@@ -15,8 +15,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     type: req.query.river ? 'river' : (req.query.place ? 'place' : ''),
     filters: req.query.filters
   }
-
-  if (query.type === 'river') {
+  if (query.term !== '' && query.type === 'river') {
     // We have a river query
     let response = await riverServices.getRiverDetail(query.term)
     if (response.status === 200) {
@@ -31,7 +30,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     const levels = new Levels(query, {}, river, response.data || [])
     const model = new ViewModel(query, {}, river, levels)
     return res.render('river-sea-groundwater-rainfall-levels', { model })
-  } else if (query.type === 'place') {
+  } else if (query.term !== '' && query.type === 'place') {
     // A place query
     let response = await locationServices.getLocationByQuery(query.term)
     // Get place
@@ -56,16 +55,16 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
 
 // Search levels
 router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
-  const term = req.body.location
-  const model = { term: term }
+  const queryTerm = req.body.location
+  const model = { queryTerm: queryTerm }
 
   // Empty search
-  if (term === '') {
+  if (queryTerm === '') {
     return res.render('river-sea-groundwater-rainfall-levels', { model })
   }
 
   // Check places
-  const locationResponse = await locationServices.getLocationsByQuery(model.term)
+  const locationResponse = await locationServices.getLocationsByQuery(queryTerm)
   const places = []
   if (locationResponse.status === 200) {
     if (locationResponse.data.results && locationResponse.data.results.length) {
@@ -79,7 +78,7 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   model.places = places
 
   // Check rivers
-  const riverResponse = await riverServices.getRivers(model.term)
+  const riverResponse = await riverServices.getRivers(queryTerm)
   let rivers = []
   if (riverResponse.status === 200) {
     rivers = riverResponse.data
@@ -95,10 +94,10 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     res.render('river-sea-groundwater-rainfall-levels', { model })
   } else if (places.length === 1 && !rivers.length) {
     // We have a single place
-    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(term)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(queryTerm)}`)
   } else if (rivers.length === 1 && !places.length) {
     // We have a single river
-    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(term)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(queryTerm)}`)
   } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
     // We have too many full postcodes
     model.isError = true
