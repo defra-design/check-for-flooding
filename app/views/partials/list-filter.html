@@ -6,7 +6,7 @@
       </legend>
       <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
         {{ model.query | dump }}
-        {% for item in model.filters %}
+        {% for item in model.levels.filters %}
         <div class="govuk-checkboxes__item defra-search-filter__checkbox-item">
           <input class="govuk-checkboxes__input defra-search-filter__input" id="{{ item.type }}" name="filters" type="checkbox" value="{{ item.type }}"{% if item.isSelected %} checked{% endif %}>
           <label class="govuk-checkboxes__label" for="{{ item.type }}">
@@ -16,9 +16,9 @@
         {% endfor %}
       </div>
     </fieldset>
-    <input name="numFiltersSelected" value="{{ model.numFilters }}" type="hidden" />
-    <input name="type" value="{{ model.type }}" type="hidden" />
-    <input name="term" value="{{ model.term }}" type="hidden" />
+    <input name="numFiltersSelected" value="{{ model.levels.numFilters }}" type="hidden" />
+    <input name="type" value="{{ model.queryType }}" type="hidden" />
+    <input name="term" value="{{ model.queryTerm }}" type="hidden" />
     <button class="govuk-button govuk-button--secondary defra-search-filter__button-results" type="submit" data-module="govuk-button">
       Filter results
     </button>

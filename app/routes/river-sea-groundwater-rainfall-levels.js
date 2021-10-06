@@ -6,9 +6,10 @@ const router = express.Router()
 const River = require('../models/river')
 const Place = require('../models/place')
 const Levels = require('../models/levels')
+const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels')
 
 // Get levels
-router.get('/levels', async (req, res) => {
+router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const query = {
     term: decodeURI(req.query.river || req.query.place),
     type: req.query.river ? 'river' : (req.query.place ? 'place' : ''),
@@ -27,9 +28,9 @@ router.get('/levels', async (req, res) => {
     }
     const river = new River(response.data)
     response = await levelServices.getLevelsByRiver(query.term)
-    const levels = response.data || []
-    const model = new Levels(query, {}, river, levels)
-    return res.render('levels', { model })
+    const levels = new Levels(query, {}, river, response.data || [])
+    const model = new ViewModel(query, {}, river, levels)
+    return res.render('river-sea-groundwater-rainfall-levels', { model })
   } else if (query.type === 'place') {
     // A place query
     let response = await locationServices.getLocationByQuery(query.term)
@@ -44,23 +45,23 @@ router.get('/levels', async (req, res) => {
     }
     const place = new Place(response.data.result)
     response = await levelServices.getLevelsWithin(place.bboxBuffered)
-    const levels = response.data || []
-    const model = new Levels(query, place, {}, levels)
-    return res.render('levels', { model })
+    const levels = new Levels(query, place, {}, response.data || [])
+    const model = new ViewModel(query, place, {}, levels)
+    return res.render('river-sea-groundwater-rainfall-levels', { model })
   } else {
     // No query
-    res.render('levels')
+    res.render('river-sea-groundwater-rainfall-levels')
   }
 })
 
 // Search levels
-router.post('/levels', async (req, res) => {
+router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const term = req.body.location
   const model = { term: term }
 
   // Empty search
   if (term === '') {
-    return res.render('levels', { model })
+    return res.render('river-sea-groundwater-rainfall-levels', { model })
   }
 
   // Check places
@@ -91,18 +92,18 @@ router.post('/levels', async (req, res) => {
   if (!places.length && !rivers.length) {
     // We have no matches
     model.isNoResults = true
-    res.render('levels', { model })
+    res.render('river-sea-groundwater-rainfall-levels', { model })
   } else if (places.length === 1 && !rivers.length) {
     // We have a single place
-    res.redirect(`/levels?place=${encodeURI(term)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(term)}`)
   } else if (rivers.length === 1 && !places.length) {
     // We have a single river
-    res.redirect(`/levels?river=${encodeURI(term)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(term)}`)
   } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
     // We have too many full postcodes
     model.isError = true
     model.isErrorPostcode = true
-    res.render('levels', { model })
+    res.render('river-sea-groundwater-rainfall-levels', { model })
   } else {
     // We have multiple matches
     if (places.filter(place => place.type !== 'postcode').length === 0) {
@@ -110,14 +111,14 @@ router.post('/levels', async (req, res) => {
       model.places = []
     }
     model.isMultipleMatch = true
-    res.render('levels', { model })
+    res.render('river-sea-groundwater-rainfall-levels', { model })
   }
 })
 
 router.post('/filter-levels', async (req, res) => {
   const { type, term } = req.body
   const filters = req.body.filters ? Array.isArray(req.body.filters) ? req.body.filters.join(',') : req.body.filters : ''
-  res.redirect(`/levels?${type}=${term}&filters=${filters}`)
+  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filters=${filters}`)
 })
 
 module.exports = router

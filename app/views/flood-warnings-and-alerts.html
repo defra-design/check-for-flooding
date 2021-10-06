@@ -2,10 +2,14 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
+{% if model.place %}
+{{ model.place.name }} -
+{% endif %}
 Flood warnings and alerts in England - GOV.UK
 {% endblock %}
 
 {% block content %}
+<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>
 
 {% if model.isError %}
 <div class="govuk-grid-row">
@@ -74,13 +78,14 @@ Flood warnings and alerts in England - GOV.UK
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <div class="defra-search-summary" id="searchSummary">
-      <button id="map-btn" class="defra-button-secondary defra-button-secondary--map"><svg width="15" height="20" viewBox="0 0 15 20"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="currentColor"></path></svg><span>View map</span><span class="govuk-visually-hidden">(Visual only)</span></button>
+      <span id="map-live"></span>
     </div>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
+    {% if model.warnings %}
     <ul class="defra-flood-list" id="list">
       <li class="defra-flood-list-item-group">
         <h3 class="defra-flood-list__group-title">
@@ -123,6 +128,7 @@ Flood warnings and alerts in England - GOV.UK
         </ul>
       </li>
     </ul>
+    {% endif %}
     {% include "partials/context-footer.html" %}
   </div>
   <div class="govuk-grid-column-one-third">

@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 
 class BannerLocation {
-  constructor (place, warnings, stations) {
+  constructor (place, warnings, levels) {
     const hasSevere = !!(warnings.groups.find(g => g.severity.id === 1))
     const hasWarnings = !!(warnings.groups.find(g => g.severity.id === 2))
     const hasAlerts = !!(warnings.groups.find(g => g.severity.id === 3))
@@ -26,7 +26,7 @@ class BannerLocation {
     this.hasWarnings = hasWarnings
     this.hasAlerts = hasAlerts
     this.hasRemoved = hasRemoved
-    this.hasHighLevels = stations.hasHighLevels
+    this.hasHighLevels = levels.hasHigh
     this.updated = `${moment().tz('Europe/London').format('h:mma')} on ${moment().tz('Europe/London').format('D MMMM YYYY')}`
   }
 
@@ -37,7 +37,7 @@ class BannerLocation {
       this.severeMainLink = `/target-area/${group.items[0].id}`
       this.severeMainText = `Severe flood warning for ${group.items[0].name}`
     } else {
-      this.severeMainLink = `/flood-warnings-and-alerts?q=${encodeURIComponent(location)}#severe`
+      this.severeMainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#severe`
       this.severeMainText = `${group.items.length} severe flood warnings in this area`
     }
     this.icon = group.severity.icon
@@ -51,7 +51,7 @@ class BannerLocation {
       this.mainLink = `/target-area/${group.items[0].id}`
       this.mainText = `Flood warning for ${group.items[0].name}`
     } else {
-      this.mainLink = `/flood-warnings-and-alerts?q=${encodeURIComponent(location)}#warnings`
+      this.mainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#warnings`
       this.mainText = `${group.items.length} flood warnings in this area`
     }
     this.icon = group.severity.icon
@@ -66,7 +66,7 @@ class BannerLocation {
         this.mainLink = `/target-area/${group.items[0].id}`
         this.mainText = 'There is a flood alert in this area'
       } else {
-        this.mainLink = `/flood-warnings-and-alerts?q=${encodeURIComponent(location)}#alerts`
+        this.mainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#alerts`
         this.mainText = `${group.items.length} flood alerts in this area`
       }
       this.icon = group.severity.icon
@@ -77,7 +77,7 @@ class BannerLocation {
         this.alertsSummaryLinkText = '1 flood alert'
         this.alertsSummaryText = 'is'
       } else {
-        this.alertsSummaryLink = `/flood-warnings-and-alerts?q=${encodeURIComponent(location)}#alerts`
+        this.alertsSummaryLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#alerts`
         this.alertsSummaryLinkText = `${group.items.length} flood alerts`
         this.alertsSummaryText = 'are'
       }
@@ -91,7 +91,7 @@ class BannerLocation {
       this.removedLinkText = '1 flood alert or warning was removed '
       this.removedText = 'in the last 24 hours.'
     } else {
-      this.removedLink = `/flood-warnings-and-alerts?q=${encodeURIComponent(location)}#removed`
+      this.removedLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#removed`
       this.removedLinkText = 'Flood alerts and warnings were removed'
       this.removedText = 'in the last 24 hours.'
     }

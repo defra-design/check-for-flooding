@@ -1,23 +1,19 @@
 const utils = require('../utils')
-const Level = require('../models/level')
+const Level = require('./level')
 
 class Levels {
   constructor (query, place, river, levels) {
-    this.term = query.term
-    this.type = query.type
-    this.place = place
-    this.river = river
     this.filters = [...new Set(levels.map(item => item.type))].map(item => ({
       type: item,
       count: levels.filter(level => level.type === item).length,
       isSelected: query.filters ? query.filters.includes(item) : false
     }))
-    this.numLevels = this.filters.filter(x => x.isSelected).length ? levels.filter(
+    this.numFilters = this.filters.filter(x => x.isSelected).length
+    this.numItems = this.filters.filter(x => x.isSelected).length ? levels.filter(
       level => this.filters.filter(x => x.isSelected).map(x => x.type).includes(level.type)
     ).length : levels.length
-    this.hasHighLevels = false
-    this.levels = this.createLevels(levels, this.filters.filter(x => x.isSelected))
-    this.numFilters = this.filters.filter(x => x.isSelected).length
+    this.hasHigh = false
+    this.items = this.createLevels(levels, this.filters.filter(x => x.isSelected))
     this.bbox = place.bboxBuffered || river.bbox || []
   }
 
@@ -30,7 +26,7 @@ class Levels {
       value.forEach((item, index) => {
         groups[key][index] = new Level(item)
         if (item.state === 'high') {
-          this.hasHighLevels = true
+          this.hasHigh = true
         }
       })
     })
