@@ -94,10 +94,10 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     res.render('river-sea-groundwater-rainfall-levels', { model })
   } else if (places.length === 1 && !rivers.length) {
     // We have a single place
-    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(queryTerm)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(queryTerm)}#`)
   } else if (rivers.length === 1 && !places.length) {
     // We have a single river
-    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(queryTerm)}`)
+    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(queryTerm)}#`)
   } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
     // We have too many full postcodes
     model.isError = true
@@ -117,7 +117,7 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
 router.post('/filter-levels', async (req, res) => {
   const { type, term } = req.body
   const filters = req.body.filters ? Array.isArray(req.body.filters) ? req.body.filters.join(',') : req.body.filters : ''
-  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filters=${filters}`)
+  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filters=${filters}#`)
 })
 
 module.exports = router

@@ -65,8 +65,9 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
     model.isNoResultsPost = true
     res.render('flood-warnings-and-alerts', { model })
   } else if (places.length === 1) {
+    console.log(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}`)
     // We have a single place
-    res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}`)
+    res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}#`)
   } else if (places.filter(place => place.type !== 'postcode').length === 0) {
     // We have too many full postcodes
     model.isError = true
