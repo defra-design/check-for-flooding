@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.place %}
+{% if model.place.name %}
 {{ model.place.name }} -
 {% endif %}
 Flood warnings and alerts in England - GOV.UK
@@ -44,36 +44,49 @@ Flood warnings and alerts in England - GOV.UK
   </div>
 </div>
 
-{% if model.isMultipleMatch %}
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-s govuk-!-margin-top-4">Locations matching '{{ model.term }}'</h2>
+	<div class="govuk-grid-column-full">
+
+    {% if model.isMultipleMatch %}
+		<h2 class="govuk-heading-m govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/levels?place={{ place.name }}">{{ place.name | marked(model.term) | safe }}</a></li>
+			<li><a href="/flood-warnings-and-alerts?place={{ place.name }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		<p>Alternatively try searching again</p>
-	</div>
-</div>
-{% endif %}
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+    {% elif model.isNoResultsGet %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-4">
+      No flood warnings or alerts near '{{ model.queryTerm }}'
+    </h2>
+    <p class="govuk-body"><a href="">You can do this...</a></p>
+
+    {% elif model.isNoResultsPost %}
+    <h2 class="govuk-heading-m govuk-!-margin-top-4">
+      No results for '{{ model.queryTerm }}'
+    </h2>
+    <p class="govuk-body">If you searched a place in England, you should:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>check the spelling</li>
+      <li>enter a broader location</li>
+    </ul>
+    <p class="govuk-body">If you searched a place outside England, you should visit:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a href="https://www.sepa.org.uk/environment/water/flooding/">Scottish Environment Protection Agency</a></li>
+      <li><a href="https://www.nidirect.gov.uk/articles/check-the-risk-of-flooding-in-your-area">Northern Ireland Direct</a></li>
+      <li><a href="https://naturalresources.wales/flooding">Natural Resources Wales</a></li>
+    </ul>         
+
+    {% elif model.warnings.groups.length %}
     <div class="defra-search-summary" id="searchSummary">
       <span id="map-live"></span>
     </div>
-  </div>
-</div>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if model.warnings.groups.length %}
     <ul class="defra-flood-list" id="list">
       {% for group in model.warnings.groups %}
       <li class="defra-flood-list-item-group">
-        <h3 class="defra-flood-list__group-title">
+        <h3 class="defra-flood-list__group-title" id="{{ group.severity.pluralisedHash }}">
           {{ group.title }}
         </h3>
         <p>{{ group.severity.subTitle }}</p>
@@ -92,11 +105,10 @@ Flood warnings and alerts in England - GOV.UK
     </ul>
     {% endif %}
     {% include "partials/context-footer.html" %}
-  </div>
-  <div class="govuk-grid-column-one-third">
     {% include "partials/related-content.html" %}
   </div>
 </div>
+
 {% endblock %}
 
 {% block pageScripts %}

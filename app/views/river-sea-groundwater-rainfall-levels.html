@@ -79,7 +79,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">
-      No river, sea, groundwater or rainfall levels found
+      No results for '{{ model.queryTerm }}'
     </h2>
     <p class="govuk-body">If you searched a river or place in England, you should:</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -141,6 +141,13 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 {% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% include "partials/context-footer.html" %}
+    {% include "partials/related-content.html" %}
+  </div>
+</div>
 {% endblock %}
 
 {% block pageScripts %}

@@ -1,10 +1,10 @@
 <div class="defra-search govuk-form-group{% if model.isError %} govuk-form-group--error{% endif %}">
   <form method="post" autocomplete="off">
     <label class="govuk-label defra-search__label" for="location">
-      {% if model.searchType == 'placeAndRiver' %}
-      Search river, town or postcode
-      {% else %}
+      {% if model.searchType == 'placeOnly' %}
       Enter town or postcode
+      {% else %}
+      Search river, town or postcode
       {% endif %}
     </label>
     {% if model.isError %}
@@ -12,10 +12,10 @@
       <span class="govuk-visually-hidden">Error:</span>
       {% if model.isErrorPostcode %}
       Enter a full postcode
-      {% elif model.searchType == 'placeAndRiver' %}
-      Enter a river, town or postcode
-      {% else %}
+      {% elif model.searchType == 'placeOnly' %}
       Enter town or postcode
+      {% else %}
+      Enter a river, town or postcode
       {% endif %}
     </span>
     {% endif %}

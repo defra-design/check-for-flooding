@@ -27,9 +27,59 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
   if (warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
     const model = new ViewModel(queryTerm, place, warnings)
+    if (!warnings.groups.length) {
+      model.isNoResultsGet = true
+    }
     res.render('flood-warnings-and-alerts', { model })
   } else {
     // Return 500 error
+  }
+})
+
+// Search warnings
+router.post('/flood-warnings-and-alerts', async (req, res) => {
+  const queryTerm = req.body.location
+  const model = { queryTerm: queryTerm }
+
+  // Empty search
+  if (queryTerm === '') {
+    return res.redirect('/flood-warnings-and-alerts')
+  }
+
+  // Check places
+  const locationResponse = await locationServices.getLocationsByQuery(queryTerm)
+  const places = []
+  if (locationResponse.status === 200) {
+    if (locationResponse.data.results && locationResponse.data.results.length) {
+      // We have some matches
+      locationResponse.data.results.forEach(result => { places.push(new Place(result.GAZETTEER_ENTRY)) })
+    }
+  } else {
+    // Log 500 error
+    console.log('500 error: Location')
+  }
+  model.places = places
+
+  if (!places.length) {
+    // We have no matches
+    model.isNoResultsPost = true
+    res.render('flood-warnings-and-alerts', { model })
+  } else if (places.length === 1) {
+    // We have a single place
+    res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}`)
+  } else if (places.filter(place => place.type !== 'postcode').length === 0) {
+    // We have too many full postcodes
+    model.isError = true
+    model.isErrorPostcode = true
+    res.render('flood-warnings-and-alerts', { model })
+  } else {
+    // We have multiple matches
+    if (places.filter(place => place.type !== 'postcode').length === 0) {
+      // We dont want to display hundreds of full postcodes
+      model.places = []
+    }
+    model.isMultipleMatch = true
+    res.render('flood-warnings-and-alerts', { model })
   }
 })
 
