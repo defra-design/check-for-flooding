@@ -11,6 +11,8 @@ class ViewModel {
     this.targetArea = targetArea
     this.targetAreaMessageDate = isActive ? `Updated at ${date}` : isRemoved ? `Removed at ${date}` : null
     this.isActive = isActive
+    this.isRemoved = isRemoved
+    this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
   }
 }
 module.exports = ViewModel

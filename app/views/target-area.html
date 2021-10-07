@@ -26,6 +26,50 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
+
+    <!-- Active -->
+    <div class="defra-flood-status govuk-!-margin-bottom-3">
+      {% if model.isActive %}
+      <div class="defra-flood-status-item defra-flood-status-item--{{ model.targetArea.severity.hash }}">
+        <span class="defra-flood-status-item__icon">
+          {{ model.targetArea.severity.icon | safe }}
+        </span>
+        <div class="defra-flood-status-item__text">
+          <strong>{{ model.targetArea.severity.subTitle }} - <a class="govuk-link" href="{{ model.targetArea.severity.actionLink }}">{{ model.targetArea.severity.tagline }}</a></strong>
+        </div>
+      </div>
+
+      <!-- Inactive but active parent -->
+      {% elif model.isParentActive %}
+      <div class="defra-flood-status-item defra-flood-status-item--alert">
+        <span class="defra-flood-status-item__icon">
+          {{ model.targetArea.parentSeverity.icon | safe }}
+        </span>
+        <div class="defra-flood-status-item__text">
+          {% if model.isRemoved %}
+          The flood warning was removed, but there's still <a href="/target-area/{{ model.targetArea.parentId }}">a flood alert in the wider area</a>  
+          {% else %}
+          There are no flood warnings in this area, but there is <a href="/target-area/{{ model.targetArea.parentId }}">a flood alert in the wider area</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Inactive or removed and inactive parent -->
+      {% elif not model.isParentActive %}
+      <div class="defra-flood-status-item">
+        {% if model.isRemoved %}
+        <div class="defra-flood-status-item__text">
+          The flood {% if model.targetArea.type == 'warning' %}warning{% else %}alert{% endif %} was removed
+        </div>
+        {% else %}
+        <div class="defra-flood-status-item__text">
+          There are no flood {% if model.targetArea.type == 'warning' %}warnings{% else %}alerts{% endif %} in this area
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
       {{ model.title }}
     </h1>
