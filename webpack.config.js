@@ -9,6 +9,7 @@ module.exports = (env, argv) => ({
     core: './app/assets/javascripts/core',
     levels: './app/assets/javascripts/pages/levels',
     warnings: './app/assets/javascripts/pages/warnings',
+    'target-area': './app/assets/javascripts/pages/target-area',
     location: './app/assets/javascripts/pages/location',
     national: './app/assets/javascripts/pages/national'
   },

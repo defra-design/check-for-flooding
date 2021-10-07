@@ -26,7 +26,7 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
       {{ model.title }}
     </h1>
   </div>
@@ -34,10 +34,36 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <p><a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a></p>
-    <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-6 govuk-!-margin-bottom-6">
-      <time datetime="">{{ model.targetArea.date }}</time>
+    {% if model.targetAreaMessageDate %}
+    <p class="defra-flood-meta govuk-!-margin-top-1 govuk-!-margin-bottom-0">
+      <time datetime="">{{ model.targetAreaMessageDate }}</time>
     </p>
+    {% endif %}
+    <span id="map-live"></span>
+  </div>
+</div>
+<div class="govuk-grid-row govuk-!-padding-top-6">
+  <div class="govuk-grid-column-two-thirds">
+    {% if model.targetArea.message %}
+    <p>{{ model.targetArea.message }}</p>
+    {% elif model.type == 'warning' %}
+    <p>We'll update this page when there's a flood warning in the area.</p>
+    <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
+    {% else %}
+    <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
+    {% endif %}
+    <p>
+      <a href="https://www.gov.uk/sign-up-for-flood-warnings">
+        {% if model.isActive %}
+        Get updates to this message by phone, text or email
+        {% else %}
+        Get flood warnings by phone, text or email
+        {% endif %}
+      </a>
+    </p>
+    {% if model.isActive %}
+    <p>Could this information be better? <a href="">Tell us how to improve it.</a></p>
+    {% endif %}
     {% include "partials/context-footer.html" %}
   </div>
   <div class="govuk-grid-column-one-third">
@@ -51,8 +77,11 @@
 <script>
   window.flood = {
     model: {
-      bbox: {{ model.place.bbox | dump | safe }},
-      outlookDays: {{ model.outlook.days | dump | safe }}
+      id: {{ model.targetArea.id | dump | safe }},
+      type: {{ model.targetArea.type | dump | safe }},
+      name: {{ model.targetArea.name | dump | safe }},
+      centroid: {{ model.targetArea.centroid | dump | safe }},
+      bbox: {{ model.targetArea.bbox | dump | safe }}
     }
   }
 </script>

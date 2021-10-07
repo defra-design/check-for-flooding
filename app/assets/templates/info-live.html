@@ -20,11 +20,13 @@
         {% endif %}
     </strong>
     <p class="defra-map-info__description">
-        <a href="">{{ model.name }}</a>
+        <a href="/target-area/{{ model.id }}">{{ model.name }}</a>
     </p>
+    {% if model.date %}
     <p class="defra-map-info__meta">
         Issued {{ model.date }}
     </p>
+    {% endif %}
 </div>
 {% elif model.type === 'S' or model.type === 'M' or model.type === 'G' or model.type === 'C' %}
 <div id="infoDescription">

@@ -8,6 +8,8 @@ module.exports = {
     flood_warning_areas.parent,
     flood_warning_areas.ta_name AS name,
     flood_warning_areas.descrip AS area,
+    Replace(CONCAT(to_char(ST_X(ST_Centroid(flood_warning_areas.geom)), '99.000000'),','
+    ,to_char(ST_Y(ST_Centroid(flood_warning_areas.geom)), '99.000000')), ' ', '') AS centroid,
     Replace(CONCAT(to_char(ST_XMin(flood_warning_areas.geom), '99.000000'),','
     ,to_char(ST_YMin(flood_warning_areas.geom), '99.000000'),','
     ,to_char(ST_XMax(flood_warning_areas.geom), '99.000000'),','
@@ -24,6 +26,8 @@ module.exports = {
     null AS parent,
     flood_alert_areas.ta_name AS name,
     flood_alert_areas.descrip AS area,
+    Replace(CONCAT(to_char(ST_X(ST_Centroid(flood_alert_areas.geom)), '99.000000'),','
+    ,to_char(ST_Y(ST_Centroid(flood_alert_areas.geom)), '99.000000')), ' ', '') AS centroid,
     Replace(CONCAT(to_char(ST_XMin(flood_alert_areas.geom), '99.000000'),','
     ,to_char(ST_YMin(flood_alert_areas.geom), '99.000000'),','
     ,to_char(ST_XMax(flood_alert_areas.geom), '99.000000'),','

@@ -1,4 +1,3 @@
-const moment = require('moment-timezone')
 const severity = require('../models/severity')
 
 class TargetArea {
@@ -9,7 +8,8 @@ class TargetArea {
     this.severity = severity.find(item => item.id === parseInt(data.severity, 10))
     this.message = data.message
     this.area = data.area
-    this.date = `${moment(data.date).tz('Europe/London').format('h:mma')} on ${moment(data.date).tz('Europe/London').format('D MMMM YYYY')}`
+    this.date = data.date
+    this.centroid = data.centroid.split(',').map(x => parseFloat(x))
     this.bbox = data.bbox.split(',').map(x => parseFloat(x))
   }
 }

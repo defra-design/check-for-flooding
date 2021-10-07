@@ -437,29 +437,37 @@ function LiveMap (mapId, options) {
 
   // Create optional target area feature
   if (options.targetArea) {
-    if (options.targetArea.polygon) { // Vector source
-      // Create polygon feature
-      targetArea.polygonFeature = new Feature({
-        geometry: new MultiPolygon(options.targetArea.polygon).transform('EPSG:4326', 'EPSG:3857')
-      })
-      // Create point feature
-      targetArea.pointFeature = new Feature({
-        geometry: new Point(getCenter(targetArea.polygonFeature.getGeometry().getExtent())),
-        ta_code: options.targetArea.id,
-        ta_name: options.targetArea.name
-      })
-      targetArea.pointFeature.setId('flood.' + options.targetArea.id)
-      // Transform id
-      // const featureId = 'flood_warning_alert.' + options.targetArea.id
-      // targetArea.polygonFeature.setId(featureId)
-    } else if (options.targetArea.centre) { // Vector tile source
-      // Create point feature
-      targetArea.pointFeature = new Feature({
-        geometry: new Point(transform(options.targetArea.centre, 'EPSG:4326', 'EPSG:3857')),
-        name: options.targetArea.name
-      })
-      targetArea.pointFeature.setId(options.targetArea.id)
-    }
+    targetArea.pointFeature = new Feature({
+      geometry: new Point(transform(options.targetArea.centre, 'EPSG:4326', 'EPSG:3857')),
+      name: options.targetArea.name,
+      ta_code: options.targetArea.id,
+      type: 'TA'
+    })
+    targetArea.pointFeature.setId(options.targetArea.id)
+    // if (options.targetArea.polygon) { // Vector source
+    //   // Create polygon feature
+    //   targetArea.polygonFeature = new Feature({
+    //     geometry: new MultiPolygon(options.targetArea.polygon).transform('EPSG:4326', 'EPSG:3857')
+    //   })
+    //   // Create point feature
+    //   targetArea.pointFeature = new Feature({
+    //     geometry: new Point(getCenter(targetArea.polygonFeature.getGeometry().getExtent())),
+    //     ta_code: options.targetArea.id,
+    //     ta_name: options.targetArea.name
+    //   })
+    //   targetArea.pointFeature.setId('flood.' + options.targetArea.id)
+    //   // Transform id
+    //   // const featureId = 'flood_warning_alert.' + options.targetArea.id
+    //   // targetArea.polygonFeature.setId(featureId)
+    // } else if (options.targetArea.centre) { // Vector tile source
+    //   // Create point feature
+    //   console.log(options.targetArea.centre)
+    //   targetArea.pointFeature = new Feature({
+    //     geometry: new Point(transform(options.targetArea.centre, 'EPSG:4326', 'EPSG:3857')),
+    //     name: options.targetArea.name
+    //   })
+    //   targetArea.pointFeature.setId(options.targetArea.id)
+    // }
   }
 
   // Define map extent
