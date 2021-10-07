@@ -1,0 +1,60 @@
+
+{% extends "layout.html" %}
+
+{% block pageTitle %}
+{{ model.title }} - GOV.UK
+{% endblock %}
+
+{% block beforeContent %}
+<div class="govuk-phase-banner">
+  <p class="govuk-phase-banner__content">
+    <strong class="govuk-tag govuk-phase-banner__content__tag">
+      beta
+    </strong>
+    <span class="govuk-phase-banner__text">
+      This is a new service – your <a class="govuk-link" href="">feedback</a> will help us to improve it.
+    </span>
+  </p>
+</div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <a href="/find-location" class="defra-flood-location-link">Check another location</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+      {{ model.title }}
+    </h1>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p><a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a></p>
+    <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-6 govuk-!-margin-bottom-6">
+      <time datetime="">{{ model.targetArea.date }}</time>
+    </p>
+    {% include "partials/context-footer.html" %}
+  </div>
+  <div class="govuk-grid-column-one-third">
+    {% include "partials/related-content.html" %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+  window.flood = {
+    model: {
+      bbox: {{ model.place.bbox | dump | safe }},
+      outlookDays: {{ model.outlook.days | dump | safe }}
+    }
+  }
+</script>
+<script src="/public/javascripts/target-area.js"></script>
+{% endblock %}

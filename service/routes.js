@@ -4,6 +4,7 @@ const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
 const outlookServices = require('./outlook')
+const targetAreaServices = require('./target-area')
 const mapServices = require('./map')
 const fs = require('fs')
 const path = require('path')
@@ -27,6 +28,21 @@ router.get('/service/warnings/:x1/:y1/:x2/:y2', async (req, res, next) => {
   try {
     const { x1, y1, x2, y2 } = req.params
     res.status(200).json(await warningServices.getWarningsWithinBbox([x1, y1, x2, y2]))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+//
+// Target area
+//
+
+// Get a single target area with all its details
+router.get('/service/target-area/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id
+    res.status(200).json(await targetAreaServices.getTargetArea(id))
   } catch (err) {
     res.status(500)
     console.log(err)

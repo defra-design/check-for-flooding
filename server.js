@@ -142,6 +142,7 @@ app.use('/', require('./app/routes/find-location'))
 app.use('/', require('./app/routes/location'))
 app.use('/', require('./app/routes/flood-warnings-and-alerts'))
 app.use('/', require('./app/routes/river-sea-groundwater-rainfall-levels'))
+app.use('/', require('./app/routes/target-area'))
 
 // Load routes (found in service/routes)
 app.use('/', require('./service/routes'))
