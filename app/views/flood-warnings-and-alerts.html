@@ -57,7 +57,7 @@ Flood warnings and alerts in England - GOV.UK
     <p>Alternatively try searching again</p>
   </div>
 
-  {% elif model.isNoResultsGet %}
+  {% elif model.isNoResults %}
   <div class="govuk-grid-column-two-thirds">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">
       No flood warnings or alerts near '{{ model.place.name }}'
@@ -65,7 +65,7 @@ Flood warnings and alerts in England - GOV.UK
     <p class="govuk-body"><a href="">You can do this...</a></p>
   </div>
 
-  {% elif model.isNoResultsPost %}
+  {% elif model.isErrorLocation %}
   <div class="govuk-grid-column-two-thirds">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">
       No results for '{{ model.queryTerm }}'

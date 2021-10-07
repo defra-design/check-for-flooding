@@ -28,7 +28,7 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
     const warnings = new Warnings(warningResponse.data)
     const model = new ViewModel(queryTerm, place, warnings)
     if (!warnings.groups.length) {
-      model.isNoResultsGet = true
+      model.isNoResults = true
     }
     res.render('flood-warnings-and-alerts', { model })
   } else {
@@ -62,7 +62,7 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
 
   if (!places.length) {
     // We have no matches
-    model.isNoResultsPost = true
+    model.isErrorLocation = true
     res.render('flood-warnings-and-alerts', { model })
   } else if (places.length === 1) {
     console.log(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}`)
