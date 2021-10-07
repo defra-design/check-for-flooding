@@ -94,6 +94,9 @@
         display: block;
         padding-left:0px;
         @include govuk-font($size: 19, $weight: bold);
+        @include mq ($from: tablet) {
+            max-width: 66%;
+        }
     }
     &__title:after {
         position: absolute;

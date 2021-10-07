@@ -278,8 +278,8 @@ function OutlookMap (mapId, options) {
   }
 
   // Centre map on bbox
-  if (options.bbox && options.bbox.length) {
-    maps.setExtentFromLonLat(map, options.bbox)
+  if (options.extent && options.extent.length) {
+    maps.setExtentFromLonLat(map, options.extent)
   }
 
   //

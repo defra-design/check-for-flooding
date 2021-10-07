@@ -60,7 +60,7 @@ Flood warnings and alerts in England - GOV.UK
   {% elif model.isNoResultsGet %}
   <div class="govuk-grid-column-two-thirds">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">
-      No flood warnings or alerts near '{{ model.queryTerm }}'
+      No flood warnings or alerts near '{{ model.place.name }}'
     </h2>
     <p class="govuk-body"><a href="">You can do this...</a></p>
   </div>
