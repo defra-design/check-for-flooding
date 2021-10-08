@@ -57,11 +57,6 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const places = []
   let rivers = []
 
-  // Empty search
-  // if (queryTerm === '') {
-  //   return res.render('river-sea-groundwater-rainfall-levels', { model })
-  // }
-
   // Check places
   if (query.term !== '') {
     const locationResponse = await locationServices.getLocationsByQuery(query.term)
