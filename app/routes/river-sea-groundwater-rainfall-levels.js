@@ -44,6 +44,8 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     const levelResponse = await levelServices.getLevelsWithin(place.bboxBuffered)
     const levels = new Levels(query.filters, place, {}, levelResponse.data || [])
     model = new ViewModel(query, place, null, null, null, levels)
+  } else {
+    model = new ViewModel(query, null, null, null, null, null)
   }
   res.render('river-sea-groundwater-rainfall-levels', { model })
 })
@@ -91,31 +93,6 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   } else {
     res.render('river-sea-groundwater-rainfall-levels', { model })
   }
-
-  // if (!places.length && !rivers.length) {
-  //   // We have no matches
-  //   model.isNoResults = true
-  //   res.render('river-sea-groundwater-rainfall-levels', { model })
-  // } else if (places.length === 1 && !rivers.length) {
-  //   // We have a single place
-  //   res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(queryTerm)}#`)
-  // } else if (rivers.length === 1 && !places.length) {
-  //   // We have a single river
-  //   res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(queryTerm)}#`)
-  // } else if (places.filter(place => place.type !== 'postcode').length === 0 && !rivers.length) {
-  //   // We have too many full postcodes
-  //   model.isError = true
-  //   model.isErrorPostcode = true
-  //   res.render('river-sea-groundwater-rainfall-levels', { model })
-  // } else {
-  //   // We have multiple matches
-  //   if (places.filter(place => place.type !== 'postcode').length === 0) {
-  //     // We dont want to display hundreds of full postcodes
-  //     model.places = []
-  //   }
-  //   model.isMultipleMatch = true
-  //   res.render('river-sea-groundwater-rainfall-levels', { model })
-  // }
 })
 
 router.post('/filter-levels', async (req, res) => {

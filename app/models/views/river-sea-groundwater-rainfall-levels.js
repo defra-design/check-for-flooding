@@ -19,7 +19,7 @@ class ViewModel {
     this.isErrorEmpty = isPost && !query.term
     this.isErrorLocation = isPost && query.term && !place
     this.isErrorPostcode = isPost && places.length > 1 && (places.filter(place => place.type === 'postcode').length === places.length)
-    this.isError = this.isErrorEmpty || this.isErrorLocation || this.isErrorPostcode
+    this.isError = isPost ? (this.isErrorEmpty || this.isErrorLocation || this.isErrorPostcode) : false
   }
 }
 module.exports = ViewModel

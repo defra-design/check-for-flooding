@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-Locations matching {{ model.query }} - Check for flooding - GOV.UK
+Locations matching {{ model.queryTerm }} - Check for flooding - GOV.UK
 {% endblock %}
 
 {% block beforeContent %}
@@ -20,12 +20,12 @@ Locations matching {{ model.query }} - Check for flooding - GOV.UK
 {% block content %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h1 class="govuk-heading-l">Locations matching '{{ model.query }}'</h1>
+		<h1 class="govuk-heading-l">Locations matching '{{ model.queryTerm }}'</h1>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/location/{{ place.slug }}">{{ place.name | marked(model.query) | safe }}</a></li>
+			<li><a href="/location/{{ place.slug }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
