@@ -5,7 +5,6 @@
         <h2 class="govuk-fieldset__heading defra-search-filter__heading">Filter by measurement type</h2>
       </legend>
       <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-        {{ model.query | dump }}
         {% for item in model.levels.filters %}
         <div class="govuk-checkboxes__item defra-search-filter__checkbox-item">
           <input class="govuk-checkboxes__input defra-search-filter__input" id="{{ item.type }}" name="filters" type="checkbox" value="{{ item.type }}"{% if item.isSelected %} checked{% endif %}>

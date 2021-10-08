@@ -1,5 +1,3 @@
-const moment = require('moment-timezone')
-
 class BannerLocation {
   constructor (place, warnings, levels) {
     const hasSevere = !!(warnings.groups.find(g => g.severity.id === 1))
@@ -27,7 +25,6 @@ class BannerLocation {
     this.hasAlerts = hasAlerts
     this.hasRemoved = hasRemoved
     this.hasHighLevels = levels.hasHigh
-    this.updated = `${moment().tz('Europe/London').format('h:mma')} on ${moment().tz('Europe/London').format('D MMMM YYYY')}`
   }
 
   groupSevere (group, location) {

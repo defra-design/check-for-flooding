@@ -2,11 +2,11 @@ const utils = require('../utils')
 const Level = require('./level')
 
 class Levels {
-  constructor (query, place, river, levels) {
+  constructor (filters, place, river, levels) {
     this.filters = [...new Set(levels.map(item => item.type))].map(item => ({
       type: item,
       count: levels.filter(level => level.type === item).length,
-      isSelected: query.filters ? query.filters.includes(item) : false
+      isSelected: filters ? filters.includes(item) : false
     }))
     this.numFilters = this.filters.filter(x => x.isSelected).length
     this.numItems = this.filters.filter(x => x.isSelected).length ? levels.filter(

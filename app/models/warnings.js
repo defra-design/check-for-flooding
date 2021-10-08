@@ -32,7 +32,6 @@ class Warnings {
       }
     }
     this.highestSeverity = Math.min.apply(Math, this.groups.map((o) => { return o.severity.id }))
-    this.updated = `${moment().tz('Europe/London').format('h:mma')} on ${moment().tz('Europe/London').format('D MMMM YYYY')}`
   }
 }
 

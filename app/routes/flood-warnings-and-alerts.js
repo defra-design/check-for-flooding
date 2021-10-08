@@ -10,7 +10,7 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 router.get('/flood-warnings-and-alerts', async (req, res) => {
   const queryTerm = req.query.place
   // Get place
-  let place = {}
+  let place
   if (queryTerm && queryTerm !== '') {
     const locationResponse = await locationServices.getLocationByQuery(queryTerm)
     if (locationResponse.status === 200) {
@@ -23,13 +23,10 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
     }
   }
   // Get warnings
-  const warningResponse = await warningServices.getWarningsWithin(place.bbox || [])
+  const warningResponse = await warningServices.getWarningsWithin(place ? place.bbox : [])
   if (warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
-    const model = new ViewModel(queryTerm, place, warnings)
-    if (!warnings.groups.length) {
-      model.isNoResults = true
-    }
+    const model = new ViewModel(queryTerm, place, null, warnings)
     res.render('flood-warnings-and-alerts', { model })
   } else {
     // Return 500 error
@@ -39,13 +36,10 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
 // Search warnings
 router.post('/flood-warnings-and-alerts', async (req, res) => {
   const queryTerm = req.body.location
-  const model = { queryTerm: queryTerm }
-
   // Empty search
   if (queryTerm === '') {
     return res.redirect('/flood-warnings-and-alerts')
   }
-
   // Check places
   const locationResponse = await locationServices.getLocationsByQuery(queryTerm)
   const places = []
@@ -58,28 +52,10 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
     // Log 500 error
     console.log('500 error: Location')
   }
-  model.places = places
-
-  if (!places.length) {
-    // We have no matches
-    model.isErrorLocation = true
-    res.render('flood-warnings-and-alerts', { model })
-  } else if (places.length === 1) {
-    console.log(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}`)
-    // We have a single place
+  const model = new ViewModel(queryTerm, null, places, null)
+  if (model.isSingleMatch) {
     res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}#`)
-  } else if (places.filter(place => place.type !== 'postcode').length === 0) {
-    // We have too many full postcodes
-    model.isError = true
-    model.isErrorPostcode = true
-    res.render('flood-warnings-and-alerts', { model })
   } else {
-    // We have multiple matches
-    if (places.filter(place => place.type !== 'postcode').length === 0) {
-      // We dont want to display hundreds of full postcodes
-      model.places = []
-    }
-    model.isMultipleMatch = true
     res.render('flood-warnings-and-alerts', { model })
   }
 })

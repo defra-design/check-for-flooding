@@ -46,7 +46,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 
-{% if model.isMultipleMatch %}
+{% if model.isMultipleMatch and not model.isErrorPostcode %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		<h2 class="govuk-heading-m govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
@@ -75,7 +75,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 	</div>
 </div>
 
-{% elif model.isNoResults %}
+{% elif model.isErrorLocation and not model.isErrorPostcode %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">
@@ -95,7 +95,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </div>
 </div>
 
-{% elif model and model.queryTerm !== '' and not model.isError %}
+{% elif not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-search-summary" id="searchSummary">

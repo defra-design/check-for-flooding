@@ -9,8 +9,7 @@ Flood warnings and alerts in England - GOV.UK
 {% endblock %}
 
 {% block content %}
-
-{% if model.isError %}
+{% if model.isErrorPostcode %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -19,15 +18,7 @@ Flood warnings and alerts in England - GOV.UK
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
-					<li>
-						<a href="#location">
-							{% if model.isErrorPostcode %}
-              Enter a full postcode
-							{% else %}
-							Enter a town or postcode
-							{% endif %}
-						</a>
-					</li>
+					<li><a href="#location">Enter a full postcode</a></li>
 				</ul>
 			</div>
 		</div>
@@ -45,7 +36,7 @@ Flood warnings and alerts in England - GOV.UK
 </div>
 
 <div class="govuk-grid-row">
-  {% if model.isMultipleMatch %}
+  {% if model.isMultipleMatch and not model.isErrorPostcode %}
   <div class="govuk-grid-column-two-thirds">
     <h2 class="govuk-heading-m govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
     <p>More than one match was found for your location. Choose the correct location from the following options:</p>
@@ -119,12 +110,10 @@ Flood warnings and alerts in England - GOV.UK
 {% endblock %}
 
 {% block pageScripts %}
-{% if model and model.place %}
 <script>
   window.flood = {
     model: { bbox: {{ model.bbox | dump | safe }} }
   }
 </script>
-{% endif %}
 <script src="/public/javascripts/warnings.js"></script>
 {% endblock %}
