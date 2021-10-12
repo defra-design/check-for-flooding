@@ -50,6 +50,12 @@ $govuk-assets-path: '/govuk/assets/';
 @import "components/map/map-info";
 @import "components/map/map-overlays";
 @import "components/map/map-days";
+@import "components/flood-statistics";
+@import "components/line-chart";
+@import "components/toggle-list-display";
+@import "components/flood-impact-list";
+@import "components/social";
+@import "components/service-error";
 
 // Tools
 
