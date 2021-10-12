@@ -34,7 +34,24 @@ const groupBy = (items, key) => items.reduce(
   {}
 )
 
+const formatElaspedTime = (date) => {
+  const duration = (new Date() - new Date(date))
+  const mins = Math.floor(duration / (1000 * 60))
+  const hours = Math.floor(duration / (1000 * 60 * 60))
+  const days = parseInt(Math.floor(hours / 24))
+  if (mins < 91 || hours < 2) {
+    return `${mins} minutes ago`
+  } else {
+    if (hours < 48) {
+      return `${hours} hours ago`
+    } else {
+      return `${days} days ago`
+    }
+  }
+}
+
 module.exports = {
+  formatElaspedTime,
   getSlug,
   getSlugFromGazetteerEntry,
   groupBy

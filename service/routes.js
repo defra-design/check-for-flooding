@@ -50,7 +50,7 @@ router.get('/service/target-area/:id', async (req, res, next) => {
 })
 
 //
-// Stations
+// Rivers
 //
 
 // Get all rivers
@@ -93,6 +93,20 @@ router.get('/service/rivers/:slug', async (req, res, next) => {
 router.get('/service/river-detail/:slug', async (req, res, next) => {
   try {
     res.status(200).json(await riverServices.getRiverDetailBySlug(req.params.slug))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+//
+// Stations
+//
+
+// Get a single station with all its details
+router.get('/service/station/:id', async (req, res, next) => {
+  try {
+    res.status(200).json(await stationServices.getStation(req.params.id))
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -159,6 +173,22 @@ router.get('/service/geojson/:type', async (req, res, next) => {
   }
 })
 
+// Vector tiles
+router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
+  const { x, y, z } = req.params
+  fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
+    if (err) {
+      res.status(204)
+    } else {
+      // set the content type based on the file
+      res.setHeader('Content-Type', 'application/x-protobuf')
+      res.setHeader('Content-Encoding', 'gzip')
+      res.write(data, 'binary')
+    }
+    res.end(null, 'binary')
+  })
+})
+
 // GeoJSON warning areas used with TippeCanoe (creating vector tiles)
 router.get('/service/flood-warning-areas-geojson', async (req, res, next) => {
   try {
@@ -177,22 +207,6 @@ router.get('/service/target-areas-geojson', async (req, res, next) => {
     res.status(500)
     console.log(err)
   }
-})
-
-// Vector tiles
-router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
-  const { x, y, z } = req.params
-  fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
-    if (err) {
-      res.status(204)
-    } else {
-      // set the content type based on the file
-      res.setHeader('Content-Type', 'application/x-protobuf')
-      res.setHeader('Content-Encoding', 'gzip')
-      res.write(data, 'binary')
-    }
-    res.end(null, 'binary')
-  })
 })
 
 module.exports = router

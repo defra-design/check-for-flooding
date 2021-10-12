@@ -1,7 +1,7 @@
 const db = require('./db')
 
 module.exports = {
-  // Used on list pages
+  // Used on list page
   getStationsWithinBbox: async (bbox) => {
     // Convert type names to chars
     const response = await db.query(`
@@ -49,7 +49,7 @@ module.exports = {
     return response.rows || {}
   },
 
-  // Used on list pages
+  // Used on list page
   getStationsByRiverSlug: async (slug) => {
     // Convert type names to chars
     const response = await db.query(`
@@ -97,5 +97,40 @@ module.exports = {
       response.rows = []
     }
     return response.rows || []
+  },
+
+  // Used on detail page
+  getStation: async (id) => {
+    const response = await db.query(`
+    SELECT
+    station.id,
+    CASE
+    WHEN station.type = 'm' THEN true
+    ELSE false
+    END AS is_multi,
+    station.type_name AS type,
+    river.display AS river,
+    station.river AS river_name_wiski,
+    station.name,
+    station.state,
+    station.status,
+    station.percentile_95 AS range_bottom,
+    station.percentile_5 AS range_top,
+    station.value AS height,
+    station.value_downstream AS height_downstream,
+    station.value_1hr AS rainfall_1hr,
+    station.value_6hr AS rainfall_6hr,
+    station.value_24hr AS rainfall_24hr,
+    station.value_date AS date,
+    station.up AS upstream_id,
+    station.down AS downstream_id,
+    CONCAT(station.lon,',',station.lat) AS centroid,
+    station.is_wales
+    FROM station
+    LEFT JOIN river_station ON river_station.station_id = station.id
+    LEFT JOIN river ON river.slug = river_station.slug
+    WHERE station.id = $1
+    `, [id])
+    return response.rows[0]
   }
 }
