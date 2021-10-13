@@ -28,9 +28,10 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
       {{ model.title }}
     </h1>
+    <span class="govuk-caption-m">Measured 45 minutes ago</span>
   </div>
 </div>
 
@@ -86,14 +87,65 @@
 
 {% else %}
 
-{% if model.isFfoi and model.forecastOutOfDate %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h2 class="govuk-visually-hidden">Station summary</h2>
+    <div class="defra-flood-statistics govuk-!-margin-top-6">
+      <dl class="defra-flood-statistics__list">
+      {# if station has hasPercentiles, this should exclude Coastal #}
+        {% if model.station.rangeTop and model.station.rangeBottom  %}
+        <div class="defra-flood-statistics__column-one-third"> 
+          <dt class="defra-flood-statistics__key">
+            <span class="defra-toggletip">
+              <a href="/asset-25#state" class="defra-toggletip__link" aria-label="How we define state"> <!-- defra-flood-statistics__impact--high -->
+                State
+              </a>
+              <span class="defra-toggletip__status" role="status"></span>
+            </span>
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            {{ model.station.state | capitalize }}
+            <span class="defra-flood-statistics__value-detail">
+            {% if model.station.state == 'low' %}
+            below {{ model.station.rangeBottom }}m
+            {% elif model.station.state == 'high' %}
+            above {{ model.station.rangeTop }}m
+            {% else %}
+            {{ model.station.rangeBottom }}m to {{ model.station.rangeTop }}m
+            {% endif %}
+            </span>
+          </dd>
+        </div>
+        {% endif %}
+        <div class="defra-flood-statistics__column-one-third">
+          <dt class="defra-flood-statistics__key">
+            <span class="defra-toggletip">
+              <a href="/asset-25#river-height" class="defra-toggletip__link" aria-label="How we measure height">
+                Height
+              </a>
+              <span class="defra-toggletip__status" role="status"></span>
+            </span>
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            {{ model.station.height }}m
+            <span class="defra-flood-statistics__value-detail">
+              at <time datetime="">{{ model.time }}</time>
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+  <!-- {% if model.isFfoi and model.forecastOutOfDate %}
   <div class="defra-service-error govuk-!-margin-bottom-8">
     <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the forecast data</h2>
     <p class="govuk-body govuk-!-margin-bottom-0">
       The forecast data is missing or more than 24 hours old. Try again later.
     </p>
   </div>
-{% endif %}
+  {% endif %}
 
   {# Latest Status #}
   {% if model.readings %}
@@ -165,7 +217,7 @@
     <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
   </div>
     
-  {% endif %}
+  {% endif %} -->
 {% endif %}
 
 <div class="govuk-grid-row">
@@ -174,7 +226,7 @@
       <span id="map"></span>
       {% if model.station.upstreamId %}<a href="/station/{{ model.station.upstreamId }}" class="defra-flood-nav__link defra-flood-nav__link--upstream">Upstream</a>{% endif %}
       {% if model.station.downstreamId %}<a href="/station/{{ model.station.downstreamId }}" class="defra-flood-nav__link defra-flood-nav__link--downstream">Downstream</a>{% endif %}
-      <a href="/river-and-sea-levels?rloi-id={{ model.station.id }}" class="defra-flood-nav__link">Nearby levels</a>
+      <a href="/river-sea-groundwater-rainfall-levels?id={{ model.station.id }}" class="defra-flood-nav__link">Nearby levels</a>
     </nav>
   </div>
 </div>
@@ -289,9 +341,28 @@
     <p class="govuk-text govuk-!-margin-bottom-6">
       <a href="/how-we-measure-river-sea-groundwater-levels">How we measure river, sea and groundwater levels</a>
     </p>
-    {% include "partials/social.html" %}
   </div>  
 </div>  
 
+{% include "partials/social.html" %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% include "partials/context-footer.html" %}
+    {% include "partials/related-content.html" %}
+  </div>
+</div>
+
 {% endblock %}
 
+{% block pageScripts %}
+<script>
+  window.flood = {
+    model: {
+      id: {{ model.station.id | dump | safe }},
+      centroid: {{ model.station.centroid | dump | safe }}
+    }
+  }
+</script>
+<script src="/public/javascripts/station.js"></script>
+{% endblock %}

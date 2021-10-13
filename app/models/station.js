@@ -1,5 +1,3 @@
-const utils = require('../utils')
-
 class Station {
   constructor (data, variant = '') {
     this.id = data.id
@@ -20,7 +18,7 @@ class Station {
       this.rainfall_1hr = data.rainfall_6hrl
       this.rainfall_1hr = data.rainfall_24hr
     }
-    this.date = data.date ? utils.formatElaspedTime(data.date) : ''
+    this.date = data.date
     if (data.upstream_id) {
       this.upstreamId = data.upstream_id
     }
@@ -28,7 +26,7 @@ class Station {
       this.downstreamId = data.downstream_id
     }
     this.isWales = data.is_wales === 'TRUE'
-    this.centroid = data.centroid.split(',').map(x => parseFloat(x))
+    this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)
   }
 }
 

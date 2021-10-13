@@ -1,3 +1,5 @@
+const moment = require('moment-timezone')
+
 const getSlug = (string) => {
   return string.replace(/\s+/g, '-').replace(/'|\(|\)|,/g, '').toLowerCase()
 }
@@ -50,8 +52,24 @@ const formatElaspedTime = (date) => {
   }
 }
 
+const formatTime = (date) => {
+  const today = moment().startOf('day')
+  const tomorrow = moment().add(1, 'days').startOf('day')
+  const dateWhen = (() => {
+    if (moment(date).isSame(today, 'd')) {
+      return 'today'
+    } else if (moment(date).isSame(tomorrow, 'd')) {
+      return 'tomorrow'
+    } else {
+      return `on ${moment(date).format('D/MM/YY')}`
+    }
+  })()
+  return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
+}
+
 module.exports = {
   formatElaspedTime,
+  formatTime,
   getSlug,
   getSlugFromGazetteerEntry,
   groupBy

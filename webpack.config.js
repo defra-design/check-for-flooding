@@ -11,7 +11,8 @@ module.exports = (env, argv) => ({
     warnings: './app/assets/javascripts/pages/warnings',
     'target-area': './app/assets/javascripts/pages/target-area',
     location: './app/assets/javascripts/pages/location',
-    national: './app/assets/javascripts/pages/national'
+    national: './app/assets/javascripts/pages/national',
+    station: './app/assets/javascripts/pages/station'
   },
   output: {
     path: path.resolve(__dirname, 'public/javascripts')

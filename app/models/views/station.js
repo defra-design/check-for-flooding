@@ -1,4 +1,4 @@
-// const moment = require('moment-timezone')
+const utils = require('../../utils')
 
 class ViewModel {
   constructor (station) {
@@ -13,7 +13,10 @@ class ViewModel {
         return `${station.type.charAt(0).toUpperCase() + station.type.slice(1)} level at ${station.name}`
       }
     })()
+    this.time = station.date ? utils.formatTime(station.date) : ''
+    this.timeElapsed = station.date ? utils.formatElaspedTime(station.date) : ''
     this.station = station
+    this.readings = []
   }
 }
 module.exports = ViewModel
