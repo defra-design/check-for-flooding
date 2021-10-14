@@ -36,19 +36,16 @@
 </div>
 
 {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts or model.banner.hasRemoved %}
-  {% if (model.banner.hasSevere or model.banner.hasWarnings) and model.banner.hasAlerts  %}
-  <p class="govuk-body">
-    <a href="{{ model.banner.alertsSummaryLink }}">{{ model.banner.alertsSummaryLinkText }}</a> {{ model.banner.alertsSummaryText }} also in the wider area, where some flooding is possible. 
-  </p>
-  {% endif %}
-  {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
-  <span id="map-live"></span>
-  {% endif %}
-  {% if model.banner.hasRemoved  %}
-  <p class="govuk-body">
-    <a href="{{ model.banner.removedLink }}">{{ model.banner.removedLinkText }}</a> {{ model.banner.removedText }}
-  </p>
-  {% endif %}
+{% if (model.banner.hasSevere or model.banner.hasWarnings) and model.banner.hasAlerts  %}
+<p class="govuk-body">
+  <a href="{{ model.banner.alertsSummaryLink }}">{{ model.banner.alertsSummaryLinkText }}</a> {{ model.banner.alertsSummaryText }} also in the wider area, where some flooding is possible. 
+</p>
+{% endif %}
+{% if model.banner.hasRemoved  %}
+<p class="govuk-body">
+  <a href="{{ model.banner.removedLink }}">{{ model.banner.removedLinkText }}</a> {{ model.banner.removedText }}
+</p>
+{% endif %}
 {% else %}
-  <p>This service tells you your risk of flooding from rivers, the sea and groundwater. <a href="https://www.gov.uk/find-local-council">Contact your local council about surface water flooding</a> (also known as flash flooding).</p>
+<p>This service tells you your risk of flooding from rivers, the sea and groundwater. <a href="https://www.gov.uk/find-local-council">Contact your local council about surface water flooding</a> (also known as flash flooding).</p>
 {% endif %}
