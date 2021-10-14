@@ -105,10 +105,10 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.levels and not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-search-summary govuk-!-margin-top-8" id="searchSummary">
-        <h2 class="govuk-heading-m" aria-live="polite" id="search-count">
-          {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the {{ model.river.name }}{% else %}near {{ model.place.name }}{% endif %}
-        </h2>
+    <div id="searchSummary">
+      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-2" aria-live="polite" id="search-count">
+        {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the {{ model.river.name }}{% else %}near {{ model.place.name }}{% endif %}
+      </h2>
     </div>
     {% if model.queryType === 'river' %}
     <ul class="defra-flood-list-subgroup" id="list">

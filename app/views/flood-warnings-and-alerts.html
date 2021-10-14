@@ -32,6 +32,7 @@ Flood warnings and alerts in England - GOV.UK
       Flood warnings and alerts in England
     </h1>
     {% include "partials/list-search.html" %}
+    <span id="map-live"></span>
   </div>
 </div>
 
@@ -76,10 +77,7 @@ Flood warnings and alerts in England - GOV.UK
 
   {% elif model.warnings.groups.length %}
   <div class="govuk-grid-column-full">
-    <div class="defra-search-summary" id="searchSummary">
-      <span id="map-live"></span>
-    </div>
-    <ul class="defra-flood-list" id="list">
+    <ul class="defra-flood-list defra-flood-list--warnings" id="list">
       {% for group in model.warnings.groups %}
       <li class="defra-flood-list-item-group">
         <h3 class="defra-flood-list__group-title" id="{{ group.severity.pluralisedHash }}">
