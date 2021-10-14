@@ -43,13 +43,20 @@ River, sea, groundwater and rainfall levels - GOV.UK
       River, sea, groundwater and rainfall levels
     </h1>
     {% include "partials/list-search.html" %}
+    {% if model.levels.filters | length > 1 %}
+    <span id="filter"></span>
+    {% endif %}
+    <span id="map"></span>
+    {% if model.levels.filters | length > 1 %}
+    {% include "partials/list-filter.html" %}
+    {% endif %}
   </div>
 </div>
 
 {% if model.isMultipleMatch and not model.isErrorPostcode %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-m govuk-!-margin-top-4">Locations matching '{{ model.queryTerm }}'</h2>
+		<h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.queryTerm }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
 		<h3 class="govuk-heading-s">Rivers</h3>
@@ -78,7 +85,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.isErrorLocation and not model.isErrorPostcode %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-heading-m govuk-!-margin-top-4">
+    <h2 class="govuk-heading-m govuk-!-margin-top-8">
       No results for '{{ model.queryTerm }}'
     </h2>
     <p class="govuk-body">If you searched a river or place in England, you should:</p>
@@ -98,17 +105,10 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.levels and not model.isError %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-search-summary" id="searchSummary">
+    <div class="defra-search-summary govuk-!-margin-top-8" id="searchSummary">
         <h2 class="govuk-heading-m" aria-live="polite" id="search-count">
           {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the {{ model.river.name }}{% else %}near {{ model.place.name }}{% endif %}
         </h2>
-        {% if model.levels.filters | length > 1 %}
-        <span id="filter"></span>
-        {% endif %}
-        <span id="map"></span>
-        {% if model.levels.filters | length > 1 %}
-        {% include "partials/list-filter.html" %}
-        {% endif %}
     </div>
     {% if model.queryType === 'river' %}
     <ul class="defra-flood-list-subgroup" id="list">
@@ -153,12 +153,10 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block pageScripts %}
-{% if model and model.levels.bbox %}
 <script>
   window.flood = {
     model: { bbox: {{ model.bbox | dump | safe }} }
   }
 </script>
-{% endif %}
 <script src="/public/javascripts/levels.js"></script>
 {% endblock %}

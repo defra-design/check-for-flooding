@@ -1,7 +1,7 @@
 'use strict'
 import 'elm-pep'
 import '../core'
-// import '../components/charts'
+import '../components/charts'
 import '../components/toggletip'
 import '../components/toggle-list-display'
 import '../build/templates'
