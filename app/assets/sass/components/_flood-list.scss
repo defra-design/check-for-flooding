@@ -269,39 +269,6 @@
         display: block;
         position: relative;
         @include govuk-font($size: 19);
-        /*
-        &--rising,
-        &--stable,
-        &--falling {
-            padding-left: 20px;
-            @include mq ($from: tablet) {
-                padding-left: 23px;
-            }
-        }
-        &--rising:after,
-        &--stable:after,
-        &--falling:after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            left: 0px;
-            top: 0px;
-            background-size: 100%;
-            @include mq ($from: tablet) {
-                top: 3px;
-            }
-        }
-        &--rising:after {
-            background-image: svg-url('<svg width="18" height="18" viewBox="0 0 18 18"><path d="M4,8L9,3L14,8" style="fill:none;fill-rule:nonzero;stroke:#0b0c0c;stroke-width:2px;"/><path d="M9,16L9,3" style="fill:none;fill-rule:nonzero;stroke:#000;stroke-width:2px;stroke-linejoin:round;stroke-miterlimit:1.5;"/></svg>');
-        }
-        &--stable:after {
-            background-image: svg-url('<svg width="18" height="18" viewBox="0 0 18 18"><path d="M9,14L14,9L9,4" style="fill:none;fill-rule:nonzero;stroke:#0b0c0c;stroke-width:2px;"/><path d="M14,9L4,9" style="fill:none;fill-rule:nonzero;stroke:#000;stroke-width:2px;stroke-linejoin:round;stroke-miterlimit:1.5;"/></svg>');
-        }
-        &--falling:after {
-            background-image: svg-url('<svg width="18" height="18" viewBox="0 0 18 18"><path d="M4,10L9,15L14,10" style="fill:none;fill-rule:nonzero;stroke:#0b0c0c;stroke-width:2px;"/><path d="M9,15L9,2" style="fill:none;fill-rule:nonzero;stroke:#000;stroke-width:2px;stroke-linejoin:round;stroke-miterlimit:1.5;"/></svg>');
-        }
-        */
     }
     &__description {
         display: block;
@@ -323,6 +290,9 @@
 // Warnings borders
 .defra-flood-list--warnings {
     margin-top: 30px;
+    @include mq ($from: tablet) {
+        margin-top: 50px;
+    }
     .defra-flood-list-item-group {
         border: 0px;
     }
