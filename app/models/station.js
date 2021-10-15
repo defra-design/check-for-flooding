@@ -7,6 +7,7 @@ class Station {
     this.river = data.river || (data.type === 'river' ? (data.river_name_wiski) : '')
     this.state = data.state
     this.status = data.status
+    this.valueStatus = data.value_status
     if (data.range_top && data.range_bottom) {
       this.rangeTop = data.range_top
       this.rangeBottom = data.range_bottom
@@ -14,9 +15,9 @@ class Station {
     if (variant !== 'rainfall') {
       this.height = variant === 'downstream' ? data.height_downstream : data.height
     } else {
-      this.rainfall_1hr = data.rainfall_1hr
-      this.rainfall_1hr = data.rainfall_6hrl
-      this.rainfall_1hr = data.rainfall_24hr
+      this.rainfall1hr = data.rainfall_1hr
+      this.rainfall6hr = data.rainfall_6hrl
+      this.rainfall24hr = data.rainfall_24hr
     }
     this.date = data.date
     if (data.upstream_id) {

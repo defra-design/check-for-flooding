@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-
+<!--<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>-->
 {% if model.banner %}
 <div class="defra-flood-status govuk-!-margin-bottom-3">
   <div class="defra-flood-status-item defra-flood-status-item--{{ model.severityLevel }}">
@@ -31,61 +31,116 @@
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
       {{ model.title }}
     </h1>
-    <span class="govuk-caption-m">Measured 45 minutes ago</span>
+    <!--
+    {% if model.station.status == 'active' and model.station.state != 'error' %}
+    <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
+    {% endif %}
+    -->
   </div>
 </div>
 
-{# For multi station #}
+{# Multi station #}
 {% if model.station.isMulti %}
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        {% if model.station.isDownstream %}
-        <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the downstream level. <a href="/station/{{ model.station.id }}">View the upstream level.</a></p>
-        {% else %}
-        <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the upstream level. <a href="/station/{{ model.station.id }}/downstream">View the downstream level.</a></p>
-        {% endif %}
-      </div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% if model.station.isDownstream %}
+    <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the downstream level. <a href="/station/{{ model.station.id }}">View the upstream level.</a></p>
+    {% else %}
+    <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the upstream level. <a href="/station/{{ model.station.id }}/downstream">View the downstream level.</a></p>
+    {% endif %}
   </div>
+</div>
 {% endif %}
 
-{# if station is suspended #}
-{% if model.status === 'suspended' %}
+{# Station is suspended #}
+{% if model.station.status == 'suspended' %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      <div class="defra-service-error govuk-!-margin-bottom-2">
-        <h2 class="defra-service-error__title" id="error-summary-title">
-          This measuring station is offline
-        </h2>
-        <p class="govuk-body govuk-!-margin-bottom-0">
-          {% if model.station.statusReason %}
-            {{ model.station.statusReason}}
-          {% else %}
-            We are working to get it back online.
-          {% endif %} 
-          You can <a href="/river-and-sea-levels">check another river, sea, groundwater or rainfall level</a>.
-        </p>
-      </div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-top-6">
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        This measuring station is offline
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        {% if model.station.statusReason %}
+          {{ model.station.statusReason}}
+        {% else %}
+          We are working to get it back online.
+        {% endif %} 
+        You can <a href="/river-and-sea-levels">check another river, sea, groundwater or rainfall level</a>.
+      </p>
     </div>
   </div>
+</div>
 
-{# if station is closed #}
-{% elif model.status === 'closed' %}
+{# Station is closed #}
+{% elif model.station.status == 'closed' %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-      <div class="defra-service-error govuk-!-margin-bottom-2">
-        <h2 class="defra-service-error__title" id="error-summary-title">
-          This measuring station is closed
-        </h2>
-        <p class="govuk-body govuk-!-margin-bottom-0">
-          No data is available. You can <a href="/river-and-sea-levels">check another river, sea, groundwater or rainfall level</a>.
-        </p>
-      </div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-top-6">
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        This measuring station is closed
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        No data is available. You can <a href="/river-sea-groundwater-rainfall-levels">check another river, sea, groundwater or rainfall level</a>.
+      </p>
     </div>
   </div>
+</div>
 
-{% else %}
+{# No recent value #}
+{% elif model.station.valueStatus == 'missing' %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-top-6">
+      <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
+    </div>
+  </div>
+</div>
+
+{# Latest mesurement unrelaible #}
+{% elif model.station.valueStatus == 'unreliable' %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-top-6">
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        There's a problem with the latest measurement
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        The latest measurement is unreliable. This could be due to a fault with the measuring equipment.
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <nav aria-label="Related levels" class="govuk-!-margin-top-6">
+      <span id="map"></span>
+      {% if model.station.upstreamId %}
+      <a href="/station/{{ model.station.upstreamId }}" class="defra-button-secondary defra-button-secondary--icon" role="button" data-module="govuk-button">
+        <svg width="14" height="18" viewBox="0 0 14 18" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,17L6,17L6,4.828Z" style="fill:currentColor;fill-rule:nonzero;"/></svg>
+        Upstream
+      </a>
+      {% endif %}
+      {% if model.station.downstreamId %}
+      <a href="/station/{{ model.station.downstreamId }}" class="defra-button-secondary defra-button-secondary--icon" role="button" data-module="govuk-button">
+        <svg width="14" height="18" viewBox="0 0 14 18" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M6,13.172L2.414,9.586L1,11L7,17L13,11L11.586,9.586L8,13.172L8,1L6,1L6,13.172Z" style="fill:currentColor;fill-rule:nonzero;"/></svg>
+        Downstream
+      </a>
+      {% endif %}
+      <a href="/river-sea-groundwater-rainfall-levels?id={{ model.station.id }}" class="defra-button-secondary" role="button" data-module="govuk-button">
+        Nearby levels
+      </a>
+    </nav>
+  </div>
+</div>
+
+{% if model.station.status == 'active' and model.station.valueStatus == 'normal' %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
@@ -219,17 +274,6 @@
     
   {% endif %} -->
 {% endif %}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <nav aria-label="Related levels" class="defra-flood-nav govuk-!-margin-top-3 govuk-!-margin-bottom-6">
-      <span id="map"></span>
-      {% if model.station.upstreamId %}<a href="/station/{{ model.station.upstreamId }}" class="defra-flood-nav__link defra-flood-nav__link--upstream">Upstream</a>{% endif %}
-      {% if model.station.downstreamId %}<a href="/station/{{ model.station.downstreamId }}" class="defra-flood-nav__link defra-flood-nav__link--downstream">Downstream</a>{% endif %}
-      <a href="/river-sea-groundwater-rainfall-levels?id={{ model.station.id }}" class="defra-flood-nav__link">Nearby levels</a>
-    </nav>
-  </div>
-</div>
 
 {# Graph #}
 {% if model.station.isActive and model.readings %}

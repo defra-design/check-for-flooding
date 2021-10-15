@@ -14,7 +14,7 @@ import '../components/map/live'
 if (document.getElementById('map-live')) {
   window.flood.maps.createLiveMap('map-live', {
     btnText: 'View map',
-    btnClasses: 'defra-button-secondary defra-button-secondary--map',
+    btnClasses: 'defra-button-secondary defra-button-secondary--icon',
     layers: 'mv,ts,tw,ta',
     extent: window.flood.model.bbox
   })

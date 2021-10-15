@@ -122,6 +122,7 @@ module.exports = {
     station.value_6hr AS rainfall_6hr,
     station.value_24hr AS rainfall_24hr,
     station.value_date AS date,
+    station.value_status AS value_status,
     station.up AS upstream_id,
     station.down AS downstream_id,
     CONCAT(station.lon,',',station.lat) AS centroid,

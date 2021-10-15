@@ -48,16 +48,21 @@
 
 .defra-button-secondary {
     position: relative;
+    display: inline-block;
     @include govuk-font($size: 16);
     width: auto;
-    margin: 0px;
+    margin: 0px 0px 5px;
     border: 1px solid govuk-colour('mid-grey');
     box-shadow: none;
     background-color: white;
     padding: 9px 10px 10px;
     outline: 3px solid transparent;
     cursor: pointer;
-    color: $govuk-text-colour;
+    color: $govuk-text-colour !important;
+    text-decoration: none;
+    &:visited {
+        color: $govuk-text-colour;
+    }
     &:hover {
         background-color: #dbdad9;
     }
@@ -66,7 +71,7 @@
         border-color: $govuk-focus-colour;
         box-shadow: 0 2px 0 govuk-colour('black') !important;
     }
-    &--map {
+    &--icon {
         padding-left: 31px;
         svg {
             position: absolute;

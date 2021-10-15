@@ -13,7 +13,7 @@ import '../components/map/live'
 if (document.getElementById('map-live')) {
   window.flood.maps.createLiveMap('map-live', {
     btnText: `View map of the flood ${window.flood.model.type} area`,
-    btnClasses: 'defra-button-secondary defra-button-secondary--map govuk-!-margin-top-4',
+    btnClasses: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-top-4',
     layers: 'mv,ts,tw,ta',
     extent: window.flood.model.bbox,
     targetArea: {

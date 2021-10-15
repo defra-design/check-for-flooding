@@ -34,7 +34,8 @@
         margin-bottom: 5px;
     }
     &__value {
-        @include govuk-font($size: 36);
+        @include govuk-font($size: 36, $weight: bold);
+        color: govuk-colour('blue');
         margin:0;
         display: block;
         box-sizing: border-box;
@@ -49,6 +50,7 @@
     }
     &__value-detail {
         @include govuk-font($size: 16);
+        color: $govuk-text-colour;
         margin-top: 5px;
         display: block;
     }

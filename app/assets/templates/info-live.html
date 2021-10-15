@@ -31,7 +31,7 @@
 {% elif model.type === 'S' or model.type === 'M' or model.type === 'G' or model.type === 'C' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name">
-        <a href="">
+        <a href="/station/{{ model.id }}">
             {% if model.type === 'C' %}Tide{% elif model.type === 'G' %}Groundwater{% else %}{{ model.river }}{% endif %} at
             {{ model.name }}
             {% if model.iswales %} (Natural Resources Wales){% endif %}
