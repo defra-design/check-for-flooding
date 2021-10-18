@@ -61,7 +61,7 @@
     "mt-osgridref": "^0.1.0",
     "notifications-node-client": "^4.7.2",
     "nunjucks": "^3.2.1",
-    "ol": "^6.6.1",
+    "ol": "^6.8.1",
     "pg": "^8.6.0",
     "portscanner": "^2.1.1",
     "require-dir": "^1.0.0",

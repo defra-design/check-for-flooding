@@ -1,5 +1,6 @@
 const axios = require('axios')
-const apiKey = process.env.OS_API_KEY
+// const apiKey = process.env.OS_API_KEY
+const apiKey = process.env.BING_API_KEY
 const utils = require('../utils')
 
 module.exports = {
@@ -51,17 +52,28 @@ module.exports = {
   // Return multiple results - used for post requests
   getLocationsByQuery: async (query) => {
     query = encodeURI(query)
-    const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
-    const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
+    // const types = ['postcode', 'hamlet', 'village', 'town', 'city', 'other_settlement'].map(i => `local_type:${i}`).join(' ')
+    // const uri = `https://api.os.uk/search/names/v1/find?query=${query}&fq=${types}&key=${apiKey}`
+    const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${query},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=5&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,AdminDivision2`
     const response = await axios.get(uri).then((response) => { return response })
+    // if (response.status === 200) {
+    //   if (response.data && response.data.results) {
+    //     let results = response.data.results
+    //     results = removeDuplicates(results)
+    //     results = setIsSimilar(results)
+    //     results = filterQuery(query, results)
+    //     // Replace results with filtered set
+    //     response.data.results = results
+    //   }
+    // }
     if (response.status === 200) {
-      if (response.data && response.data.results) {
-        let results = response.data.results
-        results = removeDuplicates(results)
-        results = setIsSimilar(results)
-        results = filterQuery(query, results)
+      if (response.data && response.data.resourceSets) {
+        // let results = response.data.resourceSets.results[0].resources
+        // results = removeDuplicates(results)
+        // results = setIsSimilar(results)
+        // results = filterQuery(query, results)
         // Replace results with filtered set
-        response.data.results = results
+        response.data.results = response.data.resourceSets[0].resources
       }
     }
     return response
