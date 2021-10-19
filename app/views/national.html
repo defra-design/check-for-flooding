@@ -52,10 +52,10 @@
       {% endif %}
       {% endfor %}
     </div>
-    {% if not model.warnings.hasActive %}
+    {% if model.warnings.hasActive %}
     <span id="map-live"></span>
     {% endif %}
-    <p class="defra-flood-meta {% if model.warnings.hasActive or model.warnings.hasRemoved %} defra-flood-meta--border{% endif %} govuk-!-margin-bottom-6">
+    <p class="defra-flood-meta {% if model.warnings.hasActive or model.warnings.hasRemoved %} defra-flood-meta--border{% else %}govuk-!-margin-top-0{% endif %} govuk-!-margin-bottom-6">
       Updated at <time datetime="">{{ model.warningsDate }}</time>
     </p> 
 
