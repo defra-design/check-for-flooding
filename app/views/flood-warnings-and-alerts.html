@@ -110,7 +110,10 @@ Flood warnings and alerts in England - GOV.UK
 {% block pageScripts %}
 <script>
   window.flood = {
-    model: { bbox: {{ model.bbox | dump | safe }} }
+    model: {
+      bbox: {{ model.bbox | dump | safe }},
+      bingApiKey: {{ model.bingApiKey | dump | safe }}
+    }
   }
 </script>
 <script src="/public/javascripts/warnings.js"></script>

@@ -1,3 +1,5 @@
+const bingApiKey = process.env.BING_API_KEY
+
 class ViewModel {
   constructor (queryTerm, place, places, warnings) {
     this.searchType = 'placeOnly'
@@ -6,6 +8,7 @@ class ViewModel {
     this.bbox = place ? place.bbox : []
     this.places = places || []
     this.warnings = warnings
+    this.bingApiKey = bingApiKey
     // Results
     this.isSingleMatch = queryTerm && !place && places.length === 1
     this.isMultipleMatch = queryTerm && !place && places.length > 1

@@ -155,7 +155,10 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% block pageScripts %}
 <script>
   window.flood = {
-    model: { bbox: {{ model.bbox | dump | safe }} }
+    model: {
+      bbox: {{ model.bbox | dump | safe }},
+      bingApiKey: {{ model.bingApiKey | dump | safe }}
+    }
   }
 </script>
 <script src="/public/javascripts/levels.js"></script>

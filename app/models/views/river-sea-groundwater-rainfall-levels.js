@@ -1,3 +1,5 @@
+const bingApiKey = process.env.BING_API_KEY
+
 class ViewModel {
   constructor (query, place, places, river, rivers, levels, isPost = false) {
     this.searchType = 'placeAndRiver'
@@ -10,6 +12,7 @@ class ViewModel {
     this.river = river
     this.rivers = rivers
     this.levels = levels
+    this.bingApiKey = bingApiKey
     // Results
     this.isSinglePlace = isPost && places.length === 1 && !rivers.length
     this.isSingleRiver = isPost && rivers.length === 1 && !places.length

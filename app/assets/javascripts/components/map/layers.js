@@ -2,13 +2,9 @@
 /*
 Initialises the window.flood.maps layers
 */
-// import { Feature } from 'ol'
-import { Map as MlMap } from 'maplibre-gl'
-import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Layer } from 'ol/layer'
-import { Source, BingMaps, Vector as VectorSource, VectorTile as VectorTileSource, XYZ } from 'ol/source'
-// import WebGLPointsLayer from 'ol/layer/WebGLPoints'
+import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
+import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import { GeoJSON, MVT } from 'ol/format'
-import { toLonLat } from 'ol/proj'
 
 //
 // Vector source
@@ -33,102 +29,13 @@ window.flood.maps.layers = {
   },
 
   // Bing maps road
-  // road: () => {
-  //   return new TileLayer({
-  //     ref: 'road',
-  //     source: new BingMaps({
-  //       key: window.flood.model.bingMaps,
-  //       imagerySet: 'RoadOnDemand'
-  //     }),
-  //     visible: false,
-  //     zIndex: 0
-  //   })
-  // },
-
-  // OS Raster
-  // road: () => {
-  //   return new TileLayer({
-  //     ref: 'road',
-  //     source: new XYZ({
-  //       url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
-  //       attributions: '&copy; Crown copyright and database rights OS 2021'
-  //     }),
-  //     visible: false,
-  //     zIndex: 0
-  //   })
-  // },
-
-  // Maplibre map layer (Vector tiles with WebGL rendering)
-  // Without using mapbox/maplibre performance is unusable
   road: () => {
-    const mlMap = new MlMap({
-      style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/v2/styles/open-zoomstack-outdoor/style.json',
-      // style: 'https://api.os.uk/maps/vector/v1/vts/resources/styles?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
-      attributionControl: false,
-      container: 'viewport',
-      interactive: false
-      // transformRequest: url => {
-      //   url += '&srs=3857'
-      //   return {
-      //     url: url
-      //   }
-      // }
-    })
-    // Address hiDpi margin/size issue? May be a better way to do this
-    mlMap.canvasWidth = mlMap.getCanvas().width
-    mlMap.on('zoomstart', (e) => {
-      const newWidth = mlMap.getCanvas().width
-      if (mlMap.canvasWidth === newWidth) {
-        mlMap.resize()
-        mlMap.canvasWidth = newWidth
-      }
-    })
-    // We need a reference to this in container.js
-    window.flood.maps.mlMap = mlMap
-    // Return the layer
-    const mlLayer = new Layer({
-      render: (frameState) => {
-        const canvas = mlMap.getCanvas()
-        const viewState = frameState.viewState
-        const visible = mlLayer.getVisible()
-        canvas.style.display = visible ? 'block' : 'none'
-        mlMap.jumpTo({
-          center: toLonLat(viewState.center),
-          zoom: viewState.zoom - 1,
-          animate: false
-        })
-        // Removes the small lag between mapbox and openlayers updating
-        // cancel the scheduled update & trigger synchronous redraw
-        // see https://github.com/mapbox/mapbox-gl-js/issues/7893#issue-408992184
-        // NOTE: THIS MIGHT BREAK WHEN UPDATING MAPBOX
-        if (mlMap._frame) {
-          mlMap._frame.cancel()
-          mlMap._frame = null
-        }
-        mlMap._render()
-        // Remove unecessaary attributes
-        canvas.removeAttribute('tabindex')
-        canvas.removeAttribute('role')
-        canvas.removeAttribute('aria-label')
-        return canvas
-      },
-      ref: 'road',
-      source: new Source({
-        attributions: '&copy; ***Ordnance survey copyright statement***'
-      }),
-      visible: false,
-      zIndex: 0
-    })
-    return mlLayer
-  },
-
-  // ESRI World Imagery
-  satellite: () => {
     return new TileLayer({
-      ref: 'satellite',
-      source: new XYZ({
-        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        attributions: '&copy; ***Esri copyright statement***'
+      ref: 'road',
+      source: new BingMaps({
+        key: window.flood.model.bingApiKey,
+        imagerySet: 'RoadOnDemand',
+        hidpi: true
       }),
       visible: false,
       zIndex: 0
@@ -136,17 +43,17 @@ window.flood.maps.layers = {
   },
 
   // Bing maps aerial
-  // satellite: () => {
-  //   return new TileLayer({
-  //     ref: 'satellite',
-  //     source: new BingMaps({
-  //       key: window.flood.model.bingMaps,
-  //       imagerySet: 'AerialWithLabelsOnDemand'
-  //     }),
-  //     visible: false,
-  //     zIndex: 0
-  //   })
-  // },
+  satellite: () => {
+    return new TileLayer({
+      ref: 'satellite',
+      source: new BingMaps({
+        key: window.flood.model.bingApiKey,
+        imagerySet: 'AerialWithLabelsOnDemand'
+      }),
+      visible: false,
+      zIndex: 0
+    })
+  },
 
   //
   // Vector tile layers

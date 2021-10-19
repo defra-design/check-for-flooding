@@ -125,7 +125,8 @@
       type: {{ model.targetArea.type | dump | safe }},
       name: {{ model.targetArea.name | dump | safe }},
       centroid: {{ model.targetArea.centroid | dump | safe }},
-      bbox: {{ model.targetArea.bbox | dump | safe }}
+      bbox: {{ model.targetArea.bbox | dump | safe }},
+      bingApiKey: {{ model.bingApiKey | dump | safe }}
     }
   }
 </script>

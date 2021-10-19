@@ -1,3 +1,4 @@
+const bingApiKey = process.env.BING_API_KEY
 const moment = require('moment-timezone')
 
 class ViewModel {
@@ -13,6 +14,7 @@ class ViewModel {
     this.isActive = isActive
     this.isRemoved = isRemoved
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
+    this.bingApiKey = bingApiKey
   }
 }
 module.exports = ViewModel
