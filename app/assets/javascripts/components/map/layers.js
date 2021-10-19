@@ -34,8 +34,8 @@ window.flood.maps.layers = {
       ref: 'road',
       source: new BingMaps({
         key: window.flood.model.bingApiKey,
-        imagerySet: 'RoadOnDemand',
-        hidpi: true
+        imagerySet: 'RoadOnDemand'
+        // hidpi: true
       }),
       visible: false,
       zIndex: 0
@@ -48,8 +48,8 @@ window.flood.maps.layers = {
       ref: 'satellite',
       source: new BingMaps({
         key: window.flood.model.bingApiKey,
-        imagerySet: 'AerialWithLabelsOnDemand',
-        hidpi: true
+        imagerySet: 'AerialWithLabelsOnDemand'
+        // hidpi: true
       }),
       visible: false,
       zIndex: 0
