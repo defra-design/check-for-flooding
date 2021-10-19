@@ -48,7 +48,8 @@ window.flood.maps.layers = {
       ref: 'satellite',
       source: new BingMaps({
         key: window.flood.model.bingApiKey,
-        imagerySet: 'AerialWithLabelsOnDemand'
+        imagerySet: 'AerialWithLabelsOnDemand',
+        hidpi: true
       }),
       visible: false,
       zIndex: 0
