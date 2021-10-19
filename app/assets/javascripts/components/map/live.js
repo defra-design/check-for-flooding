@@ -8,8 +8,8 @@
 import { View, Overlay, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
-import { Point, MultiPolygon } from 'ol/geom'
-import { buffer, containsExtent, getCenter } from 'ol/extent'
+import { Point } from 'ol/geom' // MultiPolygon
+import { buffer, containsExtent } from 'ol/extent' // getCenter
 import { Vector as VectorSource } from 'ol/source'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
