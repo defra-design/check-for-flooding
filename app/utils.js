@@ -1,28 +1,8 @@
 const moment = require('moment-timezone')
+const turf = require('@turf/turf')
 
 const getSlug = (string) => {
   return string.replace(/\s+/g, '-').replace(/'|\(|\)|,/g, '').toLowerCase()
-}
-
-const getSlugFromGazetteerEntry = (gazetteerEntry) => {
-  const localType = gazetteerEntry.LOCAL_TYPE
-  const name = gazetteerEntry.NAME1
-  const countyUnity = gazetteerEntry.COUNTY_UNITARY
-  const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
-  const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
-  const isSimilar = gazetteerEntry.IS_SIMILAR
-  let slug = getSlug(name)
-  if (localType !== 'City' && localType !== 'Postcode' && (countyUnity || districtBorough)) {
-    let qaulifier = getSlug(countyUnity || districtBorough) // eg Bury, bury
-    if (name !== qaulifier) {
-      // eg Charlton, Wiltshire
-      qaulifier += isSimilar && postCodeDistrict ? `-${postCodeDistrict.toLowerCase()}` : ''
-      // Make a 'unique' slug
-      slug = `${slug}-${qaulifier}`
-    }
-    // Address Charlton
-  }
-  return slug
 }
 
 const groupBy = (items, key) => items.reduce(
@@ -67,10 +47,48 @@ const formatTime = (date) => {
   return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
 }
 
+const bufferBbox = (bbox, m) => {
+  // Convert bbox (binding box) )into polygon, add buffer, and convert back to bbox as db query needs a bbox envelope
+  return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
+}
+
+const getNameFromGazetteerEntry = (gazetteerEntry) => {
+  const coreCities = [
+    'Birmingham, West Midlands',
+    'Brighton, Brighton and Hove',
+    'Coventry, West Midlands',
+    'Derby, Derby City',
+    'Manchester, Greater Manchester',
+    'Leeds, West Yorkshire',
+    'Leicester, Leicester City',
+    'Liverpool, Merseyside',
+    'Newcastle upon Tyne, Tyne & Wear',
+    'Nottingham, Nottingham City',
+    'Reading, Berkshire',
+    'Sheffield, South Yorkshire'
+  ]
+  // Default name
+  let name = gazetteerEntry.name
+  // If core city remove local authority
+  if (coreCities.includes(name)) {
+    name = gazetteerEntry.address.locality
+  }
+  // If postcode re-construct name
+  if (gazetteerEntry.address.postalCode) {
+    name = `${gazetteerEntry.address.postalCode}, ${gazetteerEntry.address.locality}`
+  }
+  // Remove duplication within the name
+  if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
+    name = gazetteerEntry.address.locality
+  }
+  return name
+}
+
 module.exports = {
   formatElaspedTime,
   formatTime,
   getSlug,
-  getSlugFromGazetteerEntry,
-  groupBy
+  groupBy,
+  bufferBbox,
+  getNameFromGazetteerEntry
 }

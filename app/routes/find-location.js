@@ -15,11 +15,9 @@ router.post('/find-location', async (req, res) => {
   // Check places
   if (query.term !== '') {
     const locationResponse = await locationServices.getLocationsByQuery(query.term)
-    console.log(locationResponse.data.results)
     if (locationResponse.status === 200) {
       if (locationResponse.data.results && locationResponse.data.results.length) {
         // We have some matches
-        // locationResponse.data.results.forEach(result => { places.push(new Place(result.GAZETTEER_ENTRY)) })
         locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
       }
     } else {
