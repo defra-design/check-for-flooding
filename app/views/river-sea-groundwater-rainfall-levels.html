@@ -108,7 +108,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
         {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} {% if model.queryType == 'river' %}on the {{ model.river.name }}{% else %}near {{ model.place.name }}{% endif %}
       </h2>
-      <p>Select level to view historic data</p>
+      <p>Select level to view height over the last 5 days</p>
     </div>
     {% if model.queryType === 'river' %}
     <ul class="defra-flood-list-subgroup" id="list">
