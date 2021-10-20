@@ -130,9 +130,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
 
       {% if model.levels.sea | length %}
+      <!--
       <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
         {{ model.levels.sea | length }} sea level{% if model.levels.sea | length != 1 %}s{% endif %} near {{ model.place.name }}
       </h2>
+      -->
       <p>Select level to view height over the last 5 days</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
