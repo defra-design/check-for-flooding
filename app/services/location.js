@@ -49,7 +49,6 @@ module.exports = {
         delete response.data.results
       }
     }
-    console.log(response.data.result)
     return response
   },
 

@@ -1,76 +1,49 @@
-<li class="defra-flood-list-item defra-flood-list-item--{{ item.type }}{% if item.state %}-{{ item.state }}{% endif %}" data-type="{{ item.type }}">
-  <div class="defra-flood-list__title-column">
-    <span class="defra-flood-list-item__title">
-      {% if item.type == 'rainfall' %}
-      <a href="">{{ item.name }} rainfall</a>
-      {% else %}
-      <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
-        {{ item.name }}
-        {{ station.external_name }}
-        {% if item.iswales === true %}
-        (Natural Resources Wales)
-        {% endif %}
-        {% if item.isDownstream == true %}
-        (downstream)
-        {% endif %}
-      </a>
+<tr class="">
+  <td class="defra-flood-table__cell defra-flood-table__cell--item-name">
+    {% if item.type == 'rainfall' %}
+    <a href="">{{ item.name }} rainfall</a>
+    {% else %}
+    <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
+      {{ item.name }}
+      {{ station.external_name }}
+      {% if item.iswales === true %}
+      (Natural Resources Wales)
       {% endif %}
-      {% if item.state !== 'error' %}
-      <span class="defra-flood-list-data__description">{{ item.elapsedTime }}</span>
+      {% if item.isDownstream == true %}
+      (downstream)
       {% endif %}
-    </span>
-  </div>
-  <div class="defra-flood-list__data-column">
-    <dl class="defra-flood-list-data">
-      {% if item.state === 'error' %}
-      <div class="defra-flood-list-data__column-full">
-        <dt class="govuk-visually-hidden">Status</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">Data not available</span>
-        </dd>
-      </div>
-      {% elif item.type == 'rainfall' %}
-      <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">Last hour</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">{{ item.value1hr }}mm</span>
-          <span class="defra-flood-list-data__description" aria-hidden="true">1 hour</span>
-        </dd>
-      </div>
-      <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">Last 6 hours</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">{{ item.value6hr }}mm</span>
-          <span class="defra-flood-list-data__description" aria-hidden="true">6 hours</span>
-        </dd>
-      </div>
-      <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">Last 24 hours</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">{{ item.value24hr }}mm</span>
-          <span class="defra-flood-list-data__description" aria-hidden="true">24 hours</span>
-        </dd>
-      </div>
-      {% else %}
-      <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">State</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">{% if item.isDownstream %}---{% else %}{{ item.state | title }}{% endif %}</span>
-        </dd>
-      </div>
-      <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">Height</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">{% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m</span>
-        </dd>
-      </div>
-      <!-- <div class="defra-flood-list-data__column">
-        <dt class="govuk-visually-hidden">Trend</dt>
-        <dd>
-          <span class="defra-flood-list-data__value">N/A</span>
-        </dd>
-      </div> -->
-      {% endif %}
-    </dl>
-  </div>
-</li>
+    </a>
+    {% endif %}
+    {% if item.state !== 'error' %}
+    <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
+    {% endif %}
+  </td>
+  {% if item.state === 'error' %}
+  <td class="defra-flood-table__cell" colspan="3">
+    Data not available
+  </td>
+  {% elif item.type == 'rainfall' %}
+  <td class="defra-flood-table__cell">
+    {{ item.value1hr }}mm
+  </td>
+  <td class="defra-flood-table__cell">
+    {{ item.value6hr }}mm
+  </td>
+  <td class="defra-flood-table__cell">
+    {{ item.value24hr }}mm
+  </td>
+  {% else %}
+  <td class="defra-flood-table__cell">
+    {% if item.isDownstream %}---{% else %}{{ item.state | title }}{% endif %}
+  </td>
+  <td class="defra-flood-table__cell" colspan="2">
+    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+  </td>
+  <!-- <div class="defra-flood-list-data__column">
+    <dt class="govuk-visually-hidden">Trend</dt>
+    <dd>
+      <span class="defra-flood-list-data__value">N/A</span>
+    </dd>
+  </div> -->
+  {% endif %}
+</tr>

@@ -13,14 +13,30 @@ class Levels {
       level => this.filters.filter(x => x.isSelected).map(x => x.type).includes(level.type)
     ).length : levels.length
     this.hasHigh = false
-    this.items = this.createLevels(levels, this.filters.filter(x => x.isSelected))
+    this.numRiver = this.filterLevels(levels, 'river').length
+    this.river = this.groupLevels(this.filterLevels(levels, 'river'))
+    this.sea = this.filterLevels(levels, 'sea').map(x => new Level(x))
+    this.groundwater = this.filterLevels(levels, 'groundwater').map(x => new Level(x))
+    this.rainfall = this.filterLevels(levels, 'rainfall').map(x => new Level(x))
     this.bbox = place.bboxBuffered || river.bbox || []
   }
 
-  createLevels (levels, selectedFilters) {
+  filterLevels (levels, groupName) {
+    // Filter by group
+    if (['sea', 'groundwater', 'rainfall'].includes(groupName)) {
+      levels = levels.filter(x => x.group_name.toLowerCase() === groupName)
+    } else {
+      levels = levels.filter(x => !['sea', 'groundwater', 'rainfall'].includes(x.group_name.toLowerCase()))
+    }
+    // Filter by selected
+    const selectedFilters = this.filters.filter(x => x.isSelected)
     if (selectedFilters.length) {
       levels = levels.filter(level => selectedFilters.map(x => x.type).includes(level.type))
     }
+    return levels
+  }
+
+  groupLevels (levels) {
     const groups = utils.groupBy(levels, 'group_name')
     Object.entries(groups).forEach(([key, value]) => {
       value.forEach((item, index) => {

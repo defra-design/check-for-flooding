@@ -16,7 +16,7 @@ if (filter) {
   window.flood.createFilter(filter, {
     detailsId: 'filter-details',
     countId: 'search-count',
-    listId: 'list'
+    resultsId: 'results'
   })
 }
 

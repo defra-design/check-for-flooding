@@ -81,9 +81,9 @@ const Filter = (btnContainer, settings) => {
       if (xhr.status === 200) { // Success
         const response = xhr.response
         const targetCount = document.getElementById(settings.countId)
-        const targetList = document.getElementById(settings.listId)
+        const targetResults = document.getElementById(settings.resultsId)
         targetCount.parentNode.replaceChild(response.getElementById(settings.countId), targetCount)
-        targetList.parentNode.replaceChild(response.getElementById(settings.listId), targetList)
+        targetResults.parentNode.replaceChild(response.getElementById(settings.resultsId), targetResults)
       } else {
         console.log('Error: ' + xhr.status)
       }

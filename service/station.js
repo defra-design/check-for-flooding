@@ -16,14 +16,24 @@ module.exports = {
     station.value_date,
     station.type_name AS type,
     CASE WHEN station.type = 'm' THEN 1 ELSE 0 END AS is_multi,
-    CASE WHEN river.display is NOT NULL THEN river.display ELSE station.name END AS group_name,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'Sea'
+    WHEN station.type_name = 'groundwater' THEN 'Groundwater'
+    WHEN station.type_name = 'rainfall' THEN 'Rainfall'
+    WHEN river.display is NOT NULL THEN river.display
+    ELSE station.name END AS group_name,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
+    WHEN station.type_name = 'groundwater' THEN 3
+    WHEN station.type_name = 'rainfall' THEN 4
+    ELSE 1 END AS group_order,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     0 AS is_downstream
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
-    WHERE ST_Contains(ST_MakeEnvelope($1,$2,$3,$4,4326),station.geom))
+    WHERE ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom))
     UNION ALL
     (SELECT station.name,
     station.id,
@@ -36,15 +46,26 @@ module.exports = {
     station.value_date,
     station.type_name AS type,
     CASE WHEN station.type = 'm' THEN 1 ELSE 0 END AS is_multi,
-    CASE WHEN river.display is NOT NULL THEN river.display ELSE station.name END AS group_name,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'Sea'
+    WHEN station.type_name = 'groundwater' THEN 'Groundwater'
+    WHEN station.type_name = 'rainfall' THEN 'Rainfall'
+    WHEN river.display is NOT NULL THEN river.display
+    ELSE station.name
+    END AS group_name,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
+    WHEN station.type_name = 'groundwater' THEN 3
+    WHEN station.type_name = 'rainfall' THEN 4
+    ELSE 1 END AS group_order,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     1 AS is_downstream
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
-    WHERE (ST_Contains(ST_MakeEnvelope($1,$2,$3,$4,4326),station.geom)) AND station.type = 'm')
-    ORDER BY group_name, station_order, is_downstream  
+    WHERE (ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom)) AND station.type = 'm')
+    ORDER BY group_order, group_name, station_order, is_downstream;   
     `, bbox)
     return response.rows || {}
   },
