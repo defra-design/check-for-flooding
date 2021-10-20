@@ -29,8 +29,7 @@
   &__cell--river-name {
     @include govuk-font($size: 16);
     text-align: left;
-    border-top: 4px solid $govuk-border-colour;
-    border-bottom: 0px;
+    border-top: 3px solid $govuk-border-colour;
     a {
       color: $govuk-text-colour;
     }

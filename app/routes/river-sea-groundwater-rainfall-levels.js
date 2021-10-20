@@ -25,7 +25,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     const river = new River(riverResponse.data)
     const levelResponse = await levelServices.getLevelsByRiver(term)
-    const levels = new Levels(query.filters, {}, river, levelResponse.data || [])
+    const levels = new Levels(query.filter, {}, river, levelResponse.data || [])
     model = new ViewModel(query, null, null, river, null, levels)
   } else if (query.place && query.place !== '') {
     // Place query
@@ -42,7 +42,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     const place = new Place(locationResponse.data.result)
     const levelResponse = await levelServices.getLevelsWithin(place.bboxBuffered)
-    const levels = new Levels(query.filters, place, {}, levelResponse.data || [])
+    const levels = new Levels(query.filter, place, {}, levelResponse.data || [])
     model = new ViewModel(query, place, null, null, null, levels)
   } else {
     model = new ViewModel(query, null, null, null, null, null)
@@ -57,8 +57,8 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const places = []
   let rivers = []
 
-  // Check places
   if (query.term !== '') {
+    // Check places
     const locationResponse = await locationServices.getLocationsByQuery(query.term)
     if (locationResponse.status === 200) {
       if (locationResponse.data.results && locationResponse.data.results.length) {
@@ -91,9 +91,8 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
 })
 
 router.post('/filter-levels', async (req, res) => {
-  const { type, term } = req.body
-  const filters = req.body.filters ? Array.isArray(req.body.filters) ? req.body.filters.join(',') : req.body.filters : ''
-  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filters=${filters}#`)
+  const { type, term, filter } = req.body
+  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filter=${filter}#`)
 })
 
 module.exports = router

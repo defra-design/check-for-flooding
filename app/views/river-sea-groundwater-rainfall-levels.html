@@ -17,13 +17,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       River, sea, groundwater and rainfall levels
     </h1>
     {% include "partials/list-search.html" %}
-    {% if model.levels.filters | length > 1 %}
-    <span id="filter"></span>
-    {% endif %}
     <span id="map"></span>
-    {% if model.levels.filters | length > 1 %}
-    {% include "partials/list-filter.html" %}
-    {% endif %}
   </div>
 </div>
 
@@ -77,6 +71,22 @@ River, sea, groundwater and rainfall levels - GOV.UK
 </div>
 
 {% elif model.levels  %}
+{% if model.levels.filters | length > 1 %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-navbar govuk-!-margin-top-4 govuk-!-margin-bottom-4">
+      <ul class="defra-navbar__list">
+        {% for filter in model.levels.filters %}
+        <li class="defra-navbar__item{% if filter.type == model.levels.filter %} defra-navbar__item--selected{% endif %}">
+          <a href="/river-sea-groundwater-rainfall-levels?place={{ model.queryTerm }}&filter={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div id="results">
@@ -93,11 +103,13 @@ River, sea, groundwater and rainfall levels - GOV.UK
         {% endfor %}
       </table>
       {% else %}
-      {% if model.levels.river | length %}
+      {% if model.levels.filter == 'river' %}
+      <!--
       <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
-        {{ model.levels.numRiver }} river level{% if model.levels.numRiver != 1 %}s{% endif %} near {{ model.place.name }}
+        {{ model.levels.numItems }} river level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
       </h2>
       <p>Select level to view height over the last 5 days</p>
+      -->
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
@@ -106,7 +118,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
             <th scope="col" class="defra-flood-table__header govuk-!-width-one-quarter" colspan="2">Height</th>
           </tr>
         </thead>
-        {% for group, items in model.levels.river %}
+        {% for group, items in model.levels.items %}
           <tr class="">
             <th colspan="4" scope="colgroup" class="defra-flood-table__cell defra-flood-table__cell--river-name">
               <a href="/river-sea-groundwater-rainfall-levels?river={{ group | urlencode }}">{{ group }}</a>
@@ -120,10 +132,20 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
 
       {% if model.levels.sea | length %}
+      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
+        {{ model.levels.sea | length }} sea level{% if model.levels.sea | length != 1 %}s{% endif %} near {{ model.place.name }}
+      </h2>
+      <p>Select level to view height over the last 5 days</p>
       <table class="defra-flood-table">
-      {% for item in model.levels.sea %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
+        <thead class="defra-flood-table__head">
+          <tr class="defra-flood-table__row">
+            <th scope="col" class="defra-flood-table__header govuk-!-width-three-quarters">Location</th>
+            <th scope="col" class="defra-flood-table__header govuk-!-width-one-quarter" colspan="3">Height</th>
+          </tr>
+        </thead>
+        {% for item in model.levels.sea %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
       </table>
       {% endif %}
 
@@ -149,9 +171,9 @@ River, sea, groundwater and rainfall levels - GOV.UK
             <th scope="col" class="defra-flood-table__header">24 hours</th>
           </tr>
         </thead>
-      {% for item in model.levels.rainfall %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
+        {% for item in model.levels.rainfall %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
       </table>
       {% endif %}
 

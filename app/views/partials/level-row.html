@@ -32,6 +32,17 @@
   <td class="defra-flood-table__cell">
     {{ item.value24hr }}mm
   </td>
+  {% elif item.type == 'tide' and item.riverSlug != '' %}
+  <td class="defra-flood-table__cell">
+    ---
+  </td>
+  <td class="defra-flood-table__cell" colspan="2">
+    {{ item.value }}
+  </td>
+  {% elif item.type == 'tide' %}
+  <td class="defra-flood-table__cell" colspan="2">
+    {{ item.value }}
+  </td>
   {% else %}
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}{{ item.state | title }}{% endif %}

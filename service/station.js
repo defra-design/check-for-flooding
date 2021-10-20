@@ -27,6 +27,11 @@ module.exports = {
     WHEN station.type_name = 'groundwater' THEN 3
     WHEN station.type_name = 'rainfall' THEN 4
     ELSE 1 END AS group_order,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'sea'
+    WHEN station.type_name = 'groundwater' THEN 'groundwater'
+    WHEN station.type_name = 'rainfall' THEN 'rainfall'
+    ELSE 'river' END AS group_type,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     0 AS is_downstream
@@ -58,6 +63,11 @@ module.exports = {
     WHEN station.type_name = 'groundwater' THEN 3
     WHEN station.type_name = 'rainfall' THEN 4
     ELSE 1 END AS group_order,
+    CASE
+    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'sea'
+    WHEN station.type_name = 'groundwater' THEN 'groundwater'
+    WHEN station.type_name = 'rainfall' THEN 'rainfall'
+    ELSE 'river' END AS group_type,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     1 AS is_downstream

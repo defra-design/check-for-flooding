@@ -2,38 +2,19 @@ const utils = require('../utils')
 const Level = require('./level')
 
 class Levels {
-  constructor (filters, place, river, levels) {
-    this.filters = [...new Set(levels.map(item => item.type))].map(item => ({
+  constructor (filter, place, river, levels) {
+    const filters = [...new Set(levels.map(item => item.group_type))].map(item => ({
       type: item,
-      count: levels.filter(level => level.type === item).length,
-      isSelected: filters ? filters.includes(item) : false
+      count: levels.filter(level => level.group_type === item).length
     }))
-    this.numFilters = this.filters.filter(x => x.isSelected).length
-    this.numItems = this.filters.filter(x => x.isSelected).length ? levels.filter(
-      level => this.filters.filter(x => x.isSelected).map(x => x.type).includes(level.type)
-    ).length : levels.length
+    filter = filter || filters[0].type
+    this.filters = filters
+    this.filter = filter
+    levels = levels.filter(x => x.group_type === filter)
+    this.numItems = levels.length
     this.hasHigh = false
-    this.numRiver = this.filterLevels(levels, 'river').length
-    this.river = this.groupLevels(this.filterLevels(levels, 'river'))
-    this.sea = this.filterLevels(levels, 'sea').map(x => new Level(x))
-    this.groundwater = this.filterLevels(levels, 'groundwater').map(x => new Level(x))
-    this.rainfall = this.filterLevels(levels, 'rainfall').map(x => new Level(x))
+    this.items = filter === 'river' ? this.groupLevels(levels) : levels.map(x => new Level(x))
     this.bbox = place.bboxBuffered || river.bbox || []
-  }
-
-  filterLevels (levels, groupName) {
-    // Filter by group
-    if (['sea', 'groundwater', 'rainfall'].includes(groupName)) {
-      levels = levels.filter(x => x.group_name.toLowerCase() === groupName)
-    } else {
-      levels = levels.filter(x => !['sea', 'groundwater', 'rainfall'].includes(x.group_name.toLowerCase()))
-    }
-    // Filter by selected
-    const selectedFilters = this.filters.filter(x => x.isSelected)
-    if (selectedFilters.length) {
-      levels = levels.filter(level => selectedFilters.map(x => x.type).includes(level.type))
-    }
-    return levels
   }
 
   groupLevels (levels) {
