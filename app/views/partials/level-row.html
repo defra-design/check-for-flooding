@@ -65,7 +65,7 @@
   {% elif model.queryType === 'river' or item.type == 'groundwater' %}
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}
-    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--grey{% endif %} govuk-!-font-size-14">
+    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">
     {{ item.state | title }}
     </strong>
     {% endif %}
@@ -83,7 +83,7 @@
   </td>
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}
-    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--grey{% endif %} govuk-!-font-size-14">
+    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">
     {{ item.state | title }}
     </strong>
     {% endif %}

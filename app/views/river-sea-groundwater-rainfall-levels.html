@@ -10,7 +10,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% endblock %}
 
 {% block content %}
-
+<pre style="white-space: pre-wrap;">{{ model.place | dump }}</pre>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl">
@@ -110,7 +110,8 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% else %}
 
       <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-        {{ model.levels.filter | capitalize }} level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
+        {{ model.levels.filter | capitalize }} level{% if model.levels.numItems != 1 %}s{% endif %}
+        {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
       </h2>
 
       {% if model.levels.filter == 'river' %}
