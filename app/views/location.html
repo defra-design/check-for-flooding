@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-Check for flooding {% if model.place.type === 'city' %}in{% else %}near{% endif%} {{ model.place.name }} - GOV.UK
+Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}near{% endif%} {{ model.place.name }} - GOV.UK
 {% endblock %}
 
 {% block beforeContent %}
@@ -37,7 +37,9 @@ Check for flooding {% if model.place.type === 'city' %}in{% else %}near{% endif%
   <div class="govuk-grid-column-two-thirds">
     {% include "partials/location-banner.html" %}
     <p><a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a></p>
+    {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
     <span id="map-live"></span>
+    {% endif %}
     <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-0 govuk-!-margin-bottom-4">
       Up to date as of <time datetime="">{{ model.warningsDate }}</time>
     </p>
