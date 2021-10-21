@@ -75,7 +75,7 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
   }
   // If postcode re-construct name
   if (gazetteerEntry.address.postalCode) {
-    name = gazetteerEntry.address.postalCode
+    name = gazetteerEntry.address.postalCode.replace(/ /g, '\u00a0')
   }
   // Remove duplication within the name
   if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
