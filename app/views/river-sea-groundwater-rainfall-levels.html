@@ -91,10 +91,9 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-column-full">
     <div id="results">
       {% if model.queryType === 'river' %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0">
+      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-2">
         {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} on the {{ model.river.name }}
       </h2>
-      <p>Select location to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
@@ -110,11 +109,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
       </table>
       {% else %}
 
-      {% if model.levels.filter == 'river' %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        River level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
+      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+        {{ model.levels.filter | capitalize }} level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
       </h2>
-      <p>Select location to view details</p>
+
+      {% if model.levels.filter == 'river' %}
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
@@ -132,10 +131,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
 
       {% if model.levels.filter == 'sea' %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        Sea level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
-      </h2>
-      <p>Select location to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
@@ -150,10 +145,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
 
       {% if model.levels.filter == 'groundwater' %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        Groundwater level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
-      </h2>
-      <p>Select location to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
@@ -170,10 +161,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
 
       {% if model.levels.filter == 'rainfall' %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-        Rainfall near {{ model.place.name }}
-      </h2>
-      <p>Select locaton to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
