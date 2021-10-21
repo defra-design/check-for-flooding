@@ -224,7 +224,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Hide all map siblings from screen readers
   const mapSiblings = document.querySelectorAll('body > *:not(.defra-map):not(script):not([aria-hidden="true"])')
-  forEach(mapSiblings, (mapSibling) => { mapSibling.setAttribute('aria-hidden', 'true') })
+  forEach(mapSiblings, (mapSibling) => {
+    mapSibling.setAttribute('aria-hidden', 'true')
+    mapSibling.classList.add('defra-map-visually-hidden')
+  })
 
   // Move focus to first interactive element inside the dialog
   viewport.focus()
@@ -272,6 +275,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       // Re-instate aria-hidden elements
       forEach(mapSiblings, (mapSibling) => {
         mapSibling.removeAttribute('aria-hidden')
+        mapSibling.classList.remove('defra-map-visually-hidden')
       })
       // Tidy up any document or window listeners
       window.removeEventListener('keydown', keydown)
