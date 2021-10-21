@@ -61,8 +61,8 @@
   <td class="defra-flood-table__cell">
     {{ item.value }}
   </td>
-  <!-- Groundwater level -->
-  {% elif item.type == 'groundwater' %}
+  <!-- Single river or groundwater level -->
+  {% elif model.queryType === 'river' or item.type == 'groundwater' %}
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}
     <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--grey{% endif %} govuk-!-font-size-14">
