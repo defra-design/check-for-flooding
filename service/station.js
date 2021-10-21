@@ -16,12 +16,9 @@ module.exports = {
     station.value_date,
     station.type_name AS type,
     CASE WHEN station.type = 'm' THEN 1 ELSE 0 END AS is_multi,
-    CASE
-    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'Sea'
-    WHEN station.type_name = 'groundwater' THEN 'Groundwater'
-    WHEN station.type_name = 'rainfall' THEN 'Rainfall'
-    WHEN river.display is NOT NULL THEN river.display
-    ELSE station.name END AS group_name,
+    CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
+    CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
+    CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
@@ -32,7 +29,6 @@ module.exports = {
     WHEN station.type_name = 'groundwater' THEN 'groundwater'
     WHEN station.type_name = 'rainfall' THEN 'rainfall'
     ELSE 'river' END AS group_type,
-    CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     0 AS is_downstream
     FROM river
@@ -51,13 +47,9 @@ module.exports = {
     station.value_date,
     station.type_name AS type,
     CASE WHEN station.type = 'm' THEN 1 ELSE 0 END AS is_multi,
-    CASE
-    WHEN station.type_name = 'tide' AND river.id is NULL THEN 'Sea'
-    WHEN station.type_name = 'groundwater' THEN 'Groundwater'
-    WHEN station.type_name = 'rainfall' THEN 'Rainfall'
-    WHEN river.display is NOT NULL THEN river.display
-    ELSE station.name
-    END AS group_name,
+    CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
+    CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
+    CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
@@ -68,14 +60,13 @@ module.exports = {
     WHEN station.type_name = 'groundwater' THEN 'groundwater'
     WHEN station.type_name = 'rainfall' THEN 'rainfall'
     ELSE 'river' END AS group_type,
-    CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     1 AS is_downstream
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
     WHERE (ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom)) AND station.type = 'm')
-    ORDER BY group_order, group_name, station_order, is_downstream;   
+    ORDER BY group_order, river_name, station_order, is_downstream;   
     `, bbox)
     return response.rows || {}
   },
@@ -94,7 +85,8 @@ module.exports = {
     station.value_24hr,
     station.value_date,
     station.type_name AS type,
-    CASE WHEN river.display is NOT NULL THEN river.display ELSE station.name END AS group_name,
+    CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
+    CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     0 AS is_downstream
@@ -113,7 +105,8 @@ module.exports = {
     station.value_24hr,
     station.value_date,
     station.type_name AS type,
-    CASE WHEN river.display is NOT NULL THEN river.display ELSE station.name END AS group_name,
+    CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
+    CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
     1 AS is_downstream
@@ -121,7 +114,7 @@ module.exports = {
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
     WHERE (river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3) AND station.type = 'm')
-    ORDER BY group_name, station_order, is_downstream
+    ORDER BY river_name, station_order, is_downstream
     `, [`%-${slug}%`, `%${slug}-%`, slug])
     // Address this in SQL/Materialised view
     if (response.rows && [...new Set(response.rows.map(item => item.river_slug))].length > 1) {

@@ -1,4 +1,5 @@
 <tr class="">
+  <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--item-name">
     {% if item.type == 'rainfall' %}
     <a href="">{{ item.name }} rainfall</a>
@@ -18,7 +19,16 @@
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}
   </td>
-  {% if item.state === 'error' %}
+  <!-- Error within river-->
+  {% if item.state === 'error' and item.riverSlug != '' %}
+  <td class="defra-flood-table__cell">
+    {{ item.riverName }}
+  </td>
+  <td class="defra-flood-table__cell" colspan="3">
+    Data not available
+  </td>
+  <!-- Error with groundwater or sea -->
+  {% elif item.type == 'error' %}
   <td class="defra-flood-table__cell" colspan="3">
     Data not available
   </td>
@@ -32,29 +42,58 @@
   <td class="defra-flood-table__cell">
     {{ item.value24hr }}mm
   </td>
+  <!-- Tide level within river -->
   {% elif item.type == 'tide' and item.riverSlug != '' %}
+  <td class="defra-flood-table__cell">
+    {{ item.riverName }}
+  </td>
   <td class="defra-flood-table__cell">
     ---
   </td>
-  <td class="defra-flood-table__cell" colspan="2">
-    {{ item.value }}
-  </td>
-  {% elif item.type == 'tide' %}
-  <td class="defra-flood-table__cell" colspan="2">
-    {{ item.value }}
-  </td>
-  {% else %}
   <td class="defra-flood-table__cell">
-    {% if item.isDownstream %}---{% else %}{{ item.state | title }}{% endif %}
+    {{ item.value }}m
   </td>
-  <td class="defra-flood-table__cell" colspan="2">
+  <td class="defra-flood-table__cell">
+    ---
+  </td>
+  <!-- Sea level -->
+  {% elif item.type == 'tide' %}
+  <td class="defra-flood-table__cell">
+    {{ item.value }}
+  </td>
+  <!-- Groundwater level -->
+  {% elif item.type == 'groundwater' %}
+  <td class="defra-flood-table__cell">
+    {% if item.isDownstream %}---{% else %}
+    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--grey{% endif %} govuk-!-font-size-14">
+    {{ item.state | title }}
+    </strong>
+    {% endif %}
+  </td>
+  <td class="defra-flood-table__cell">
     {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
   </td>
-  <!-- <div class="defra-flood-list-data__column">
-    <dt class="govuk-visually-hidden">Trend</dt>
-    <dd>
-      <span class="defra-flood-list-data__value">N/A</span>
-    </dd>
-  </div> -->
+  <td class="defra-flood-table__cell">
+    Stable
+  </td>
+  <!-- River level -->
+  {% else %}
+  <td class="defra-flood-table__cell">
+    {{ item.riverName }}
+  </td>
+  <td class="defra-flood-table__cell">
+    {% if item.isDownstream %}---{% else %}
+    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--grey{% endif %} govuk-!-font-size-14">
+    {{ item.state | title }}
+    </strong>
+    {% endif %}
+  </td>
+  <td class="defra-flood-table__cell">
+    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+  </td>
+  <td class="defra-flood-table__cell">
+    Stable
+  </td>
+
   {% endif %}
 </tr>

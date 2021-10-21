@@ -94,86 +94,88 @@ River, sea, groundwater and rainfall levels - GOV.UK
       <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0">
         {{ model.levels.numItems }} river level{% if model.levels.numItems != 1 %}s{% endif %} on the {{ model.river.name }}
       </h2>
-      <p>Select level to view height over the last 5 days</p>
+      <p>Select location to view details</p>
       <table class="defra-flood-table">
-        {% for river, items in model.levels.river.items %}
-        {% for item in items %}
+        {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
-        {% endfor %}
         {% endfor %}
       </table>
       {% else %}
+
       {% if model.levels.filter == 'river' %}
-      <!--
-      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
+      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
         River level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
       </h2>
-      <p>Select level to view height over the last 5 days</p>
-      -->
+      <p>Select location to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header govuk-!-width-one-half">Location</th>
-            <th scope="col" class="defra-flood-table__header govuk-!-width-one-quarter">State</th>
-            <th scope="col" class="defra-flood-table__header govuk-!-width-one-quarter" colspan="2">Height</th>
+            <th scope="col" class="defra-flood-table__header" style="width: 40% !important">Location</th>
+            <th scope="col" class="defra-flood-table__header">River</th>
+            <th scope="col" class="defra-flood-table__header">State</th>
+            <th scope="col" class="defra-flood-table__header">Height</th>
+            <th scope="col" class="defra-flood-table__header">Trend</th>
           </tr>
         </thead>
-        {% for group, items in model.levels.items %}
-          <tr class="">
-            <th colspan="4" scope="colgroup" class="defra-flood-table__cell defra-flood-table__cell--river-name">
-              <a href="/river-sea-groundwater-rainfall-levels?river={{ group | urlencode }}">{{ group }}</a>
-            </th>
-          </tr>
-          {% for item in items %}
-          {% include "partials/level-row.html" %}
-          {% endfor %}
-        {% endfor %}
-      </table>
-      {% endif %}
-
-      {% if model.levels.sea | length %}
-      <!--
-      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
-        {{ model.levels.sea | length }} sea level{% if model.levels.sea | length != 1 %}s{% endif %} near {{ model.place.name }}
-      </h2>
-      <p>Select level to view height over the last 5 days</p>
-      -->
-      <table class="defra-flood-table">
-        <thead class="defra-flood-table__head">
-          <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header govuk-!-width-three-quarters">Location</th>
-            <th scope="col" class="defra-flood-table__header govuk-!-width-one-quarter" colspan="3">Height</th>
-          </tr>
-        </thead>
-        {% for item in model.levels.sea %}
+        {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
       </table>
       {% endif %}
 
-      {% if model.levels.groundwater | length %}
-      <table class="defra-flood-table">
-      {% for item in model.levels.groundwater %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
-      </table>
-      {% endif %}
-
-      {% if model.levels.rainfall | length %}
-      <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-0" aria-live="polite" id="search-count">
-        {{ model.levels.rainfall | length }} rainfall level{% if model.levels.rainfall | length != 1 %}s{% endif %} near {{ model.place.name }}
+      {% if model.levels.filter == 'sea' %}
+      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        Sea level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
       </h2>
-      <p>Select level to view accumulations of the last 24 hours</p>
+      <p>Select location to view details</p>
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
             <th scope="col" class="defra-flood-table__header govuk-!-width-one-half">Location</th>
+            <th scope="col" class="defra-flood-table__header govuk-!-width-one-half">Height</th>
+          </tr>
+        </thead>
+        {% for item in model.levels.items %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
+      </table>
+      {% endif %}
+
+      {% if model.levels.filter == 'groundwater' %}
+      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        Groundwater level{% if model.levels.numItems != 1 %}s{% endif %} near {{ model.place.name }}
+      </h2>
+      <p>Select location to view details</p>
+      <table class="defra-flood-table">
+        <thead class="defra-flood-table__head">
+          <tr class="defra-flood-table__row">
+            <th scope="col" class="defra-flood-table__header" style="width: 40% !important">Location</th>
+            <th scope="col" class="defra-flood-table__header">State</th>
+            <th scope="col" class="defra-flood-table__header">Height</th>
+            <th scope="col" class="defra-flood-table__header">Trend</th>
+          </tr>
+        </thead>
+        {% for item in model.levels.items %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
+      </table>
+      {% endif %}
+
+      {% if model.levels.filter == 'rainfall' %}
+      <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+        Rainfall near {{ model.place.name }}
+      </h2>
+      <p>Select locaton to view accumulations of the last 24 hours</p>
+      <table class="defra-flood-table">
+        <thead class="defra-flood-table__head">
+          <tr class="defra-flood-table__row">
+            <th scope="col" class="defra-flood-table__header govuk-!-width-one-third">Location</th>
             <th scope="col" class="defra-flood-table__header">1 hour</th>
             <th scope="col" class="defra-flood-table__header">6 hours</th>
             <th scope="col" class="defra-flood-table__header">24 hours</th>
           </tr>
         </thead>
-        {% for item in model.levels.rainfall %}
+        {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
       </table>

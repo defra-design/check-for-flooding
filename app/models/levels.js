@@ -13,7 +13,7 @@ class Levels {
     levels = levels.filter(x => x.group_type === filter)
     this.numItems = levels.length
     this.hasHigh = false
-    this.items = filter === 'river' ? this.groupLevels(levels) : levels.map(x => new Level(x))
+    this.items = levels.map(x => new Level(x))
     this.bbox = place.bboxBuffered || river.bbox || []
   }
 
