@@ -1,4 +1,9 @@
 <tr class="">
+  {% if model.querySearchType != 'river' and model.queryType == 'river' and item.groupStart == loop.index %}
+  <td class="defra-flood-table__cell" rowspan="{{ item.groupCount }}">
+    {% if item.riverSlug %}{{ item.riverName }}{% else %}---{% endif %}
+  </td>
+  {% endif %}
   <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--item-name">
     {% if item.type == 'rainfall' %}
@@ -19,19 +24,12 @@
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}
   </td>
-  <!-- Error within river-->
-  {% if item.state === 'error' and item.riverSlug != '' %}
-  <td class="defra-flood-table__cell">
-    {{ item.riverName }}
-  </td>
+  <!-- Error -->
+  {% if item.state === 'error'%}
   <td class="defra-flood-table__cell" colspan="3">
     Data not available
   </td>
   <!-- Error with groundwater or sea -->
-  {% elif item.type == 'error' %}
-  <td class="defra-flood-table__cell" colspan="3">
-    Data not available
-  </td>
   {% elif item.type == 'rainfall' %}
   <td class="defra-flood-table__cell">
     {{ item.value1hr }}mm
@@ -44,9 +42,6 @@
   </td>
   <!-- Tide level within river -->
   {% elif item.type == 'tide' and item.riverSlug != '' %}
-  <td class="defra-flood-table__cell">
-    {{ item.riverName }}
-  </td>
   <td class="defra-flood-table__cell">
     ---
   </td>
@@ -62,7 +57,7 @@
     {{ item.value }}
   </td>
   <!-- Single river or groundwater level -->
-  {% elif model.queryType === 'river' or item.type == 'groundwater' %}
+  {% elif model.querySearchType === 'river' or item.type == 'groundwater' %}
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}
     <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">
@@ -78,9 +73,6 @@
   </td>
   <!-- River level -->
   {% else %}
-  <td class="defra-flood-table__cell">
-    {{ item.riverName }}
-  </td>
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}---{% else %}
     <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">

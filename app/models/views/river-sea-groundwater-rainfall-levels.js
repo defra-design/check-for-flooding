@@ -4,8 +4,8 @@ class ViewModel {
   constructor (query, place, places, river, rivers, levels, isPost = false) {
     this.searchType = 'placeAndRiver'
     this.queryTerm = query.term || query.river || query.place ? decodeURI(query.term || query.river || query.place) : ''
-    this.queryType = query.river ? 'river' : (query.place ? 'place' : '')
-    this.queryFilters = query.filters
+    this.querySearchType = query.river ? 'river' : (query.place ? 'place' : '')
+    this.queryType = levels ? levels.type : null
     this.bbox = !isPost && levels ? levels.bbox : []
     this.place = place
     this.places = places

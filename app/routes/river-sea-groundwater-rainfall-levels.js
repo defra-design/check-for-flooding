@@ -25,7 +25,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     const river = new River(riverResponse.data)
     const levelResponse = await levelServices.getLevelsByRiver(term)
-    const levels = new Levels(query.filter, {}, river, levelResponse.data || [])
+    const levels = new Levels({}, river, query.type, levelResponse.data || [])
     model = new ViewModel(query, null, null, river, null, levels)
   } else if (query.place && query.place !== '') {
     // Place query
@@ -42,7 +42,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     const place = new Place(locationResponse.data.result)
     const levelResponse = await levelServices.getLevelsWithin(place.bboxBuffered)
-    const levels = new Levels(query.filter, place, {}, levelResponse.data || [])
+    const levels = new Levels(place, {}, query.type, levelResponse.data || [])
     model = new ViewModel(query, place, null, null, null, levels)
   } else {
     model = new ViewModel(query, null, null, null, null, null)
@@ -88,11 +88,6 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   } else {
     res.render('river-sea-groundwater-rainfall-levels', { model })
   }
-})
-
-router.post('/filter-levels', async (req, res) => {
-  const { type, term, filter } = req.body
-  res.redirect(`/river-sea-groundwater-rainfall-levels?${type}=${term}&filter=${filter}#`)
 })
 
 module.exports = router

@@ -1,7 +1,7 @@
 const utils = require('../utils')
 
 class Level {
-  constructor (data) {
+  constructor (data, count, start) {
     this.id = data.id
     this.name = data.name
     this.state = data.state
@@ -16,6 +16,8 @@ class Level {
     this.riverName = data.river_name
     this.riverDisplay = data.river_display
     this.riverSlug = data.river_slug || ''
+    this.groupCount = count
+    this.groupStart = start
     this.isDownstream = Boolean(data.is_downstream)
   }
 }
