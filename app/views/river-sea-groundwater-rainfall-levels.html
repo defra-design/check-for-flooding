@@ -110,8 +110,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% else %}
 
       <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-        {{ model.queryType | capitalize }} level{% if model.levels.numItems != 1 %}s{% endif %}
-        {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
+        {{ model.queryType | capitalize }} levels {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
       </h2>
 
       {% if model.queryType == 'river' %}

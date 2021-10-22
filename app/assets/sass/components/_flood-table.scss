@@ -26,23 +26,11 @@
   &__cell {
     @extend .govuk-table__cell;
   }
-  &__cell--river-name {
-    @include govuk-font($size: 16);
-    text-align: left;
-    border-top: 3px solid $govuk-border-colour;
-    border-bottom: 0px;
-    a {
-      color: $govuk-text-colour;
-    }
-  }
   &__cell--item-name {
     @include govuk-font($size: 19, $weight: bold);
   }
   &__item-date {
     display: block;
     @include govuk-font($size: 14);
-  }
-  tbody tr:first-child .defra-flood-table__cell--river-name {
-    border-top :0px;
   }
 }

@@ -1,6 +1,6 @@
 <tr class="">
   {% if model.querySearchType != 'river' and model.queryType == 'river' and item.groupStart == loop.index %}
-  <td class="defra-flood-table__cell" rowspan="{{ item.groupCount }}">
+  <td class="defra-flood-table__cell defra-flood-table__cell--river-name" rowspan="{{ item.groupCount }}">
     {% if item.riverSlug %}{{ item.riverName }}{% else %}---{% endif %}
   </td>
   {% endif %}
