@@ -1,12 +1,12 @@
 .defra-flood-table {
   @extend .govuk-table;
-  td, th {
-    @include mq ($until: tablet) {
-      box-sizing: border-box;
-    }
-  }
   &__header {
     @extend .govuk-table__header;
+  }
+  &__header--rainfall span {
+    @include mq ($until: tablet) {
+      @include defra-visually-hidden();
+    }
   }
   &__row--subgroup td {
     border-top: 1px solid govuk-colour('light-grey');
