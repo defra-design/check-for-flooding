@@ -21,7 +21,8 @@ window.flood.maps.layers = {
       ref: 'road',
       source: new BingMaps({
         key: 'AtbOHVZK_YNqr1Cu_FIB39nZ8Uq9XPB-RmLjk6cxJwRW3I0J3kkDZ_5qQaiMu6H-' + '&c4w=1&cstl=rd&src=h&st=me|lv:0_trs|v:0_pt|v:0',
-        imagerySet: 'RoadOnDemand'
+        imagerySet: 'RoadOnDemand',
+        hidpi: true
       }),
       visible: false,
       zIndex: 0
@@ -34,8 +35,8 @@ window.flood.maps.layers = {
       ref: 'road',
       source: new BingMaps({
         key: window.flood.model.bingApiKey,
-        imagerySet: 'RoadOnDemand'
-        // hidpi: true
+        imagerySet: 'RoadOnDemand',
+        hidpi: true
       }),
       visible: false,
       zIndex: 0
@@ -48,8 +49,8 @@ window.flood.maps.layers = {
       ref: 'satellite',
       source: new BingMaps({
         key: window.flood.model.bingApiKey,
-        imagerySet: 'AerialWithLabelsOnDemand'
-        // hidpi: true
+        imagerySet: 'AerialWithLabelsOnDemand',
+        hidpi: true
       }),
       visible: false,
       zIndex: 0
