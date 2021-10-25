@@ -96,6 +96,7 @@
     {% else %}
     <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
     {% endif %}
+    <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
     <p>
       <a href="https://www.gov.uk/sign-up-for-flood-warnings">
         {% if model.isActive %}
