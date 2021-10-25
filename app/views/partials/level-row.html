@@ -1,13 +1,17 @@
 {% if model.queryType == 'river' and item.groupStart == loop.index %}
+<!-- River -->
 <tr class="defra-flood-table__row">
-  <td class="defra-flood-table__cell defra-flood-table__cell--river" colspan="4">
+  <td class="defra-flood-table__cell defra-flood-table__cell--river" colspan="3">
     {% if item.riverSlug %}
     <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
-    {% else %}---{% endif %}
+    {% else %}
+    {{ item.riverWiskiName }}
+    {% endif %}
   </td>
 </tr>
 {% endif %}
-<tr class="defra-flood-table__row">
+
+<tr class="defra-flood-table__row{% if model.queryType == 'river' %} defra-flood-table__row--subgroup{% endif %}">
   <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--location">
     {% if item.type == 'rainfall' %}
@@ -28,12 +32,14 @@
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}
   </td>
+
   <!-- Error -->
-  {% if item.state === 'error'%}
-  <td class="defra-flood-table__cell" colspan="2">
+  {% if item.state === 'error' %}
+  <td class="defra-flood-table__cell defra-flood-table__cell--error" colspan="{% if item.riverSlug != '' or item.type == 'river' %}2{% else %}1{% endif %}">
     Data not available
   </td>
-  <!-- Error with groundwater or sea -->
+
+  <!-- Rainfall -->
   {% elif item.type == 'rainfall' %}
   <td class="defra-flood-table__cell">
     {{ item.value1hr }}mm
@@ -44,43 +50,25 @@
   <td class="defra-flood-table__cell">
     {{ item.value24hr }}mm
   </td>
-  <!-- Tide level within river -->
-  {% elif item.type == 'tide' and item.riverSlug != '' %}
-  <td class="defra-flood-table__cell">
-    {{ item.value }}m
-  </td>
-  <td class="defra-flood-table__cell">
-    &nbsp;
-  </td>
 
-  <!-- Sea level -->
+  <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
   <td class="defra-flood-table__cell">
     {{ item.value }}
   </td>
-  <!-- Single river or groundwater level -->
-  {% elif model.querySearchType === 'river' or item.type == 'groundwater' %}
+  {% if item.riverSlug != '' %}
   <td class="defra-flood-table__cell">
-    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+    &nbsp;
   </td>
-  <td class="defra-flood-table__cell">
-    {% if item.isDownstream %}---{% else %}
-    <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">
-    {{ item.state | title }}
-    </strong>
-    {% endif %}
-  </td>
+  {% endif %}
 
-  <!-- River level -->
+  <!-- River or groundwater -->
   {% else %}
   <td class="defra-flood-table__cell">
     {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--state">
     {% if item.isDownstream %}{% else %}
-    <!--<span class="defra-flood-table__icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5" ><circle cx="15" cy="15" r="14.5" fill="#5694ca" stroke="#fff"/><path d="M12 8.109h6v2.018h-3v.968h3v2.027h-2v.968h2v1.99h-2v.968h2v2.485l-6 .885V8.109z" fill="#fff"/><g fill="none" stroke-linecap="round" stroke-linejoin="miter"><use xlink:href="#B" stroke="#5595ca" stroke-width="3.5"/><use xlink:href="#B" stroke="#fff" stroke-width="1.5"/></g><defs ><path id="B" d="M9.697 20.184c.393.389.886.731 1.767.731 1.792 0 1.711-1.463 3.536-1.463s1.71 1.463 3.536 1.463c.826 0 1.24-.3 1.767-.731"/></defs></svg>
-    </span>-->
     <strong class="govuk-tag {% if item.state == 'high' %}govuk-tag--red{% else %}govuk-tag--blue{% endif %} govuk-!-font-size-14">
     {{ item.state | title }}
     </strong>

@@ -16,6 +16,7 @@ class Level {
     this.riverName = data.river_name
     this.riverDisplay = data.river_display
     this.riverSlug = data.river_slug || ''
+    this.riverWiskiName = data.river_wiski_name
     this.groupCount = count
     this.groupStart = start
     this.isDownstream = Boolean(data.is_downstream)

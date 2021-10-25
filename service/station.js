@@ -19,6 +19,7 @@ module.exports = {
     CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
+    station.river AS river_wiski_name,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
@@ -50,6 +51,7 @@ module.exports = {
     CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
+    station.river AS river_wiski_name,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
