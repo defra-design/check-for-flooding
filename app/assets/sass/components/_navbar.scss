@@ -16,6 +16,10 @@
     text-decoration: none;
   }
   &__item--selected a {
-    border-bottom: 5px solid govuk-colour('blue');
+    border-color: govuk-colour('blue');
+  }
+  a:focus {
+    box-shadow: none;
+    border-color: govuk-colour('black');
   }
 }
