@@ -63,6 +63,13 @@ module.exports = {
         results = results.filter(result => result.address.adminDistrict === 'England')
         // Remove medium and low confidence results
         results = results.filter(result => result.confidence === 'High')
+        // Remove duplication within the name
+        results = results.map(result => {
+          if (result.address.adminDistrict2 === result.address.locality) {
+            result.name = result.address.locality
+          }
+          return result
+        })
         // Remove duplicates
         results = Array.from(new Map(results.map(result => [result.name, result])).values())
         response.data.results = results
