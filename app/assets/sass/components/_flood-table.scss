@@ -1,15 +1,6 @@
 .defra-flood-table {
   @extend .govuk-table;
-  @include mq ($until: tablet) {
-    display: block;
-  }
-  thead, tbody, tr, th, td {
-    @include mq ($until: tablet) {
-      display: block;
-    }
-  }
   td, th {
-    vertical-align: top;
     @include mq ($until: tablet) {
       box-sizing: border-box;
     }
@@ -17,17 +8,24 @@
   &__head {
 
   }
-  &__row {
-    
-  }
   &__header {
     @extend .govuk-table__header;
   }
   &__cell {
     @extend .govuk-table__cell;
+    vertical-align: middle;
   }
-  &__cell--item-name {
+  &__cell--river {
+    @include govuk-font($size: 16);
+    a {
+      color: $govuk-text-colour;
+    }
+  }
+  &__cell--location {
     @include govuk-font($size: 19, $weight: bold);
+  }
+  &__cell--state {
+    @include govuk-font($size: 14);
   }
   &__item-date {
     display: block;

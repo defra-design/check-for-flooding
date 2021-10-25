@@ -94,34 +94,19 @@ River, sea, groundwater and rainfall levels - GOV.UK
       <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-2">
         {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} on the {{ model.river.name }}
       </h2>
-      <table class="defra-flood-table">
-        <thead class="defra-flood-table__head">
-          <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header" style="width: 40% !important">Location</th>
-            <th scope="col" class="defra-flood-table__header">State</th>
-            <th scope="col" class="defra-flood-table__header">Height</th>
-            <th scope="col" class="defra-flood-table__header">Trend</th>
-          </tr>
-        </thead>
-        {% for item in model.levels.items %}
-        {% include "partials/level-row.html" %}
-        {% endfor %}
-      </table>
       {% else %}
-
       <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
         {{ model.queryType | capitalize }} levels {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
       </h2>
+      {% endif %}
 
-      {% if model.queryType == 'river' %}
+      {% if model.querySearchType === 'river' or model.queryType == 'river' or model.queryType == 'groundwater' %}
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header" style="width: 20% !important">River</th>
             <th scope="col" class="defra-flood-table__header" style="width: 40% !important">Location</th>
-            <th scope="col" class="defra-flood-table__header">State</th>
             <th scope="col" class="defra-flood-table__header">Height</th>
-            <th scope="col" class="defra-flood-table__header">Trend</th>
+            <th scope="col" class="defra-flood-table__header">State</th>
           </tr>
         </thead>
         {% for item in model.levels.items %}
@@ -144,27 +129,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
       </table>
       {% endif %}
 
-      {% if model.queryType == 'groundwater' %}
-      <table class="defra-flood-table">
-        <thead class="defra-flood-table__head">
-          <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header" style="width: 40% !important">Location</th>
-            <th scope="col" class="defra-flood-table__header">State</th>
-            <th scope="col" class="defra-flood-table__header">Height</th>
-            <th scope="col" class="defra-flood-table__header">Trend</th>
-          </tr>
-        </thead>
-        {% for item in model.levels.items %}
-        {% include "partials/level-row.html" %}
-        {% endfor %}
-      </table>
-      {% endif %}
-
       {% if model.queryType == 'rainfall' %}
       <table class="defra-flood-table">
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
-            <th scope="col" class="defra-flood-table__header govuk-!-width-one-third">Location</th>
+            <th scope="col" class="defra-flood-table__header">Location</th>
             <th scope="col" class="defra-flood-table__header">1 hour</th>
             <th scope="col" class="defra-flood-table__header">6 hours</th>
             <th scope="col" class="defra-flood-table__header">24 hours</th>
@@ -174,8 +143,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
         {% include "partials/level-row.html" %}
         {% endfor %}
       </table>
-      {% endif %}
-
       {% endif %}
     </div>
   </div>
