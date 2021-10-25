@@ -1,7 +1,6 @@
 'use strict'
 import 'elm-pep'
 import '../core'
-import '../components/filter'
 import '../build/templates'
 import '../components/nunjucks'
 import '../components/map/maps'
