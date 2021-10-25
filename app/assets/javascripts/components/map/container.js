@@ -268,15 +268,15 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       document.body.classList.remove('defra-map-body')
       document.documentElement.classList.remove('defra-map-html')
       clearAllBodyScrollLocks()
-      // Remove map and return focus
-      containerElement.parentNode.removeChild(containerElement)
-      const button = document.getElementById(mapId + '-btn')
-      button.focus()
       // Re-instate aria-hidden elements
       forEach(mapSiblings, (mapSibling) => {
         mapSibling.removeAttribute('aria-hidden')
         mapSibling.classList.remove('defra-map-visually-hidden')
       })
+      // Remove map and return focus
+      containerElement.parentNode.removeChild(containerElement)
+      const button = document.getElementById(mapId + '-btn')
+      button.focus()
       // Tidy up any document or window listeners
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
