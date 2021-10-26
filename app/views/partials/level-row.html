@@ -34,19 +34,13 @@
       {% endif %}
     </a>
     {% endif %}
-    {% if item.state !== 'error' %}
+    {% if item.state != 'error' %}
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}
   </td>
 
-  <!-- Error -->
-  {% if item.state === 'error' %}
-  <td class="defra-flood-table__cell defra-flood-table__cell--error" colspan="{% if item.riverSlug != '' or item.type == 'river' %}3{% else %}1{% endif %}">
-    Data not available
-  </td>
-
   <!-- Rainfall -->
-  {% elif item.type == 'rainfall' %}
+  {% if item.type == 'rainfall' %}
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
     {{ item.value1hr }}mm
   </td>
@@ -60,7 +54,11 @@
   <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
   <td class="defra-flood-table__cell defra-flood-table__cell--height">
+    {% if item.state == 'error' %}
+    n/a
+    {% else %}
     {% if item.value %}{{ item.value }}m{% endif %}
+    {% endif %}
   </td>
   {% if item.riverSlug != '' %}
   <td class="defra-flood-table__cell">
@@ -74,9 +72,16 @@
   <!-- River or groundwater -->
   {% else %}
   <td class="defra-flood-table__cell defra-flood-table__cell--height">
+    {% if item.state == 'error' %}
+    <span class="defra-flood-table__item-error">n/a</span>
+    {% else %}
     {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+    {% endif %}
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--state">
+    {% if item.state == 'error' %}
+    <span class="defra-flood-table__item-error">n/a</span>
+    {% else %}
     {% if item.isDownstream %}
     &nbsp;
     {% else %}
@@ -95,8 +100,12 @@
     {% endif %}
     <span>{{ item.state | capitalize }}</span>
     {% endif %}
+    {% endif %}
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--trend{% if item.state %} defra-flood-table__cell--trend-{{ item.state }}{% endif %}">
+    {% if item.state == 'error' %}
+    <span class="defra-flood-table__item-error">n/a</span>
+    {% else %}
     {% if item.trend == 'rising' %}
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5"><path d="M10 7.595v18.631" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 3.774l5 8H5l5-8z" fill="currentColor"/></svg>
     {% elif item.trend == 'falling' %}
@@ -105,6 +114,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5"><path d="M14.179 15H2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 15l-8-5v10l8-5z" fill="currentColor"/></svg>
     {% endif %}
     <span>Stable</span>
+    {% endif %}
   </td>
 
   {% endif %}
