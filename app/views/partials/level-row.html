@@ -1,13 +1,13 @@
 {% if model.queryType == 'river' and item.groupStart == loop.index %}
 <!-- River -->
 <tr class="defra-flood-table__row">
-  <td class="defra-flood-table__cell defra-flood-table__cell--river" colspan="3">
+  <th class="defra-flood-table__cell defra-flood-table__cell--river" colspan="3" scope="colgroup">
     {% if item.riverSlug %}
     <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
     {% else %}
     {{ item.riverWiskiName }}
     {% endif %}
-  </td>
+  </th>
 </tr>
 {% endif %}
 
