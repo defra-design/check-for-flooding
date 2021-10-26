@@ -29,6 +29,9 @@
       {% if item.type == 'groundwater' %}
       borehole
       {% endif %}
+      {% if item.riverSlug != '' and item.type == 'tide' %}
+      tide
+      {% endif %}
     </a>
     {% endif %}
     {% if item.state !== 'error' %}
@@ -57,7 +60,7 @@
   <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
   <td class="defra-flood-table__cell defra-flood-table__cell--height">
-    {{ item.value }}
+    {% if item.value %}{{ item.value }}m{% endif %}
   </td>
   {% if item.riverSlug != '' %}
   <td class="defra-flood-table__cell">
