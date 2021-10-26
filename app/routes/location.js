@@ -17,7 +17,6 @@ router.get('/location', (req, res) => {
 
 router.get('/location/:location', async (req, res) => {
   const referrer = req.get('Referrer')
-  console.log(referrer)
   const slug = req.params.location.toLowerCase()
   const locationResponse = await locationServices.getLocationBySlug(slug)
   if (locationResponse.status === 200) {
