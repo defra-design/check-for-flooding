@@ -19,6 +19,7 @@
   &__cell--river {
     @include govuk-font($size: 16);
     border-top: 1px solid $govuk-border-colour;
+    padding-top: 20px;
     border-bottom: 0px;
     a {
       color: $govuk-text-colour;
