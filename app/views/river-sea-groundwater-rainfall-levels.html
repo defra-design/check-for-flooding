@@ -98,52 +98,27 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {{ model.queryType | capitalize }} levels {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
     </h2>
     {% endif %}
-
-    {% if model.querySearchType === 'river' or model.queryType == 'river' or model.queryType == 'groundwater' %}
     <table class="defra-flood-table">
       <thead class="defra-flood-table__head">
         <tr class="defra-flood-table__row">
-          <th scope="col" class="defra-flood-table__header" style="width: 50% !important">Location</th>
-          <th scope="col" class="defra-flood-table__header">Height</th>
-          <th scope="col" class="defra-flood-table__header">State</th>
-        </tr>
-      </thead>
-      {% for item in model.levels.items %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    {% if model.queryType == 'sea' %}
-    <table class="defra-flood-table">
-      <thead class="defra-flood-table__head">
-        <tr class="defra-flood-table__row">
-          <th scope="col" class="defra-flood-table__header" style="width: 50% !important">Location</th>
-          <th scope="col" class="defra-flood-table__header">Height</th>
-        </tr>
-      </thead>
-      {% for item in model.levels.items %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
-    </table>
-    {% endif %}
-
-    {% if model.queryType == 'rainfall' %}
-    <table class="defra-flood-table">
-      <thead class="defra-flood-table__head">
-        <tr class="defra-flood-table__row">
+        {% if model.queryType == 'rainfall' %}
           <th scope="col" class="defra-flood-table__header">Location</th>
           <th scope="col" class="defra-flood-table__header defra-flood-table__header--rainfall">1 h<span>ou</span>r</th>
           <th scope="col" class="defra-flood-table__header defra-flood-table__header--rainfall">6 h<span>ou</span>rs</th>
           <th scope="col" class="defra-flood-table__header defra-flood-table__header--rainfall">24 h<span>ou</span>rs</th>
+        {% else %}
+          <th scope="col" class="defra-flood-table__header" style="width: 50% !important">Location</th>
+          <th scope="col" class="defra-flood-table__header">Height</th>
+          {% if model.queryType != 'sea' %}
+          <th scope="col" class="defra-flood-table__header">State</th>
+          {% endif %}
+        {% endif %}
         </tr>
       </thead>
       {% for item in model.levels.items %}
       {% include "partials/level-row.html" %}
       {% endfor %}
     </table>
-    {% endif %}
-
   </div>
 </div>
 {% endif %}
