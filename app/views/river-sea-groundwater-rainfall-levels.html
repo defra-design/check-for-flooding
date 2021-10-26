@@ -102,16 +102,16 @@ River, sea, groundwater and rainfall levels - GOV.UK
       <thead class="defra-flood-table__head">
         <tr class="defra-flood-table__row">
         {% if model.queryType == 'rainfall' %}
-          <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
+          <th class="defra-flood-table__header defra-flood-table__header--location-rainfall" scope="col">Location</th>
           <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">1 h<span>ou</span>r</th>
           <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">6 h<span>ou</span>rs</th>
           <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">24 h<span>ou</span>rs</th>
         {% else %}
-          <th class="defra-flood-table__header defra-flood-table__header--location" scope="col" style="width: 50%">Location</th>
-          <th class="defra-flood-table__header" scope="col">Height</th>
+          <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
+          <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">Height</th>
           {% if model.queryType != 'sea' %}
-          <th class="defra-flood-table__header" scope="col">State</th>
-          <th class="defra-flood-table__header" scope="col">Trend</th>
+          <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">State</th>
+          <th class="defra-flood-table__header defra-flood-table__header--trend" scope="col">Trend</th>
           {% endif %}
         {% endif %}
         </tr>
