@@ -16,6 +16,8 @@ router.get('/location', (req, res) => {
 })
 
 router.get('/location/:location', async (req, res) => {
+  const referrer = req.get('Referrer')
+  console.log(referrer)
   const slug = req.params.location.toLowerCase()
   const locationResponse = await locationServices.getLocationBySlug(slug)
   if (locationResponse.status === 200) {
@@ -29,7 +31,7 @@ router.get('/location/:location', async (req, res) => {
       const levels = new Levels(place, null, null, (levelResponse.data || []))
       const banner = new BannerLocation(place, warnings, levels)
       const outlook = new Outlook(outlookResponse.data, { bbox2k: place.bbox })
-      const model = new ViewModel(place, banner, outlook)
+      const model = new ViewModel(place, banner, outlook, referrer)
       return res.render('location', { model })
     } else {
       // Return 404
