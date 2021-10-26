@@ -91,11 +91,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-column-full">
     {% if model.querySearchType === 'river' %}
     <h2 class="govuk-heading-m govuk-!-margin-top-8 govuk-!-margin-bottom-2">
-      {{ model.levels.numItems }} level{% if model.levels.numItems != 1 %}s{% endif %} on the {{ model.river.name }}
+      Levels on the {{ model.river.name }}
     </h2>
     {% else %}
     <h2 class="govuk-heading-m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-      {{ model.queryType | capitalize }} levels {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
+      {{ model.queryType | capitalize }} {% if model.queryType != 'rainfall' %}levels{% endif %} {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
     </h2>
     {% endif %}
     <table class="defra-flood-table">
