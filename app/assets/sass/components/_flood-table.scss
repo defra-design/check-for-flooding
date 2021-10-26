@@ -64,7 +64,8 @@
       }
     }
   }
-  &__cell--trend-normal {
+  &__cell--trend-normal,
+  &__cell--trend-low {
     color: govuk-colour('blue');
   }
   &__cell--trend-high {
