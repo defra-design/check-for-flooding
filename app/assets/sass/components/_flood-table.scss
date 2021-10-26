@@ -2,11 +2,19 @@
   @extend .govuk-table;
   &__header {
     @extend .govuk-table__header;
+    padding-right: 10px;
+    text-align: center;
   }
-  &__header--rainfall span {
-    @include mq ($until: tablet) {
-      @include defra-visually-hidden();
+  &__header--rainfall {
+    text-align: right;
+    span {
+      @include mq ($until: tablet) {
+        @include defra-visually-hidden();
+      }
     }
+  }
+  &__header--location {
+    text-align: left;
   }
   &__row--subgroup td {
     border-top: 1px solid govuk-colour('light-grey');
@@ -14,22 +22,36 @@
   }
   &__cell {
     @extend .govuk-table__cell;
+    padding-right: 10px;
     vertical-align: middle;
+    text-align:center;
+    svg {
+      display: block;
+      margin: auto;
+    }
   }
   &__cell--river {
     @include govuk-font($size: 16);
     border-top: 1px solid $govuk-border-colour;
     padding-top: 20px;
     border-bottom: 0px;
+    text-align:left;
     a {
       color: $govuk-text-colour;
     }
   }
   &__cell--location {
     @include govuk-font($size: 19, $weight: bold);
+    text-align:left;
   }
-  &__cell--state {
-    @include govuk-font($size: 14);
+  &__cell--trend-normal {
+    color: govuk-colour('blue');
+  }
+  &__cell--trend-high {
+    color: govuk-colour('dark-blue');
+  }
+  &__cell--rainfall {
+    text-align: right;
   }
   &__item-date {
     display: block;
