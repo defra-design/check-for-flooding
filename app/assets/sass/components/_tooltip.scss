@@ -1,6 +1,9 @@
-.defra-toggletip {
+.defra-tooltip {
   display: inline-block;
   position: relative;
+  [role="tooltip"] {
+      @include defra-visually-hidden();
+  }
   &--open {
       z-index: 1;
   }

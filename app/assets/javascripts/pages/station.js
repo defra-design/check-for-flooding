@@ -2,7 +2,6 @@
 import 'elm-pep'
 import '../core'
 import '../components/charts'
-import '../components/toggletip'
 import '../components/toggle-list-display'
 import '../build/templates'
 import '../components/nunjucks'
@@ -11,8 +10,6 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
-
-const { forEach } = window.flood.utils
 
 // Create LiveMap
 if (document.getElementById('map')) {
@@ -23,13 +20,5 @@ if (document.getElementById('map')) {
     centre: window.flood.model.centroid,
     zoom: 14,
     selectedId: `stations.${window.flood.model.id}`
-  })
-}
-
-// Add toggleTips
-const toggletips = document.querySelectorAll('.defra-toggletip')
-if (toggletips) {
-  forEach(toggletips, toggletip => {
-    window.flood.createToggleTip(toggletip)
   })
 }

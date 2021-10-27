@@ -28,8 +28,7 @@ window.flood.utils = {
     xmlhttp.onreadystatechange = () => {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
         try {
-          const json = JSON.parse(xmlhttp.responseText)
-          callback(null, json)
+          callback(null, xmlhttp.response)
         } catch (err) {
           callback(err)
         }
