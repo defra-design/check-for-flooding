@@ -74,6 +74,9 @@
   &__cell--rainfall {
     text-align: right;
   }
+  &__cell--error {
+    @include govuk-font($size: 14);
+  }
   &__item-date {
     display: block;
     @include govuk-font($size: 14);
