@@ -40,7 +40,6 @@ const Tooltips = () => {
           if (err) {
             console.log('Error: ' + err)
           } else {
-            tooltip.classList.add('defra-tooltip--open')
             content.innerHTML = ''
             const fragmentId = tool.href.substring(tool.href.indexOf('#'))
             const fragment = response.querySelector(`${fragmentId}`)
@@ -48,25 +47,46 @@ const Tooltips = () => {
             fragment.querySelectorAll('a').forEach(link => {
               link.outerHTML = link.innerHTML
             })
-            fragment.className = 'defra-tooltip__content'
             window.setTimeout(() => {
               content.appendChild(fragment)
+              addTooltip(tooltip)
             }, 100)
           }
         })
       } else {
-        tooltip.classList.add('defra-tooltip--open')
+        // Basic tooltip
+        addTooltip(tooltip)
       }
     }
   })
 
   // Remove on escape
   document.addEventListener('keyup', (e) => {
-    const container = document.querySelector('.defra-tooltip--open')
-    if (container && (e.key === 'Escape' || e.key === 'Esc')) {
-      removeTooltip(container)
+    const tooltip = document.querySelector('.defra-tooltip--open')
+    if (tooltip && (e.key === 'Escape' || e.key === 'Esc')) {
+      removeTooltip(tooltip)
     }
   })
+
+  // Add on mouse enter (basic tooltip only)
+  document.addEventListener('mouseenter', (e) => {
+    const isTooltip = e.target.classList.contains('defra-tooltip')
+    if (isTooltip && !e.target.firstElementChild.hasAttribute('href')) {
+      addTooltip(e.target)
+    }
+  }, true)
+
+  // Add on keyboard focus (basic tooltip only)
+  document.addEventListener('focus', (e) => {
+    const isTool = e.target.classList.contains('defra-tooltip__tool')
+    if (isTool && !e.target.hasAttribute('href')) {
+      addTooltip(e.target.parentElement)
+    }
+  }, true)
+}
+
+const addTooltip = (tooltip) => {
+  tooltip.classList.add('defra-tooltip--open')
 }
 
 const removeTooltip = (tooltip) => {
