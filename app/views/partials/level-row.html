@@ -84,8 +84,8 @@
     {% elif item.isDownstream %}
     &nbsp;
     {% else %}
-    <span class="defra-tooltip">
-      <svg aria-describedby="tooltip-state-{{ item.id | lower }}" tabindex="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill-rule="evenodd" stroke-linecap="round" stroke-miterlimit="1.5">
+    <span class="defra-tooltip" data-defra-tooltip>
+      <svg class="defra-tooltip__tool" aria-describedby="tooltip-state-{{ item.id | lower }}" tabindex="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill-rule="evenodd" stroke-linecap="round" stroke-miterlimit="1.5">
         {% if item.state == 'high' and item.type == 'groundwater' %}
         <path d="M2.501 12.583c1.551-.637 1.967-2.166 4.375-2.166 3.043 0 2.851 2.439 5.893 2.439 2.986 0 2.85-2.439 5.892-2.439s2.85 2.439 5.892 2.439c1.377 0 2.068-.5 2.946-1.22" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14.167 7.084v17.499h1.666V7.084h8.333V5.417H5.834v1.667h8.333z" fill="currentColor"/>
         {% elif item.state == 'high' and item.type == 'river' %}
@@ -100,7 +100,7 @@
         <g fill="none"><path d="M10.833 24.353V3.85h8.334v20.578m0-10.579h-3.334m3.334-4.999h-3.334m3.334 9.998h-3.334" stroke="currentColor" stroke-width="1.67"/><g stroke-linecap="round"><use xlink:href="#B" stroke="#fff" stroke-width="5.83"/><use xlink:href="#B" stroke="currentColor" stroke-width="2.5"/></g></g><defs ><path id="B" d="M6.162 23.502c.759.813 1.834 1.259 2.946 1.219 2.986 0 2.85-2.439 5.892-2.439s2.85 2.439 5.892 2.439c1.377 0 2.068-.5 2.946-1.219"/></defs>
         {% endif %}
       </svg>
-      <span class="defra-flood-table__item" role="tooltip" id="tooltip-state-{{ item.id | lower }}">{{ item.state | capitalize }}</span>
+      <span class="defra-tooltip__tip" role="tooltip" id="tooltip-state-{{ item.id | lower }}">{{ item.state | capitalize }}</span>
     </span>
     {% endif %}
   </td>
@@ -108,16 +108,18 @@
     {% if item.state == 'error' %}
     n/a
     {% else %}
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5">
-      {% if item.trend == 'rising' %}
-      <path d="M10 7.595v18.631" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 3.774l5 8H5l5-8z" fill="currentColor"/></svg>
-      {% elif item.trend == 'falling' %}
-      <path d="M10 22.405V3.774" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 26.226l5-8H5l5 8z" fill="currentColor"/></svg>
-      {% else %}
-      <path d="M14.179 15H2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 15l-8-5v10l8-5z" fill="currentColor"/>
-      {% endif %}
-    </svg>
-    <span class="defra-flood-table__item">Stable</span>
+    <span class="defra-tooltip" data-defra-tooltip>
+      <svg class="defra-tooltip__tool" aria-describedby="tooltip-trend-{{ item.id | lower }}" tabindex="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5">
+        {% if item.trend == 'rising' %}
+        <path d="M10 7.595v18.631" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 3.774l5 8H5l5-8z" fill="currentColor"/></svg>
+        {% elif item.trend == 'falling' %}
+        <path d="M10 22.405V3.774" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 26.226l5-8H5l5 8z" fill="currentColor"/></svg>
+        {% else %}
+        <path d="M14.179 15H2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 15l-8-5v10l8-5z" fill="currentColor"/>
+        {% endif %}
+      </svg>
+      <span class="defra-tooltip__tip" role="tooltip" id="tooltip-trend-{{ item.id | lower }}">Stable</span>
+    </span>
     {% endif %}
   </td>
 

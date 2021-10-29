@@ -21,10 +21,7 @@ if (document.getElementById('map')) {
 }
 
 // Add tool tips
-const { forEach } = window.flood.utils
-const tooltips = document.querySelectorAll('.defra-tooltip')
+const tooltips = document.querySelectorAll('[data-tooltip]')
 if (tooltips) {
-  forEach(tooltips, tooltip => {
-    window.flood.createTooltip(tooltip)
-  })
+  window.flood.createTooltips()
 }
