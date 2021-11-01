@@ -21,42 +21,47 @@ if (!Element.prototype.closest) {
 }
 
 const Tooltips = () => {
-  // Add on click
+  // Add tooltip
+  const addTooltip = (tool) => {
+    tool.parentNode.classList.add('defra-tooltip--open')
+  }
+
+  // Remove tooltip
+  const removeTooltip = (tooltip) => {
+    if (tooltip) {
+      tooltip.classList.remove('defra-tooltip--open')
+      // xhr tooltips
+      const status = tooltip.querySelector('[role="status"]')
+      if (status) { status.innerHTML = '' }
+    }
+  }
+
+  // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
     // Hide tooltip
     removeTooltip(document.querySelector('.defra-tooltip--open'))
-    const tooltip = e.target.closest('.defra-tooltip')
-    // Add tooltip
-    if (tooltip) {
+    const isTooltip = e.target.classList.contains('defra-tooltip__tool')
+    if (isTooltip && e.target.tagName === 'a') {
       e.preventDefault()
-      const tool = tooltip.firstElementChild
+      const tool = e.target
       const content = tool.nextSibling
-      const isXhr = tool.hasAttribute('href')
-
-      if (isXhr) {
-        // XMLHttpRequest
-        const url = tool.href.split(/\?|#/)[0]
-        xhr(url, (err, response) => {
-          if (err) {
-            console.log('Error: ' + err)
-          } else {
-            content.innerHTML = ''
-            const fragmentId = tool.href.substring(tool.href.indexOf('#'))
-            const fragment = response.querySelector(`${fragmentId}`)
-            // Remove any hyperlinks
-            fragment.querySelectorAll('a').forEach(link => {
-              link.outerHTML = link.innerHTML
-            })
-            window.setTimeout(() => {
-              content.appendChild(fragment)
-              addTooltip(tooltip)
-            }, 100)
-          }
-        })
-      } else {
-        // Basic tooltip
-        addTooltip(tooltip)
-      }
+      const url = tool.href.split(/\?|#/)[0]
+      // XMLHttpRequest
+      xhr(url, (err, response) => {
+        if (err) {
+          console.log('Error: ' + err)
+        } else {
+          content.innerHTML = ''
+          const fragmentId = tool.href.substring(tool.href.indexOf('#'))
+          const fragment = response.querySelector(`${fragmentId}`)
+          // Remove any hyperlinks
+          fragment.querySelectorAll('a').forEach(link => {
+            link.outerHTML = link.innerHTML
+          })
+          content.appendChild(fragment)
+          addTooltip(tool)
+        }
+      })
     }
   })
 
@@ -71,30 +76,37 @@ const Tooltips = () => {
   // Add on mouse enter (basic tooltip only)
   document.addEventListener('mouseenter', (e) => {
     const isTooltip = e.target.classList.contains('defra-tooltip')
-    if (isTooltip && !e.target.firstElementChild.hasAttribute('href')) {
+    if (isTooltip && e.target.firstElementChild !== 'a') {
+      window.setTimeout(() => {
+        addTooltip(e.target.firstElementChild)
+      }, 100)
+    }
+  }, true)
+
+  // Remove on mouse leave (basic tooltip only)
+  document.addEventListener('mouseleave', (e) => {
+    const isTooltip = e.target.classList.contains('defra-tooltip')
+    if (isTooltip && e.target.firstElementChild !== 'a') {
+      removeTooltip(e.target)
+    }
+  }, true)
+
+  // Add on focus (basic tooltip only)
+  document.addEventListener('focusin', (e) => {
+    const isTool = e.target.classList.contains('defra-tooltip__tool')
+    console.log(e.target)
+    if (isTool && e.target.tagName !== 'a') {
       addTooltip(e.target)
     }
-  }, true)
+  })
 
-  // Add on keyboard focus (basic tooltip only)
-  document.addEventListener('focus', (e) => {
+  // Remove on blur (basic tooltip only)
+  document.addEventListener('focusout', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
-    if (isTool && !e.target.hasAttribute('href')) {
-      addTooltip(e.target.parentElement)
+    if (isTool && e.target.tagName !== 'a') {
+      removeTooltip(e.target.parentNode)
     }
-  }, true)
-}
-
-const addTooltip = (tooltip) => {
-  tooltip.classList.add('defra-tooltip--open')
-}
-
-const removeTooltip = (tooltip) => {
-  if (tooltip) {
-    tooltip.classList.remove('defra-tooltip--open')
-    const status = tooltip.querySelector('[role="status"]')
-    if (status) { status.innerHTML = '' }
-  }
+  })
 }
 
 window.flood.createTooltips = (tooltips) => {
