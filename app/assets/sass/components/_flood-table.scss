@@ -58,19 +58,6 @@
         display: none;
       }
     }
-    span[role="tooltip"] {
-      @include mq ($from: tablet) {
-        position: static !important;
-        width: auto !important;
-        height: auto !important;
-        overflow: visible !important;
-        clip: auto !important;
-        -webkit-clip-path: none !important;
-        clip-path: none !important;
-        border: 0 !important;
-        white-space: normal !important;
-      }
-    }
   }
   &__cell--high {
     svg {
@@ -86,5 +73,37 @@
   &__item-date {
     display: block;
     @include govuk-font($size: 14);
+  }
+}
+
+// Tooltip overides
+.defra-flood-table {
+  &__cell--state, &__cell--trend {
+    span[role="tooltip"] {
+      @include mq ($from: tablet) {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        clip: auto !important;
+        -webkit-clip-path: none !important;
+        clip-path: none !important;
+        border: 0 !important;
+        white-space: normal !important;
+        box-shadow: none;
+        top: auto;
+        right: auto;
+        margin: 0px;
+        background-color:transparent;
+        padding: 0px;
+        text-align: center;
+        @include govuk-font($size: 19);
+      }
+    }
+    span[role="tooltip"]:before, span[role="tooltip"]:after {
+      @include mq ($from: tablet) {
+        content: none;
+      }
+    }
   }
 }

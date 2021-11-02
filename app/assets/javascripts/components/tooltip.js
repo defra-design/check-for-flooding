@@ -23,23 +23,27 @@ if (!Element.prototype.closest) {
 const Tooltips = () => {
   // Add tooltip
   const addTooltip = (tool) => {
+    removeTooltips()
     tool.parentNode.classList.add('defra-tooltip--open')
   }
 
   // Remove tooltip
-  const removeTooltip = (tooltip) => {
-    if (tooltip) {
-      tooltip.classList.remove('defra-tooltip--open')
-      // xhr tooltips
-      const status = tooltip.querySelector('[role="status"]')
-      if (status) { status.innerHTML = '' }
+  const removeTooltips = () => {
+    const tooltips = document.querySelectorAll('.defra-tooltip--open')
+    if (tooltips.length) {
+      tooltips.forEach((tooltip) => {
+        tooltip.classList.remove('defra-tooltip--open')
+        // xhr tooltips
+        const status = tooltip.querySelector('[role="status"]')
+        if (status) { status.innerHTML = '' }
+      })
     }
   }
 
   // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
     // Hide tooltip
-    removeTooltip(document.querySelector('.defra-tooltip--open'))
+    removeTooltips()
     const isTooltip = e.target.classList.contains('defra-tooltip__tool')
     if (isTooltip && e.target.tagName === 'a') {
       e.preventDefault()
@@ -67,9 +71,8 @@ const Tooltips = () => {
 
   // Remove on escape
   document.addEventListener('keyup', (e) => {
-    const tooltip = document.querySelector('.defra-tooltip--open')
-    if (tooltip && (e.key === 'Escape' || e.key === 'Esc')) {
-      removeTooltip(tooltip)
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      removeTooltips()
     }
   })
 
@@ -87,7 +90,7 @@ const Tooltips = () => {
   document.addEventListener('mouseleave', (e) => {
     const isTooltip = e.target.classList.contains('defra-tooltip')
     if (isTooltip && e.target.firstElementChild !== 'a') {
-      removeTooltip(e.target)
+      removeTooltips()
     }
   }, true)
 
@@ -104,7 +107,7 @@ const Tooltips = () => {
   document.addEventListener('focusout', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
     if (isTool && e.target.tagName !== 'a') {
-      removeTooltip(e.target.parentNode)
+      removeTooltips()
     }
   })
 }
