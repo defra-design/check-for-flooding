@@ -4,31 +4,21 @@
 
 const { xhr } = window.flood.utils
 
-// ie11 element.closest() polyfil
-const Element = window.Element
-if (!Element.prototype.matches) {
-  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector
-}
-if (!Element.prototype.closest) {
-  Element.prototype.closest = (s) => {
-    let el = this
-    do {
-      if (Element.prototype.matches.call(el, s)) return el
-      el = el.parentElement || el.parentNode
-    } while (el !== null && el.nodeType === 1)
-    return null
-  }
-}
-
 const Tooltips = () => {
   // Add tooltip
   const addTooltip = (tool) => {
+    // Position tooltip left or right
     const viewportWidth = window.innerWidth
     const toolRect = tool.getBoundingClientRect()
     const isRight = toolRect.left < (viewportWidth / 2)
     tool.parentNode.classList.add('defra-tooltip--open')
+    // Tool too close to left for default display
     if (isRight) {
       tool.parentNode.classList.add('defra-tooltip--right')
+    }
+    // Typically more text so width is fixed
+    if (tool.tagName === 'A') {
+      tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
   }
 
@@ -54,7 +44,7 @@ const Tooltips = () => {
     }
     e.preventDefault()
     const tool = e.target
-    const content = tool.nextSibling
+    const content = tool.nextElementSibling
     const url = tool.href.split(/\?|#/)[0]
     // XMLHttpRequest
     xhr(url, (err, response) => {
@@ -85,6 +75,7 @@ const Tooltips = () => {
   document.addEventListener('mouseenter', (e) => {
     const isTooltip = e.target.classList.contains('defra-tooltip')
     if (isTooltip && e.target.firstElementChild.tagName !== 'A') {
+      removeTooltips()
       addTooltip(e.target.firstElementChild)
     }
   }, true)
@@ -101,14 +92,15 @@ const Tooltips = () => {
   document.addEventListener('focusin', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
     if (isTool && e.target.tagName !== 'A') {
+      removeTooltips()
       addTooltip(e.target)
     }
   })
 
-  // Remove on blur (basic tooltip only)
+  // Remove on blur (basic and xhr tooltips)
   document.addEventListener('focusout', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
-    if (isTool && e.target.tagName !== 'A') {
+    if (isTool) {
       removeTooltips()
     }
   })

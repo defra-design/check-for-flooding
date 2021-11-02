@@ -2,6 +2,9 @@
   display: inline-block;
   position: relative;
 	z-index: 1;
+	&--open {
+		z-index: 99;
+	}
   a {
 		color: $govuk-text-colour !important;
 		text-decoration: none;
@@ -16,8 +19,6 @@
   &__tip {
 		box-sizing: border-box;
 		position: absolute;
-		// width: 250px;
-		// max-width: 290px;
 		top: 50%;
 		right: 100%;
 		margin:-1em 10px 0px 0px;
@@ -26,10 +27,17 @@
 		text-align: left;
 		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
 		@include govuk-font($size: 16, $weight: regular);
+		p {
+			@include govuk-font($size: 16, $weight: regular);
+		}
 		p:last-child {
 				margin-bottom: 0px;
 		}
   }
+	&--fixed-width .defra-tooltip__tip {
+		width: 250px;
+		max-width: 290px;
+	}
 	&--right .defra-tooltip__tip {
 		right: auto;
 		left: 100%;

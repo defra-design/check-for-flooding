@@ -34,6 +34,7 @@ window.flood.utils = {
         }
       }
     }
+    xmlhttp.responseType = 'document'
     xmlhttp.open('GET', url, true)
     xmlhttp.send()
   },
