@@ -34,6 +34,7 @@ $govuk-assets-path: '/govuk/assets/';
 @import "objects/buttons";
 
 // Components
+@import "components/contents";
 @import "components/related-items";
 @import "components/flood-list";
 @import "components/flood-table";

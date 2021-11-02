@@ -1,13 +1,14 @@
 .defra-related-items {
-    border-top: 2px solid govuk-colour("blue");
-    padding-top: govuk-spacing(2);
-    margin-top: 20px;
-    @include mq ($from: tablet) {
-      margin-top: 0px;
-    }
+  border-top: 2px solid govuk-colour("blue");
+  padding-top: govuk-spacing(2);
+  margin-top: 20px;
+  @include mq ($from: tablet) {
+    margin-top: 0px;
   }
-  
-  .defra-related-items .govuk-list > li {
-    margin-bottom: govuk-spacing(2);
-  }
+}
+
+// Overides
+.defra-related-items .govuk-list > li {
+  margin-bottom: govuk-spacing(2);
+}
   

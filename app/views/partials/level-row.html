@@ -108,7 +108,7 @@
     {% if item.state == 'error' %}
     n/a
     {% else %}
-    <span class="defra-tooltip" data-defra-tooltip>
+    <span class="defra-tooltip">
       <svg class="defra-tooltip__tool" aria-describedby="tooltip-trend-{{ item.id | lower }}" tabindex="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="30" viewBox="0 0 20 30" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="1.5">
         {% if item.trend == 'rising' %}
         <path d="M10 7.595v18.631" fill="none" stroke="currentColor" stroke-width="3"/><path d="M10 3.774l5 8H5l5-8z" fill="currentColor"/></svg>

@@ -47,7 +47,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   } else {
     model = new ViewModel(query, null, null, null, null, null)
   }
-  res.render('river-sea-groundwater-rainfall-levels', { model })
+  res.render('levels', { model })
 })
 
 // Search levels
@@ -86,7 +86,7 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   } else if (model.isSingleRiver) {
     res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(query.term)}#`)
   } else {
-    res.render('river-sea-groundwater-rainfall-levels', { model })
+    res.render('levels', { model })
   }
 })
 

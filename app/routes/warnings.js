@@ -27,7 +27,7 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
   if (warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
     const model = new ViewModel(queryTerm, place, null, warnings)
-    res.render('flood-warnings-and-alerts', { model })
+    res.render('warnings', { model })
   } else {
     // Return 500 error
   }
@@ -38,7 +38,7 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
   const queryTerm = req.body.location
   // Empty search
   if (queryTerm === '') {
-    return res.redirect('/flood-warnings-and-alerts')
+    return res.redirect('/warnings')
   }
   // Check places
   const locationResponse = await locationServices.getLocationsByQuery(queryTerm)
@@ -54,9 +54,9 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
   }
   const model = new ViewModel(queryTerm, null, places, null)
   if (model.isSingleMatch) {
-    res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(queryTerm)}#`)
+    res.redirect(`/warnings?place=${encodeURI(queryTerm)}#`)
   } else {
-    res.render('flood-warnings-and-alerts', { model })
+    res.render('warnings', { model })
   }
 })
 

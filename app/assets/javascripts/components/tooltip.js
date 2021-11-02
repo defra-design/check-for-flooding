@@ -23,8 +23,13 @@ if (!Element.prototype.closest) {
 const Tooltips = () => {
   // Add tooltip
   const addTooltip = (tool) => {
-    removeTooltips()
+    const viewportWidth = window.innerWidth
+    const toolRect = tool.getBoundingClientRect()
+    const isRight = toolRect.left < (viewportWidth / 2)
     tool.parentNode.classList.add('defra-tooltip--open')
+    if (isRight) {
+      tool.parentNode.classList.add('defra-tooltip--right')
+    }
   }
 
   // Remove tooltip
@@ -33,6 +38,7 @@ const Tooltips = () => {
     if (tooltips.length) {
       tooltips.forEach((tooltip) => {
         tooltip.classList.remove('defra-tooltip--open')
+        tooltip.classList.remove('defra-tooltip--right')
         // xhr tooltips
         const status = tooltip.querySelector('[role="status"]')
         if (status) { status.innerHTML = '' }
@@ -43,30 +49,29 @@ const Tooltips = () => {
   // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
     // Hide tooltip
-    removeTooltips()
-    const isTooltip = e.target.classList.contains('defra-tooltip__tool')
-    if (isTooltip && e.target.tagName === 'a') {
-      e.preventDefault()
-      const tool = e.target
-      const content = tool.nextSibling
-      const url = tool.href.split(/\?|#/)[0]
-      // XMLHttpRequest
-      xhr(url, (err, response) => {
-        if (err) {
-          console.log('Error: ' + err)
-        } else {
-          content.innerHTML = ''
-          const fragmentId = tool.href.substring(tool.href.indexOf('#'))
-          const fragment = response.querySelector(`${fragmentId}`)
-          // Remove any hyperlinks
-          fragment.querySelectorAll('a').forEach(link => {
-            link.outerHTML = link.innerHTML
-          })
-          content.appendChild(fragment)
-          addTooltip(tool)
-        }
-      })
+    if (!(e.target.classList.contains('defra-tooltip__tool') && e.target.tagName === 'A')) {
+      return
     }
+    e.preventDefault()
+    const tool = e.target
+    const content = tool.nextSibling
+    const url = tool.href.split(/\?|#/)[0]
+    // XMLHttpRequest
+    xhr(url, (err, response) => {
+      if (err) {
+        console.log('Error: ' + err)
+      } else {
+        content.innerHTML = ''
+        const fragmentId = tool.href.substring(tool.href.indexOf('#'))
+        const fragment = response.querySelector(`${fragmentId}`)
+        // Remove any hyperlinks
+        fragment.querySelectorAll('a').forEach(link => {
+          link.outerHTML = link.innerHTML
+        })
+        content.appendChild(fragment)
+        addTooltip(tool)
+      }
+    })
   })
 
   // Remove on escape
@@ -79,17 +84,15 @@ const Tooltips = () => {
   // Add on mouse enter (basic tooltip only)
   document.addEventListener('mouseenter', (e) => {
     const isTooltip = e.target.classList.contains('defra-tooltip')
-    if (isTooltip && e.target.firstElementChild !== 'a') {
-      window.setTimeout(() => {
-        addTooltip(e.target.firstElementChild)
-      }, 100)
+    if (isTooltip && e.target.firstElementChild.tagName !== 'A') {
+      addTooltip(e.target.firstElementChild)
     }
   }, true)
 
   // Remove on mouse leave (basic tooltip only)
   document.addEventListener('mouseleave', (e) => {
     const isTooltip = e.target.classList.contains('defra-tooltip')
-    if (isTooltip && e.target.firstElementChild !== 'a') {
+    if (isTooltip && e.target.firstElementChild.tagName !== 'A') {
       removeTooltips()
     }
   }, true)
@@ -97,8 +100,7 @@ const Tooltips = () => {
   // Add on focus (basic tooltip only)
   document.addEventListener('focusin', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
-    console.log(e.target)
-    if (isTool && e.target.tagName !== 'a') {
+    if (isTool && e.target.tagName !== 'A') {
       addTooltip(e.target)
     }
   })
@@ -106,7 +108,7 @@ const Tooltips = () => {
   // Remove on blur (basic tooltip only)
   document.addEventListener('focusout', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
-    if (isTool && e.target.tagName !== 'a') {
+    if (isTool && e.target.tagName !== 'A') {
       removeTooltips()
     }
   })
