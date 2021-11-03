@@ -69,16 +69,15 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
   ]
   // Default name
   let name = gazetteerEntry.name
-  // If core city remove local authority
+
   if (coreCities.includes(name)) {
+    // If core city remove local authority
     name = gazetteerEntry.address.locality
-  }
-  // If postcode re-construct name
-  if (gazetteerEntry.address.postalCode) {
-    name = gazetteerEntry.address.postalCode.replace(/ /g, '\u00a0')
-  }
-  // Remove duplication within the name
-  if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
+  } else if (gazetteerEntry.entityType === 'Postcode1') {
+    // If full postcode re-construct name
+    name = `${gazetteerEntry.address.locality}, ${gazetteerEntry.address.postalCode}`
+  } else if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
+    // Remove duplication within the name
     name = gazetteerEntry.address.locality
   }
   return name

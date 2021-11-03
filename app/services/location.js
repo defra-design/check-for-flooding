@@ -32,7 +32,7 @@ module.exports = {
 
   // Return a single result - used for filtering lists
   getLocationByQuery: async (query) => {
-    const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(query)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=1&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,AdminDivision2`
+    const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(query)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=1&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,Postcode1,Postcode2,Postcode3,AdminDivision2`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
@@ -54,7 +54,7 @@ module.exports = {
 
   // Return multiple results
   getLocationsByQuery: async (query) => {
-    const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(query)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=5&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,AdminDivision2`
+    const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(query)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=5&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,Postcode1,Postcode2,Postcode3,AdminDivision2`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
