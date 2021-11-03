@@ -4,12 +4,23 @@
 
 const { xhr } = window.flood.utils
 
-const Tooltips = () => {
-  // Reference to outer element used for positioning
-  const container = document.querySelector('.govuk-width-container')
-  const containerLeft = container.getBoundingClientRect().left
-  const containerWidth = container.getBoundingClientRect().width
+// ie11 closest() polyfill
+const Element = window.Element
+if (!Element.prototype.matches) {
+  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector
+}
+if (!Element.prototype.closest) {
+  Element.prototype.closest = (s) => {
+    let el = this
+    do {
+      if (Element.prototype.matches.call(el, s)) return el
+      el = el.parentElement || el.parentNode
+    } while (el !== null && el.nodeType === 1)
+    return null
+  }
+}
 
+const Tooltips = () => {
   // Add tooltip
   const addTooltip = (tool) => {
     // Open tooltip first so we can get dimensions
@@ -18,6 +29,10 @@ const Tooltips = () => {
     if (tool.tagName === 'A') {
       tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
+    // Reference to outer element used for positioning
+    const container = document.querySelector('.govuk-width-container')
+    const containerLeft = container.getBoundingClientRect().left
+    const containerWidth = container.getBoundingClientRect().width
     // Determin position of overlay
     const toolLeft = tool.getBoundingClientRect().left
     const toolWidth = tool.getBoundingClientRect().width
@@ -54,9 +69,9 @@ const Tooltips = () => {
 
   // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
-    const isTool = e.target.classList.contains('defra-tooltip__tool')
+    const isTool = e.target.closest('.defra-tooltip')
     const isXhrTool = isTool && e.target.tagName === 'A'
-    // Remove existing tooltip unless its a basic tooltip
+    // Remove tooltips when clicking outside unless its a basic tooltip
     if (!isTool || isXhrTool) { removeTooltips() }
     // Only intersted in xhrTools from here on
     if (!isXhrTool) { return }
@@ -70,7 +85,6 @@ const Tooltips = () => {
       if (err) {
         console.log('Error: ' + err)
       } else {
-        removeTooltips()
         content.innerHTML = ''
         const fragmentId = tool.href.substring(tool.href.indexOf('#'))
         const fragment = response.querySelector(`${fragmentId}`)

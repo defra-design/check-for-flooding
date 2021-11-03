@@ -79,7 +79,12 @@
 // Tooltip overides
 .defra-flood-table {
   &__cell--state, &__cell--trend {
-    span[role="tooltip"] {
+    .defra-tooltip:before, .defra-tooltip:after {
+      @include mq ($from: tablet) {
+        content: none;
+      }
+    }
+    .defra-tooltip__tip {
       @include mq ($from: tablet) {
         position: static !important;
         width: auto !important;
@@ -93,16 +98,11 @@
         box-shadow: none;
         top: auto;
         right: auto;
-        margin: 0px;
+        margin: 0px !important;
         background-color:transparent;
         padding: 0px;
         text-align: center;
         @include govuk-font($size: 19);
-      }
-    }
-    span[role="tooltip"]:before, span[role="tooltip"]:after {
-      @include mq ($from: tablet) {
-        content: none;
       }
     }
   }

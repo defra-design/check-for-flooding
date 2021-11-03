@@ -60,12 +60,14 @@
 		@include govuk-font($size: 16, $weight: regular);
 		p {
 			@include govuk-font($size: 16, $weight: regular);
+			margin-bottom: 5px;
 		}
 		p:last-child {
 				margin-bottom: 0px;
 		}
   }
 	&--fixed-width .defra-tooltip__tip {
+		padding: 10px;
 		width: 250px;
 	}
 }

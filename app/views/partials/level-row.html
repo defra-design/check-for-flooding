@@ -84,7 +84,7 @@
     {% elif item.isDownstream %}
     &nbsp;
     {% else %}
-    <span class="defra-tooltip" data-defra-tooltip>
+    <span class="defra-tooltip">
       <svg class="defra-tooltip__tool" aria-describedby="tooltip-state-{{ item.id | lower }}" tabindex="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill-rule="evenodd" stroke-linecap="round" stroke-miterlimit="1.5">
         {% if item.state == 'high' and item.type == 'groundwater' %}
         <path d="M2.501 12.583c1.551-.637 1.967-2.166 4.375-2.166 3.043 0 2.851 2.439 5.893 2.439 2.986 0 2.85-2.439 5.892-2.439s2.85 2.439 5.892 2.439c1.377 0 2.068-.5 2.946-1.22" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M14.167 7.084v17.499h1.666V7.084h8.333V5.417H5.834v1.667h8.333z" fill="currentColor"/>
