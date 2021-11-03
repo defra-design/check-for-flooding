@@ -29,24 +29,22 @@ const Tooltips = () => {
     if (tool.tagName === 'A') {
       tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
-    // Reference to outer element used for positioning
-    const container = document.querySelector('.govuk-width-container')
-    const containerLeft = container.getBoundingClientRect().left
-    const containerWidth = container.getBoundingClientRect().width
     // Determin position of overlay
     const toolLeft = tool.getBoundingClientRect().left
     const toolWidth = tool.getBoundingClientRect().width
     const tip = tool.nextElementSibling
     const tipWidth = tip.getBoundingClientRect().width
-    const tipLeft = tip.getBoundingClientRect().left
     // Centre tip
-    let tipOffsetX = (tipWidth - toolWidth) / 2 - (((tipWidth - toolWidth) / 2) * 2)
+    let tipOffsetX = ((tipWidth - toolWidth) / 2) - (((tipWidth - toolWidth) / 2) * 2)
     // Correct offset if near edge of govuk-width-container
-    const newTipLeft = tipLeft + tipOffsetX - containerLeft
+    const newTipLeft = toolLeft + tipOffsetX
+    const container = document.querySelector('.govuk-width-container')
+    const containerLeft = container.getBoundingClientRect().left
+    const containerWidth = container.getBoundingClientRect().width
     if (newTipLeft < containerLeft) {
       tipOffsetX = toolLeft - containerLeft
     } else if ((newTipLeft + tipWidth) > (containerLeft + containerWidth)) {
-      tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (containerLeft + containerWidth)) - containerLeft
+      tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (containerLeft + containerWidth))
     }
     tip.style.marginLeft = `${tipOffsetX}px`
   }
