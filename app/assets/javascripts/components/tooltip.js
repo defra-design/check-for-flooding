@@ -5,21 +5,25 @@
 const { xhr } = window.flood.utils
 
 const Tooltips = () => {
+  // Reference to outer element used for positioning
+  const govukWidthContainerRect = document.querySelector('.govuk-width-container').getBoundingClientRect()
+
   // Add tooltip
   const addTooltip = (tool) => {
-    // Position tooltip left or right
-    const viewportWidth = window.innerWidth
-    const toolRect = tool.getBoundingClientRect()
-    const isRight = toolRect.left < (viewportWidth / 2)
+    // Open tooltip first so we can get dimensions
     tool.parentNode.classList.add('defra-tooltip--open')
-    // Tool too close to left for default display
-    if (isRight) {
-      tool.parentNode.classList.add('defra-tooltip--right')
-    }
     // Typically more text so width is fixed
     if (tool.tagName === 'A') {
       tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
+    // Determin position of overlay
+    const toolWidth = tool.getBoundingClientRect().width
+    const tip = tool.nextElementSibling
+    const tipWidth = tip.getBoundingClientRect().width
+    const tipOffsetX = (tipWidth - toolWidth) / 2 - (((tipWidth - toolWidth) / 2) * 2)
+    tip.style.marginLeft = `${tipOffsetX}px`
+    // console.log(`${tipOffsetX}px`)
+    // console.log(govukWidthContainerRect.left, 'Tool:', Math.round(toolRect.left), toolRect.width, 'Tip:', Math.round(tipRect.left), Math.round(tipRect.width))
   }
 
   // Remove tooltip

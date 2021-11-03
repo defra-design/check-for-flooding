@@ -5,6 +5,37 @@
 	&--open {
 		z-index: 99;
 	}
+	&--open:before {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		width: 8px;
+		height: 8px;
+		background:white;
+		top: 100%;
+		left: 50%;
+		margin: 6px 0px 0px -4px;
+		-webkit-transform: rotate(135deg);
+		-moz-transform: rotate(135deg);
+		-o-transform: rotate(135deg);
+		transform: rotate(135deg);
+	}
+  &--open:after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		width: 8px;
+		height: 8px;
+		background:white;
+		top: 100%;
+		left: 50%;
+		margin: 6px 0px 0px -4px;
+		-webkit-transform: rotate(135deg);
+		-moz-transform: rotate(135deg);
+		-o-transform: rotate(135deg);
+		transform: rotate(135deg);
+		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
+  }
   a {
 		color: $govuk-text-colour !important;
 		text-decoration: none;
@@ -19,9 +50,9 @@
   &__tip {
 		box-sizing: border-box;
 		position: absolute;
-		top: 50%;
-		right: 100%;
-		margin:-1em 10px 0px 0px;
+		top: 100%;
+		left: 0px;
+		margin-top: 10px;
 		background-color: white;
 		padding: 7.5px 10px;
 		text-align: left;
@@ -36,50 +67,6 @@
   }
 	&--fixed-width .defra-tooltip__tip {
 		width: 250px;
-		max-width: 290px;
-	}
-	&--right .defra-tooltip__tip {
-		right: auto;
-		left: 100%;
-		margin-right: 0px;
-		margin-left: 10px;
-	}
-	&__tip:before {
-		content: '';
-		position: absolute;
-		z-index: 1;
-		width: 8px;
-		height: 8px;
-		background:white;
-		top: 16px;
-		left: 100%;
-		margin: -4px 0px 0px -4px;
-		-webkit-transform: rotate(135deg);
-		-moz-transform: rotate(135deg);
-		-o-transform: rotate(135deg);
-		transform: rotate(135deg);
-	}
-  &__tip:after {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		width: 8px;
-		height: 8px;
-		background:white;
-		top: 16px;
-		left: 100%;
-		margin: -4px 0px 0px -4px;
-		-webkit-transform: rotate(135deg);
-		-moz-transform: rotate(135deg);
-		-o-transform: rotate(135deg);
-		transform: rotate(135deg);
-		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
-  }
-	&--right .defra-tooltip__tip:before,
-	&--right .defra-tooltip__tip:after {
-		left:auto;
-		right: 100%;
-		margin: -4px -4px 0px 4px;
 	}
 }
 .defra-tooltip:not(.defra-tooltip--open) .defra-tooltip__tip {
