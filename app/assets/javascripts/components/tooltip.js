@@ -6,7 +6,9 @@ const { xhr } = window.flood.utils
 
 const Tooltips = () => {
   // Reference to outer element used for positioning
-  const govukWidthContainerRect = document.querySelector('.govuk-width-container').getBoundingClientRect()
+  const container = document.querySelector('.govuk-width-container')
+  const containerLeft = container.getBoundingClientRect().left
+  const containerWidth = container.getBoundingClientRect().width
 
   // Add tooltip
   const addTooltip = (tool) => {
@@ -17,13 +19,21 @@ const Tooltips = () => {
       tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
     // Determin position of overlay
+    const toolLeft = tool.getBoundingClientRect().left
     const toolWidth = tool.getBoundingClientRect().width
     const tip = tool.nextElementSibling
     const tipWidth = tip.getBoundingClientRect().width
-    const tipOffsetX = (tipWidth - toolWidth) / 2 - (((tipWidth - toolWidth) / 2) * 2)
+    const tipLeft = tip.getBoundingClientRect().left
+    // Centre tip
+    let tipOffsetX = (tipWidth - toolWidth) / 2 - (((tipWidth - toolWidth) / 2) * 2)
+    // Correct offset if near edge of govuk-width-container
+    const newTipLeft = tipLeft + tipOffsetX - containerLeft
+    if (newTipLeft < containerLeft) {
+      tipOffsetX = toolLeft - containerLeft
+    } else if ((newTipLeft + tipWidth) > (containerLeft + containerWidth)) {
+      tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (containerLeft + containerWidth)) - containerLeft
+    }
     tip.style.marginLeft = `${tipOffsetX}px`
-    // console.log(`${tipOffsetX}px`)
-    // console.log(govukWidthContainerRect.left, 'Tool:', Math.round(toolRect.left), toolRect.width, 'Tip:', Math.round(tipRect.left), Math.round(tipRect.width))
   }
 
   // Remove tooltip
@@ -33,6 +43,8 @@ const Tooltips = () => {
       tooltips.forEach((tooltip) => {
         tooltip.classList.remove('defra-tooltip--open')
         tooltip.classList.remove('defra-tooltip--right')
+        const tip = tooltip.querySelector('.defra-tooltip__tip')
+        tip.style.removeProperty('margin-left')
         // xhr tooltips
         const status = tooltip.querySelector('[role="status"]')
         if (status) { status.innerHTML = '' }
@@ -42,11 +54,14 @@ const Tooltips = () => {
 
   // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
-    // Hide tooltip
-    if (!(e.target.classList.contains('defra-tooltip__tool') && e.target.tagName === 'A')) {
-      return
-    }
+    const isTool = e.target.classList.contains('defra-tooltip__tool')
+    const isXhrTool = isTool && e.target.tagName === 'A'
+    // Remove existing tooltip unless its a basic tooltip
+    if (!isTool || isXhrTool) { removeTooltips() }
+    // Only intersted in xhrTools from here on
+    if (!isXhrTool) { return }
     e.preventDefault()
+    // Get content
     const tool = e.target
     const content = tool.nextElementSibling
     const url = tool.href.split(/\?|#/)[0]
@@ -55,6 +70,7 @@ const Tooltips = () => {
       if (err) {
         console.log('Error: ' + err)
       } else {
+        removeTooltips()
         content.innerHTML = ''
         const fragmentId = tool.href.substring(tool.href.indexOf('#'))
         const fragment = response.querySelector(`${fragmentId}`)
