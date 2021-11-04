@@ -71,6 +71,9 @@
   }
 	&--fixed-width .defra-tooltip__tip {
 		padding: 10px;
+		@include mq ($from: tablet) {
+			padding: 15px;
+		}
 		width: 250px;
 	}
 	&--bottom .defra-tooltip__tip {

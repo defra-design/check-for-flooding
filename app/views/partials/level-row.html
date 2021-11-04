@@ -100,7 +100,13 @@
         <g fill="none"><path d="M10.833 24.353V3.85h8.334v20.578m0-10.579h-3.334m3.334-4.999h-3.334m3.334 9.998h-3.334" stroke="currentColor" stroke-width="1.67"/><g stroke-linecap="round"><use xlink:href="#B" stroke="#fff" stroke-width="5.83"/><use xlink:href="#B" stroke="currentColor" stroke-width="2.5"/></g></g><defs ><path id="B" d="M6.162 23.502c.759.813 1.834 1.259 2.946 1.219 2.986 0 2.85-2.439 5.892-2.439s2.85 2.439 5.892 2.439c1.377 0 2.068-.5 2.946-1.219"/></defs>
         {% endif %}
       </svg>
-      <span class="defra-tooltip__tip" role="tooltip" id="tooltip-state-{{ item.id | lower }}">{{ item.state | capitalize }}</span>
+      <span class="defra-tooltip__tip" role="tooltip" id="tooltip-state-{{ item.id | lower }}">
+        {% if item.state == 'high' %}
+        <strong>{{ item.state | capitalize }}</strong>
+        {% else %}
+        {{ item.state | capitalize }}
+        {% endif %}
+      </span>
     </span>
     {% endif %}
   </td>

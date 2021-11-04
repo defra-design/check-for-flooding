@@ -46,6 +46,10 @@ const Tooltips = () => {
     } else if ((newTipLeft + tipWidth) > (containerLeft + containerWidth)) {
       tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (containerLeft + containerWidth))
     }
+    // Switch position if near top
+    if (tip.getBoundingClientRect().top < 15) {
+      tool.parentNode.classList.add('defra-tooltip--bottom')
+    }
     tip.style.marginLeft = `${tipOffsetX}px`
   }
 
@@ -55,7 +59,7 @@ const Tooltips = () => {
     if (tooltips.length) {
       tooltips.forEach((tooltip) => {
         tooltip.classList.remove('defra-tooltip--open')
-        tooltip.classList.remove('defra-tooltip--right')
+        tooltip.classList.remove('defra-tooltip--bottom')
         const tip = tooltip.querySelector('.defra-tooltip__tip')
         tip.style.removeProperty('margin-left')
         // xhr tooltips
