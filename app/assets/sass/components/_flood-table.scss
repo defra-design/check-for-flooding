@@ -107,5 +107,10 @@
         @include govuk-font($size: 19);
       }
     }
+    .defra-tooltip--open strong {
+      @include mq ($until: tablet) {
+        font-weight: normal;
+      }
+    }
   }
 }
