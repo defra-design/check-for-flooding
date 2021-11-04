@@ -63,7 +63,7 @@
 		@include govuk-font($size: 16, $weight: regular);
 		p {
 			@include govuk-font($size: 16, $weight: regular);
-			margin-bottom: 5px;
+			margin-bottom: 10px;
 		}
 		p:last-child {
 				margin-bottom: 0px;
