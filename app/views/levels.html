@@ -78,7 +78,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav class="defra-navbar govuk-!-margin-top-4" aria-label="Show levels by type" role="navigation">
+    <nav class="defra-navbar govuk-!-margin-top-4 govuk-!-margin-bottom-4" aria-label="Show levels by type" role="navigation">
       <ul class="defra-navbar__list">
         {% for filter in model.levels.filters %}
         <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
@@ -93,9 +93,9 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <table class="defra-flood-table govuk-!-margin-top-6">
+    <table class="defra-flood-table">
       {% if model.querySearchType === 'river' %}
-      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-bottom-2">
+      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-top-7">
         Levels on the {{ model.river.name }}
       </caption>
       {% else %}
