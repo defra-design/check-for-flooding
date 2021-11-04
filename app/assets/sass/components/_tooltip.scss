@@ -12,9 +12,10 @@
 		width: 8px;
 		height: 8px;
 		background:white;
-		top: 100%;
+		top: auto;
+		bottom: 100%;
 		left: 50%;
-		margin: 6px 0px 0px -4px;
+		margin: -0px 0px 6px -4px;
 		-webkit-transform: rotate(135deg);
 		-moz-transform: rotate(135deg);
 		-o-transform: rotate(135deg);
@@ -27,9 +28,10 @@
 		width: 8px;
 		height: 8px;
 		background:white;
-		top: 100%;
+		top: auto;
+		bottom: 100%;
 		left: 50%;
-		margin: 6px 0px 0px -4px;
+		margin: 0px 0px 6px -4px;
 		-webkit-transform: rotate(135deg);
 		-moz-transform: rotate(135deg);
 		-o-transform: rotate(135deg);
@@ -50,9 +52,10 @@
   &__tip {
 		box-sizing: border-box;
 		position: absolute;
-		top: 100%;
+		top: auto;
+		bottom: 100%;
 		left: 0px;
-		margin-top: 10px;
+		margin-bottom: 10px;
 		background-color: white;
 		padding: 7.5px 10px;
 		text-align: left;
@@ -69,6 +72,17 @@
 	&--fixed-width .defra-tooltip__tip {
 		padding: 10px;
 		width: 250px;
+	}
+	&--bottom .defra-tooltip__tip {
+		top: 100%;
+		bottom: auto;
+		margin-top: 10px;
+	}
+	&--bottom.defra-tooltip--open:before,
+	&--bottom.defra-tooltip--open:after {
+		top: 100%;
+		bottom: auto;
+		margin: 6px 0px 0px -4px;
 	}
 }
 .defra-tooltip:not(.defra-tooltip--open) .defra-tooltip__tip {
