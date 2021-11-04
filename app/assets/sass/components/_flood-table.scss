@@ -37,7 +37,6 @@
   &__cell--river {
     @include govuk-font($size: 16);
     border-top: 1px solid $govuk-border-colour;
-    padding-top: 20px;
     border-bottom: 0px;
     text-align:left;
     a {
@@ -73,6 +72,9 @@
   &__item-date {
     display: block;
     @include govuk-font($size: 14);
+  }
+  tbody tr:first-child .defra-flood-table__cell {
+    border-top: 0px;
   }
 }
 

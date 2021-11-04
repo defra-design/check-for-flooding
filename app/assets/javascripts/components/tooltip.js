@@ -36,7 +36,7 @@ const Tooltips = () => {
     const tipWidth = tip.getBoundingClientRect().width
     // Centre tip
     let tipOffsetX = ((tipWidth - toolWidth) / 2) - (((tipWidth - toolWidth) / 2) * 2)
-    // Correct offset if near edge of govuk-width-container
+    // Correct offset if near sides of govuk-width-container
     const newTipLeft = toolLeft + tipOffsetX
     const container = document.querySelector('.govuk-width-container')
     const containerLeft = container.getBoundingClientRect().left

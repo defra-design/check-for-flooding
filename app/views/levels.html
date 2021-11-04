@@ -53,7 +53,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.isErrorLocation %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-heading-m govuk-!-margin-top-8">
+    <h2 class="govuk-heading-m govuk-!-margin-top-7">
       No results for '{{ model.queryTerm }}'
     </h2>
     <p class="govuk-body">If you searched a river or place in England, you should:</p>
@@ -71,10 +71,14 @@ River, sea, groundwater and rainfall levels - GOV.UK
 </div>
 
 {% elif model.levels  %}
-{% if model.levels.filters | length > 1 %}
+{% if model.querySearchType === 'place' %}
+<h2 class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-0">
+  Results for '{{ model.queryTerm }}'
+</h2>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav class="defra-navbar govuk-!-margin-top-6 govuk-!-margin-bottom-4" aria-label="Show levels by type" role="navigation">
+    <nav class="defra-navbar govuk-!-margin-top-6" aria-label="Show levels by type" role="navigation">
       <ul class="defra-navbar__list">
         {% for filter in model.levels.filters %}
         <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
@@ -89,14 +93,14 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <table class="defra-flood-table">
+    <table class="defra-flood-table govuk-!-margin-top-6">
       {% if model.querySearchType === 'river' %}
-      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-top-8 govuk-!-margin-bottom-2">
+      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-bottom-2">
         Levels on the {{ model.river.name }}
       </caption>
       {% else %}
-      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-        {{ model.queryType | capitalize }} {% if model.queryType != 'rainfall' %}levels{% endif %} {% if model.place.type == 'admindivision2' %}in{% else %}near{% endif %} {{ model.place.name }}
+      <caption class="govuk-visually-hidden">
+        {{ model.queryType | capitalize }} {% if model.queryType != 'rainfall' %}levels{% endif %}
       </caption>
       {% endif %}
       <thead class="defra-flood-table__head">
