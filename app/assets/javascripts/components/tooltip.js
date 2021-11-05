@@ -62,6 +62,7 @@ const Tooltips = () => {
       tooltips.forEach((tooltip) => {
         tooltip.classList.remove('defra-tooltip--open')
         tooltip.classList.remove('defra-tooltip--bottom')
+        tooltip.classList.remove('defra-tooltip--keyboard-focus')
         const tip = tooltip.querySelector('.defra-tooltip__tip')
         tip.style.removeProperty('margin-left')
         // xhr tooltips
@@ -125,21 +126,10 @@ const Tooltips = () => {
     }
   }, true)
 
-  // Stop focus on mouse or touch (basic tooltip only) *Need to check best practise
-  document.addEventListener('mousedown', (e) => {
-    const tool = e.target.closest('.defra-tooltip__tool')
-    if (tool && tool.tagName !== 'A') {
-      console.log('mousedown')
-      e.stopPropagation()
-      return false
-    }
-  })
-
   // Add on focus (basic tooltip only)
   document.addEventListener('focusin', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
     if (isTool && e.target.tagName !== 'A') {
-      console.log('focusin')
       removeTooltips()
       addTooltip(e.target)
     }
@@ -149,6 +139,7 @@ const Tooltips = () => {
   document.addEventListener('focusout', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
     if (isTool) {
+      e.target.parentNode.classList.remove('defra-tooltip--keyboard-focus')
       removeTooltips()
     }
   })

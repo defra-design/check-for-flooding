@@ -38,13 +38,11 @@
 		transform: rotate(135deg);
 		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
   }
+	&__tool {
+		outline: 0px;
+	}
 	&__tool:not(a) {
 		margin: 3px;
-	}
-	&__tool:not(a):focus {
-		outline: 3px solid govuk-colour('black');
-		color: govuk-colour('black');
-		background-color: $govuk-focus-colour;
 	}
   a {
 		color: $govuk-text-colour !important;
@@ -57,6 +55,11 @@
 		border: 0px;
 		margin-bottom: -1px;
   }
+	&__tool[keyboard-focus]:not(a):focus {
+		outline: 3px solid govuk-colour('black');
+		color: govuk-colour('black');
+		background-color: $govuk-focus-colour;
+	}
   &__tip {
 		box-sizing: border-box;
 		position: absolute;
