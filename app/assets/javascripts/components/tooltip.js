@@ -111,7 +111,7 @@ const Tooltips = () => {
 
   // Add on mouse enter (basic tooltip only)
   document.addEventListener('mouseenter', (e) => {
-    const isTooltip = e.target.classList.contains('defra-tooltip')
+    const isTooltip = e.target.classList && e.target.classList.contains('defra-tooltip')
     if (isTooltip && e.target.firstElementChild.tagName !== 'A') {
       removeTooltips()
       addTooltip(e.target.firstElementChild)
@@ -120,7 +120,7 @@ const Tooltips = () => {
 
   // Remove on mouse leave (basic tooltip only)
   document.addEventListener('mouseleave', (e) => {
-    const isTooltip = e.target.classList.contains('defra-tooltip')
+    const isTooltip = e.target.classList && e.target.classList.contains('defra-tooltip')
     if (isTooltip && e.target.firstElementChild.tagName !== 'A') {
       removeTooltips()
     }

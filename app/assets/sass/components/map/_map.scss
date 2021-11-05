@@ -94,6 +94,11 @@
       float:left;
     }
   }
+  span {
+    @include mq ($until: desktop) {
+      @include defra-visually-hidden();
+    }
+  }
   @include mq ($from: desktop) {
     width:auto;
     padding-right:11px;
