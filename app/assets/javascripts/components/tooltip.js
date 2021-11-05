@@ -126,6 +126,15 @@ const Tooltips = () => {
     }
   }, true)
 
+  // Stop focus on mouse or touch (basic tooltip only) *Need to check best practise
+  document.addEventListener('mousedown', (e) => {
+    const tool = e.target.closest('.defra-tooltip__tool')
+    if (tool && tool.tagName !== 'A') {
+      e.stopPropagation()
+      return false
+    }
+  })
+
   // Add on focus (basic tooltip only)
   document.addEventListener('focusin', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
