@@ -21,6 +21,9 @@ if (!Element.prototype.closest) {
 }
 
 const Tooltips = () => {
+  // Refacter as options
+  const viewportMargin = 15
+
   // Add tooltip
   const addTooltip = (tool) => {
     // Open tooltip first so we can get dimensions
@@ -30,24 +33,23 @@ const Tooltips = () => {
       tool.parentNode.classList.add('defra-tooltip--fixed-width')
     }
     // Determin position of overlay
-    const toolLeft = tool.getBoundingClientRect().left
-    const toolWidth = tool.getBoundingClientRect().width
+    const tooltip = tool.parentNode
+    const tooltipLeft = tooltip.getBoundingClientRect().left
+    const tooltipWidth = tooltip.getBoundingClientRect().width
     const tip = tool.nextElementSibling
     const tipWidth = tip.getBoundingClientRect().width
     // Centre tip
-    let tipOffsetX = ((tipWidth - toolWidth) / 2) - (((tipWidth - toolWidth) / 2) * 2)
+    let tipOffsetX = ((tipWidth - tooltipWidth) / 2) - (((tipWidth - tooltipWidth) / 2) * 2)
     // Correct offset if near sides of govuk-width-container
-    const newTipLeft = toolLeft + tipOffsetX
-    const container = document.querySelector('.govuk-width-container')
-    const containerLeft = container.getBoundingClientRect().left
-    const containerWidth = container.getBoundingClientRect().width
-    if (newTipLeft < containerLeft) {
-      tipOffsetX = toolLeft - containerLeft
-    } else if ((newTipLeft + tipWidth) > (containerLeft + containerWidth)) {
-      tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (containerLeft + containerWidth))
+    const newTipLeft = tooltipLeft + tipOffsetX
+    const viewportWidth = window.innerWidth
+    if (newTipLeft < viewportMargin) {
+      tipOffsetX = tooltipLeft - viewportMargin
+    } else if ((newTipLeft + tipWidth) > (viewportWidth - viewportMargin)) {
+      tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (viewportWidth - viewportMargin))
     }
     // Switch position if near top
-    if (tip.getBoundingClientRect().top < 15) {
+    if (tip.getBoundingClientRect().top < viewportMargin) {
       tool.parentNode.classList.add('defra-tooltip--bottom')
     }
     tip.style.marginLeft = `${tipOffsetX}px`
