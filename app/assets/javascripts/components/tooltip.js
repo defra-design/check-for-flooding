@@ -73,15 +73,14 @@ const Tooltips = () => {
 
   // Add on click (xhr tooltip only)
   document.addEventListener('click', (e) => {
-    const isTool = e.target.closest('.defra-tooltip')
-    const isXhrTool = isTool && e.target.tagName === 'A'
+    const tool = e.target.closest('.defra-tooltip__tool')
+    const isXhrTool = tool && tool.tagName === 'A'
     // Remove tooltips when clicking outside unless its a basic tooltip
-    if (!isTool || isXhrTool) { removeTooltips() }
+    if (!tool || isXhrTool) { removeTooltips() }
+    if (tool) { e.preventDefault() }
     // Only intersted in xhrTools from here on
     if (!isXhrTool) { return }
-    e.preventDefault()
     // Get content
-    const tool = e.target
     const content = tool.nextElementSibling
     const url = tool.href.split(/\?|#/)[0]
     // XMLHttpRequest
@@ -130,6 +129,7 @@ const Tooltips = () => {
   document.addEventListener('mousedown', (e) => {
     const tool = e.target.closest('.defra-tooltip__tool')
     if (tool && tool.tagName !== 'A') {
+      console.log('mousedown')
       e.stopPropagation()
       return false
     }
@@ -139,6 +139,7 @@ const Tooltips = () => {
   document.addEventListener('focusin', (e) => {
     const isTool = e.target.classList.contains('defra-tooltip__tool')
     if (isTool && e.target.tagName !== 'A') {
+      console.log('focusin')
       removeTooltips()
       addTooltip(e.target)
     }
