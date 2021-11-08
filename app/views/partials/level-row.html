@@ -14,10 +14,7 @@
 <tr class="defra-flood-table__row{% if model.queryType == 'river' %} defra-flood-table__row--subgroup{% endif %}">
   <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--location">
-    {% if item.type == 'rainfall' %}
-    <a href="">{{ item.name }}</a>
-    {% else %}
-    <a href="/station/{{ item.id }}{% if item.position == 'd' %}/downstream{% endif %}">
+    <a href="/station/{{ item.id | urlencode }}{% if item.position == 'd' %}/downstream{% endif %}">
       {{ item.name }}
       {{ station.external_name }}
       {% if item.iswales %}
@@ -33,7 +30,6 @@
       tide
       {% endif %}
     </a>
-    {% endif %}
     {% if item.state != 'error' %}
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}

@@ -156,7 +156,7 @@ module.exports = {
     FROM station
     LEFT JOIN river_station ON river_station.station_id = station.id
     LEFT JOIN river ON river.slug = river_station.slug
-    WHERE station.id = $1
+    WHERE lower(station.id) = lower($1)
     `, [id])
     return response.rows[0]
   }

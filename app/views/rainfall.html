@@ -1,0 +1,132 @@
+{% extends 'layout.html' %}
+
+{% block pageTitle %}
+Rainfall level at Abbeytown - GOV.UK
+{% endblock %}
+
+{% block content %}
+<!--<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>-->
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+      Rainfall level at Abbeytown
+    </h1>
+    <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <nav aria-label="Related levels" class="govuk-!-margin-top-6">
+      <span id="map"></span>
+      <a href="/river-sea-groundwater-rainfall-levels?id={{ model.station.id }}" class="defra-button-secondary" role="button" data-module="govuk-button">
+        Nearby levels
+      </a>
+    </nav>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h2 class="govuk-visually-hidden">Station summary</h2>
+    <div class="defra-flood-statistics">
+      <dl class="defra-flood-statistics__list">
+        <div class="defra-flood-statistics__column-one-third"> 
+          <dt class="defra-flood-statistics__key">
+            1 hour
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            0mm
+          </dd>
+        </div>
+        <div class="defra-flood-statistics__column-one-third"> 
+          <dt class="defra-flood-statistics__key">
+            6 hours
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            1.2mm
+          </dd>
+        </div>
+        <div class="defra-flood-statistics__column-one-third"> 
+          <dt class="defra-flood-statistics__key">
+            24 hours
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            2.4mm
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+{# Bar chart #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <figure class="defra-line-chart" aria-hidden="true"><!-- hidden by default, removed with js -->
+      <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-7">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</figcaption>
+        <div id="line-chart" class="defra-line-chart__container" role="presentation"></div>
+        {% if model.isFfoi and not model.forecastOutOfDate %}
+        <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-2"> {{ model.forecastDetails }}</p>
+        {% endif %}
+        {% if model.dataOverHourOld %}
+        <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-2">We take measurements more often as the risk of flooding increases.</p>
+        {% endif %}
+        {% if model.station.isRiver and model.hasNegativeValues %}
+        <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-2">Levels that are very low or below zero are normal for some stations.</p>
+        {% endif %}
+    </figure>
+  </div>
+</div>
+
+{# Station Details #}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <details class="govuk-details govuk-!-margin-top-6" data-module="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          View technical information for this measuring station
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <dl class="govuk-summary-list govuk-summary-list--no-border govuk-summary-list--defra-flood-station govuk-!-font-size-16">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Title
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Value
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </details>
+    <p class="govuk-text govuk-!-margin-bottom-6">
+      <a href="/how-we-measure-river-sea-groundwater-levels">How we measure rainfall levels</a>
+    </p>
+  </div>  
+</div>  
+
+{% include "partials/social.html" %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    {% include "partials/context-footer.html" %}
+    {% include "partials/related-content.html" %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+  window.flood = {
+    model: {
+      id: {{ model.station.id | dump | safe }},
+      centroid: {{ model.station.centroid | dump | safe }}
+    }
+  }
+</script>
+<script src="/public/javascripts/rainfall.js"></script>
+{% endblock %}

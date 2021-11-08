@@ -12,7 +12,8 @@ module.exports = (env, argv) => ({
     'target-area': './app/assets/javascripts/pages/target-area',
     location: './app/assets/javascripts/pages/location',
     national: './app/assets/javascripts/pages/national',
-    station: './app/assets/javascripts/pages/station'
+    station: './app/assets/javascripts/pages/station',
+    rainfall: './app/assets/javascripts/pages/rainfall'
   },
   output: {
     path: path.resolve(__dirname, 'public/javascripts')
