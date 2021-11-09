@@ -402,7 +402,8 @@
   window.flood = {
     model: {
       id: {{ model.station.id | dump | safe }},
-      centroid: {{ model.station.centroid | dump | safe }}
+      centroid: {{ model.station.centroid | dump | safe }},
+      bingApiKey: {{ model.bingApiKey | dump | safe }}
     }
   }
 </script>

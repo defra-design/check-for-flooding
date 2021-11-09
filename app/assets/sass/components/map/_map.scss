@@ -88,15 +88,21 @@
   line-height:40px;
   color: govuk-colour('black');
   svg {
-    display: block;
+    display: inline-block;
     margin:10px;
-    @include mq ($from: desktop) {
-      float:left;
-    }
+    vertical-align: top;
   }
   span {
+    vertical-align: top;
     @include mq ($until: desktop) {
-      @include defra-visually-hidden();
+      // Visually hidden
+      clip: rect(0 0 0 0); 
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap; 
+      width: 1px;
     }
   }
   @include mq ($from: desktop) {
