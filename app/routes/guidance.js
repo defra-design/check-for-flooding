@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 
-router.get('/about-river-sea-groundwater-rainfall-levels', (req, res) => {
+router.get('/how-we-measure-river-sea-groundwater-rainfall-levels', (req, res) => {
   res.render('levels-faq')
 })
 
