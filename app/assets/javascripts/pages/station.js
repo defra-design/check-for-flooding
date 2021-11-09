@@ -10,6 +10,7 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
+import '../components/tooltip'
 
 // Create LiveMap
 if (document.getElementById('map')) {
@@ -21,4 +22,10 @@ if (document.getElementById('map')) {
     zoom: 14,
     selectedId: `stations.${window.flood.model.id}`
   })
+}
+
+// Add tooltips
+const tooltips = document.querySelectorAll('[data-tooltip]')
+if (tooltips) {
+  window.flood.createTooltips()
 }

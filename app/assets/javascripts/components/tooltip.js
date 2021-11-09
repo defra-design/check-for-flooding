@@ -21,11 +21,10 @@ if (!Element.prototype.closest) {
 }
 
 const Tooltips = () => {
-  // Refacter as options
-  const viewportMargin = 15
-
   // Add tooltip
   const addTooltip = (tool) => {
+    // Outer margin
+    const viewportMargin = document.querySelector('.govuk-width-container').getBoundingClientRect().left
     // Open tooltip first so we can get dimensions
     tool.parentNode.classList.add('defra-tooltip--open')
     // Typically more text so width is fixed
@@ -44,10 +43,13 @@ const Tooltips = () => {
     const newTipLeft = tooltipLeft + tipOffsetX
     const viewportWidth = window.innerWidth
     if (newTipLeft < viewportMargin) {
+      // Left side
       tipOffsetX = tooltipLeft - viewportMargin
     } else if ((newTipLeft + tipWidth) > (viewportWidth - viewportMargin)) {
+      // Right side
       tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (viewportWidth - viewportMargin))
     }
+
     // Switch position if near top
     if (tip.getBoundingClientRect().top < viewportMargin) {
       tool.parentNode.classList.add('defra-tooltip--bottom')
