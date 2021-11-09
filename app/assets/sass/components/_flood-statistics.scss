@@ -13,20 +13,23 @@
         display:block;
         clear:both;
     }
-    &__column-one-quarter,
-    &__column-one-third {
+    &__column-one-quarter {
         width:50%;
         box-sizing: border-box;
-        padding-right: 15px;
+        padding-right: 10px;
         float:left;
         @include mq ($from: tablet) {
-            padding-left: 15px;
-            width:25%;
+            padding: 0px 15px;
+            width:33.33%;
         }
     }
     &__column-one-third {
+        width:33.33%;
+        box-sizing: border-box;
+        padding-right: 10px;
+        float:left;
         @include mq ($from: tablet) {
-            width:33.33%;
+            padding: 0px 15px;
         }
     }
     &__key {
