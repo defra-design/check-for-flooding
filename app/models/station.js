@@ -1,10 +1,11 @@
 class Station {
-  constructor (data, variant = '') {
+  constructor (data) {
+    const type = data.type
     this.id = data.id
     this.name = data.name
     this.isMulti = data.is_multi === 'TRUE'
-    this.type = data.type
-    this.river = data.river || (data.type === 'river' ? (data.river_name_wiski) : '')
+    this.type = type
+    this.river = data.river || (type === 'river' ? (data.river_name_wiski) : '')
     this.state = data.state
     this.status = data.status
     this.valueStatus = data.value_status
@@ -12,20 +13,24 @@ class Station {
       this.rangeTop = data.range_top
       this.rangeBottom = data.range_bottom
     }
-    if (variant !== 'rainfall') {
-      this.height = variant === 'downstream' ? data.height_downstream : data.height
+    if (type !== 'rainfall') {
+      this.height = data.height_downstream || data.height
+      if (data.upstream_id) {
+        this.upstreamId = data.upstream_id
+      }
+      if (data.downstream_id) {
+        this.downstreamId = data.downstream_id
+      }
+      this.telemetryId = data.measure_id
+      this.telemetryDownstreamId = data.measure_downstream_id
     } else {
       this.rainfall1hr = data.rainfall_1hr
-      this.rainfall6hr = data.rainfall_6hrl
+      this.rainfall6hr = data.rainfall_6hr
       this.rainfall24hr = data.rainfall_24hr
+      this.telemetryId = data.measure_rainfall_id
     }
+
     this.date = data.date
-    if (data.upstream_id) {
-      this.upstreamId = data.upstream_id
-    }
-    if (data.downstream_id) {
-      this.downstreamId = data.downstream_id
-    }
     this.isWales = data.is_wales === 'TRUE'
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)
   }

@@ -152,7 +152,10 @@ module.exports = {
     station.up AS upstream_id,
     station.down AS downstream_id,
     CONCAT(station.lon,',',station.lat) AS centroid,
-    station.is_wales
+    station.is_wales,
+    station.measure_id,
+    station.measure_downstream_id,
+    station.measure_rainfall_id
     FROM station
     LEFT JOIN river_station ON river_station.station_id = station.id
     LEFT JOIN river ON river.slug = river_station.slug

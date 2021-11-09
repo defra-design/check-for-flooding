@@ -2,8 +2,7 @@ const express = require('express')
 const router = express.Router()
 const stationServices = require('../services/station')
 const Station = require('../models/station')
-const StationViewModel = require('../models/views/station')
-const RainfallViewModel = require('../models/views/rainfall')
+const ViewModel = require('../models/views/station')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
@@ -16,14 +15,9 @@ router.get('/station/:id', async (req, res) => {
     if (!stationResponse.data) {
       return res.status(404).render('404')
     }
-    const response = new Station(stationResponse.data)
-    if (response.type === 'rainfall') {
-      const model = new RainfallViewModel(response)
-      return res.render('rainfall', { model })
-    } else {
-      const model = new StationViewModel(response)
-      return res.render('station', { model })
-    }
+    const station = new Station(stationResponse.data)
+    const model = new ViewModel(station, null)
+    return res.render(model.station.type === 'rainfall' ? 'rainfall' : 'station', { model })
   } else {
     // Return 500 error
   }

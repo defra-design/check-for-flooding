@@ -1,16 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block pageTitle %}
-Rainfall level at Abbeytown - GOV.UK
+{{ model.title }} - GOV.UK
 {% endblock %}
 
 {% block content %}
-<!--<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>-->
+<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
-      Rainfall level at Abbeytown
+      {{ model.title }}
     </h1>
     <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
   </div>
@@ -37,7 +37,7 @@ Rainfall level at Abbeytown - GOV.UK
             1 hour
           </dt>
           <dd class="defra-flood-statistics__value">
-            0mm
+            {{ model.station.rainfall1hr }}mm
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -45,7 +45,7 @@ Rainfall level at Abbeytown - GOV.UK
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            1.2mm
+            {{ model.station.rainfall6hr }}mm
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -53,7 +53,7 @@ Rainfall level at Abbeytown - GOV.UK
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            2.4mm
+            {{ model.station.rainfall24hr }}mm
           </dd>
         </div>
       </dl>
@@ -65,7 +65,7 @@ Rainfall level at Abbeytown - GOV.UK
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <figure class="defra-line-chart" aria-hidden="true"><!-- hidden by default, removed with js -->
-      <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-7">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</figcaption>
+      <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-7">Rainfall over the last 24 hours (millimeters per hour)</figcaption>
         <div id="line-chart" class="defra-line-chart__container" role="presentation"></div>
         {% if model.isFfoi and not model.forecastOutOfDate %}
         <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-2"> {{ model.forecastDetails }}</p>
@@ -93,10 +93,24 @@ Rainfall level at Abbeytown - GOV.UK
         <dl class="govuk-summary-list govuk-summary-list--no-border govuk-summary-list--defra-flood-station govuk-!-font-size-16">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Title
+              Grid reference
+            </dt>
+            <dd class="govuk-summary-list__value">NY 12345 12345</dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Station name
             </dt>
             <dd class="govuk-summary-list__value">
-              Value
+              Gargrave
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Station ID
+            </dt>
+            <dd class="govuk-summary-list__value">
+              8083
             </dd>
           </div>
         </dl>
