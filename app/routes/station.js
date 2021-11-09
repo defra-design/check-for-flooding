@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const stationServices = require('../services/station')
+const telemetryServices = require('../services/telemetry')
 const Station = require('../models/station')
 const ViewModel = require('../models/views/station')
 
@@ -15,9 +16,15 @@ router.get('/station/:id', async (req, res) => {
     if (!stationResponse.data) {
       return res.status(404).render('404')
     }
+    // Station details
     const station = new Station(stationResponse.data)
-    const model = new ViewModel(station, null)
-    return res.render(model.station.type === 'rainfall' ? 'rainfall' : 'station', { model })
+    let telemetry
+    // Rainfall telemetry
+    if (station.type === 'rainfall') {
+      telemetry = await telemetryServices.getRainfallTelemetry(station.telemetryId)
+    }
+    const model = new ViewModel(station, telemetry)
+    return res.render(station.type === 'rainfall' ? 'rainfall' : 'station', { model })
   } else {
     // Return 500 error
   }
