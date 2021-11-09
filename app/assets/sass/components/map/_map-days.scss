@@ -72,12 +72,6 @@
     text-decoration: none;
   }
 }
-.defra-map-days__month {
-  display:none;
-  @include mq ($from: tablet) {
-    display: inline;
-  }
-}
 .defra-map-days__icon {
   position:absolute;
   width:18px;

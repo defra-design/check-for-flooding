@@ -15,12 +15,13 @@
     }
     &__column-one-quarter,
     &__column-one-third {
+        width:50%;
+        box-sizing: border-box;
+        padding-right: 15px;
+        float:left;
         @include mq ($from: tablet) {
-            width:25%;
-            box-sizing: border-box;
             padding-left: 15px;
-            padding-right: 15px;
-            float:left;
+            width:25%;
         }
     }
     &__column-one-third {

@@ -41,7 +41,7 @@ const formatTime = (date) => {
     } else if (moment(date).isSame(tomorrow, 'd')) {
       return 'tomorrow'
     } else {
-      return `on ${moment(date).format('D/MM/YY')}`
+      return ` ${moment(date).format('D/MM/YY')}`
     }
   })()
   return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
