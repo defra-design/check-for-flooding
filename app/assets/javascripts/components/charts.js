@@ -2,24 +2,18 @@
 // Chart component
 
 import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
-
 import { axisBottom, axisLeft } from 'd3-axis'
-
 import { scaleLinear, scaleTime } from 'd3-scale'
-
 import { timeFormat } from 'd3-time-format'
-
 import { timeDay } from 'd3-time'
-
 import { select, selectAll, pointer } from 'd3-selection'
-
 import { bisector, extent } from 'd3-array'
 
-function LineChart (containerId, data) {
-  // Settings
-  const windowBreakPoint = 640
-  const svgBreakPoint = 576
+// Settings
+const windowBreakPoint = 640
+const svgBreakPoint = 576
 
+function LineChart (containerId, data) {
   const chart = document.getElementById(containerId)
 
   // Setup array to combine observed and forecast points and identify startPoint for locator
@@ -464,11 +458,8 @@ function LineChart (containerId, data) {
 }
 
 function BarChart (containerId, data) {
-  // Settings
-  const windowBreakPoint = 640
-  const svgBreakPoint = 576
-
-  const chart = document.getElementById(containerId)
+  // const chart = document.getElementById(containerId)
+  console.log(containerId)
 }
 
 window.flood.charts = {

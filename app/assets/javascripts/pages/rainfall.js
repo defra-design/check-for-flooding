@@ -1,6 +1,7 @@
 'use strict'
 import 'elm-pep'
 import '../core'
+import '../components/charts'
 import '../build/templates'
 import '../components/nunjucks'
 import '../components/map/maps'
@@ -19,4 +20,9 @@ if (document.getElementById('map')) {
     zoom: 14,
     selectedId: `stations.${window.flood.model.id}`
   })
+}
+
+// Create bar chart
+if (document.getElementById('bar-chart')) {
+  window.flood.charts.createBarChart('bar-chart', {})
 }
