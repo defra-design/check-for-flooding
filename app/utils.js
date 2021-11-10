@@ -16,7 +16,7 @@ const groupBy = (items, key) => items.reduce(
   {}
 )
 
-const formatElaspedTime = (date) => {
+const formatTimeElapsed = (date) => {
   const duration = (new Date() - new Date(date))
   const mins = Math.floor(duration / (1000 * 60))
   const hours = Math.floor(duration / (1000 * 60 * 60))
@@ -32,7 +32,7 @@ const formatElaspedTime = (date) => {
   }
 }
 
-const formatTime = (date) => {
+const formatTimeRecent = (date) => {
   const today = moment().startOf('day')
   const tomorrow = moment().add(1, 'days').startOf('day')
   const dateWhen = (() => {
@@ -45,6 +45,10 @@ const formatTime = (date) => {
     }
   })()
   return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
+}
+
+const formatTimeHour = (date) => {
+  return moment(date).tz('Europe/London').format('h:mma')
 }
 
 const bufferBbox = (bbox, m) => {
@@ -84,8 +88,9 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
 }
 
 module.exports = {
-  formatElaspedTime,
-  formatTime,
+  formatTimeElapsed,
+  formatTimeRecent,
+  formatTimeHour,
   getSlug,
   groupBy,
   bufferBbox,

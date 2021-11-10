@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<!--<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>-->
+<!-- <pre style="white-space: pre-wrap;">{{ model | dump }}</pre> -->
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
@@ -61,10 +61,29 @@
   </div>
 </div>
 
+{# Data table #}
+<table class="govuk-table">
+  <caption class="govuk-table__caption govuk-table__caption--s govuk-!-margin-top-4">Rainfall over the last 24 hours</caption>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">Period</th>
+      <th scope="col" class="govuk-table__header govuk-table__header--numeric">Accumulation</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    {% for item in model.telemetry.hourly %}
+    <tr class="govuk-table__row">
+      <th scope="row" class="govuk-table__header">{{ item.dateTime }}</th>
+      <td class="govuk-table__cell govuk-table__cell--numeric">{{ item.value }}mm</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {# Bar chart #}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <figure class="defra-bar-chart" aria-hidden="true"><!-- hidden by default, removed with js -->
+    <figure class="defra-bar-chart" hidden><!-- hidden by default, removed with js -->
       <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-7">Rainfall over the last 24 hours</figcaption>
       <div id="bar-chart" class="defra-bar-chart__container" role="presentation"></div>
     </figure>

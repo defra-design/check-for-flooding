@@ -1,4 +1,3 @@
-const utils = require('../utils')
 const Level = require('./level')
 
 class Levels {
