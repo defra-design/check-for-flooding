@@ -83,15 +83,15 @@ class BannerLocation {
 
   groupRemoved (group, location) {
     this.removed = group.items.length
-    if (group.items.length === 1) {
-      this.removedLink = `/target-area/${group.items[0].id}`
-      this.removedLinkText = '1 flood alert or warning was removed '
-      this.removedText = 'in the last 24 hours.'
-    } else {
-      this.removedLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#removed`
-      this.removedLinkText = 'Flood alerts and warnings were removed'
-      this.removedText = 'in the last 24 hours.'
-    }
+    // if (group.items.length === 1) {
+    //   this.removedLink = `/target-area/${group.items[0].id}`
+    //   this.removedLinkText = '1 flood alert or warning was removed '
+    //   this.removedText = 'in the last 24 hours.'
+    // } else {
+    this.removedLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#removed`
+    this.removedLinkText = 'Flood warnings and alerts removed'
+    this.removedText = ''
+    // }
   }
 }
 
