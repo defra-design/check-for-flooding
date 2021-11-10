@@ -16,7 +16,6 @@ class RainfallTelemetry {
       }
       // End batch
       if (moment(item.dateTime).minutes() === 0 || index === telemetry.length - 1) {
-        console.log(index, batchStartIndex, item.dateTime)
         hourly.push({
           dateTime: moment(item.dateTime),
           value: Math.round(batchTotal * 100) / 100

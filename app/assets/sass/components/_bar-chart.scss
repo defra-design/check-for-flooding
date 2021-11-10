@@ -1,15 +1,12 @@
 // Bar graph
-.defra-bar-chart {
+.js-enabled .defra-bar-chart__visualisation {
   position:relative;
+  display: block !important;
   // border-bottom:1px solid $govuk-border-colour;
   // padding-bottom:15px;
   margin:0;
 }
-.defra-bar-chart-data {
-  border-top:1px solid $govuk-border-colour;
-  padding-top:20px;
-}
-.js-enabled .defra-bar-chart-data {
+.js-enabled .defra-bar-chart__table {
   @extend .govuk-visually-hidden;
 }
 .defra-bar-chart__caption {

@@ -21,13 +21,14 @@ class ViewModel {
     if (telemetry.quarterly) {
       telemetry.quarterly = telemetry.quarterly.map(item => {
         return {
-          dateTime: utils.formatTimeHour(item.dateTime),
+          dateTime: item.dateTime,
           value: item.value
         }
       })
       telemetry.hourly = telemetry.hourly.map(item => {
         return {
-          dateTime: utils.formatTimeHour(item.dateTime),
+          dateTime: item.dateTime,
+          dateTimeHour: utils.formatTimeHour(item.dateTime),
           value: item.value
         }
       })

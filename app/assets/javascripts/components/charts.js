@@ -458,8 +458,8 @@ function LineChart (containerId, data) {
 }
 
 function BarChart (containerId, data) {
-  const chart = document.getElementById(containerId)
-  // console.log(chart)
+  // const chart = document.getElementById(containerId)
+  console.log(data)
 }
 
 window.flood.charts = {

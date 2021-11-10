@@ -24,5 +24,5 @@ if (document.getElementById('map')) {
 
 // Create bar chart
 if (document.getElementById('bar-chart')) {
-  window.flood.charts.createBarChart('bar-chart', {})
+  window.flood.charts.createBarChart('bar-chart', window.flood.model.telemetry)
 }
