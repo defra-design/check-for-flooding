@@ -18,7 +18,7 @@ class ViewModel {
     this.timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
     this.station = station
     // Keep presentation logic in the ViewModel
-    if (telemetry.quarterly) {
+    if (station.type === 'rainfall') {
       telemetry.quarterly = telemetry.quarterly.map(item => {
         return {
           dateTime: item.dateTime,

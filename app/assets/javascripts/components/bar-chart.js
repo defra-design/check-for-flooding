@@ -1,0 +1,94 @@
+'use strict'
+// Chart component
+
+import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
+import { axisBottom, axisLeft } from 'd3-axis'
+import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
+import { timeFormat } from 'd3-time-format'
+import { timeDay } from 'd3-time'
+import { select, selectAll, pointer } from 'd3-selection'
+import { bisector, extent, max } from 'd3-array'
+import { transform } from 'd3-zoom'
+
+// Settings
+const windowBreakPoint = 640
+const svgBreakPoint = 576
+
+function BarChart (containerId, data) {
+  const chart = document.getElementById(containerId)
+
+  const parseHour = timeFormat('%-I%p')
+
+  const renderChart = () => {
+    // Set isMobile boolean
+    const parentWidth = Math.floor(select('#' + containerId).node().getBoundingClientRect().width)
+    const isMobile = window.innerWidth <= windowBreakPoint && parentWidth <= svgBreakPoint
+
+    // const x = d3.scale
+    //   .ordinal()
+    //   .domain(letters)
+    //   .rangeRoundBands([0, width], 0.1, 0.1)
+    // const xExtent = extent(data, (d, i) => { return new Date(d.dateTime) })
+    const xScale = scaleBand().range([0, width]).padding(0.4)
+    xScale.domain(data.map((d) => { return d.dateTime }).reverse())
+    const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => { return !(i % 12) }))
+    xAxis.tickFormat((d) => { return parseHour(new Date(d)).toLocaleLowerCase() })
+
+    // const yExtent = extent(data, (d, i) => { return new Date(d.value) })
+    // yExtent[1] = 20
+    const yScale = scaleLinear().range([height, 0])
+    const yAxis = axisLeft().scale(yScale)
+    yScale.domain([0, max(data, (d) => { return d.value })])
+
+    // Position axis bottom and right
+    svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
+    svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
+
+    // Offset y ticks
+    svg.selectAll('.y.axis .tick').attr('transform', function () {
+      console.log(select(this).attr('transform'))
+      // return 'translate(0, -3)'
+    })
+
+    clipInner.selectAll('.bar')
+      .data(data)
+      .enter().append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => { return xScale(d.dateTime) })
+      .attr('y', (d) => { return yScale(d.value) })
+      .attr('width', xScale.bandwidth())
+      .attr('height', (d) => { return height - yScale(d.value) })
+    // svg.selectAll('.x.axis text').attr('y', 12)
+    // svgInner.attr('transform', 'translate(' + (margin.left + margin.right) + ',' + 0 + ')')
+    clip.attr('width', width).attr('height', height)
+  }
+
+  //
+  // Setup
+  //
+
+  const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
+  const svgInner = svg.append('g').style('pointer-events', 'all')
+  svgInner.append('g').classed('y grid', true)
+  svgInner.append('g').classed('x grid', true)
+  svgInner.append('g').classed('x axis', true)
+  svgInner.append('g').classed('y axis', true)
+  const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
+  const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
+
+  // Get width and height
+  const margin = { top: 25, bottom: 25, left: 28, right: 28 }
+  const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
+  let width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
+  let height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+
+  renderChart()
+
+  this.chart = chart
+}
+
+window.flood.charts = {
+  createBarChart: (containerId, data) => {
+    return new BarChart(containerId, data)
+  }
+}

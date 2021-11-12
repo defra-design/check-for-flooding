@@ -1,7 +1,7 @@
 'use strict'
 import 'elm-pep'
 import '../core'
-import '../components/charts'
+import '../components/bar-chart'
 import '../build/templates'
 import '../components/nunjucks'
 import '../components/map/maps'
