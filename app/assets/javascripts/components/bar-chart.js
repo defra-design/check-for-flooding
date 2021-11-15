@@ -1,18 +1,11 @@
 'use strict'
 // Chart component
 
-import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
 import { axisBottom, axisLeft } from 'd3-axis'
-import { scaleLinear, scaleTime, scaleBand } from 'd3-scale'
+import { scaleLinear, scaleBand } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
-import { timeDay } from 'd3-time'
-import { select, selectAll, pointer } from 'd3-selection'
-import { bisector, extent, max } from 'd3-array'
-import { transform } from 'd3-zoom'
-
-// Settings
-const windowBreakPoint = 640
-const svgBreakPoint = 576
+import { select } from 'd3-selection'
+import { max } from 'd3-array'
 
 function BarChart (containerId, data) {
   const chart = document.getElementById(containerId)
@@ -27,8 +20,6 @@ function BarChart (containerId, data) {
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
       const hourMinute = parseHourMinute(new Date(d))
       return ['3:00', '6:00', '9:00', '12:00'].includes(hourMinute)
-      // console.log(parseHour(new Date(d)))
-      // return !(i % 12)
     }))
     xAxis.tickFormat((d) => { return formatTime(new Date(d)).toLocaleLowerCase() })
 
@@ -57,8 +48,8 @@ function BarChart (containerId, data) {
       .attr('y', (d) => { return yScale(d.value) })
       .attr('width', xScale.bandwidth())
       .attr('height', (d) => { return height - yScale(d.value) })
-    // svg.selectAll('.x.axis text').attr('y', 12)
-    // svgInner.attr('transform', 'translate(' + (margin.left + margin.right) + ',' + 0 + ')')
+
+    // Update clip container
     clip.attr('width', width).attr('height', height)
   }
 
@@ -69,7 +60,6 @@ function BarChart (containerId, data) {
   const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
   const svgInner = svg.append('g').style('pointer-events', 'all')
   svgInner.append('g').classed('y grid', true)
-  // svgInner.append('g').classed('x grid', true)
   svgInner.append('g').classed('x axis', true)
   svgInner.append('g').classed('y axis', true)
   const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
