@@ -17,14 +17,20 @@ const svgBreakPoint = 576
 function BarChart (containerId, data) {
   const chart = document.getElementById(containerId)
 
-  const parseHour = timeFormat('%-I%p')
+  const formatTime = timeFormat('%-I%p')
+  const parseHourMinute = timeFormat('%-I:%M')
 
   const renderChart = () => {
     // Setup xScale, domain and range
     const xScale = scaleBand().range([0, width]).padding(0.4)
     xScale.domain(data.map((d) => { return d.dateTime }).reverse())
-    const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => { return !(i % 12) }))
-    xAxis.tickFormat((d) => { return parseHour(new Date(d)).toLocaleLowerCase() })
+    const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
+      const hourMinute = parseHourMinute(new Date(d))
+      return ['3:00', '6:00', '9:00', '12:00'].includes(hourMinute)
+      // console.log(parseHour(new Date(d)))
+      // return !(i % 12)
+    }))
+    xAxis.tickFormat((d) => { return formatTime(new Date(d)).toLocaleLowerCase() })
 
     // Setup yScale, domain and range
     const yScale = scaleLinear().range([height, 0])

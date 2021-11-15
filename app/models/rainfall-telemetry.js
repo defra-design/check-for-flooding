@@ -5,6 +5,7 @@ class RainfallTelemetry {
     let batchTotal = 0
     let batchStartIndex = -1
     const hourly = []
+    console.log(telemetry[0])
     telemetry.reverse().forEach((item, index) => {
       // Determin start index
       if (batchStartIndex < 0 && moment(item.dateTime).minutes() === 15) {
