@@ -57,7 +57,22 @@ function BarChart (containerId, data) {
   // Setup
   //
 
-  const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
+  // Add time scale buttons
+  const segmentedControl = document.createElement('div')
+  segmentedControl.className = 'defra-segmented-control'
+  segmentedControl.innerHTML = `
+    <div class="defra-segmented-control__item">
+    <input class="defra-segmented-control__input" name="time" type="radio" id="time15"/>
+    <label for="time15">15 minutes</label>
+    </div>
+    <div class="defra-segmented-control__item">
+    <input class="defra-segmented-control__input" name="time" type="radio" id="time60"/>
+    <label for="time60">Hourly</label>
+    </div>
+  `
+  document.querySelector(`#${containerId}`).append(segmentedControl)
+
+  const svg = select(`#${containerId}`).append('svg').style('pointer-events', 'none')
   const svgInner = svg.append('g').style('pointer-events', 'all')
   svgInner.append('g').classed('y grid', true)
   svgInner.append('g').classed('x axis', true)
