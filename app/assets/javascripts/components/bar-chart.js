@@ -20,40 +20,33 @@ function BarChart (containerId, data) {
   const parseHour = timeFormat('%-I%p')
 
   const renderChart = () => {
-    // Set isMobile boolean
-    const parentWidth = Math.floor(select('#' + containerId).node().getBoundingClientRect().width)
-    const isMobile = window.innerWidth <= windowBreakPoint && parentWidth <= svgBreakPoint
-
-    // const x = d3.scale
-    //   .ordinal()
-    //   .domain(letters)
-    //   .rangeRoundBands([0, width], 0.1, 0.1)
-    // const xExtent = extent(data, (d, i) => { return new Date(d.dateTime) })
+    // Setup xScale, domain and range
     const xScale = scaleBand().range([0, width]).padding(0.4)
     xScale.domain(data.map((d) => { return d.dateTime }).reverse())
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => { return !(i % 12) }))
     xAxis.tickFormat((d) => { return parseHour(new Date(d)).toLocaleLowerCase() })
 
-    // const yExtent = extent(data, (d, i) => { return new Date(d.value) })
-    // yExtent[1] = 20
+    // Setup yScale, domain and range
     const yScale = scaleLinear().range([height, 0])
-    const yAxis = axisLeft().scale(yScale)
+    const yAxis = axisLeft(yScale).tickSizeOuter(0).ticks(5)
     yScale.domain([0, max(data, (d) => { return d.value })])
 
     // Position axis bottom and right
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
     svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
 
-    // Offset y ticks
-    svg.selectAll('.y.axis .tick').attr('transform', function () {
-      console.log(select(this).attr('transform'))
-      // return 'translate(0, -3)'
-    })
+    // Re-position y ticks
+    svg.select('.y.axis').style('text-anchor', 'start')
+    svg.selectAll('.y.axis .tick line').attr('x2', 6)
+    svg.selectAll('.y.axis .tick text').attr('x', 9)
 
-    clipInner.selectAll('.bar')
-      .data(data)
-      .enter().append('rect')
-      .attr('class', 'bar')
+    // Position y grid
+    svg.select('.y.grid')
+      .attr('transform', 'translate(0,' + 0 + ')')
+      .call(axisLeft(yScale).tickSizeOuter(0).ticks(5).tickSize(-width, 0, 0).tickFormat(''))
+
+    // Position bars
+    svg.selectAll('.bar')
       .attr('x', (d) => { return xScale(d.dateTime) })
       .attr('y', (d) => { return yScale(d.value) })
       .attr('width', xScale.bandwidth())
@@ -70,17 +63,29 @@ function BarChart (containerId, data) {
   const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
   const svgInner = svg.append('g').style('pointer-events', 'all')
   svgInner.append('g').classed('y grid', true)
-  svgInner.append('g').classed('x grid', true)
+  // svgInner.append('g').classed('x grid', true)
   svgInner.append('g').classed('x axis', true)
   svgInner.append('g').classed('y axis', true)
   const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
   const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
+  clipInner.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar')
 
   // Get width and height
   const margin = { top: 25, bottom: 25, left: 28, right: 28 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
   let height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+
+  //
+  // Events
+  //
+
+  window.addEventListener('resize', () => {
+    const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
+    width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
+    height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+    renderChart()
+  })
 
   renderChart()
 

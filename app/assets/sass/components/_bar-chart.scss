@@ -14,7 +14,7 @@
   @extend .govuk-body;
   margin-bottom:30px;
   @include mq ($from: tablet) {
-      margin-bottom:40px;
+    margin-bottom:40px;
   }
   margin-right:0px;
   text-align:left;
@@ -29,6 +29,36 @@
   height:300px;
   width:100%;
   @include mq ($from: desktop) {
-      height:450px;
+    height:450px;
+  }
+  .axis.y { 
+    @include govuk-font($size: 14, $tabular: true);
+  }
+  .axis.x { 
+    @include govuk-font($size: 14); 
+  }
+  .axis.y text,
+  .axis.x text {
+    fill: $govuk-secondary-text-colour;
+  }
+  .axis.y .tick line,
+  .grid.y path.domain { 
+    display: none;
+  }
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: $govuk-border-colour;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+  }
+  .bar {
+    fill: govuk-colour('blue');
+  }
+  .grid line {
+    fill: none;
+    stroke: rgba(govuk-colour('black'), 0.1);
+    stroke-width: 1;
+    shape-rendering: crispEdges;
   }
 }
