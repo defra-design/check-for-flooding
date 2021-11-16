@@ -107,15 +107,15 @@ function BarChart (containerId, data) {
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
-  segmentedControl.className = 'defra-segmented-control'
+  segmentedControl.className = 'defra-segmented-control govuk-!-margin-bottom-2'
   segmentedControl.innerHTML = `
-    <div class="defra-segmented-control__item">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly" checked/>
-    <label for="timeQuarterly">15 minutes</label>
+    <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
+      <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly" checked/>
+      <label for="timeQuarterly">15 minutes</label>
     </div>
-    <div class="defra-segmented-control__item">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly"/>
-    <label for="timeHourly">Hourly</label>
+    <div class="defra-segmented-control__segment">
+      <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly"/>
+      <label for="timeHourly">Hourly</label>
     </div>
   `
   container.append(segmentedControl)
@@ -155,6 +155,11 @@ function BarChart (containerId, data) {
 
   document.addEventListener('click', (e) => {
     if (e.target.className === 'defra-segmented-control__input') {
+      const siblings = e.target.parentNode.parentNode.children
+      for (var i = 0; i < siblings.length; i++) {
+        siblings[i].classList.remove('defra-segmented-control__segment--selected')
+      }
+      e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
       const dataPeriod = e.target.getAttribute('data-period') === 'quarterly' ? dataQuarterly : dataHourly
       xScale = setScaleX(dataPeriod)
       yScale = setScaleY(dataPeriod)
