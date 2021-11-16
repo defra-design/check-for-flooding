@@ -96,7 +96,9 @@
 {% else %}
 <!-- Rainfall -->
 <div id="infoDescription">
-    <strong class="defra-map-info__name">Rainfall at {{ model.name }}</strong>
+    <strong class="defra-map-info__name">
+        <a href="/station/{{ model.id }}">Rainfall at {{ model.name }}</a>
+    </strong>
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
     <p class="defra-flood-list-item__error">
         Closed or temporarily out of service

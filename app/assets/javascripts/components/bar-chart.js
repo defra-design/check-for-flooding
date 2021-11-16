@@ -12,21 +12,20 @@ function BarChart (containerId, data) {
 
   const formatTime = timeFormat('%-I%p')
   const parseHourMinute = timeFormat('%-I:%M')
+  const parseMinutes = timeFormat('%-M')
 
   const renderChart = () => {
-    // Setup xScale, domain and range
-    const xScale = scaleBand().range([0, width]).padding(0.4)
-    xScale.domain(data.map((d) => { return d.dateTime }).reverse())
+    // Calculate new xScale from range
+    xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
       const hourMinute = parseHourMinute(new Date(d))
       return ['3:00', '6:00', '9:00', '12:00'].includes(hourMinute)
     }))
     xAxis.tickFormat((d) => { return formatTime(new Date(d)).toLocaleLowerCase() })
 
-    // Setup yScale, domain and range
-    const yScale = scaleLinear().range([height, 0])
+    // Calculate new yScale from range
+    yScale = yScale.range([height, 0])
     const yAxis = axisLeft(yScale).tickSizeOuter(0).ticks(5)
-    yScale.domain([0, max(data, (d) => { return d.value })])
 
     // Position axis bottom and right
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
@@ -53,25 +52,75 @@ function BarChart (containerId, data) {
     clip.attr('width', width).attr('height', height)
   }
 
+  const renderBars = (data) => {
+    clipInner.selectAll('.bar').remove()
+    clipInner.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar')
+  }
+
+  const getDataHourly = () => {
+    // Batch data into hourly totals
+    const hours = []
+    let batchTime
+    let batchTotal = 0
+    let isBatch = false
+    data.forEach((item, index) => {
+      const minutes = parseInt(parseMinutes(new Date(item.dateTime)), 10)
+      // Get batch time
+      if (!isBatch && minutes === 0) {
+        batchTime = item.dateTime
+        isBatch = true
+      }
+      // Add up batch
+      if (isBatch) {
+        batchTotal += item.value
+        if (minutes === 15) {
+          // Finish batch
+          hours.push({
+            dateTime: batchTime,
+            value: Math.round(batchTotal * 100) / 100
+          })
+          isBatch = false
+          batchTotal = 0
+        }
+      }
+    })
+    return hours
+  }
+
+  const setScaleX = (data) => {
+    return scaleBand().domain(data.map((d) => { return d.dateTime }).reverse())
+  }
+
+  const setScaleY = (data) => {
+    return scaleLinear().domain([0, max(data, (d) => { return d.value })])
+  }
+
   //
   // Setup
   //
+
+  const dataQuarterly = data
+  const dataHourly = getDataHourly()
+
+  // Get container element
+  const container = document.querySelector(`#${containerId}`)
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-segmented-control'
   segmentedControl.innerHTML = `
     <div class="defra-segmented-control__item">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="time15"/>
-    <label for="time15">15 minutes</label>
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly" checked/>
+    <label for="timeQuarterly">15 minutes</label>
     </div>
     <div class="defra-segmented-control__item">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="time60"/>
-    <label for="time60">Hourly</label>
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly"/>
+    <label for="timeHourly">Hourly</label>
     </div>
   `
-  document.querySelector(`#${containerId}`).append(segmentedControl)
+  container.append(segmentedControl)
 
+  // Create chart container elements
   const svg = select(`#${containerId}`).append('svg').style('pointer-events', 'none')
   const svgInner = svg.append('g').style('pointer-events', 'all')
   svgInner.append('g').classed('y grid', true)
@@ -79,13 +128,19 @@ function BarChart (containerId, data) {
   svgInner.append('g').classed('y axis', true)
   const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
   const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
-  clipInner.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar')
 
   // Get width and height
   const margin = { top: 25, bottom: 25, left: 28, right: 28 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
   let height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+
+  // Setup scales with domains
+  let xScale = setScaleX(dataQuarterly)
+  let yScale = setScaleY(dataQuarterly)
+  renderBars(dataQuarterly)
+
+  renderChart()
 
   //
   // Events
@@ -98,7 +153,15 @@ function BarChart (containerId, data) {
     renderChart()
   })
 
-  renderChart()
+  document.addEventListener('click', (e) => {
+    if (e.target.className === 'defra-segmented-control__input') {
+      const dataPeriod = e.target.getAttribute('data-period') === 'quarterly' ? dataQuarterly : dataHourly
+      xScale = setScaleX(dataPeriod)
+      yScale = setScaleY(dataPeriod)
+      renderBars(dataPeriod)
+      renderChart()
+    }
+  })
 
   this.chart = chart
 }
