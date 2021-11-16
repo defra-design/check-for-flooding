@@ -1,17 +1,12 @@
 .defra-segmented-control {
-  display: inline-flex;
-  justify-content: space-between;
-  background: white;
-  max-width: 500px;
   margin: auto;
-  overflow: hidden;
-  position: relative;
-  padding: 5px;
-  margin-left: -4px;
+  border-top: 1px solid govuk-colour('light-grey');
   &__segment {
-    min-width: 100px;
+    display: inline-block;
+    margin-top: -1px;
     position: relative;
     text-align: center;
+    padding-right: 15px;
   }
   &__segment--selected {
     z-index: 1;
@@ -32,13 +27,18 @@
     cursor: pointer;
     display: block;
     @include govuk-font($size: 16);
-    padding: 6px 5px 7px 5px;
+    padding: 7.5px 0;
+    border-top: 3px solid transparent;
     position: relative;
-    box-shadow: 0 0 0 1px govuk-colour('mid-grey');
     outline: 3px solid transparent;
+    color: govuk-colour('blue');
   }
   input:checked + label {
-    background-color: govuk-colour('light-grey');
-    box-shadow: 0 0 0 2px govuk-colour('black');
+    border-top: 3px solid govuk-colour('blue');
+  }
+  input:focus + label {
+    border-top: 3px solid govuk-colour('black');
+    background-color: $govuk-focus-colour;
+    color: govuk-colour('black');
   }
 }

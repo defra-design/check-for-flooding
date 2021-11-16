@@ -118,7 +118,8 @@ function BarChart (containerId, data) {
       <label for="timeHourly">Hourly</label>
     </div>
   `
-  container.append(segmentedControl)
+  container.parentNode.insertBefore(segmentedControl, container)
+  // container.append(segmentedControl)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg').style('pointer-events', 'none')
@@ -130,10 +131,11 @@ function BarChart (containerId, data) {
   const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
 
   // Get width and height
-  const margin = { top: 25, bottom: 25, left: 28, right: 28 }
+  const margin = { top: 0, bottom: 30, left: 0, right: 34 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-  let width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
-  let height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+  let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
+  let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
+  console.log(containerBoundingRect.height, (Math.floor(containerBoundingRect.height) - margin.bottom))
 
   // Setup scales with domains
   let xScale = setScaleX(dataQuarterly)
@@ -148,8 +150,8 @@ function BarChart (containerId, data) {
 
   window.addEventListener('resize', () => {
     const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-    width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
-    height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+    width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
+    height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
     renderChart()
   })
 

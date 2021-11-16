@@ -2,9 +2,7 @@
 .js-enabled .defra-bar-chart__visualisation {
   position:relative;
   display: block !important;
-  // border-bottom:1px solid $govuk-border-colour;
-  // padding-bottom:15px;
-  margin:0;
+  margin: 0;
 }
 .js-enabled .defra-bar-chart__table {
   @extend .govuk-visually-hidden;
