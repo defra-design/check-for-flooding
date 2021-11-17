@@ -2,30 +2,34 @@ const moment = require('moment-timezone')
 
 class RainfallTelemetry {
   constructor (telemetry) {
+    // Batch data into hourly totals
+    const hours = []
+    let batchTime
     let batchTotal = 0
-    let batchStartIndex = -1
-    const hourly = []
-    telemetry.reverse().forEach((item, index) => {
-      // Determin start index
-      if (batchStartIndex < 0 && moment(item.dateTime).minutes() === 15) {
-        batchStartIndex = index
+    let isBatch = false
+    telemetry.forEach((item, index) => {
+      const minutes = moment(item.dateTime).minutes()
+      // Get batch time
+      if (!isBatch && minutes === 0) {
+        batchTime = item.dateTime
+        isBatch = true
       }
       // Add up batch
-      if (batchStartIndex >= 0) {
+      if (isBatch) {
         batchTotal += item.value
-      }
-      // End batch
-      if (moment(item.dateTime).minutes() === 0 || index === telemetry.length - 1) {
-        hourly.push({
-          dateTime: moment(item.dateTime),
-          value: Math.round(batchTotal * 100) / 100
-        })
-        batchStartIndex = index
-        batchTotal = 0
+        if (minutes === 15) {
+          // Finish batch
+          hours.push({
+            dateTime: batchTime,
+            value: Math.round(batchTotal * 100) / 100
+          })
+          isBatch = false
+          batchTotal = 0
+        }
       }
     })
-    this.quarterly = telemetry.reverse()
-    this.hourly = hourly.reverse()
+    this.quarterly = telemetry
+    this.hourly = hours
   }
 }
 module.exports = RainfallTelemetry
