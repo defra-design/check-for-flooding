@@ -48,12 +48,27 @@ function checkFiles () {
   }
 }
 
+// Create template session data defaults file if it doesn't exist
+const dataDirectory = path.join(__dirname, '/app/data')
+const sessionDataDefaultsFile = path.join(dataDirectory, '/session-data-defaults.js')
+const sessionDataDefaultsFileExists = fs.existsSync(sessionDataDefaultsFile)
+
+if (!sessionDataDefaultsFileExists) {
+  console.log('Creating session data defaults file')
+  if (!fs.existsSync(dataDirectory)) {
+    fs.mkdirSync(dataDirectory)
+  }
+
+  fs.createReadStream(path.join(__dirname, '/lib/template.session-data-defaults.js'))
+    .pipe(fs.createWriteStream(sessionDataDefaultsFile))
+}
+
 // Run gulp
 function runGulp () {
   const spawn = require('cross-spawn')
 
   process.env.FORCE_COLOR = 1
-  var gulp = spawn('./node_modules/.bin/gulp', ['--log-level', '-L'])
+  var gulp = spawn('node', ['./node_modules/gulp/bin/gulp.js', '--log-level', '-L'])
   gulp.stdout.pipe(process.stdout)
   gulp.stderr.pipe(process.stderr)
   process.stdin.pipe(gulp.stdin)
