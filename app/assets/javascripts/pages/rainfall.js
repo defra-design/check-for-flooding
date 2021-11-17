@@ -4,11 +4,11 @@ import '../core'
 import '../components/bar-chart'
 import '../build/templates'
 import '../components/nunjucks'
-import '../components/map/maps'
-import '../components/map/styles'
-import '../components/map/layers'
-import '../components/map/container'
-import '../components/map/live'
+// import '../components/map/maps'
+// import '../components/map/styles'
+// import '../components/map/layers'
+// import '../components/map/container'
+// import '../components/map/live'
 
 // Create LiveMap
 if (document.getElementById('map')) {
