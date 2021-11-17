@@ -20,11 +20,17 @@ if (!Element.prototype.closest) {
   }
 }
 
-const Tooltips = () => {
+const Tooltips = (options) => {
+  // Setup defaults
+  const defaults = {
+    margin: 15
+  }
+  options = Object.assign({}, defaults, options)
+
   // Add tooltip
   const addTooltip = (tool) => {
     // Outer margin
-    const viewportMargin = document.querySelector('.govuk-width-container').getBoundingClientRect().left
+    const viewportMargin = options.margin
     // Open tooltip first so we can get dimensions
     tool.parentNode.classList.add('defra-tooltip--open')
     // Typically more text so width is fixed
@@ -147,6 +153,6 @@ const Tooltips = () => {
   })
 }
 
-window.flood.createTooltips = (tooltips) => {
-  return Tooltips(tooltips)
+window.flood.createTooltips = (options) => {
+  return Tooltips(options)
 }
