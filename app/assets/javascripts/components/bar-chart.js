@@ -92,7 +92,8 @@ function BarChart (containerId, data) {
   }
 
   const setScaleY = (data) => {
-    return scaleLinear().domain([0, max(data, (d) => { return d.value })])
+    // Return y Scale but with a minimum of 0.6mm
+    return scaleLinear().domain([0, Math.max(max(data, (d) => { return d.value }), 0.6)])
   }
 
   //
