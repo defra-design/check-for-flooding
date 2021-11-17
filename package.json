@@ -17,7 +17,6 @@
     "@babel/core": "^7.13.10",
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.10",
-    "@heroku/buildpack-registry": "^1.0.1",
     "@mapbox/sphericalmercator": "^1.1.0",
     "@turf/polygon-smooth": "^6.5.0",
     "@turf/turf": "^6.5.0",
