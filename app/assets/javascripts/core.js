@@ -34,8 +34,8 @@ window.flood.utils = {
         }
       }
     }
-    xmlhttp.responseType = 'document'
     xmlhttp.open('GET', url, true)
+    xmlhttp.responseType = 'document'
     xmlhttp.send()
   },
   forEach: (items, callback) => {
