@@ -6,6 +6,7 @@ import { scaleLinear, scaleBand } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
 import { select } from 'd3-selection'
 import { max } from 'd3-array'
+import { timeMinute } from 'd3-time'
 
 function BarChart (containerId, data) {
   const chart = document.getElementById(containerId)
@@ -60,28 +61,16 @@ function BarChart (containerId, data) {
   const getDataHourly = () => {
     // Batch data into hourly totals
     const hours = []
-    let batchTime
     let batchTotal = 0
-    let isBatch = false
-    data.forEach((item, index) => {
+    data.forEach(item => {
       const minutes = parseInt(parseMinutes(new Date(item.dateTime)), 10)
-      // Get batch time
-      if (!isBatch && minutes === 0) {
-        batchTime = item.dateTime
-        isBatch = true
-      }
-      // Add up batch
-      if (isBatch) {
-        batchTotal += item.value
-        if (minutes === 15) {
-          // Finish batch
-          hours.push({
-            dateTime: batchTime,
-            value: Math.round(batchTotal * 100) / 100
-          })
-          isBatch = false
-          batchTotal = 0
-        }
+      batchTotal += item.value
+      if (minutes === 15) {
+        hours.push({
+          dateTime: timeMinute.offset(new Date(item.dateTime), -15),
+          value: Math.round(batchTotal * 100) / 100
+        })
+        batchTotal = 0
       }
     })
     return hours

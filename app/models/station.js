@@ -29,7 +29,6 @@ class Station {
       this.rainfall24hr = data.rainfall_24hr
       this.telemetryId = data.measure_rainfall_id
     }
-
     this.date = data.date
     this.isWales = data.is_wales === 'TRUE'
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)

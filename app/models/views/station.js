@@ -14,10 +14,10 @@ class ViewModel {
         return `${station.type.charAt(0).toUpperCase() + station.type.slice(1)} level at ${station.name}`
       }
     })()
-    this.time = station.date ? utils.formatTimeRecent(station.date) : ''
-    this.timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
     this.station = station
     // Keep presentation logic in the ViewModel
+    let time = station.date ? utils.formatTimeRecent(station.date) : ''
+    let timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
     if (station.type === 'rainfall') {
       telemetry.quarterly = telemetry.quarterly.map(item => {
         return {
@@ -32,7 +32,14 @@ class ViewModel {
           value: item.value
         }
       })
+      time = utils.formatTimeRecent(telemetry.dateTime)
+      timeElapsed = utils.formatTimeElapsed(telemetry.dateTime)
     }
+    this.time = time
+    this.timeElapsed = timeElapsed
+    this.rainfall1hr = telemetry.latest1hr
+    this.rainfall6hr = telemetry.latest6hr
+    this.rainfall24hr = telemetry.latest24hr
     this.telemetry = telemetry
     this.bingApiKey = bingApiKey
   }
