@@ -281,10 +281,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
-      // window.removeEventListener('resize', windowResize)
-      // if (window.visualViewport) {
-      //   window.visualViewport.removeEventListener('resize', visualViewportResize)
-      // }
+      window.removeEventListener('resize', windowResize)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', visualViewportResize)
+      }
     }
   }
 
@@ -576,35 +576,35 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   // Redraw map on browser zoom otherise it becomes pixelated
   // We need to refreh any vector layers as this appears the only way to redraw canvas
   // Doesnt work in Safari as devicePixelRatio doesn't change on browserZoom
-  // let devicePixelRatio = window.devicePixelRatio
-  // const windowResize = (e) => {
-  //   const newPixelRatio = window.devicePixelRatio
-  //   if (newPixelRatio !== devicePixelRatio) {
-  //     map.pixelRatio_ = window.devicePixelRatio
-  //     const newPixelRatio = window.devicePixelRatio
-  //     const layers = map.getLayers()
-  //     layers.forEach((layer) => {
-  //       if (layer instanceof Vector || layer instanceof VectorTile || layer instanceof VectorImage) {
-  //         console.log('windowResize: ', layer.get('ref'))
-  //         layer.setStyle(layer.getStyle())
-  //       }
-  //     })
-  //     devicePixelRatio = newPixelRatio
-  //   }
-  // }
-  // window.addEventListener('resize', windowResize)
+  let devicePixelRatio = window.devicePixelRatio
+  const windowResize = (e) => {
+    const newPixelRatio = window.devicePixelRatio
+    if (newPixelRatio !== devicePixelRatio) {
+      map.pixelRatio_ = window.devicePixelRatio
+      const newPixelRatio = window.devicePixelRatio
+      const layers = map.getLayers()
+      layers.forEach((layer) => {
+        if (layer instanceof Vector || layer instanceof VectorTile || layer instanceof VectorImage) {
+          console.log('windowResize: ', layer.get('ref'))
+          layer.setStyle(layer.getStyle())
+        }
+      })
+      devicePixelRatio = newPixelRatio
+    }
+  }
+  window.addEventListener('resize', windowResize)
 
   // Rescale map on mobile browser zoom
   // iOS doesn't fire resize event on browser zoom
-  // let isMobileBrowserZoom = false
-  // const visualViewportResize = (e) => {
-  //   if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
-  //     console.log('visualViewportResize')
-  //     map.updateSize()
-  //     isMobileBrowserZoom = true
-  //   }
-  // }
-  // if (window.visualViewport) {
-  //   window.visualViewport.addEventListener('resize', visualViewportResize)
-  // }
+  let isMobileBrowserZoom = false
+  const visualViewportResize = (e) => {
+    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
+      console.log('visualViewportResize')
+      map.updateSize()
+      isMobileBrowserZoom = true
+    }
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', visualViewportResize)
+  }
 }
