@@ -37,11 +37,11 @@ const formatTimeRecent = (date) => {
   const tomorrow = moment().add(1, 'days').startOf('day')
   const dateWhen = (() => {
     if (moment(date).isSame(today, 'd')) {
-      return 'today'
+      return ''
     } else if (moment(date).isSame(tomorrow, 'd')) {
       return 'tomorrow'
     } else {
-      return ` ${moment(date).format('D/MM/YY')}`
+      return `${moment(date).format('D/MM/YY')}`
     }
   })()
   return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`

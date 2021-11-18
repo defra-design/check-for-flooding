@@ -28,12 +28,12 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
       {{ model.title }}
     </h1>
-    {% if model.station.status == 'active' and model.station.state != 'error' %}
+    <!-- {% if model.station.status == 'active' and model.station.state != 'error' %}
     <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
-    {% endif %}
+    {% endif %} -->
   </div>
 </div>
 
@@ -117,7 +117,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav aria-label="Related levels" class="govuk-!-margin-top-6">
+    <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
       {% if model.station.upstreamId %}
       <a href="/station/{{ model.station.upstreamId }}" class="defra-button-secondary defra-button-secondary--icon" role="button" data-module="govuk-button">
@@ -182,7 +182,7 @@
           <dd class="defra-flood-statistics__value">
             {{ model.station.height }}m
             <span class="defra-flood-statistics__value-detail">
-              <time datetime="">{{ model.time }}</time>
+              <time datetime="">at {{ model.time }}</time>
             </span>
           </dd>
         </div>

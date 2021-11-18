@@ -50,7 +50,7 @@ const Tooltips = (options) => {
     const viewportWidth = window.innerWidth
     if (newTipLeft < viewportMargin) {
       // Left side
-      tipOffsetX = tooltipLeft - viewportMargin
+      tipOffsetX = ((tooltipLeft - viewportMargin) / 2) - (((tooltipLeft - viewportMargin) / 2) * 2)
     } else if ((newTipLeft + tipWidth) > (viewportWidth - viewportMargin)) {
       // Right side
       tipOffsetX = tipOffsetX - (newTipLeft + tipWidth - (viewportWidth - viewportMargin))

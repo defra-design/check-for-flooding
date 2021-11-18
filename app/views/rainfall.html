@@ -7,16 +7,16 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
       {{ model.title }}
     </h1>
-    <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
+    <!-- <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span> -->
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav aria-label="Related levels" class="govuk-!-margin-top-6">
+    <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
       <a href="/river-sea-groundwater-rainfall-levels?id={{ model.station.id }}" class="defra-button-secondary" role="button" data-module="govuk-button">
         Nearby levels
@@ -36,6 +36,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.rainfall1hr }}mm
+            <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -44,6 +45,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.rainfall6hr }}mm
+            <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -52,6 +54,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.rainfall24hr }}mm
+            <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
       </dl>

@@ -34,12 +34,12 @@ class ViewModel {
       })
       time = utils.formatTimeRecent(telemetry.dateTime)
       timeElapsed = utils.formatTimeElapsed(telemetry.dateTime)
+      this.rainfall1hr = telemetry.latest1hr
+      this.rainfall6hr = telemetry.latest6hr
+      this.rainfall24hr = telemetry.latest24hr
     }
     this.time = time
     this.timeElapsed = timeElapsed
-    this.rainfall1hr = telemetry.latest1hr
-    this.rainfall6hr = telemetry.latest6hr
-    this.rainfall24hr = telemetry.latest24hr
     this.telemetry = telemetry
     this.bingApiKey = bingApiKey
   }
