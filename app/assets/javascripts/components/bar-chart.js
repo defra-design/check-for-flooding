@@ -48,6 +48,7 @@ function BarChart (containerId, data) {
       .attr('y', (d) => { return yScale(d.value) })
       .attr('width', xScale.bandwidth())
       .attr('height', (d) => { return height - yScale(d.value) })
+      .classed('bar--incomplete', (d) => { return d.isInComplete })
 
     // Update clip container
     clip.attr('width', width).attr('height', height)
@@ -67,8 +68,9 @@ function BarChart (containerId, data) {
       batchTotal += item.value
       if (minutes === 15) {
         hours.push({
-          dateTime: timeMinute.offset(new Date(item.dateTime), -15),
-          value: Math.round(batchTotal * 100) / 100
+          dateTime: timeMinute.offset(new Date(item.dateTime), +45),
+          value: Math.round(batchTotal * 100) / 100,
+          isInComplete: !(new Date(data[0].dateTime).getTime() >= timeMinute.offset(new Date(item.dateTime), +45).getTime())
         })
         batchTotal = 0
       }
@@ -125,7 +127,6 @@ function BarChart (containerId, data) {
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
-  console.log(containerBoundingRect.height, (Math.floor(containerBoundingRect.height) - margin.bottom))
 
   // Setup scales with domains
   let xScale = setScaleX(dataQuarterly)
@@ -148,7 +149,7 @@ function BarChart (containerId, data) {
   document.addEventListener('click', (e) => {
     if (e.target.className === 'defra-segmented-control__input') {
       const siblings = e.target.parentNode.parentNode.children
-      for (var i = 0; i < siblings.length; i++) {
+      for (let i = 0; i < siblings.length; i++) {
         siblings[i].classList.remove('defra-segmented-control__segment--selected')
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')

@@ -53,6 +53,9 @@
   .bar {
     fill: govuk-colour('blue');
   }
+  .bar--incomplete {
+    fill: govuk-colour('mid-grey');
+  }
   .grid line {
     fill: none;
     stroke: rgba(govuk-colour('black'), 0.1);

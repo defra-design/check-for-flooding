@@ -10,7 +10,7 @@ class RainfallTelemetry {
       batchTotal += item.value
       if (minutes === 15) {
         hours.push({
-          dateTime: moment(item.dateTime).subtract(15, 'minutes').toDate(),
+          dateTime: moment(item.dateTime).add(45, 'minutes').toDate(),
           value: Math.round(batchTotal * 100) / 100
         })
         batchTotal = 0
@@ -18,11 +18,10 @@ class RainfallTelemetry {
     })
     this.dateTime = telemetry[0].dateTime
     this.latest1hr = hours[0].value
-    this.latest6hr = hours.slice(0, 6).reduce((acc, obj) => { return acc + obj.value }, 0)
-    this.latest24hr = hours.slice(0, 24).reduce((acc, obj) => { return acc + obj.value }, 0)
+    this.latest6hr = Math.round(hours.slice(0, 6).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
+    this.latest24hr = Math.round(hours.slice(0, 24).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
     this.quarterly = telemetry
     this.hourly = hours
-    console.log(this.latest1hr, this.latest6hr, this.latest24hr)
   }
 }
 module.exports = RainfallTelemetry
