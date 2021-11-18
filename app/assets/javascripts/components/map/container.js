@@ -226,7 +226,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   const mapSiblings = document.querySelectorAll('body > *:not(.defra-map):not(script):not([aria-hidden="true"])')
   forEach(mapSiblings, (mapSibling) => {
     mapSibling.setAttribute('aria-hidden', 'true')
-    mapSibling.classList.add('defra-map-visually-hidden')
+    mapSibling.classList.add('defra-map-visibility-hidden')
   })
 
   // Move focus to first interactive element inside the dialog
@@ -271,7 +271,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       // Re-instate aria-hidden elements
       forEach(mapSiblings, (mapSibling) => {
         mapSibling.removeAttribute('aria-hidden')
-        mapSibling.classList.remove('defra-map-visually-hidden')
+        mapSibling.classList.remove('defra-map-visibility-hidden')
       })
       // Remove map and return focus
       containerElement.parentNode.removeChild(containerElement)
