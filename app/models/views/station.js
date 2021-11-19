@@ -19,21 +19,14 @@ class ViewModel {
     let time = station.date ? utils.formatTimeRecent(station.date) : ''
     let timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
     if (station.type === 'rainfall') {
-      telemetry.quarterly = telemetry.quarterly.map(item => {
-        return {
-          dateTime: item.dateTime,
-          value: item.value
-        }
-      })
       telemetry.hourly = telemetry.hourly.map(item => {
         return {
-          dateTime: item.dateTime,
-          dateTimeHour: utils.formatTimeHour(item.dateTime),
-          value: item.value
+          ...item,
+          dateTimeHour: utils.formatTimeHour(item.dateTime)
         }
       })
-      time = utils.formatTimeRecent(telemetry.dateTime)
-      timeElapsed = utils.formatTimeElapsed(telemetry.dateTime)
+      time = utils.formatTimeRecent(telemetry.latestDateTime)
+      timeElapsed = utils.formatTimeElapsed(telemetry.latestDateTime)
       this.rainfall1hr = telemetry.latest1hr
       this.rainfall6hr = telemetry.latest6hr
       this.rainfall24hr = telemetry.latest24hr
