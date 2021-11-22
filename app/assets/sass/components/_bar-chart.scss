@@ -39,9 +39,14 @@
   .axis.x text {
     fill: $govuk-secondary-text-colour;
   }
-  .axis.y .tick line,
-  .grid.y path.domain { 
+  .axis.y .tick line { 
     display: none;
+  }
+  .grid.y path.domain {
+    fill: none;
+    stroke: #E6E6E6;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
   }
   .axis path,
   .axis line {
@@ -58,8 +63,13 @@
   }
   .grid line {
     fill: none;
-    stroke: rgba(govuk-colour('black'), 0.1);
+    stroke: #E6E6E6;
     stroke-width: 1;
+    shape-rendering: crispEdges;
+  }
+  .latest-line {
+    stroke-width: 1;
+    stroke: govuk-colour('dark-grey');
     shape-rendering: crispEdges;
   }
 }

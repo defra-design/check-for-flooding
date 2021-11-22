@@ -14,6 +14,9 @@ function BarChart (containerId, data) {
   const formatTime = timeFormat('%-I%p')
   const parseHourMinute = timeFormat('%-I:%M')
   const parseMinutes = timeFormat('%-M')
+  const parseHour = timeFormat('%-I')
+
+  let dataLatest = data.find(x => x.isLatest)
 
   const renderChart = () => {
     // Calculate new xScale from range
@@ -50,6 +53,11 @@ function BarChart (containerId, data) {
       .attr('height', (d) => { return height - yScale(d.value) })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
 
+    // Draw latest reading line
+    const xLatest = xScale(dataLatest.dateTime) + xScale.bandwidth() / 2
+    latest.attr('transform', 'translate(' + xLatest + ', 0)')
+      .attr('y1', 0).attr('y2', height)
+
     // Update clip container
     clip.attr('width', width).attr('height', height)
   }
@@ -70,7 +78,8 @@ function BarChart (containerId, data) {
         hours.push({
           dateTime: timeMinute.offset(new Date(item.dateTime), +45),
           value: Math.round(batchTotal * 100) / 100,
-          isInComplete: !(new Date(data[0].dateTime).getTime() >= timeMinute.offset(new Date(item.dateTime), +45).getTime())
+          ...(!(new Date(data[0].dateTime).getTime() >= timeMinute.offset(new Date(item.dateTime), +45).getTime()) && { isInComplete: true }),
+          ...(parseInt(parseHour(new Date(item.dateTime)), 10) === parseInt(parseHour(new Date(dataLatest.dateTime)), 10) && { isLatest: true })
         })
         batchTotal = 0
       }
@@ -102,7 +111,7 @@ function BarChart (containerId, data) {
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
-  segmentedControl.className = 'defra-segmented-control govuk-!-margin-bottom-2'
+  segmentedControl.className = 'defra-segmented-control'
   segmentedControl.innerHTML = `
     <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
       <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly" checked/>
@@ -124,6 +133,9 @@ function BarChart (containerId, data) {
   svgInner.append('g').classed('y axis', true)
   const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
   const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
+
+  // Add latest line
+  const latest = clipInner.append('line').classed('latest-line', true)
 
   // Get width and height
   const margin = { top: 0, bottom: 30, left: 0, right: 34 }
@@ -157,6 +169,7 @@ function BarChart (containerId, data) {
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
       const dataPeriod = e.target.getAttribute('data-period') === 'quarterly' ? dataQuarterly : dataHourly
+      dataLatest = dataPeriod.find(x => x.isLatest)
       xScale = setScaleX(dataPeriod)
       yScale = setScaleY(dataPeriod)
       renderBars(dataPeriod)
