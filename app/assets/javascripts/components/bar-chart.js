@@ -8,7 +8,7 @@ import { select } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 
-function BarChart (containerId, data) {
+function BarChart (containerId, telemetry) {
   const chart = document.getElementById(containerId)
 
   const formatTime = timeFormat('%-I%p')
@@ -16,7 +16,7 @@ function BarChart (containerId, data) {
   const parseMinutes = timeFormat('%-M')
   const parseHour = timeFormat('%-I')
 
-  let dataLatest = data.find(x => x.isLatest)
+  let dataLatest = telemetry.find(x => x.isLatest)
 
   const renderChart = () => {
     // Calculate new xScale from range
@@ -71,15 +71,17 @@ function BarChart (containerId, data) {
     // Batch data into hourly totals
     const hours = []
     let batchTotal = 0
-    data.forEach(item => {
+    telemetry.forEach(item => {
       const minutes = parseInt(parseMinutes(new Date(item.dateTime)), 10)
+      const latestTime = timeMinute.offset(new Date(dataLatest.dateTime), +45).setMinutes(0)
       batchTotal += item.value
       if (minutes === 15) {
+        const currentHour = timeMinute.offset(new Date(item.dateTime), +45)
         hours.push({
-          dateTime: timeMinute.offset(new Date(item.dateTime), +45),
+          dateTime: currentHour,
           value: Math.round(batchTotal * 100) / 100,
-          ...(!(new Date(data[0].dateTime).getTime() >= timeMinute.offset(new Date(item.dateTime), +45).getTime()) && { isInComplete: true }),
-          ...(parseInt(parseHour(new Date(item.dateTime)), 10) === parseInt(parseHour(new Date(dataLatest.dateTime)), 10) && { isLatest: true })
+          ...(!(new Date(telemetry[0].dateTime).getTime() >= currentHour.getTime()) && { isInComplete: true }),
+          ...((currentHour.getTime() === latestTime) && { isLatest: true })
         })
         batchTotal = 0
       }
@@ -91,11 +93,11 @@ function BarChart (containerId, data) {
     return scaleBand().domain(data.map((d) => { return d.dateTime }).reverse())
   }
 
-  const setScaleY = (data) => {
-    // Get max from data
-    let maxData = max(data, (d) => { return d.value })
-    // Buffer 25% and round to 1 decimal place or set minimum of 1
-    maxData = maxData > 0 ? Math.round((maxData * 1.25) * 10) / 10 : 1
+  const setScaleY = (data, minimum) => {
+    // Get max from data or minimum
+    let maxData = Math.max(max(data, (d) => { return d.value }), minimum)
+    // Buffer 25% and round to nearest integer
+    maxData = Math.ceil((maxData * 1.25) * 10 / 10)
     return scaleLinear().domain([0, maxData])
   }
 
@@ -103,7 +105,7 @@ function BarChart (containerId, data) {
   // Setup
   //
 
-  const dataQuarterly = data
+  const dataQuarterly = telemetry
   const dataHourly = getDataHourly()
 
   // Get container element
@@ -145,7 +147,7 @@ function BarChart (containerId, data) {
 
   // Setup scales with domains
   let xScale = setScaleX(dataQuarterly)
-  let yScale = setScaleY(dataQuarterly)
+  let yScale = setScaleY(dataQuarterly, 1)
   renderBars(dataQuarterly)
 
   renderChart()
@@ -168,11 +170,12 @@ function BarChart (containerId, data) {
         siblings[i].classList.remove('defra-segmented-control__segment--selected')
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
-      const dataPeriod = e.target.getAttribute('data-period') === 'quarterly' ? dataQuarterly : dataHourly
-      dataLatest = dataPeriod.find(x => x.isLatest)
-      xScale = setScaleX(dataPeriod)
-      yScale = setScaleY(dataPeriod)
-      renderBars(dataPeriod)
+      const period = e.target.getAttribute('data-period')
+      const data = period === 'quarterly' ? dataQuarterly : dataHourly
+      dataLatest = data.find(x => x.isLatest)
+      xScale = setScaleX(data)
+      yScale = setScaleY(data, period === 'quarterly' ? 1 : 4)
+      renderBars(data)
       renderChart()
     }
   })
@@ -181,7 +184,7 @@ function BarChart (containerId, data) {
 }
 
 window.flood.charts = {
-  createBarChart: (containerId, data) => {
-    return new BarChart(containerId, data)
+  createBarChart: (containerId, telemetry) => {
+    return new BarChart(containerId, telemetry)
   }
 }

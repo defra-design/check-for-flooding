@@ -39,14 +39,10 @@
   .axis.x text {
     fill: $govuk-secondary-text-colour;
   }
-  .axis.y .tick line { 
+  .axis.y .tick line,
+  .axis.y path,
+  .grid.y path.domain { 
     display: none;
-  }
-  .grid.y path.domain {
-    fill: none;
-    stroke: #E6E6E6;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
   }
   .axis path,
   .axis line {
