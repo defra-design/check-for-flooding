@@ -4,8 +4,8 @@
 import { axisBottom, axisLeft } from 'd3-axis'
 import { scaleLinear, scaleBand } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
-import { select } from 'd3-selection'
-import { max } from 'd3-array'
+import { select, pointer } from 'd3-selection'
+import { bisector, max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 
 function BarChart (containerId, telemetry) {
@@ -14,9 +14,9 @@ function BarChart (containerId, telemetry) {
   const formatTime = timeFormat('%-I%p')
   const parseHourMinute = timeFormat('%-I:%M')
   const parseMinutes = timeFormat('%-M')
-  const parseHour = timeFormat('%-I')
 
   let dataLatest = telemetry.find(x => x.isLatest)
+  let dataCurrent
 
   const renderChart = () => {
     // Calculate new xScale from range
@@ -47,24 +47,32 @@ function BarChart (containerId, telemetry) {
 
     // Position bars
     svg.selectAll('.bar')
-      .attr('x', (d) => { return xScale(d.dateTime) })
+      .attr('transform', (d) => { return 'translate(' + xScale(d.dateTime) + ', 0)' })
+    svg.selectAll('.bar__fill')
+      .attr('x', 0)
       .attr('y', (d) => { return yScale(d.value) })
       .attr('width', xScale.bandwidth())
       .attr('height', (d) => { return height - yScale(d.value) })
-      .classed('bar--incomplete', (d) => { return d.isInComplete })
+
+    // Position background
+    background.attr('x', 0).attr('y', 0).attr('width', width).attr('height', height)
 
     // Draw latest reading line
-    const xLatest = xScale(dataLatest.dateTime) + xScale.bandwidth() / 2
-    latest.attr('transform', 'translate(' + xLatest + ', 0)')
-      .attr('y1', 0).attr('y2', height)
+    const xLatest = Math.round(xScale(dataLatest.dateTime) + xScale.bandwidth() / 2)
+    latest.attr('transform', 'translate(' + xLatest + ', 0)').attr('y1', 0).attr('y2', height)
 
     // Update clip container
     clip.attr('width', width).attr('height', height)
   }
 
-  const renderBars = (data) => {
+  const renderBars = () => {
     clipInner.selectAll('.bar').remove()
-    clipInner.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar')
+    const bars = clipInner.selectAll('.bar').data(data).enter()
+      .append('g').attr('class', 'bar')
+      .classed('bar--incomplete', (d) => { return d.isInComplete })
+      .classed('bar--latest', (d) => { return d.isLatest })
+    // bars.filter((d) => { return d.value > 0 || d.isLatest }).append('rect').attr('class', 'bar__bg')
+    bars.append('rect').attr('class', 'bar__fill')
   }
 
   const getDataHourly = () => {
@@ -89,16 +97,74 @@ function BarChart (containerId, telemetry) {
     return hours
   }
 
-  const setScaleX = (data) => {
+  const setScaleX = () => {
     return scaleBand().domain(data.map((d) => { return d.dateTime }).reverse())
   }
 
-  const setScaleY = (data, minimum) => {
+  const setScaleY = (minimum) => {
     // Get max from data or minimum
     let maxData = Math.max(max(data, (d) => { return d.value }), minimum)
     // Buffer 25% and round to nearest integer
     maxData = Math.ceil((maxData * 1.25) * 10 / 10)
     return scaleLinear().domain([0, maxData])
+  }
+
+  const updateToolTipBackground = () => {
+    // Set Background size
+    const bg = toolTip.select('rect')
+    const text = toolTip.select('text')
+    // const textWidth = text.node().getBBox().width
+    const textHeight = Math.round(text.node().getBBox().height)
+    bg.attr('height', textHeight + 23)
+    const toolTipWidth = bg.node().getBBox().width
+    const toolTipHeight = bg.node().getBBox().height
+    // Set background left or right position
+    if (toolTipX >= width - (toolTipWidth + 10)) {
+      // On the left
+      toolTipX -= (toolTipWidth + 10)
+    } else {
+      // On the right
+      toolTipX += 10
+    }
+    // Set background above or below position
+    if (toolTipY >= toolTipHeight + 10) {
+      toolTipY -= toolTipHeight + 10
+    } else {
+      toolTipY += 10
+    }
+    toolTipX = toolTipX.toFixed(0)
+    toolTipY = toolTipY.toFixed(0)
+  }
+
+  const showTooltip = (e) => {
+    const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
+    const dataItem = data.find(x => x.dateTime === mouseDateTime)
+    // Only need to show toltip when data item changes
+    if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
+    dataCurrent = dataItem
+    toolTip.select('text').selectAll('*').remove()
+    // Update tooltip
+    toolTipX = xScale(dataCurrent.dateTime)
+    toolTipY = pointer(e)[1]
+    console.log(toolTipX, toolTipY)
+    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(Number(dataCurrent.value).toFixed(2) + 'mm')
+    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(formatTime(new Date(dataCurrent.dateTime)).toLowerCase())
+    // Update tooltip left/right background
+    updateToolTipBackground()
+    // Update tooltip location
+    toolTip.attr('transform', 'translate(' + toolTipX + ',' + toolTipY + ')')
+    toolTip.classed('tool-tip--visible', true)
+  }
+
+  // D3 doesnt current support inverting of thids type of scale
+  const scaleBandInvert = (scale) => {
+    const domain = scale.domain()
+    const paddingOuter = scale(domain[0])
+    const eachBand = scale.step()
+    return function (value) {
+      const index = Math.floor(((value - paddingOuter) / eachBand))
+      return domain[Math.max(0, Math.min(index, domain.length - 1))]
+    }
   }
 
   //
@@ -125,19 +191,24 @@ function BarChart (containerId, telemetry) {
     </div>
   `
   container.parentNode.insertBefore(segmentedControl, container)
-  // container.append(segmentedControl)
 
   // Create chart container elements
-  const svg = select(`#${containerId}`).append('svg').style('pointer-events', 'none')
-  const svgInner = svg.append('g').style('pointer-events', 'all')
-  svgInner.append('g').classed('y grid', true)
-  svgInner.append('g').classed('x axis', true)
-  svgInner.append('g').classed('y axis', true)
-  const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
-  const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
+  const svg = select(`#${containerId}`).append('svg')
+  const background = svg.append('rect').attr('class', 'background')
+  svg.append('g').attr('class', 'y grid')
+  svg.append('g').attr('class', 'x axis')
+  svg.append('g').attr('class', 'y axis')
+  const clip = svg.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
+  const clipInner = svg.append('g').attr('clip-path', 'url(#clip)')
 
   // Add latest line
-  const latest = clipInner.append('line').classed('latest-line', true)
+  const latest = clipInner.append('line').attr('class', 'latest-line')
+
+  // Add tooltip container
+  let toolTipX, toolTipY
+  const toolTip = svg.append('g').attr('class', 'tool-tip')
+  toolTip.append('rect').attr('class', 'tool-tip-bg').attr('width', 147)
+  toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
 
   // Get width and height
   const margin = { top: 0, bottom: 30, left: 0, right: 34 }
@@ -146,10 +217,10 @@ function BarChart (containerId, telemetry) {
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
 
   // Setup scales with domains
-  let xScale = setScaleX(dataQuarterly)
-  let yScale = setScaleY(dataQuarterly, 1)
-  renderBars(dataQuarterly)
-
+  let data = dataQuarterly
+  let xScale = setScaleX()
+  let yScale = setScaleY(1)
+  renderBars()
   renderChart()
 
   //
@@ -171,13 +242,17 @@ function BarChart (containerId, telemetry) {
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
       const period = e.target.getAttribute('data-period')
-      const data = period === 'quarterly' ? dataQuarterly : dataHourly
+      data = period === 'quarterly' ? dataQuarterly : dataHourly
       dataLatest = data.find(x => x.isLatest)
-      xScale = setScaleX(data)
-      yScale = setScaleY(data, period === 'quarterly' ? 1 : 4)
-      renderBars(data)
+      xScale = setScaleX()
+      yScale = setScaleY(period === 'quarterly' ? 1 : 4)
+      renderBars()
       renderChart()
     }
+  })
+
+  background.on('mousemove', (e) => {
+    showTooltip(e)
   })
 
   this.chart = chart

@@ -29,6 +29,9 @@
   @include mq ($from: desktop) {
     height:450px;
   }
+  .background {
+    fill: transparent;
+  }
   .axis.y { 
     @include govuk-font($size: 14, $tabular: true);
   }
@@ -52,10 +55,16 @@
     shape-rendering: crispEdges;
   }
   .bar {
+    pointer-events: none;
+  }
+  .bar__fill {
     fill: govuk-colour('blue');
   }
-  .bar--incomplete {
+  .bar--incomplete .bar__fill {
     fill: govuk-colour('mid-grey');
+  }
+  .grid {
+    pointer-events: none;
   }
   .grid line {
     fill: none;
@@ -64,8 +73,28 @@
     shape-rendering: crispEdges;
   }
   .latest-line {
+    pointer-events: none;
     stroke-width: 1;
     stroke: govuk-colour('dark-grey');
     shape-rendering: crispEdges;
+  }
+  // Tooltip
+  .tool-tip {
+    visibility: hidden;
+  }
+  .tool-tip--visible {
+      visibility: visible;
+  }
+  .tool-tip-bg {
+      fill:white;
+      stroke-width: 1;
+      stroke: $govuk-secondary-text-colour;
+      shape-rendering: crispEdges;
+  }
+  .tool-tip-text {
+      @include govuk-font($size: 16);
+  }
+  .tool-tip-text__strong {
+      @include govuk-font($size: 19, $weight:bold);
   }
 }
