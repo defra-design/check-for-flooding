@@ -27,17 +27,17 @@
     cursor: pointer;
     display: block;
     @include govuk-font($size: 16);
-    padding: 7.5px 0;
-    border-bottom: 3px solid transparent;
+    padding: 10px 0;
+    border-bottom: 5px solid transparent;
     position: relative;
     outline: 3px solid transparent;
     color: govuk-colour('blue');
   }
   input:checked + label {
-    border-bottom: 3px solid govuk-colour('blue');
+    border-bottom: 5px solid govuk-colour('blue');
   }
   input:focus + label {
-    border-bottom: 3px solid govuk-colour('black');
+    border-bottom: 5px solid govuk-colour('black');
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
   }
