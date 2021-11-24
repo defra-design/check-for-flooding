@@ -72,6 +72,12 @@
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
+  .locator-line {
+    pointer-events: none;
+    stroke-width: 1;
+    stroke: govuk-colour('mid-grey');
+    shape-rendering: crispEdges;
+  }
   .latest-line {
     pointer-events: none;
     stroke-width: 1;

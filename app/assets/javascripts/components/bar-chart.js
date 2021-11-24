@@ -5,27 +5,22 @@ import { axisBottom, axisLeft } from 'd3-axis'
 import { scaleLinear, scaleBand } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
 import { select, pointer } from 'd3-selection'
-import { bisector, max } from 'd3-array'
+import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 
 function BarChart (containerId, telemetry) {
   const chart = document.getElementById(containerId)
-
-  const formatTime = timeFormat('%-I%p')
-  const parseHourMinute = timeFormat('%-I:%M')
-  const parseMinutes = timeFormat('%-M')
-
-  let dataLatest = telemetry.find(x => x.isLatest)
+  let dataLatest = telemetry.find(d => d.isLatest)
   let dataCurrent
 
   const renderChart = () => {
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
-      const hourMinute = parseHourMinute(new Date(d))
+      const hourMinute = timeFormat('%-I:%M')(new Date(d))
       return ['3:00', '6:00', '9:00', '12:00'].includes(hourMinute)
     }))
-    xAxis.tickFormat((d) => { return formatTime(new Date(d)).toLocaleLowerCase() })
+    xAxis.tickFormat((d) => { return timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase() })
 
     // Calculate new yScale from range
     yScale = yScale.range([height, 0])
@@ -80,7 +75,7 @@ function BarChart (containerId, telemetry) {
     const hours = []
     let batchTotal = 0
     telemetry.forEach(item => {
-      const minutes = parseInt(parseMinutes(new Date(item.dateTime)), 10)
+      const minutes = parseInt(timeFormat('%-M')(new Date(item.dateTime)), 10)
       const latestTime = timeMinute.offset(new Date(dataLatest.dateTime), +45).setMinutes(0)
       batchTotal += item.value
       if (minutes === 15) {
@@ -143,12 +138,17 @@ function BarChart (containerId, telemetry) {
     if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
     dataCurrent = dataItem
     toolTip.select('text').selectAll('*').remove()
-    // Update tooltip
-    toolTipX = xScale(dataCurrent.dateTime)
+    // Get tooltip position and content
+    toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = pointer(e)[1]
-    console.log(toolTipX, toolTipY)
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(Number(dataCurrent.value).toFixed(2) + 'mm')
-    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(formatTime(new Date(dataCurrent.dateTime)).toLowerCase())
+    const value = (Math.round(dataCurrent.value * 10) / 10) + 'mm'
+    const time = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')(new Date(dataCurrent.dateTime)).toLowerCase()
+    const date = timeFormat('%e %b')(new Date(dataCurrent.dateTime))
+    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(value)
+    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(`${time}, ${date}`)
+    // Update locator
+    const xLocator = toolTipX
+    locator.attr('transform', 'translate(' + xLocator + ', 0)').attr('y1', 0).attr('y2', height)
     // Update tooltip left/right background
     updateToolTipBackground()
     // Update tooltip location
@@ -156,7 +156,7 @@ function BarChart (containerId, telemetry) {
     toolTip.classed('tool-tip--visible', true)
   }
 
-  // D3 doesnt current support inverting of thids type of scale
+  // D3 doesnt currently support inverting of a scaleBand
   const scaleBandInvert = (scale) => {
     const domain = scale.domain()
     const paddingOuter = scale(domain[0])
@@ -201,6 +201,9 @@ function BarChart (containerId, telemetry) {
   const clip = svg.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
   const clipInner = svg.append('g').attr('clip-path', 'url(#clip)')
 
+  // Add locator
+  const locator = clipInner.append('line').attr('class', 'locator-line')
+
   // Add latest line
   const latest = clipInner.append('line').attr('class', 'latest-line')
 
@@ -220,6 +223,10 @@ function BarChart (containerId, telemetry) {
   let data = dataQuarterly
   let xScale = setScaleX()
   let yScale = setScaleY(1)
+
+  // Set default period
+  let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
+
   renderBars()
   renderChart()
 
@@ -241,7 +248,7 @@ function BarChart (containerId, telemetry) {
         siblings[i].classList.remove('defra-segmented-control__segment--selected')
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
-      const period = e.target.getAttribute('data-period')
+      period = e.target.getAttribute('data-period')
       data = period === 'quarterly' ? dataQuarterly : dataHourly
       dataLatest = data.find(x => x.isLatest)
       xScale = setScaleX()
