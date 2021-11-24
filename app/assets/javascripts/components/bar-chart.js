@@ -142,10 +142,12 @@ function BarChart (containerId, telemetry) {
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = pointer(e)[1]
     const value = dataCurrent.value + 'mm'
-    const time = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')(new Date(dataCurrent.dateTime)).toLowerCase()
-    const date = timeFormat('%e %b')(new Date(dataCurrent.dateTime))
+    const formatTime = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')
+    const timeStart = formatTime(timeMinute.offset(new Date(dataCurrent.dateTime), period === 'quarterly' ? -15 : -60)).toLowerCase()
+    const timeEnd = formatTime(new Date(dataCurrent.dateTime)).toLowerCase()
+    // const date = timeFormat('%e %b')(new Date(dataCurrent.dateTime))
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(value)
-    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(`${time}, ${date}`)
+    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(`${timeStart} - ${timeEnd}`)
     // Update locator
     locator.attr('transform', 'translate(' + toolTipX + ', 0)').attr('y1', 0).attr('y2', height)
     // Update tooltip left/right background
