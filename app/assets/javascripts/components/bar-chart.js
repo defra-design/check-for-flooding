@@ -156,6 +156,13 @@ function BarChart (containerId, telemetry) {
     // Update tooltip location
     toolTip.attr('transform', 'translate(' + toolTipX + ',' + toolTipY + ')')
     toolTip.classed('tool-tip--visible', true)
+    locator.classed('locator--visible', true)
+  }
+
+  const hideTooltip = () => {
+    svg.selectAll('.bar--selected').classed('bar--selected', false)
+    toolTip.classed('tool-tip--visible', false)
+    locator.classed('locator--visible', false)
   }
 
   // D3 doesnt currently support inverting of a scaleBand
@@ -204,7 +211,7 @@ function BarChart (containerId, telemetry) {
   const clipInner = svg.append('g').attr('clip-path', 'url(#clip)')
 
   // Add locator
-  const locator = clipInner.append('line').attr('class', 'locator-line')
+  const locator = clipInner.append('line').attr('class', 'locator')
 
   // Add latest line
   // const latest = clipInner.append('line').attr('class', 'latest-line')
@@ -262,6 +269,10 @@ function BarChart (containerId, telemetry) {
 
   background.on('mousemove', (e) => {
     showTooltip(e)
+  })
+
+  background.on('mouseleave', (e) => {
+    hideTooltip()
   })
 
   this.chart = chart

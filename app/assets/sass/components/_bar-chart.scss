@@ -75,12 +75,6 @@
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
-  .locator-line {
-    pointer-events: none;
-    stroke-width: 1;
-    stroke: govuk-colour('mid-grey');
-    shape-rendering: crispEdges;
-  }
   .latest-line {
     pointer-events: none;
     stroke-width: 1;
@@ -89,6 +83,17 @@
   }
   .bar--selected .latest-line {
     stroke: govuk-colour('black');
+  }
+  // Locator line
+  .locator {
+    visibility: hidden;
+  }
+  .locator.locator--visible {
+    visibility: visible;
+    pointer-events: none;
+    stroke-width: 1;
+    stroke: govuk-colour('mid-grey');
+    shape-rendering: crispEdges;
   }
   // Tooltip
   .tool-tip {
