@@ -53,8 +53,8 @@ function BarChart (containerId, telemetry) {
     background.attr('x', 0).attr('y', 0).attr('width', width).attr('height', height)
 
     // Draw latest reading line
-    const xLatest = Math.round(xScale(dataLatest.dateTime) + xScale.bandwidth() / 2)
-    latest.attr('transform', 'translate(' + xLatest + ', 0)').attr('y1', 0).attr('y2', height)
+    const xLatest = Math.round(xScale.bandwidth() / 2)
+    svg.select('.latest-line').attr('transform', 'translate(' + xLatest + ', 0)').attr('y1', 0).attr('y2', height)
 
     // Update clip container
     clip.attr('width', width).attr('height', height)
@@ -63,10 +63,10 @@ function BarChart (containerId, telemetry) {
   const renderBars = () => {
     clipInner.selectAll('.bar').remove()
     const bars = clipInner.selectAll('.bar').data(data).enter()
-      .append('g').attr('class', 'bar')
+      .append('g').attr('class', 'bar').attr('data-datetime', (d) => { return d.dateTime })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
       .classed('bar--latest', (d) => { return d.isLatest })
-    // bars.filter((d) => { return d.value > 0 || d.isLatest }).append('rect').attr('class', 'bar__bg')
+    bars.filter((d) => { return d.isLatest }).append('line').attr('class', 'latest-line')
     bars.append('rect').attr('class', 'bar__fill')
   }
 
@@ -147,10 +147,12 @@ function BarChart (containerId, telemetry) {
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(value)
     toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(`${time}, ${date}`)
     // Update locator
-    const xLocator = toolTipX
-    locator.attr('transform', 'translate(' + xLocator + ', 0)').attr('y1', 0).attr('y2', height)
+    locator.attr('transform', 'translate(' + toolTipX + ', 0)').attr('y1', 0).attr('y2', height)
     // Update tooltip left/right background
     updateToolTipBackground()
+    // Update bar selected state
+    svg.selectAll('.bar--selected').classed('bar--selected', false)
+    svg.select('[data-datetime="' + dataCurrent.dateTime + '"]').classed('bar--selected', true)
     // Update tooltip location
     toolTip.attr('transform', 'translate(' + toolTipX + ',' + toolTipY + ')')
     toolTip.classed('tool-tip--visible', true)
@@ -205,7 +207,7 @@ function BarChart (containerId, telemetry) {
   const locator = clipInner.append('line').attr('class', 'locator-line')
 
   // Add latest line
-  const latest = clipInner.append('line').attr('class', 'latest-line')
+  // const latest = clipInner.append('line').attr('class', 'latest-line')
 
   // Add tooltip container
   let toolTipX, toolTipY

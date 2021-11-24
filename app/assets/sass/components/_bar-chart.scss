@@ -60,6 +60,9 @@
   .bar__fill {
     fill: govuk-colour('blue');
   }
+  .bar--selected .bar__fill {
+    fill: govuk-colour('dark-blue');
+  }
   .bar--incomplete .bar__fill {
     fill: govuk-colour('mid-grey');
   }
@@ -83,6 +86,9 @@
     stroke-width: 1;
     stroke: govuk-colour('dark-grey');
     shape-rendering: crispEdges;
+  }
+  .bar--selected .latest-line {
+    stroke: govuk-colour('black');
   }
   // Tooltip
   .tool-tip {
