@@ -141,7 +141,7 @@ function BarChart (containerId, telemetry) {
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = pointer(e)[1]
-    const value = (Math.round(dataCurrent.value * 10) / 10) + 'mm'
+    const value = dataCurrent.value + 'mm'
     const time = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')(new Date(dataCurrent.dateTime)).toLowerCase()
     const date = timeFormat('%e %b')(new Date(dataCurrent.dateTime))
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(value)
