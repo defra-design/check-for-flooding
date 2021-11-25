@@ -273,7 +273,7 @@ function BarChart (containerId, telemetry) {
   })
 
   background.on('mouseleave', (e) => {
-    // hideTooltip()
+    hideTooltip()
   })
 
   this.chart = chart

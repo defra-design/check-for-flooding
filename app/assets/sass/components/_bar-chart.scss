@@ -82,6 +82,7 @@
     shape-rendering: crispEdges;
   }
   .bar--selected .latest-line {
+    stroke-width: 2;
     stroke: govuk-colour('black');
   }
   // Locator line
