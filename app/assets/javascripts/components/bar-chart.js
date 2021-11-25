@@ -143,10 +143,11 @@ function BarChart (containerId, telemetry) {
     toolTipY = pointer(e)[1]
     let value = dataCurrent.value + 'mm' + (dataCurrent.dateTime === dataLatest.dateTime ? ' (latest)' : '')
     value = new Date(dataCurrent.dateTime).getTime() > new Date(dataLatest.dateTime).getTime() ? 'No data' : value
+    const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'quarterly' ? -15 : -60)
     const formatTime = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')
-    const timeStart = formatTime(timeMinute.offset(new Date(dataCurrent.dateTime), period === 'quarterly' ? -15 : -60)).toLowerCase()
+    const timeStart = formatTime(periodStartDateTime).toLowerCase()
     const timeEnd = formatTime(new Date(dataCurrent.dateTime)).toLowerCase()
-    const date = timeFormat('%e %b')(new Date(dataCurrent.dateTime))
+    const date = timeFormat('%e %b')(periodStartDateTime)
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('x', 12).attr('dy', '0.5em').text(value)
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(`${timeStart} - ${timeEnd}, ${date}`)
     // Update locator
