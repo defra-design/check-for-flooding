@@ -194,15 +194,14 @@ function BarChart (containerId, telemetry) {
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-segmented-control'
   segmentedControl.innerHTML = `
-    <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
-      <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly" checked/>
-      <label for="timeQuarterly">15 minutes</label>
-    </div>
-    <div class="defra-segmented-control__segment">
-      <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly"/>
-      <label for="timeHourly">Hourly</label>
-    </div>
-  `
+  <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly" checked/>
+    <label for="timeHourly">Hourly</label>
+  </div>
+  <div class="defra-segmented-control__segment">
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly"/>
+    <label for="timeQuarterly">15 minutes</label>
+  </div>`
   container.parentNode.insertBefore(segmentedControl, container)
 
   // Create chart container elements
@@ -229,13 +228,14 @@ function BarChart (containerId, telemetry) {
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
 
-  // Setup scales with domains
-  let data = dataQuarterly
-  let xScale = setScaleX()
-  let yScale = setScaleY(1)
-
   // Set default period
   let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
+
+  // Setup scales with domains
+  let data = period === 'quarterly' ? dataQuarterly : dataHourly
+  dataLatest = data.find(x => x.isLatest)
+  let xScale = setScaleX()
+  let yScale = setScaleY(period === 'quarterly' ? 1 : 4)
 
   renderBars()
   renderChart()
