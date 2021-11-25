@@ -114,4 +114,7 @@
   .tool-tip-text__strong {
       @include govuk-font($size: 19, $weight:bold);
   }
+  .tool-tip-text__small {
+    @include govuk-font($size: 14);
+  }
 }
