@@ -3,6 +3,7 @@ const router = express.Router()
 const stationServices = require('../services/station')
 const telemetryServices = require('../services/telemetry')
 const Station = require('../models/station')
+const StationTelemetry = require('../models/station-telemetry')
 const RainfallTelemetry = require('../models/rainfall-telemetry')
 const ViewModel = require('../models/views/station')
 
@@ -20,9 +21,12 @@ router.get('/station/:id', async (req, res) => {
     // Station details
     const station = new Station(stationResponse.data)
     let telemetry
-    // Rainfall telemetry
     if (station.type === 'rainfall') {
+      // Rainfall telemetry
       telemetry = new RainfallTelemetry(await telemetryServices.getRainfallTelemetry(station.telemetryId))
+    } else {
+      // River, tide and groundwater telemetry
+      telemetry = new StationTelemetry(await telemetryServices.getStationTelemetry(station.telemetryId))
     }
     const model = new ViewModel(station, telemetry)
     return res.render(station.type === 'rainfall' ? 'rainfall' : 'station', { model })

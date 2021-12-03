@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<!--<pre style="white-space: pre-wrap;">{{ model | dump }}</pre>-->
+
 {% if model.banner %}
 <div class="defra-flood-status govuk-!-margin-bottom-3">
   <div class="defra-flood-status-item defra-flood-status-item--{{ model.severityLevel }}">
@@ -401,7 +401,9 @@
     model: {
       id: {{ model.station.id | dump | safe }},
       centroid: {{ model.station.centroid | dump | safe }},
-      bingApiKey: {{ model.bingApiKey | dump | safe }}
+      type: {{ model.station.type | dump | safe }},
+      bingApiKey: {{ model.bingApiKey | dump | safe }},
+      telemetry: {{ model.telemetry.fiveDays | dump | safe }}
     }
   }
 </script>

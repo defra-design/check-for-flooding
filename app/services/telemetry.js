@@ -2,7 +2,9 @@ const axios = require('axios')
 
 module.exports = {
   getStationTelemetry: async (uri) => {
-    uri += '/readings?_sorted&_limit=96'
+    const date = new Date()
+    date.setDate(date.getDate() - 5)
+    uri += `/readings?_sorted&since=${date.toISOString()}`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200 && response.data) {
       return response.data.items.map(item => {

@@ -23,7 +23,7 @@ function LineChart (containerId, data) {
   let hasForecast = false
   if (data.observed.length) {
     const errorFilter = l => !l.err
-    const errorAndNegativeFilter = l => errorFilter(l) && l._ >= 0
+    const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
     const filterFunction = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
     lines = data.observed.filter(filterFunction).map(l => ({ ...l, type: 'observed' })).reverse()
     dataPoint = lines[lines.length - 1] ? JSON.parse(JSON.stringify(lines[lines.length - 1])) : null
@@ -40,14 +40,14 @@ function LineChart (containerId, data) {
 
   // Area generator
   const area = d3Area().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.ts)) })
+    .x((d) => { return xScale(new Date(d.dateTime)) })
     .y0((d) => { return height })
-    .y1((d) => { return yScale(d._) })
+    .y1((d) => { return yScale(d.value) })
 
   // Line generator
   const line = d3Line().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.ts)) })
-    .y((d) => { return yScale(d._) })
+    .x((d) => { return xScale(new Date(d.dateTime)) })
+    .y((d) => { return yScale(d.value) })
 
   // Set level and date formats
   const parseTime = timeFormat('%-I:%M%p')
@@ -193,9 +193,9 @@ function LineChart (containerId, data) {
 
   const updateLocator = () => {
     dataPointLocator = dataPoint // Set locator position
-    locatorX = Math.floor(xScale(new Date(dataPointLocator.ts)))
-    locatorY = Math.floor(yScale(dataPointLocator._))
-    const latestX = Math.floor(xScale(new Date(dataPointLatest.ts)))
+    locatorX = Math.floor(xScale(new Date(dataPointLocator.dateTime)))
+    locatorY = Math.floor(yScale(dataPointLocator.value))
+    const latestX = Math.floor(xScale(new Date(dataPointLatest.dateTime)))
     locator.classed('locator--offset', true)
     locator.classed('locator--forecast', locatorX > latestX)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
@@ -206,18 +206,18 @@ function LineChart (containerId, data) {
     // Remove existing content
     toolTip.select('text').selectAll('*').remove()
     const mouseDate = xScale.invert(pointer(e)[0])
-    const bisectDate = bisector((d) => { return new Date(d.ts) }).left
+    const bisectDate = bisector((d) => { return new Date(d.dateTime) }).left
     const i = bisectDate(lines, mouseDate, 1) // returns the index to the current data item
     const d0 = lines[i - 1]
     const d1 = lines[i] || lines[i - 1]
     // Determine which date value is closest to the mouse
-    const d = mouseDate - new Date(d0.ts) > new Date(d1.ts) - mouseDate ? d1 : d0
-    dataPoint.ts = d.ts
-    dataPoint._ = d._
-    toolTipX = xScale(new Date(dataPoint.ts))
+    const d = mouseDate - new Date(d0.dateTime) > new Date(d1.dateTime) - mouseDate ? d1 : d0
+    dataPoint.dateTime = d.dateTime
+    dataPoint.value = d.value
+    toolTipX = xScale(new Date(dataPoint.dateTime))
     toolTipY = pointer(e)[1]
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(Number(dataPoint._).toFixed(2) + 'm')
-    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(parseTime(new Date(dataPoint.ts)).toLowerCase() + ', ' + parseDate(new Date(dataPoint.ts)))
+    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(Number(dataPoint.value).toFixed(2) + 'm')
+    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(parseTime(new Date(dataPoint.dateTime)).toLowerCase() + ', ' + parseDate(new Date(dataPoint.dateTime)))
     // Update tooltip left/right background
     updateToolTipBackground()
     // Update tooltip location
@@ -231,8 +231,8 @@ function LineChart (containerId, data) {
 
   const resetLocator = () => {
     // Update locator location
-    locatorX = Math.floor(xScale(new Date(dataPointLatest.ts)))
-    locatorY = Math.floor(yScale(dataPointLatest._))
+    locatorX = Math.floor(xScale(new Date(dataPointLatest.dateTime)))
+    locatorY = Math.floor(yScale(dataPointLatest.value))
     locator.classed('locator--offset', false)
     locator.classed('locator--forecast', false)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
@@ -253,7 +253,7 @@ function LineChart (containerId, data) {
     const yRangeUpperBuffered = (maxData + (range / 3)).toFixed(2)
     const yRangeLowerBuffered = (minData - (range / 3)).toFixed(2)
     yExtent[1] = yExtentDataMax <= yRangeUpperBuffered ? yRangeUpperBuffered : yExtentDataMax
-    yExtent[0] = window.flood.model.station.isRiver ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
+    yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
     // Update y scale
     yScale = scaleLinear().domain(yExtent).nice()
     yScale.range([height, 0])
@@ -344,7 +344,7 @@ function LineChart (containerId, data) {
   // values are excluded from plotting by virtue of being -ve
 
   // Set x scale extent
-  const xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.ts) })
+  const xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
   // Increase x extent by 5% from now value
   let date = new Date(data.now)
   const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
@@ -361,7 +361,7 @@ function LineChart (containerId, data) {
   xScale.range([0, width])
 
   // Set y scale extent
-  const yExtent = extent(lines, (d, i) => { return d._ })
+  const yExtent = extent(lines, (d, i) => { return d.value })
   // Adjust y extent to highest and lowest values from the data
   yExtent[0] = Math.min.apply(Math, yExtent)
   yExtent[1] = Math.max.apply(Math, yExtent)
@@ -374,7 +374,7 @@ function LineChart (containerId, data) {
   const yRangeUpperBuffer = (yExtent[1] + (yRange / 3)).toFixed(2)
   const yRangeLowerBuffer = (yExtent[0] - (yRange / 3)).toFixed(2)
 
-  yExtent[0] = window.flood.model.station.isRiver ? (yRangeLowerBuffer < 0 ? 0 : yRangeLowerBuffer) : yRangeLowerBuffer
+  yExtent[0] = data.type === 'river' ? (yRangeLowerBuffer < 0 ? 0 : yRangeLowerBuffer) : yRangeLowerBuffer
 
   yExtent[1] = yRangeUpperBuffer
   // Set y input domain

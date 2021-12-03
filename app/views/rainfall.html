@@ -149,8 +149,8 @@
     model: {
       id: {{ model.station.id | dump | safe }},
       centroid: {{ model.station.centroid | dump | safe }},
-      telemetry: {{ model.telemetry.quarterly | dump | safe }},
-      bingApiKey: {{ model.bingApiKey | dump | safe }}
+      bingApiKey: {{ model.bingApiKey | dump | safe }},
+      telemetry: {{ model.telemetry.quarterly | dump | safe }}
     }
   }
 </script>
