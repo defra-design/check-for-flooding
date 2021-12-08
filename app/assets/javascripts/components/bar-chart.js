@@ -101,6 +101,8 @@ function BarChart (containerId, telemetry) {
     let maxData = Math.max(max(data, (d) => { return d.value }), minimum)
     // Buffer 25% and round to nearest integer
     maxData = Math.ceil((maxData * 1.25) * 10 / 10)
+    // Ensure y scale always divides by 5
+    maxData = Math.ceil(maxData / 5) * 5
     return scaleLinear().domain([0, maxData])
   }
 
