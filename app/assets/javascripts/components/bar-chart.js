@@ -30,7 +30,7 @@ function BarChart (containerId, telemetry) {
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
     svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
 
-    // Re-position y ticks
+    // Position y ticks
     svg.select('.y.axis').style('text-anchor', 'start')
     svg.selectAll('.y.axis .tick line').attr('x2', 6)
     svg.selectAll('.y.axis .tick text').attr('x', 9)
