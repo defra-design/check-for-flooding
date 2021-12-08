@@ -3,6 +3,8 @@ const moment = require('moment-timezone')
 class RainfallTelemetry {
   constructor (telemetry) {
     const latestDateTime = telemetry[0].dateTime
+    // const isHourly = moment(telemetry[0].dateTime).diff(moment(telemetry[1].dateTime), 'minutes') > 15
+    // console.log(isHourly)
     this.latestDateTime = latestDateTime
     this.latest1hr = Math.round(telemetry.slice(0, 4).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
     this.latest6hr = Math.round(telemetry.slice(0, 24).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10

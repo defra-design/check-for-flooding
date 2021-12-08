@@ -13,7 +13,12 @@ class Station {
       this.rangeTop = data.range_top
       this.rangeBottom = data.range_bottom
     }
-    if (type !== 'rainfall') {
+    if (type === 'rainfall') {
+      this.rainfall1hr = data.rainfall_1hr
+      this.rainfall6hr = data.rainfall_6hr
+      this.rainfall24hr = data.rainfall_24hr
+      this.telemetryId = data.measure_rainfall_id
+    } else {
       this.height = data.height_downstream || data.height
       if (data.upstream_id) {
         this.upstreamId = data.upstream_id
@@ -23,11 +28,6 @@ class Station {
       }
       this.telemetryId = data.measure_id
       this.telemetryDownstreamId = data.measure_downstream_id
-    } else {
-      this.rainfall1hr = data.rainfall_1hr
-      this.rainfall6hr = data.rainfall_6hr
-      this.rainfall24hr = data.rainfall_24hr
-      this.telemetryId = data.measure_rainfall_id
     }
     this.date = data.date
     this.isWales = data.is_wales === 'TRUE'
