@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block content %}
+<pre style="white-space: normal;">{{ model | dump }}</pre>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
@@ -35,7 +37,7 @@
             1 hour
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.rainfall1hr }}mm
+            {{ model.latest1hr }}mm
             <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
@@ -44,7 +46,7 @@
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.rainfall6hr }}mm
+            {{ model.latest6hr }}mm
             <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
@@ -53,7 +55,7 @@
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.rainfall24hr }}mm
+            {{ model.latest24hr }}mm
             <span class="defra-flood-statistics__value-detail">at {{ model.time }}</span>
           </dd>
         </div>
@@ -150,7 +152,7 @@
       id: {{ model.station.id | dump | safe }},
       centroid: {{ model.station.centroid | dump | safe }},
       bingApiKey: {{ model.bingApiKey | dump | safe }},
-      telemetry: {{ model.telemetry.quarterly | dump | safe }}
+      telemetryId: {{ model.station.telemetryId | dump | safe }}
     }
   }
 </script>

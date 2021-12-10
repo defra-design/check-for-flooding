@@ -23,7 +23,7 @@ if (!window.flood) {
 
 // Flood utilities
 window.flood.utils = {
-  xhr: (url, callback) => {
+  xhr: (url, callback, responseType) => {
     const xmlhttp = new window.XMLHttpRequest()
     xmlhttp.onreadystatechange = () => {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
@@ -35,7 +35,7 @@ window.flood.utils = {
       }
     }
     xmlhttp.open('GET', url, true)
-    xmlhttp.responseType = 'document'
+    xmlhttp.responseType = responseType
     xmlhttp.send()
   },
   forEach: (items, callback) => {

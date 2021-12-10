@@ -8,10 +8,12 @@ import { select, pointer } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 
-function BarChart (containerId, telemetry) {
+const { xhr } = window.flood.utils
+
+function BarChart (containerId, telemetryId) {
+  const container = document.querySelector(`#${containerId}`)
   const chart = document.getElementById(containerId)
-  let dataLatest = telemetry.find(d => d.isLatest)
-  let dataCurrent
+  telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
   const renderChart = () => {
     // Calculate new xScale from range
@@ -70,28 +72,6 @@ function BarChart (containerId, telemetry) {
     bars.append('rect').attr('class', 'bar__fill')
   }
 
-  const getDataHourly = () => {
-    // Batch data into hourly totals
-    const hours = []
-    let batchTotal = 0
-    telemetry.forEach(item => {
-      const minutes = parseInt(timeFormat('%-M')(new Date(item.dateTime)), 10)
-      const latestTime = timeMinute.offset(new Date(dataLatest.dateTime), +45).setMinutes(0)
-      batchTotal += item.value
-      if (minutes === 15) {
-        const currentHour = timeMinute.offset(new Date(item.dateTime), +45)
-        hours.push({
-          dateTime: currentHour,
-          value: Math.round(batchTotal * 100) / 100,
-          ...(!(new Date(telemetry[0].dateTime).getTime() >= currentHour.getTime()) && { isInComplete: true }),
-          ...((currentHour.getTime() === latestTime) && { isLatest: true })
-        })
-        batchTotal = 0
-      }
-    })
-    return hours
-  }
-
   const setScaleX = () => {
     return scaleBand().domain(data.map((d) => { return d.dateTime }).reverse())
   }
@@ -112,7 +92,7 @@ function BarChart (containerId, telemetry) {
     const text = toolTip.select('text')
     // const textWidth = Math.round(text.node().getBBox().width)
     const textHeight = Math.round(text.node().getBBox().height)
-    bg.attr('width', period === 'quarterly' ? 190 : 150).attr('height', textHeight + 23)
+    bg.attr('width', period === 'minutes' ? 190 : 150).attr('height', textHeight + 23)
     const toolTipWidth = bg.node().getBBox().width
     const toolTipHeight = bg.node().getBBox().height
     // Set background left or right position
@@ -145,8 +125,8 @@ function BarChart (containerId, telemetry) {
     toolTipY = pointer(e)[1]
     let value = dataCurrent.value + 'mm' + (dataCurrent.dateTime === dataLatest.dateTime ? ' (latest)' : '')
     value = new Date(dataCurrent.dateTime).getTime() > new Date(dataLatest.dateTime).getTime() ? 'No data' : value
-    const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'quarterly' ? -15 : -60)
-    const formatTime = timeFormat(period === 'quarterly' ? '%-I:%M%p' : '%-I%p')
+    const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'minutes' ? -15 : -60)
+    const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
     const timeEnd = formatTime(new Date(dataCurrent.dateTime)).toLowerCase()
     const date = timeFormat('%e %b')(periodStartDateTime)
@@ -182,27 +162,36 @@ function BarChart (containerId, telemetry) {
     }
   }
 
+  const initChart = (err, response) => {
+    if (err) {
+      console.log('Error: ' + err)
+    } else {
+      data = response.values
+      // Setup scales with domains
+      dataLatest = data.find(x => x.isLatest)
+      xScale = setScaleX()
+      yScale = setScaleY(period === 'minutes' ? 1 : 4)
+      // Render bars and chart
+      renderBars()
+      renderChart()
+    }
+  }
+
   //
   // Setup
   //
-
-  const dataQuarterly = telemetry
-  const dataHourly = getDataHourly()
-
-  // Get container element
-  const container = document.querySelector(`#${containerId}`)
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-segmented-control'
   segmentedControl.innerHTML = `
   <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHourly" data-period="hourly" checked/>
-    <label for="timeHourly">Hourly</label>
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" checked/>
+    <label for="timeHours">Hourly</label>
   </div>
   <div class="defra-segmented-control__segment">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeQuarterly" data-period="quarterly"/>
-    <label for="timeQuarterly">15 minutes</label>
+    <input class="defra-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes"/>
+    <label for="timeMinutes">15 minutes</label>
   </div>`
   container.parentNode.insertBefore(segmentedControl, container)
 
@@ -232,15 +221,10 @@ function BarChart (containerId, telemetry) {
 
   // Set default period
   let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
+  let xScale, yScale, data, dataLatest, dataCurrent
 
-  // Setup scales with domains
-  let data = period === 'quarterly' ? dataQuarterly : dataHourly
-  dataLatest = data.find(x => x.isLatest)
-  let xScale = setScaleX()
-  let yScale = setScaleY(period === 'quarterly' ? 1 : 4)
-
-  renderBars()
-  renderChart()
+  // XMLHttpRequest
+  xhr(`/service/telemetry/rainfall/${telemetryId}/hours`, initChart, 'json')
 
   //
   // Events
@@ -261,12 +245,8 @@ function BarChart (containerId, telemetry) {
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
       period = e.target.getAttribute('data-period')
-      data = period === 'quarterly' ? dataQuarterly : dataHourly
-      dataLatest = data.find(x => x.isLatest)
-      xScale = setScaleX()
-      yScale = setScaleY(period === 'quarterly' ? 1 : 4)
-      renderBars()
-      renderChart()
+      // New xhr request
+      xhr(`/service/telemetry/rainfall/${telemetryId}/${period}`, initChart, 'json')
     }
   })
 
@@ -282,7 +262,7 @@ function BarChart (containerId, telemetry) {
 }
 
 window.flood.charts = {
-  createBarChart: (containerId, telemetry) => {
-    return new BarChart(containerId, telemetry)
+  createBarChart: (containerId, telemetryId) => {
+    return new BarChart(containerId, telemetryId)
   }
 }

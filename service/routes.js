@@ -5,6 +5,7 @@ const riverServices = require('./river')
 const stationServices = require('./station')
 const outlookServices = require('./outlook')
 const targetAreaServices = require('./target-area')
+const telemetryServices = require('./telemetry')
 const mapServices = require('./map')
 const fs = require('fs')
 const path = require('path')
@@ -128,6 +129,19 @@ router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) =>
 router.get('/service/stations-by-river/:slug', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationsByRiverSlug(req.params.slug))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+//
+// Telemetry
+//
+
+router.get('/service/telemetry/rainfall/:id/:period', async (req, res, next) => {
+  try {
+    res.status(200).json(await telemetryServices.getRainfall(req.params.id, req.params.period))
   } catch (err) {
     res.status(500)
     console.log(err)

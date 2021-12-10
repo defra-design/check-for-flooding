@@ -107,7 +107,7 @@ const Tooltips = (options) => {
         content.appendChild(fragment)
         addTooltip(tool)
       }
-    })
+    }, 'document')
   })
 
   // Remove on escape

@@ -19,7 +19,7 @@ class ViewModel {
     let time = station.date ? utils.formatTimeRecent(station.date) : ''
     let timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
     if (station.type === 'rainfall') {
-      telemetry.hourly = telemetry.hourly.map(item => {
+      telemetry.values = telemetry.values.map(item => {
         return {
           ...item,
           dateTimeHour: utils.formatTimeHour(item.dateTime)
@@ -27,13 +27,13 @@ class ViewModel {
       })
       time = utils.formatTimeRecent(telemetry.latestDateTime)
       timeElapsed = utils.formatTimeElapsed(telemetry.latestDateTime)
-      this.rainfall1hr = telemetry.latest1hr
-      this.rainfall6hr = telemetry.latest6hr
-      this.rainfall24hr = telemetry.latest24hr
+      this.latest1hr = telemetry.latest1hr
+      this.latest6hr = telemetry.latest6hr
+      this.latest24hr = telemetry.latest24hr
     }
     this.time = time
     this.timeElapsed = timeElapsed
-    this.telemetry = telemetry
+    this.telemetry = telemetry.values
     this.bingApiKey = bingApiKey
   }
 }
