@@ -20,6 +20,7 @@ class Level {
     this.groupCount = count
     this.groupStart = start
     this.isDownstream = Boolean(data.is_downstream)
+    this.hasDetail = Boolean(data.has_detail)
   }
 }
 module.exports = Level

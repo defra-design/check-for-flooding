@@ -11,25 +11,33 @@
 </tr>
 {% endif %}
 
+{% set name %}
+{{ item.name }}
+{{ station.external_name }}
+{% if item.iswales %}
+(Natural Resources Wales)
+{% endif %}
+{% if item.isDownstream == true %}
+(downstream)
+{% endif %}
+{% if item.type == 'groundwater' %}
+borehole
+{% endif %}
+{% if item.riverSlug != '' and item.type == 'tide' %}
+tide
+{% endif %}
+{% endset %}
+
 <tr class="defra-flood-table__row{% if model.queryType == 'river' %} defra-flood-table__row--subgroup{% endif %}">
   <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--location">
+    {% if item.hasDetail %}
     <a href="/station/{{ item.id | urlencode }}{% if item.position == 'd' %}/downstream{% endif %}">
-      {{ item.name }}
-      {{ station.external_name }}
-      {% if item.iswales %}
-      (Natural Resources Wales)
-      {% endif %}
-      {% if item.isDownstream == true %}
-      (downstream)
-      {% endif %}
-      {% if item.type == 'groundwater' %}
-      borehole
-      {% endif %}
-      {% if item.riverSlug != '' and item.type == 'tide' %}
-      tide
-      {% endif %}
+      {{ name }}
     </a>
+    {% else %}
+    {{ name }}
+    {% endif %}
     {% if item.state != 'error' %}
     <span class="defra-flood-table__item-date">{{ item.elapsedTime }}</span>
     {% endif %}

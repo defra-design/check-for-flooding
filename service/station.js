@@ -31,7 +31,10 @@ module.exports = {
     WHEN station.type_name = 'rainfall' THEN 'rainfall'
     ELSE 'river' END AS group_type,
     river_station.order AS station_order,
-    0 AS is_downstream
+    0 AS is_downstream,
+    CASE
+    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL OR measure_rainfall_id IS NOT NULL) THEN true
+    ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
@@ -63,7 +66,10 @@ module.exports = {
     WHEN station.type_name = 'rainfall' THEN 'rainfall'
     ELSE 'river' END AS group_type,
     river_station.order AS station_order,
-    1 AS is_downstream
+    1 AS is_downstream,
+    CASE
+    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL OR measure_rainfall_id IS NOT NULL) THEN true
+    ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id

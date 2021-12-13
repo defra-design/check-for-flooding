@@ -167,6 +167,8 @@ function BarChart (containerId, telemetryId) {
       console.log('Error: ' + err)
     } else {
       data = response.values
+      // Show period navigation
+      segmentedControl.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
       // Setup scales with domains
       dataLatest = data.find(x => x.isLatest)
       xScale = setScaleX()
@@ -183,6 +185,7 @@ function BarChart (containerId, telemetryId) {
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
+  segmentedControl.style.display = 'none'
   segmentedControl.className = 'defra-segmented-control'
   segmentedControl.innerHTML = `
   <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
