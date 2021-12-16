@@ -32,7 +32,7 @@ if (tooltips) {
 
 // Chart
 const chart = document.querySelector('.defra-line-chart')
-if (chart) {
+if (chart && window.flood.model.telemetry.length) {
   // If javascript is enabled make content visible to all but assitive technology
   // var figure = chart.parentNode
   chart.setAttribute('aria-hidden', true)
