@@ -30,10 +30,13 @@ class ViewModel {
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
+      this.telemetry = telemetry.values
+    } else {
+      this.telemetry = telemetry.fiveDays
     }
+    console.log(this.telemetry)
     this.time = time
     this.timeElapsed = timeElapsed
-    this.telemetry = telemetry.values
     this.bingApiKey = bingApiKey
   }
 }

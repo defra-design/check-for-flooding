@@ -403,7 +403,7 @@
       centroid: {{ model.station.centroid | dump | safe }},
       type: {{ model.station.type | dump | safe }},
       bingApiKey: {{ model.bingApiKey | dump | safe }},
-      telemetry: {{ model.telemetry.fiveDays | dump | safe }}
+      telemetry: {{ model.telemetry | dump | safe }}
     }
   }
 </script>

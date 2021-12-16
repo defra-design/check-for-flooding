@@ -27,6 +27,7 @@ router.get('/station/:id', async (req, res) => {
       telemetry = telemetry.data
     } else {
       // River, tide and groundwater telemetry
+      console.log(station.telemetryId)
       telemetry = new StationTelemetry(await telemetryServices.getStationTelemetry(station.telemetryId))
     }
     const model = new ViewModel(station, telemetry)

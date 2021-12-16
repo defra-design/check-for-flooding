@@ -97,7 +97,10 @@ module.exports = {
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
-    0 AS is_downstream
+    0 AS is_downstream,
+    CASE
+    WHEN (station.measure_id IS NOT NULL OR station.measure_downstream_id IS NOT NULL) THEN true
+    ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
@@ -117,7 +120,10 @@ module.exports = {
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     river_station.order AS station_order,
-    1 AS is_downstream
+    1 AS is_downstream,
+    CASE
+    WHEN (station.measure_id IS NOT NULL OR station.measure_downstream_id IS NOT NULL) THEN true
+    ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id

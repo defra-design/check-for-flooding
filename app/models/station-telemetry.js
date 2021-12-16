@@ -1,6 +1,6 @@
 class StationTelemetry {
   constructor (telemetry) {
-    const latestDateTime = telemetry[0].dateTime
+    const latestDateTime = telemetry.length && telemetry[0].dateTime
     this.latestDateTime = latestDateTime
     this.fiveDays = telemetry
   }
