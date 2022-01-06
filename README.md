@@ -1,5 +1,5 @@
 Check for flooding prototype
-# Revised list, accessibility fixes and rainfall detail page (v1)
+# List and rainfall detail page (v1)
 
 ## Search
 - Disambiguation page to differentiate similar towns
@@ -15,7 +15,7 @@ Check for flooding prototype
 
 ## Rainfall
 - Detail page added
-- 1, 6 and 24 hour headline figures with referecne date/time
+- 1, 6 and 24 hour headline figures with reference date/time
 - Bar chart showing rolling 24 hours
 - Latest reading line
 - Option to view hourly or 15 minute intervals
