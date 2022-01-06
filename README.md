@@ -1,3 +1,21 @@
-# Check for flooding prototype
-## Revised list and rainfall detail page (v1)
-Details in iteration to follow...
+Check for flooding prototype
+# Revised list, accessibility fixes and rainfall detail page (v1)
+
+## Search
+- Disambiguation page to differentiate similar towns
+
+## Buttons
+- New map buttons
+
+## List
+- Combined search box accepting location and river
+- Disambiguation page to differentiate towns and rivers
+- Search/results list instead of filter list
+- Sections replacing complex filters
+
+## Rainfall
+- Detail page added
+- 1, 6 and 24 hour headline figures with referecne date/time
+- Bar chart showing rolling 24 hours
+- Latest reading line
+- Option to view hourly or 15 minute intervals
