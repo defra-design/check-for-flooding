@@ -1,5 +1,5 @@
 Check for flooding prototype
-# FSR301 - Rainfall detail - v1
+# FSR-301 - Rainfall - v1
 
 ## List
 - Combined search box accepting location and river
