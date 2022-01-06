@@ -1,12 +1,6 @@
 Check for flooding prototype
 # List and rainfall detail page (v1)
 
-## Search
-- Disambiguation page to differentiate similar towns
-
-## Buttons
-- New map buttons
-
 ## List
 - Combined search box accepting location and river
 - Disambiguation page to differentiate towns and rivers
@@ -19,3 +13,9 @@ Check for flooding prototype
 - Bar chart showing rolling 24 hours
 - Latest reading line
 - Option to view hourly or 15 minute intervals
+
+## Search
+- Disambiguation page to differentiate similar towns
+
+## Buttons
+- New map buttons
