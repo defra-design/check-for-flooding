@@ -34,7 +34,6 @@ class ViewModel {
     } else {
       this.telemetry = telemetry.fiveDays
     }
-    console.log(this.telemetry)
     this.time = time
     this.timeElapsed = timeElapsed
     this.bingApiKey = bingApiKey

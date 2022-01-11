@@ -5,6 +5,7 @@ const telemetryServices = require('../services/telemetry')
 const Station = require('../models/station')
 const StationTelemetry = require('../models/station-telemetry')
 const ViewModel = require('../models/views/station')
+const moment = require('moment-timezone')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
@@ -23,11 +24,12 @@ router.get('/station/:id', async (req, res) => {
     if (station.type === 'rainfall') {
       // Rainfall telemetry
       const telemetryId = /[^/]*$/.exec(station.telemetryId)[0]
-      telemetry = await telemetryServices.getRainfallTelemetry(telemetryId, 'hours')
+      const endDate = moment().toISOString().replace(/.\d+Z$/g, 'Z')
+      const startDate = moment().subtract({ hours: 120 }).toISOString().replace(/.\d+Z$/g, 'Z')
+      telemetry = await telemetryServices.getRainfallTelemetry(telemetryId, startDate, endDate, 'hours')
       telemetry = telemetry.data
     } else {
       // River, tide and groundwater telemetry
-      console.log(station.telemetryId)
       telemetry = new StationTelemetry(await telemetryServices.getStationTelemetry(station.telemetryId))
     }
     const model = new ViewModel(station, telemetry)

@@ -139,9 +139,14 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
 // Telemetry
 //
 
-router.get('/service/telemetry/rainfall/:id/:period', async (req, res, next) => {
+router.get('/service/telemetry/rainfall/:id/:start/:end/:period', async (req, res, next) => {
   try {
-    res.status(200).json(await telemetryServices.getRainfall(req.params.id, req.params.period))
+    res.status(200).json(await telemetryServices.getRainfall(
+      req.params.id,
+      req.params.start,
+      req.params.end,
+      req.params.period
+    ))
   } catch (err) {
     res.status(500)
     console.log(err)

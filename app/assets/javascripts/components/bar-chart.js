@@ -15,14 +15,24 @@ function BarChart (containerId, telemetryId) {
   const chart = document.getElementById(containerId)
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
+  // Set initial dates
+  let endDate = new Date()
+  let startDate = new Date()
+  startDate.setHours(startDate.getHours() - 120)
+  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
+  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
+
   const renderChart = () => {
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
-      const hourMinute = timeFormat('%-I:%M')(new Date(d))
-      return ['3:00', '6:00', '9:00', '12:00'].includes(hourMinute)
+      const hourMinute = timeFormat('%H:%M')(new Date(d))
+      const labelsHours = ['01:00']
+      const labelsMinutes = ['00:15', '06:15', '12:15', '18:15']
+      const labels = period === 'hours' ? labelsHours : labelsMinutes
+      return labels.includes(hourMinute)
     }))
-    xAxis.tickFormat((d) => { return timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase() })
+    xAxis.tickFormat((d) => { return '' })
 
     // Calculate new yScale from range
     yScale = yScale.range([height, 0])
@@ -31,6 +41,9 @@ function BarChart (containerId, telemetryId) {
     // Position axis bottom and right
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
     svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
+
+    // Format X Axis ticks
+    svg.select('.x.axis').selectAll('text').each(formatLabelsX)
 
     // Position y ticks
     svg.select('.y.axis').style('text-anchor', 'start')
@@ -123,8 +136,7 @@ function BarChart (containerId, telemetryId) {
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = pointer(e)[1]
-    let value = dataCurrent.value + 'mm' + (dataCurrent.dateTime === dataLatest.dateTime ? ' (latest)' : '')
-    value = new Date(dataCurrent.dateTime).getTime() > new Date(dataLatest.dateTime).getTime() ? 'No data' : value
+    const value = dataCurrent.isValid ? dataCurrent.value + 'mm' : 'No data'
     const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
@@ -162,6 +174,13 @@ function BarChart (containerId, telemetryId) {
     }
   }
 
+  // Format X Axis labels
+  const formatLabelsX = (d, i, nodes) => {
+    const element = select(nodes[i])
+    element.append('tspan').text(timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase())
+    element.append('tspan').attr('x', 0).attr('dy', '15').text(timeFormat('%-e %b')(new Date(d)))
+  }
+
   const initChart = (err, response) => {
     if (err) {
       console.log('Error: ' + err)
@@ -170,7 +189,6 @@ function BarChart (containerId, telemetryId) {
       // Show period navigation
       segmentedControl.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
       // Setup scales with domains
-      dataLatest = data.find(x => x.isLatest)
       xScale = setScaleX()
       yScale = setScaleY(period === 'minutes' ? 1 : 4)
       // Render bars and chart
@@ -217,17 +235,17 @@ function BarChart (containerId, telemetryId) {
   toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
 
   // Get width and height
-  const margin = { top: 0, bottom: 30, left: 0, right: 34 }
+  const margin = { top: 0, bottom: 45, left: 0, right: 34 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
 
   // Set default period
   let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
-  let xScale, yScale, data, dataLatest, dataCurrent
+  let xScale, yScale, data, dataCurrent
 
   // XMLHttpRequest
-  xhr(`/service/telemetry/rainfall/${telemetryId}/hours`, initChart, 'json')
+  xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/hours`, initChart, 'json')
 
   //
   // Events
@@ -248,8 +266,11 @@ function BarChart (containerId, telemetryId) {
       }
       e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
       period = e.target.getAttribute('data-period')
+      startDate = new Date()
+      startDate.setHours(startDate.getHours() - (period === 'hours' ? 120 : 24))
+      startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
       // New xhr request
-      xhr(`/service/telemetry/rainfall/${telemetryId}/${period}`, initChart, 'json')
+      xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/${period}`, initChart, 'json')
     }
   })
 
