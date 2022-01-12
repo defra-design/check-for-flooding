@@ -73,9 +73,6 @@
         {% endif %}
     {% endif %}
     </dl>
-    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
-    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
-    {% endif %}
     {% if model.up or model.down %}
     <div class="defra-map-info__buttons">
         {% if model.up %}
@@ -91,6 +88,9 @@
         </button>
         {% endif %}
     </div>
+    {% endif %}
+    {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
+    <p class="defra-map-info__meta">Latest measurement at {{ model.date }}</p>
     {% endif %}
 </div>
 {% else %}
@@ -132,6 +132,6 @@
         </div>
     </dl>
     {% endif %}
-    <p class="defra-map-info__meta">Measured {{ model.date }}</p>
+    <p class="defra-map-info__meta">Periods upto latest reading at {{ model.date }}</p>
 </div>
 {% endif %}

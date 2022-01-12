@@ -52,7 +52,7 @@ const formatTimeHour = (date) => {
 }
 
 const formatTimeDate = (date) => {
-  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D MMM')}`
+  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D MMMM')}`
 }
 
 const bufferBbox = (bbox, m) => {

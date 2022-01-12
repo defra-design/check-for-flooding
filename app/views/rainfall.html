@@ -29,6 +29,7 @@
   <div class="govuk-grid-column-full">
     <h2 class="govuk-visually-hidden">Station summary</h2>
     <div class="defra-flood-statistics">
+      <h2 class="govuk-heading-s govuk-!-margin-top-6 govuk-!-margin-bottom-0">Periods upto latest reading at {{ model.time }}</h2>
       <dl class="defra-flood-statistics__list">
         <div class="defra-flood-statistics__column-one-third"> 
           <dt class="defra-flood-statistics__key">
@@ -36,7 +37,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.latest1hr }}mm
-            <span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>
+            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -45,7 +46,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.latest6hr }}mm
-            <span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>
+            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
@@ -54,7 +55,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.latest24hr }}mm
-            <span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>
+            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>
       </dl>

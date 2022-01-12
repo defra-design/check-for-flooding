@@ -371,41 +371,48 @@ function LiveMap (mapId, options) {
   }
 
   // Day format function
-  const formatDay = (date) => {
+  // const formatDay = (date) => {
+  //   const day = date.getDate()
+  //   const nth = (day) => {
+  //     if (day > 3 && day < 21) return 'th'
+  //     switch (day % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th' }
+  //   }
+  //   const shortDay = date.toLocaleString('en-GB', { weekday: 'short' })
+  //   const today = new Date()
+  //   const yesterday = new Date()
+  //   const tomorrow = new Date()
+  //   today.setHours(0, 0, 0, 0)
+  //   yesterday.setDate(yesterday.getDate() - 1)
+  //   yesterday.setHours(0, 0, 0, 0)
+  //   tomorrow.setDate(tomorrow.getDate() + 1)
+  //   tomorrow.setHours(0, 0, 0, 0)
+  //   date.setHours(0, 0, 0, 0)
+  //   if (date.getTime() === today.getTime()) {
+  //     return 'today'
+  //   } else if (date.getTime() === yesterday.getTime()) {
+  //     return 'yesterday'
+  //   } else if (date.getTime() === tomorrow.getTime()) {
+  //     return 'tomorrow'
+  //   } else {
+  //     return ' on ' + shortDay + ' ' + date.getDate() + nth(day)
+  //   }
+  // }
+
+  // Day format function
+  const formatDayMonth = (date) => {
     const day = date.getDate()
-    const nth = (day) => {
-      if (day > 3 && day < 21) return 'th'
-      switch (day % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th' }
-    }
-    const shortDay = date.toLocaleString('en-GB', { weekday: 'short' })
-    const today = new Date()
-    const yesterday = new Date()
-    const tomorrow = new Date()
-    today.setHours(0, 0, 0, 0)
-    yesterday.setDate(yesterday.getDate() - 1)
-    yesterday.setHours(0, 0, 0, 0)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(0, 0, 0, 0)
-    date.setHours(0, 0, 0, 0)
-    if (date.getTime() === today.getTime()) {
-      return 'today'
-    } else if (date.getTime() === yesterday.getTime()) {
-      return 'yesterday'
-    } else if (date.getTime() === tomorrow.getTime()) {
-      return 'tomorrow'
-    } else {
-      return ' on ' + shortDay + ' ' + date.getDate() + nth(day)
-    }
+    const month = date.toLocaleString('default', { month: 'long' })
+    return `${day} ${month}`
   }
 
   // Format expired time
-  const formatExpiredTime = (date) => {
-    const duration = (new Date() - new Date(date)) // milliseconds between now & Christmas
-    const mins = Math.floor(duration / (1000 * 60)) // minutes
-    const hours = Math.floor(duration / (1000 * 60 * 60)) // hours
-    const days = parseInt(Math.floor(hours / 24)) // days
-    return (mins < 91 ? mins + ' minutes' : (hours < 48 ? hours + ' hours' : days + ' days')) + ' ago'
-  }
+  // const formatExpiredTime = (date) => {
+  //   const duration = (new Date() - new Date(date)) // milliseconds between now & Christmas
+  //   const mins = Math.floor(duration / (1000 * 60)) // minutes
+  //   const hours = Math.floor(duration / (1000 * 60 * 60)) // hours
+  //   const days = parseInt(Math.floor(hours / 24)) // days
+  //   return (mins < 91 ? mins + ' minutes' : (hours < 48 ? hours + ' hours' : days + ' days')) + ' ago'
+  // }
 
   // Capitalise string
   // const capitalise = (str) => {
@@ -418,9 +425,9 @@ function LiveMap (mapId, options) {
     model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
-      model.date = `${feature.get('type') === 'R' ? 'upto' : 'at'} ${formatTime(new Date(model.valueDate))} ${formatDay(new Date(model.valueDate))}`
+      model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
     } else if (model.issuedDate) {
-      model.date = `${formatTime(new Date(model.issuedDate))} ${formatDay(new Date(model.issuedDate))}`
+      model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
     }
     const html = window.nunjucks.render('info-live.html', { model: model })
     feature.set('html', html)

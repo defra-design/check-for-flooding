@@ -30,44 +30,9 @@
   }
   &__buttons {
     margin: 15px -51px 0px -15px;
-    padding: 20px 15px 0px;
-    border-top: 1px solid #dbdad9;
+    padding: 0px 15px 0px;
+    // border-top: 1px solid #dbdad9;
   }
-  // &__button {
-  //   @include govuk-font($size: 16);
-  //   position: relative;
-  //   display: inline-block;
-  //   height: 38px;
-  //   line-height: 38px;
-  //   box-sizing: content-box;
-  //   border:0;
-  //   padding:0px 8px;
-  //   margin-bottom: 10px !important;
-  //   cursor:pointer;
-  //   background-color: white;
-  //   border: 1px solid $govuk-border-colour;
-  //   color: govuk-colour('black');
-  //   &::-moz-focus-inner {
-  //     border: 0;
-  //   }
-  //   &:hover {
-  //     background-color: govuk-colour('light-grey');
-  //   }
-  //   &:focus {
-  //     // background-color: $govuk-focus-colour;
-  //     outline: 3px solid $govuk-focus-colour;
-  //     box-shadow: inset 0px 0px 0px 2px govuk-colour('black');
-  //     border-color: govuk-colour('black');
-  //   }
-  //   svg {
-  //     position:relative;
-  //     display: inline-block;
-  //     margin: 2px 3px -1px 0px;
-  //   }
-  // }
-  // &__button--up {
-  //   margin-right:10px;
-  // }
 
   // Attributions
   ul {
