@@ -169,9 +169,10 @@ function BarChart (containerId, telemetryId) {
   // Format X Axis labels
   const formatLabelsX = (d, i, nodes) => {
     const element = select(nodes[i])
-    // element.append('tspan').text(timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase())
-    element.append('tspan').text(timeFormat('12pm-12pm')(new Date(d)).toLocaleLowerCase())
-    element.append('tspan').attr('x', 0).attr('dy', '15').text(timeFormat('%-e %b')(new Date(d)))
+    const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
+    const formattedDate = timeFormat('%-e %b')(new Date(d))
+    element.append('tspan').text(formattedTime)
+    element.append('tspan').attr('x', 0).attr('dy', '15').text(formattedDate)
   }
 
   const initChart = (err, response) => {
