@@ -121,7 +121,7 @@ function BarChart (containerId, telemetryId) {
     const mouseDateTime = e ? scaleBandInvert(xScale)(pointer(e)[0]) : null
     const dataItem = data.find(x => mouseDateTime ? x.dateTime === mouseDateTime : x.isLatest)
     // Only need to show toltip when data item changes
-    if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
+    // if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
     dataCurrent = dataItem
     toolTip.select('text').selectAll('*').remove()
     // Get tooltip position and content
@@ -273,6 +273,7 @@ function BarChart (containerId, telemetryId) {
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
     renderChart()
+    showTooltip(null)
   })
 
   document.addEventListener('click', (e) => {
