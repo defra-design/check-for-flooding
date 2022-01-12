@@ -13,7 +13,7 @@ const { xhr } = window.flood.utils
 function BarChart (containerId, telemetryId) {
   const renderChart = () => {
     // Mobile media query
-    isMobile = mobileMediaQuery.matches
+    // isMobile = mobileMediaQuery.matches
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
@@ -127,14 +127,19 @@ function BarChart (containerId, telemetryId) {
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = e ? pointer(e)[1] : 0
-    const value = dataCurrent.isValid ? dataCurrent.value + 'mm' : 'No data'
     const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
     const timeEnd = formatTime(new Date(dataCurrent.dateTime)).toLowerCase()
     const date = timeFormat('%e %b')(periodStartDateTime)
+    const value = dataCurrent.isValid ? dataCurrent.value + 'mm' : 'No data'
+    const additional = dataCurrent.isLatest ? 'Latest reading' : null
+    const description = `${timeStart} - ${timeEnd}, ${date}`
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('x', 12).attr('dy', '0.5em').text(value)
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(`${timeStart} - ${timeEnd}, ${date}`)
+    if (additional) {
+      toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(additional)
+    }
+    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(description)
     // Update locator
     locator.attr('transform', 'translate(' + toolTipX + ', 0)').attr('y1', 0).attr('y2', height)
     // Update tooltip left/right background
@@ -148,11 +153,11 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', true)
   }
 
-  const hideTooltip = () => {
-    svg.selectAll('.bar--selected').classed('bar--selected', false)
-    toolTip.classed('tool-tip--visible', false)
-    locator.classed('locator--visible', false)
-  }
+  // const hideTooltip = () => {
+  //   svg.selectAll('.bar--selected').classed('bar--selected', false)
+  //   toolTip.classed('tool-tip--visible', false)
+  //   locator.classed('locator--visible', false)
+  // }
 
   // D3 doesnt currently support inverting of a scaleBand
   const scaleBandInvert = (scale) => {
@@ -249,7 +254,7 @@ function BarChart (containerId, telemetryId) {
   // Set defaults
   let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
   let xScale, yScale, data, dataCurrent
-  let isMobile
+  // let isMobile
 
   // Get mobile media query list
   const mobileMediaQuery = window.matchMedia('(max-width: 640px)')

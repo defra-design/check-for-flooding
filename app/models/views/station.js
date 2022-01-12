@@ -25,7 +25,7 @@ class ViewModel {
           dateTimeHour: utils.formatTimeHour(item.dateTime)
         }
       })
-      time = utils.formatTimeRecent(telemetry.latestDateTime)
+      time = utils.formatTimeDate(telemetry.latestDateTime)
       timeElapsed = utils.formatTimeElapsed(telemetry.latestDateTime)
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr

@@ -418,7 +418,7 @@ function LiveMap (mapId, options) {
     model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
-      model.date = formatExpiredTime(model.valueDate)
+      model.date = `${feature.get('type') === 'R' ? 'upto' : 'at'} ${formatTime(new Date(model.valueDate))} ${formatDay(new Date(model.valueDate))}`
     } else if (model.issuedDate) {
       model.date = `${formatTime(new Date(model.issuedDate))} ${formatDay(new Date(model.issuedDate))}`
     }

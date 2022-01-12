@@ -37,7 +37,7 @@ const formatTimeRecent = (date) => {
   const tomorrow = moment().add(1, 'days').startOf('day')
   const dateWhen = (() => {
     if (moment(date).isSame(today, 'd')) {
-      return ''
+      return 'today'
     } else if (moment(date).isSame(tomorrow, 'd')) {
       return 'tomorrow'
     } else {
@@ -49,6 +49,10 @@ const formatTimeRecent = (date) => {
 
 const formatTimeHour = (date) => {
   return moment(date).tz('Europe/London').format('h:mma')
+}
+
+const formatTimeDate = (date) => {
+  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D MMM')}`
 }
 
 const bufferBbox = (bbox, m) => {
@@ -91,6 +95,7 @@ module.exports = {
   formatTimeElapsed,
   formatTimeRecent,
   formatTimeHour,
+  formatTimeDate,
   getSlug,
   groupBy,
   bufferBbox,
