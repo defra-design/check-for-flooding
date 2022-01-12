@@ -159,19 +159,7 @@ function LiveMap (mapId, options) {
         }
       } else if (props.type === 'R') {
         // Rainfall
-        state = 'rain'
-        // if (props.value1hr) {
-        //   if (props.value1hr > 4) {
-        //     state = 'rainHeavy'
-        //   } else if (props.value1hr > 0.5) {
-        //     state = 'rainModerate'
-        //   } else if (props.value1hr > 0) {
-        //     state = 'rainLight'
-        //   }
-        // }
-        if (props.value24hr && props.value24hr > 0) {
-          state = 'rainHeavy'
-        }
+        state = props.value24hr && props.value24hr > 0 ? 'rain' : 'rainDry'
       }
       // WebGl: Feature properties must be strings or numbers
       feature.set('state', state)
