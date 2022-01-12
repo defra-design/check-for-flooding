@@ -30,8 +30,7 @@ module.exports = {
       readings = response.data.items.map(item => {
         return {
           dateTime: item.dateTime,
-          value: item.value,
-          isValid: true
+          value: item.value
         }
       }).filter(item => Date.parse(item.dateTime) > startDate && Date.parse(item.dateTime) <= endDate)
     } else {

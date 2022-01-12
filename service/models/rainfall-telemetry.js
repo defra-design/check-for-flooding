@@ -2,6 +2,10 @@ const moment = require('moment-timezone')
 
 class RainfallTelemetry {
   constructor (valuesLatest, valuesRange, rangeEndDate, period) {
+    // Get latest reading
+    const latestDateTime = valuesLatest[0].dateTime
+    const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
+
     // Set range end rounded down to latest completed 15 minute period
     const rangeEndDateRounded = moment(rangeEndDate).minute(Math.floor(moment(rangeEndDate).minute() / 15) * 15).second(0).milliseconds(0).toISOString()
 
@@ -14,13 +18,20 @@ class RainfallTelemetry {
       availablePeriods.push('minutes')
     }
 
+    // Add properties to values range
+    valuesRange.forEach(value => {
+      value.isValid = true
+      value.isLatest = value.dateTime === latestDateTime
+    })
+
     // Extend telemetry upto latest interval, could be 15 or 60 minute intervals
     while (moment(valuesRange[0].dateTime).isBefore(rangeEndDateRounded)) {
       const nextDateTime = moment(valuesRange[0].dateTime).add(isMinutes ? 15 : 60, 'minutes').toDate()
       valuesRange.unshift({
         dateTime: nextDateTime,
         value: 0,
-        isValid: false
+        isValid: false,
+        isLatest: false
       })
     }
 
@@ -32,12 +43,12 @@ class RainfallTelemetry {
         const minutes = moment(item.dateTime).minutes()
         batchTotal += item.value
         if (minutes === 15) {
+          const batchDateTime = moment(item.dateTime).add(45, 'minutes').toDate()
           batchedHours.push({
-            dateTime: moment(item.dateTime).add(45, 'minutes').toDate(),
+            dateTime: batchDateTime,
             value: Math.round(batchTotal * 100) / 100,
-            isValid: item.isValid
-            // ...(!(new Date(latestDateTime).getTime() >= moment(item.dateTime).add(45, 'minutes').toDate().getTime()) && { isInComplete: true }),
-            // ...(moment(item.dateTime).hour() === moment(latestDateTime).hour() && { isLatest: true })
+            isValid: item.isValid,
+            isLatest: batchDateTime.getTime() === latestHourDateTime.getTime()
           })
           batchTotal = 0
         }
