@@ -79,10 +79,10 @@
     pointer-events: none;
     stroke-width: 1;
     stroke: govuk-colour('dark-grey');
+    stroke-dasharray: 3 3;
     shape-rendering: crispEdges;
   }
   .bar--selected .latest-line {
-    stroke-width: 2;
     stroke: govuk-colour('black');
   }
   // Locator line

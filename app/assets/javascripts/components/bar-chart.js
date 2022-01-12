@@ -150,7 +150,7 @@ function BarChart (containerId, telemetryId) {
     // Update tooltip location
     toolTip.attr('transform', 'translate(' + toolTipX + ',' + toolTipY + ')')
     toolTip.classed('tool-tip--visible', true)
-    locator.classed('locator--visible', true)
+    locator.classed('locator--visible', !dataCurrent.isLatest)
   }
 
   // const hideTooltip = () => {
