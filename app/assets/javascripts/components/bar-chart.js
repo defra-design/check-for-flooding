@@ -11,18 +11,10 @@ import { timeMinute } from 'd3-time'
 const { xhr } = window.flood.utils
 
 function BarChart (containerId, telemetryId) {
-  const container = document.querySelector(`#${containerId}`)
-  const chart = document.getElementById(containerId)
-  telemetryId = /[^/]*$/.exec(telemetryId)[0]
-
-  // Set initial dates
-  let endDate = new Date()
-  let startDate = new Date()
-  startDate.setHours(startDate.getHours() - 120)
-  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
-  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
-
   const renderChart = () => {
+    // Mobile media query
+    isMobile = mobileMediaQuery.matches
+    console.log(isMobile)
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
@@ -177,7 +169,8 @@ function BarChart (containerId, telemetryId) {
   // Format X Axis labels
   const formatLabelsX = (d, i, nodes) => {
     const element = select(nodes[i])
-    element.append('tspan').text(timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase())
+    // element.append('tspan').text(timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase())
+    element.append('tspan').text(timeFormat('12pm-12pm')(new Date(d)).toLocaleLowerCase())
     element.append('tspan').attr('x', 0).attr('dy', '15').text(timeFormat('%-e %b')(new Date(d)))
   }
 
@@ -200,6 +193,17 @@ function BarChart (containerId, telemetryId) {
   //
   // Setup
   //
+
+  const container = document.querySelector(`#${containerId}`)
+  const chart = document.getElementById(containerId)
+  telemetryId = /[^/]*$/.exec(telemetryId)[0]
+
+  // Set initial dates
+  let endDate = new Date()
+  let startDate = new Date()
+  startDate.setHours(startDate.getHours() - 120)
+  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
+  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
@@ -240,9 +244,13 @@ function BarChart (containerId, telemetryId) {
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
 
-  // Set default period
+  // Set defaults
   let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
   let xScale, yScale, data, dataCurrent
+  let isMobile
+
+  // Get mobile media query list
+  const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
   // XMLHttpRequest
   xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/hours`, initChart, 'json')
@@ -250,6 +258,8 @@ function BarChart (containerId, telemetryId) {
   //
   // Events
   //
+
+  mobileMediaQuery.addEventListener('change', renderChart)
 
   window.addEventListener('resize', () => {
     const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
