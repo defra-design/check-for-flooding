@@ -14,7 +14,6 @@ function BarChart (containerId, telemetryId) {
   const renderChart = () => {
     // Mobile media query
     isMobile = mobileMediaQuery.matches
-    console.log(isMobile)
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
@@ -119,15 +118,15 @@ function BarChart (containerId, telemetryId) {
   }
 
   const showTooltip = (e) => {
-    const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
-    const dataItem = data.find(x => x.dateTime === mouseDateTime)
+    const mouseDateTime = e ? scaleBandInvert(xScale)(pointer(e)[0]) : null
+    const dataItem = data.find(x => mouseDateTime ? x.dateTime === mouseDateTime : x.isLatest)
     // Only need to show toltip when data item changes
     if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
     dataCurrent = dataItem
     toolTip.select('text').selectAll('*').remove()
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
-    toolTipY = pointer(e)[1]
+    toolTipY = e ? pointer(e)[1] : 0
     const value = dataCurrent.isValid ? dataCurrent.value + 'mm' : 'No data'
     const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
@@ -188,6 +187,8 @@ function BarChart (containerId, telemetryId) {
       // Render bars and chart
       renderBars()
       renderChart()
+      // Show default tooltip
+      showTooltip(null)
     }
   }
 
@@ -290,7 +291,7 @@ function BarChart (containerId, telemetryId) {
   })
 
   background.on('mouseleave', (e) => {
-    hideTooltip()
+    showTooltip(null)
   })
 
   this.chart = chart
