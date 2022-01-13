@@ -128,10 +128,10 @@ function BarChart (containerId, telemetryId) {
     const mouseDateTime = e ? scaleBandInvert(xScale)(pointer(e)[0]) : null
     const dataItem = data.find(x => x.dateTime === mouseDateTime)
     // Choose which value to show
-    if (dataItem) {
+    if (e && dataItem) {
       dataCurrent = dataItem
     }
-    console.log(e, dataCurrent, !!dataItem)
+    console.log(`HasEvent: ${!!e}, HasDataCurrent: ${!!dataCurrent}, HasDataItem: ${!!dataItem}`)
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = e ? pointer(e)[1] : 0
