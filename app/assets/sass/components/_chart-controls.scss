@@ -3,11 +3,13 @@
 }
 .defra-chart-paging-control {
   position: absolute;
-  right: 20px;
+  right: 24px;
   top: 0px;
-  @include mq ($from: tablet) {
+  @include mq ($from: desktop) {
+    width: 200px;
     left: 50%;
-    margin-left: -50px;
+    margin-left: -124px;
+    text-align: center;
   }
   &__button {
     border: 0px;
@@ -17,12 +19,25 @@
     width: 40px;
     height: 40px;
     outline: 3px solid transparent;
+    color: $govuk-link-colour;
+    span {
+      @include mq ($until: desktop) {
+        @include defra-visually-hidden(); 
+      }
+    }
+    @include govuk-font($size: 16);
     cursor: pointer;
+    @include mq ($from: desktop) {
+      width: auto;
+      height: auto;
+      padding: 10px;
+    }
   }
   &__button:focus {
     background-color: $govuk-focus-colour;
   }
-  &__button:after {
+  &__button--forward:after,
+  &__button--backward:before {
     display: inline-block;
     content: '';
     border-width: 0 2px 2px 0;
@@ -33,16 +48,17 @@
   }
   &__button--forward:after {
     margin-left: 5px;
-    -webkit-transform: rotate(135deg);
-    -ms-transform: rotate(135deg);
-    transform: rotate(135deg);
-  }
-  &__button--back:after {
-    margin-right: 5px;
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
+  &__button--backward:before {
+    margin-right: 5px;
+    -webkit-transform: rotate(135deg);
+    -ms-transform: rotate(135deg);
+    transform: rotate(135deg);
+  }
+  &__button:focus:before,
   &__button:focus:after {
     color: $govuk-focus-text-colour;
   }

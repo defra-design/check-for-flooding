@@ -237,9 +237,11 @@ function BarChart (containerId, telemetryId) {
   const pagingControl = document.createElement('div')
   pagingControl.className = 'defra-chart-paging-control'
   const pageBack = document.createElement('button')
-  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
+  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
+  pageBack.innerHTML = '<span>Backward</span>'
   const pageForward = document.createElement('button')
-  pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--back'
+  pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
+  pageForward.innerHTML = '<span>Forward</span>'
   pagingControl.appendChild(pageBack)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
