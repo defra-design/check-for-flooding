@@ -16,8 +16,7 @@ class ViewModel {
     })()
     this.station = station
     // Keep presentation logic in the ViewModel
-    let time = station.date ? utils.formatTimeRecent(station.date) : ''
-    let timeElapsed = station.date ? utils.formatTimeElapsed(station.date) : ''
+    let time = station.date ? utils.formatTimeDate(station.date) : ''
     if (station.type === 'rainfall') {
       telemetry.values = telemetry.values.map(item => {
         return {
@@ -26,7 +25,6 @@ class ViewModel {
         }
       })
       time = utils.formatTimeDate(telemetry.latestDateTime)
-      timeElapsed = utils.formatTimeElapsed(telemetry.latestDateTime)
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
@@ -35,7 +33,6 @@ class ViewModel {
       this.telemetry = telemetry.fiveDays
     }
     this.time = time
-    this.timeElapsed = timeElapsed
     this.bingApiKey = bingApiKey
   }
 }

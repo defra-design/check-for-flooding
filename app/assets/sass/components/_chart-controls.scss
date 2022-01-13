@@ -1,16 +1,51 @@
 .defra-chart-controls {
   position: relative;
 }
-.defra-chart-paging-control {
-  position: absolute;
-  right: 24px;
-  top: 0px;
-  @include mq ($from: desktop) {
-    width: 200px;
-    left: 50%;
-    margin-left: -124px;
+.defra-chart-segmented-control {
+  margin: auto;
+  display: inline-block;
+  &__segment {
+    display: inline-block;
+    position: relative;
     text-align: center;
+    padding-right: 15px;
   }
+  &__segment--selected {
+    z-index: 1;
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    margin: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  label {
+    cursor: pointer;
+    display: block;
+    @include govuk-font($size: 16);
+    padding: 10px 0;
+    border-bottom: 5px solid transparent;
+    position: relative;
+    outline: 3px solid transparent;
+    color: govuk-colour('blue');
+  }
+  input:checked + label {
+    border-bottom: 5px solid govuk-colour('blue');
+  }
+  input:focus + label {
+    border-bottom: 5px solid govuk-colour('black');
+    background-color: $govuk-focus-colour;
+    color: govuk-colour('black');
+  }
+}
+.defra-chart-paging-control {
+  display: inline-block;
   &__button {
     border: 0px;
     background-color: white;
@@ -20,24 +55,13 @@
     height: 40px;
     outline: 3px solid transparent;
     color: $govuk-link-colour;
-    span {
-      @include mq ($until: desktop) {
-        @include defra-visually-hidden(); 
-      }
-    }
     @include govuk-font($size: 16);
     cursor: pointer;
-    @include mq ($from: desktop) {
-      width: auto;
-      height: auto;
-      padding: 10px;
-    }
   }
   &__button:focus {
     background-color: $govuk-focus-colour;
   }
-  &__button--forward:after,
-  &__button--backward:before {
+  &__button:after {
     display: inline-block;
     content: '';
     border-width: 0 2px 2px 0;
@@ -47,18 +71,15 @@
     color: $govuk-link-colour;
   }
   &__button--forward:after {
-    margin-left: 5px;
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
   }
-  &__button--backward:before {
-    margin-right: 5px;
+  &__button--backward:after {
     -webkit-transform: rotate(135deg);
     -ms-transform: rotate(135deg);
     transform: rotate(135deg);
   }
-  &__button:focus:before,
   &__button:focus:after {
     color: $govuk-focus-text-colour;
   }

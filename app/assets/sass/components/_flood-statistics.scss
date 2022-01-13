@@ -1,6 +1,6 @@
 .defra-flood-statistics {
-    // border-top: 1px solid $govuk-border-colour;
-    // border-bottom: 1px solid $govuk-border-colour;
+    border-top: 1px solid $govuk-border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
     &__list {
         margin:0;
         @include mq ($from: tablet) {

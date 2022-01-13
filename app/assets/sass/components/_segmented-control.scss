@@ -1,9 +1,7 @@
 .defra-segmented-control {
   margin: auto;
-  // border-bottom: 1px solid govuk-colour('light-grey');
   &__segment {
     display: inline-block;
-    margin-bottom: -1px;
     position: relative;
     text-align: center;
     padding-right: 15px;

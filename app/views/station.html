@@ -142,8 +142,8 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-visually-hidden">Station summary</h2>
-    <div class="defra-flood-statistics">
+    <div class="defra-flood-statistics govuk-!-margin-top-4">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Measured at {{ model.time }}</h2>
       <dl class="defra-flood-statistics__list">
       {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.rangeTop and model.station.rangeBottom  %}
@@ -181,9 +181,6 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.height }}m
-            <span class="defra-flood-statistics__value-detail">
-              <time datetime="">at {{ model.time }}</time>
-            </span>
           </dd>
         </div>
       </dl>
@@ -278,7 +275,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <figure class="defra-line-chart" aria-hidden="true"><!-- hidden by default, removed with js -->
-      <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-7">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</figcaption>
+      <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-7">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</figcaption>
         <div id="line-chart" class="defra-line-chart__container" role="presentation"></div>
         {% if model.isFfoi and not model.forecastOutOfDate %}
         <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-2"> {{ model.forecastDetails }}</p>

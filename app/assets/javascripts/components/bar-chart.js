@@ -21,7 +21,7 @@ function BarChart (containerId, telemetryId) {
       const labelsHours = ['01:00']
       const labelsMinutes = ['00:15', '06:15', '12:15', '18:15']
       const labels = period === 'hours' ? labelsHours : labelsMinutes
-      return labels.includes(hourMinute)
+      return labels.includes(hourMinute) && i >= 2 // Don't show lable if before 3rd tick
     }))
     xAxis.tickFormat((d) => { return '' })
 
@@ -132,13 +132,9 @@ function BarChart (containerId, telemetryId) {
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
     const timeEnd = formatTime(new Date(dataCurrent.dateTime)).toLowerCase()
     const date = timeFormat('%e %b')(periodStartDateTime)
-    const value = dataCurrent.isValid ? dataCurrent.value + 'mm' : 'No data'
-    const additional = dataCurrent.isLatest ? 'Latest reading' : null
+    const value = dataCurrent.isValid ? dataCurrent.value + 'mm' + (dataCurrent.isLatest ? ' latest' : '') : 'No data'
     const description = `${timeStart} - ${timeEnd}, ${date}`
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('x', 12).attr('dy', '0.5em').text(value)
-    if (additional) {
-      toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(additional)
-    }
     toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(description)
     // Update locator
     locator.attr('transform', 'translate(' + toolTipX + ', 0)').attr('y1', 0).attr('y2', height)
@@ -185,7 +181,8 @@ function BarChart (containerId, telemetryId) {
     } else {
       data = response.values
       // Show period navigation
-      segmentedControl.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
+      controlsContainer.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
+      pagingControl.style.display = period === 'minutes' ? 'inline-block' : 'none'
       // Setup scales with domains
       xScale = setScaleX()
       yScale = setScaleY(period === 'minutes' ? 1 : 4)
@@ -214,20 +211,20 @@ function BarChart (containerId, telemetryId) {
 
   // Add controls container
   const controlsContainer = document.createElement('div')
+  controlsContainer.style.display = 'none'
   controlsContainer.className = 'defra-chart-controls'
   container.parentNode.insertBefore(controlsContainer, container)
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
-  segmentedControl.style.display = 'none'
-  segmentedControl.className = 'defra-segmented-control'
+  segmentedControl.className = 'defra-chart-segmented-control'
   segmentedControl.innerHTML = `
-  <div class="defra-segmented-control__segment defra-segmented-control__segment--selected">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" checked/>
+  <div class="defra-chart-segmented-control__segment defra-chart-segmented-control__segment--selected">
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" checked/>
     <label for="timeHours">Hourly</label>
   </div>
-  <div class="defra-segmented-control__segment">
-    <input class="defra-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes"/>
+  <div class="defra-chart-segmented-control__segment">
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
@@ -235,13 +232,14 @@ function BarChart (containerId, telemetryId) {
 
   // Add paging buttons
   const pagingControl = document.createElement('div')
+  pagingControl.style.display = 'none'
   pagingControl.className = 'defra-chart-paging-control'
   const pageBack = document.createElement('button')
   pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
-  pageBack.innerHTML = '<span>Backward</span>'
+  pageBack.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
-  pageForward.innerHTML = '<span>Forward</span>'
+  pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
   pagingControl.appendChild(pageBack)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
@@ -297,18 +295,21 @@ function BarChart (containerId, telemetryId) {
   })
 
   document.addEventListener('click', (e) => {
-    if (e.target.className === 'defra-segmented-control__input') {
+    if (e.target.className === 'defra-chart-segmented-control__input') {
       const siblings = e.target.parentNode.parentNode.children
       for (let i = 0; i < siblings.length; i++) {
-        siblings[i].classList.remove('defra-segmented-control__segment--selected')
+        siblings[i].classList.remove('defra-chart-segmented-control__segment--selected')
       }
-      e.target.parentNode.classList.add('defra-segmented-control__segment--selected')
+      e.target.parentNode.classList.add('defra-chart-segmented-control__segment--selected')
       period = e.target.getAttribute('data-period')
       startDate = new Date()
       startDate.setHours(startDate.getHours() - (period === 'hours' ? 120 : 24))
       startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
       // New xhr request
       xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/${period}`, initChart, 'json')
+    }
+    if (e.target.classList.contains('defra-chart-paging-control__button')) {
+      console.log(e.target.className)
     }
   })
 

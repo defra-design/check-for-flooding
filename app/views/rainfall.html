@@ -27,9 +27,8 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-visually-hidden">Station summary</h2>
-    <div class="defra-flood-statistics">
-      <h2 class="govuk-heading-s govuk-!-margin-top-6 govuk-!-margin-bottom-0">Rainfall totals upto {{ model.time }}</h2>
+    <div class="defra-flood-statistics govuk-!-margin-top-4">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Totals upto {{ model.time }}</h2>
       <dl class="defra-flood-statistics__list">
         <div class="defra-flood-statistics__column-one-third"> 
           <dt class="defra-flood-statistics__key">
@@ -86,7 +85,7 @@
       </table>
       {# Bar chart #}
       <figure class="defra-bar-chart__visualisation" style="display: none" aria-hidden="true"><!-- hidden by default, removed with js -->
-        <figcaption class="govuk-heading-s govuk-!-margin-top-2 govuk-!-margin-bottom-4">Rainfall in millimetres</figcaption>
+        <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Totals over the last 5 days in millimetres</figcaption>
         <div id="bar-chart" class="defra-bar-chart__container" role="presentation"></div>
       </figure>
     </div>
