@@ -92,38 +92,46 @@ function BarChart (containerId, telemetryId) {
 
   const updateToolTipBackground = () => {
     // Set Background size
-    const bg = toolTip.select('rect')
     const text = toolTip.select('text')
+    const txtHeight = Math.round(text.node().getBBox().height) + 23
+    const pathLength = period === 'minutes' ? 182 : 142
+    const pathLeft = `M${pathLength},${(txtHeight / 2) - 8}l-0,-${(txtHeight / 2) - 8}l-${pathLength},0l0,${txtHeight}l${pathLength},0l0,-${(txtHeight / 2) - 8}l8,-8l-8,-8Z`
+    const pathRight = `M8,${(txtHeight / 2) - 8}l0,-${(txtHeight / 2) - 8}l${pathLength},0l-0,${txtHeight}l-${pathLength},0l-0,-${(txtHeight / 2) - 8}l-8,-8l8,-8Z`
+    const pathWidth = pathLength + 8
     // const textWidth = Math.round(text.node().getBBox().width)
-    const textHeight = Math.round(text.node().getBBox().height)
-    bg.attr('width', period === 'minutes' ? 190 : 150).attr('height', textHeight + 23)
-    const toolTipWidth = bg.node().getBBox().width
-    const toolTipHeight = bg.node().getBBox().height
     // Set background left or right position
-    if (toolTipX >= width - (toolTipWidth + 10)) {
+    toolTipText.attr('x', 0).attr('y', 20)
+    if (toolTipX >= width - (pathWidth + 10)) {
       // On the left
-      toolTipX -= (toolTipWidth + 10)
+      toolTipX -= (pathWidth + 3)
+      toolTipPath.attr('d', pathLeft)
+      toolTipValue.attr('x', 12)
+      toolTipDescription.attr('x', 12)
     } else {
       // On the right
-      toolTipX += 10
+      toolTipX += 3
+      toolTipPath.attr('d', pathRight)
+      toolTipValue.attr('x', 20)
+      toolTipDescription.attr('x', 20)
     }
     // Set background above or below position
-    if (toolTipY >= toolTipHeight + 10) {
-      toolTipY -= toolTipHeight + 10
-    } else {
-      toolTipY += 10
-    }
+    const toolTipHeight = toolTipPath.node().getBBox().height
+    const toolTipMarginTop = 10
+    const toolTipMarginBottom = height - (toolTipHeight + 10)
+    toolTipY -= toolTipHeight / 2
+    toolTipY = toolTipY < toolTipMarginTop ? toolTipMarginTop : toolTipY > toolTipMarginBottom ? toolTipMarginBottom : toolTipY
     toolTipX = toolTipX.toFixed(0)
     toolTipY = toolTipY.toFixed(0)
   }
 
   const showTooltip = (e) => {
     const mouseDateTime = e ? scaleBandInvert(xScale)(pointer(e)[0]) : null
-    const dataItem = data.find(x => mouseDateTime ? x.dateTime === mouseDateTime : x.isLatest)
-    // Only need to show toltip when data item changes
-    // if (dataCurrent && dataCurrent.dateTime === dataItem.dateTime) { return }
-    dataCurrent = dataItem
-    toolTip.select('text').selectAll('*').remove()
+    const dataItem = data.find(x => x.dateTime === mouseDateTime)
+    // Choose which value to show
+    if (dataItem) {
+      dataCurrent = dataItem
+    }
+    console.log(e, dataCurrent, !!dataItem)
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
     toolTipY = e ? pointer(e)[1] : 0
@@ -134,8 +142,8 @@ function BarChart (containerId, telemetryId) {
     const date = timeFormat('%e %b')(periodStartDateTime)
     const value = dataCurrent.isValid ? dataCurrent.value + 'mm' + (dataCurrent.isLatest ? ' latest' : '') : 'No data'
     const description = `${timeStart} - ${timeEnd}, ${date}`
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('x', 12).attr('dy', '0.5em').text(value)
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__small').attr('x', 12).attr('dy', '1.4em').text(description)
+    toolTipValue.attr('dy', '0.5em').text(value)
+    toolTipDescription.attr('dy', '1.4em').text(description)
     // Update locator
     locator.attr('transform', 'translate(' + toolTipX + ', 0)').attr('y1', 0).attr('y2', height)
     // Update tooltip left/right background
@@ -260,8 +268,11 @@ function BarChart (containerId, telemetryId) {
   // Add tooltip container
   let toolTipX, toolTipY
   const toolTip = svg.append('g').attr('class', 'tool-tip')
-  toolTip.append('rect').attr('class', 'tool-tip-bg').attr('width', 147)
-  toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
+  // toolTip.append('rect').attr('class', 'tool-tip-bg').attr('width', 147)
+  const toolTipPath = toolTip.append('path').attr('class', 'tool-tip-bg')
+  const toolTipText = toolTip.append('text').attr('class', 'tool-tip-text')
+  const toolTipValue = toolTipText.append('tspan').attr('class', 'tool-tip-text__strong')
+  const toolTipDescription = toolTipText.append('tspan').attr('class', 'tool-tip-text__small')
 
   // Get width and height
   const margin = { top: 0, bottom: 45, left: 0, right: 24 }
@@ -313,11 +324,11 @@ function BarChart (containerId, telemetryId) {
     }
   })
 
-  background.on('mousemove', (e) => {
+  svg.on('mousemove', (e) => {
     showTooltip(e)
   })
 
-  background.on('mouseleave', (e) => {
+  svg.on('mouseleave', (e) => {
     showTooltip(null)
   })
 

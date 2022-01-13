@@ -107,7 +107,7 @@
       fill:white;
       stroke-width: 1;
       stroke: $govuk-secondary-text-colour;
-      shape-rendering: crispEdges;
+      shape-rendering: geometricPrecision;
   }
   .tool-tip-text {
       @include govuk-font($size: 16);
