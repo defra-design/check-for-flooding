@@ -143,7 +143,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics govuk-!-margin-top-4">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Measured at {{ model.time }}</h2>
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Latest measurements at {{ model.time }}</h2>
       <dl class="defra-flood-statistics__list">
       {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.rangeTop and model.station.rangeBottom  %}
