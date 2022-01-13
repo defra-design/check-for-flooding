@@ -1,0 +1,49 @@
+.defra-chart-controls {
+  position: relative;
+}
+.defra-chart-paging-control {
+  position: absolute;
+  right: 20px;
+  top: 0px;
+  @include mq ($from: tablet) {
+    left: 50%;
+    margin-left: -50px;
+  }
+  &__button {
+    border: 0px;
+    background-color: white;
+    margin: 0px;
+    padding: 0px;
+    width: 40px;
+    height: 40px;
+    outline: 3px solid transparent;
+    cursor: pointer;
+  }
+  &__button:focus {
+    background-color: $govuk-focus-colour;
+  }
+  &__button:after {
+    display: inline-block;
+    content: '';
+    border-width: 0 2px 2px 0;
+    width: 8px;
+    height: 8px;
+    border-style: solid;
+    color: $govuk-link-colour;
+  }
+  &__button--forward:after {
+    margin-left: 5px;
+    -webkit-transform: rotate(135deg);
+    -ms-transform: rotate(135deg);
+    transform: rotate(135deg);
+  }
+  &__button--back:after {
+    margin-right: 5px;
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+  }
+  &__button:focus:after {
+    color: $govuk-focus-text-colour;
+  }
+}

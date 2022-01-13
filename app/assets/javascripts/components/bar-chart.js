@@ -212,6 +212,11 @@ function BarChart (containerId, telemetryId) {
   startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
   endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
 
+  // Add controls container
+  const controlsContainer = document.createElement('div')
+  controlsContainer.className = 'defra-chart-controls'
+  container.parentNode.insertBefore(controlsContainer, container)
+
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.style.display = 'none'
@@ -225,7 +230,20 @@ function BarChart (containerId, telemetryId) {
     <input class="defra-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
-  container.parentNode.insertBefore(segmentedControl, container)
+  // container.parentNode.insertBefore(segmentedControl, container)
+  controlsContainer.appendChild(segmentedControl)
+
+  // Add paging buttons
+  const pagingControl = document.createElement('div')
+  pagingControl.className = 'defra-chart-paging-control'
+  const pageBack = document.createElement('button')
+  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
+  const pageForward = document.createElement('button')
+  pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--back'
+  pagingControl.appendChild(pageBack)
+  pagingControl.appendChild(pageForward)
+  // container.parentNode.insertBefore(pagingControl, container)
+  controlsContainer.appendChild(pagingControl)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
