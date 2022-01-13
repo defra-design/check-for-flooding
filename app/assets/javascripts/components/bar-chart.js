@@ -264,7 +264,7 @@ function BarChart (containerId, telemetryId) {
   toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
 
   // Get width and height
-  const margin = { top: 0, bottom: 45, left: 0, right: 34 }
+  const margin = { top: 0, bottom: 45, left: 0, right: 24 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
