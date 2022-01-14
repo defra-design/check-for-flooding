@@ -97,23 +97,30 @@ function BarChart (containerId, telemetryId) {
     const pathLength = period === 'minutes' ? 182 : 142
     const pathLeft = `M${pathLength},${(txtHeight / 2) - 8}l-0,-${(txtHeight / 2) - 8}l-${pathLength},0l0,${txtHeight}l${pathLength},0l0,-${(txtHeight / 2) - 8}l8,-8l-8,-8Z`
     const pathRight = `M8,${(txtHeight / 2) - 8}l0,-${(txtHeight / 2) - 8}l${pathLength},0l-0,${txtHeight}l-${pathLength},0l-0,-${(txtHeight / 2) - 8}l-8,-8l8,-8Z`
+    const pathCentre = `M${pathLength},${txtHeight}l0,-${txtHeight}l-${pathLength},0l0,${txtHeight}l${pathLength},0Z`
     const pathWidth = pathLength + 8
     // const textWidth = Math.round(text.node().getBBox().width)
-    // Set background left or right position
+    // Set tooltip layout
     toolTipText.attr('x', 0).attr('y', 20)
     if (toolTipX >= width - (pathWidth + 10)) {
-      // On the left
+      // Tooltip on the left
       toolTipX -= (pathWidth + 3)
       toolTipPath.attr('d', pathLeft)
       toolTipValue.attr('x', 12)
       toolTipDescription.attr('x', 12)
     } else {
-      // On the right
+      // Tooltip on the right
       toolTipX += 3
       toolTipPath.attr('d', pathRight)
       toolTipValue.attr('x', 20)
       toolTipDescription.attr('x', 20)
     }
+    // Tooltip centred
+    if (toolTipX <= 0) {
+      toolTipX = 0
+      toolTipPath.attr('d', pathCentre)
+    }
+
     // Set background above or below position
     const toolTipHeight = toolTipPath.node().getBBox().height
     const toolTipMarginTop = 10
@@ -124,17 +131,16 @@ function BarChart (containerId, telemetryId) {
     toolTipY = toolTipY.toFixed(0)
   }
 
-  const showTooltip = (e) => {
-    const mouseDateTime = e ? scaleBandInvert(xScale)(pointer(e)[0]) : null
-    const dataItem = data.find(x => x.dateTime === mouseDateTime)
+  const showTooltip = (event) => {
     // Choose which value to show
-    if (e && dataItem) {
-      dataCurrent = dataItem
-    }
-    console.log(`HasEvent: ${!!e}, HasDataCurrent: ${!!dataCurrent}, HasDataItem: ${!!dataItem}`)
+    const mouseDateTime = event ? scaleBandInvert(xScale)(pointer(event)[0]) : null
+    const dataItem = mouseDateTime ? data.find(x => x.dateTime === mouseDateTime) : null
+    dataCurrent = event && dataItem ? dataItem : data.find(x => x.isLatest)
+    if (!dataCurrent) return
+
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
-    toolTipY = e ? pointer(e)[1] : 0
+    toolTipY = event ? pointer(event)[1] : 0
     const periodStartDateTime = timeMinute.offset(new Date(dataCurrent.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
