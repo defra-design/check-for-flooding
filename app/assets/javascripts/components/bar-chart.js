@@ -163,6 +163,25 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', !dataCurrent.isLatest)
   }
 
+  const setPeriod = (event) => {
+    const siblings = event.target.parentNode.parentNode.children
+    for (let i = 0; i < siblings.length; i++) {
+      siblings[i].classList.remove('defra-chart-segmented-control__segment--selected')
+    }
+    event.target.parentNode.classList.add('defra-chart-segmented-control__segment--selected')
+    period = event.target.getAttribute('data-period')
+    startDate = new Date()
+    startDate.setHours(startDate.getHours() - (period === 'hours' ? 120 : 24))
+    startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
+    // New xhr request
+    xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/${period}`, initChart, 'json')
+  }
+
+  const setPage = (event) => {
+    const direction = event.target.getAttribute('data-direction')
+    console.log(direction)
+  }
+
   // const hideTooltip = () => {
   //   svg.selectAll('.bar--selected').classed('bar--selected', false)
   //   toolTip.classed('tool-tip--visible', false)
@@ -250,9 +269,11 @@ function BarChart (containerId, telemetryId) {
   pagingControl.className = 'defra-chart-paging-control'
   const pageBack = document.createElement('button')
   pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
+  pageBack.setAttribute('data-direction', 'backward')
   pageBack.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
+  pageForward.setAttribute('data-direction', 'forward')
   pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
   pagingControl.appendChild(pageBack)
   pagingControl.appendChild(pageForward)
@@ -313,20 +334,10 @@ function BarChart (containerId, telemetryId) {
 
   document.addEventListener('click', (e) => {
     if (e.target.className === 'defra-chart-segmented-control__input') {
-      const siblings = e.target.parentNode.parentNode.children
-      for (let i = 0; i < siblings.length; i++) {
-        siblings[i].classList.remove('defra-chart-segmented-control__segment--selected')
-      }
-      e.target.parentNode.classList.add('defra-chart-segmented-control__segment--selected')
-      period = e.target.getAttribute('data-period')
-      startDate = new Date()
-      startDate.setHours(startDate.getHours() - (period === 'hours' ? 120 : 24))
-      startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
-      // New xhr request
-      xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/${period}`, initChart, 'json')
+      setPeriod(e)
     }
     if (e.target.classList.contains('defra-chart-paging-control__button')) {
-      console.log(e.target.className)
+      setPage(e)
     }
   })
 
