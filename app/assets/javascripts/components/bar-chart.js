@@ -163,6 +163,14 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', !dataCurrent.isLatest)
   }
 
+  const togglePagingControls = () => {
+    pagingControl.style.display = period === 'minutes' ? 'inline-block' : 'none'
+    if (period !== 'minutes') return
+    pageForward.disabled = paging.nextStart && paging.nextEnd
+    pageBackWard.disabled = paging.previousStart && paging.previousEnd
+    console.log(paging)
+  }
+
   const setPeriod = (event) => {
     const siblings = event.target.parentNode.parentNode.children
     for (let i = 0; i < siblings.length; i++) {
@@ -213,9 +221,15 @@ function BarChart (containerId, telemetryId) {
       console.log('Error: ' + err)
     } else {
       data = response.values
-      // Show period navigation
+      paging = {
+        nextStart: response.pageNextStartDateTime,
+        nextEnd: response.pageNextEndDateTime,
+        previousStart: response.pagePreviousStartDateTime,
+        previousEnd: response.pagePreviousEndDateTime
+      }
+      // Show controls
       controlsContainer.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
-      pagingControl.style.display = period === 'minutes' ? 'inline-block' : 'none'
+      togglePagingControls()
       // Setup scales with domains
       xScale = setScaleX()
       yScale = setScaleY(period === 'minutes' ? 1 : 4)
@@ -241,6 +255,7 @@ function BarChart (containerId, telemetryId) {
   startDate.setHours(startDate.getHours() - 120)
   startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
   endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
+  let paging
 
   // Add controls container
   const controlsContainer = document.createElement('div')
@@ -267,15 +282,15 @@ function BarChart (containerId, telemetryId) {
   const pagingControl = document.createElement('div')
   pagingControl.style.display = 'none'
   pagingControl.className = 'defra-chart-paging-control'
-  const pageBack = document.createElement('button')
-  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
-  pageBack.setAttribute('data-direction', 'backward')
-  pageBack.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
+  const pageBackWard = document.createElement('button')
+  pageBackWard.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
+  pageBackWard.setAttribute('data-direction', 'backward')
+  pageBackWard.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
   pageForward.setAttribute('data-direction', 'forward')
   pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
-  pagingControl.appendChild(pageBack)
+  pagingControl.appendChild(pageBackWard)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
   controlsContainer.appendChild(pagingControl)

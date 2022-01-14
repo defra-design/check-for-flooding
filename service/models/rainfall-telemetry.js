@@ -1,32 +1,36 @@
 const moment = require('moment-timezone')
 
 class RainfallTelemetry {
-  constructor (valuesLatest, valuesRange, rangeEndDate, period) {
-    // Get latest reading
+  constructor (valuesLatest, valuesRange, pageEndDate, period) {
+    // Set how many days we want to restrict
+    const dataLimit = 5
+
+    // Get latest reading and latest hour
     const latestDateTime = valuesLatest[0].dateTime
     const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
 
-    // Set range end rounded down to latest completed 15 minute period
-    const rangeEndDateRounded = moment(rangeEndDate).minute(Math.floor(moment(rangeEndDate).minute() / 15) * 15).second(0).milliseconds(0).toISOString()
+    // Get page range end rounded down to latest completed 15 minute period
+    const pageEndDateRounded = moment(pageEndDate).minute(Math.floor(moment(pageEndDate).minute() / 15) * 15).second(0).milliseconds(0).toISOString()
 
-    // Check if raw telemetry is minutes or hours
-    const isMinutes = moment(valuesRange[0].dateTime).diff(moment(valuesRange[1].dateTime), 'minutes') <= 15
+    // Get duration of values
+    const valueDuration = moment(valuesRange[0].dateTime).diff(moment(valuesRange[1].dateTime), 'minutes')
+    const isMinutes = valueDuration === 15
 
-    // Set available periods
+    // Get available time periods, some data is hourly only
     const availablePeriods = ['hours']
     if (isMinutes) {
       availablePeriods.push('minutes')
     }
 
-    // Add properties to values range
+    // Add additional properties to values
     valuesRange.forEach(value => {
       value.isValid = true
       value.isLatest = value.dateTime === latestDateTime
     })
 
     // Extend telemetry upto latest interval, could be 15 or 60 minute intervals
-    while (moment(valuesRange[0].dateTime).isBefore(rangeEndDateRounded)) {
-      const nextDateTime = moment(valuesRange[0].dateTime).add(isMinutes ? 15 : 60, 'minutes').toDate()
+    while (moment(valuesRange[0].dateTime).isBefore(pageEndDateRounded)) {
+      const nextDateTime = moment(valuesRange[0].dateTime).add(valueDuration, 'minutes').toDate()
       valuesRange.unshift({
         dateTime: nextDateTime,
         value: 0,
@@ -35,7 +39,7 @@ class RainfallTelemetry {
       })
     }
 
-    // If hourly requested and raw telemetry is minutes then batch data into hourly totals
+    // If hourly requested and raw telemetry is in minutes then batch data into hourly totals
     const batchedHours = []
     if (period === 'hours') {
       let batchTotal = 0
@@ -55,7 +59,24 @@ class RainfallTelemetry {
       })
     }
 
-    // Set readings
+    // Set next/previous page dates
+    const nowDateRounded = moment().minute(Math.floor(moment().minute() / 15) * 15).second(0).milliseconds(0)
+    const dataStartDateRounded = moment(nowDateRounded.toDate()).subtract(dataLimit, 'days')
+    const startDate = valuesRange[valuesRange.length - 1].dateTime
+    const endDate = valuesRange[0].dateTime
+    const duration = moment.duration(moment(endDate).diff(startDate)).asMinutes()
+    let nextStartDate = moment(endDate).add(valueDuration, 'minutes')
+    let nextEndDate = moment(endDate).add(duration + valueDuration, 'minutes')
+    let previousEndDate = moment(startDate).subtract(valueDuration, 'minutes')
+    let previousStartDate = moment(startDate).subtract(duration + valueDuration, 'minutes')
+
+    // Clear dates if pages shouldn't exist
+    nextStartDate = nextStartDate <= nowDateRounded ? nextStartDate.toDate() : null
+    previousEndDate = previousEndDate > dataStartDateRounded ? previousEndDate.toDate() : null
+    if (!nextStartDate) nextEndDate = null
+    if (!previousEndDate) previousStartDate = null
+
+    // Set values to hourly or minute readings
     let values
     if (period === 'hours') {
       values = isMinutes ? batchedHours : valuesRange
@@ -71,6 +92,10 @@ class RainfallTelemetry {
     this.period = period
     this.availablePeriods = availablePeriods
     this.values = values
+    this.pagePreviousStartDateTime = previousStartDate
+    this.pagePreviousEndDateTime = previousEndDate
+    this.pageNextStartDateTime = nextStartDate
+    this.pageNextEndDateTime = nextEndDate
   }
 }
 module.exports = RainfallTelemetry

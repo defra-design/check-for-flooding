@@ -56,6 +56,8 @@
     outline: 3px solid transparent;
     color: $govuk-link-colour;
     @include govuk-font($size: 16);
+  }
+  &__button:not([disabled]) {
     cursor: pointer;
   }
   &__button:focus {
