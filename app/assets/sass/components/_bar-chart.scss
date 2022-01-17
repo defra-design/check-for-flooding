@@ -21,16 +21,6 @@
   position:relative;
   margin:0;
   outline: 0px;
-  &:focus .background {
-    stroke: $govuk-focus-colour;
-    stroke-width: 3;
-    shape-rendering: crispEdges;
-  }
-  &:focus .border {
-    stroke: govuk-colour('black');
-    stroke-width: 3;
-    shape-rendering: crispEdges;
-  }
 }
 .defra-bar-chart svg {
   position:relative;
@@ -39,9 +29,6 @@
   width:100%;
   @include mq ($from: desktop) {
     height:450px;
-  }
-  .background, .border {
-    fill: transparent;
   }
   .axis.y { 
     @include govuk-font($size: 14, $tabular: true);
@@ -67,6 +54,9 @@
   }
   .bar {
     pointer-events: none;
+  }
+  .bar__fill {
+    fill: govuk-colour('blue');
   }
   .bar__fill {
     fill: govuk-colour('blue');
@@ -99,34 +89,47 @@
   // Locator line
   .locator {
     visibility: hidden;
-  }
-  .locator.locator--visible {
-    visibility: visible;
-    pointer-events: none;
-    stroke-width: 1;
-    stroke: govuk-colour('mid-grey');
-    shape-rendering: crispEdges;
+    &--visible {
+      visibility: visible;
+      pointer-events: none;
+    }
+    &__background {
+      visibility: hidden;
+    }
+    &__background--visible {
+      visibility: visible;
+      fill: $govuk-focus-colour;
+    }
+    &__line {
+      visibility: hidden;
+      stroke-width: 1;
+      stroke: govuk-colour('mid-grey');
+      shape-rendering: crispEdges;
+    }
+    &__line--visible {
+      visibility: visible;
+    }
   }
   // Tooltip
-  .tool-tip {
+  .tooltip {
     visibility: hidden;
   }
-  .tool-tip--visible {
+  .tooltip--visible {
       visibility: visible;
   }
-  .tool-tip-bg {
+  .tooltip-bg {
       fill:white;
       stroke-width: 1;
       stroke: $govuk-secondary-text-colour;
       shape-rendering: geometricPrecision;
   }
-  .tool-tip-text {
+  .tooltip-text {
       @include govuk-font($size: 16);
   }
-  .tool-tip-text__strong {
+  .tooltip-text__strong {
       @include govuk-font($size: 19, $weight:bold);
   }
-  .tool-tip-text__small {
+  .tooltip-text__small {
     @include govuk-font($size: 14);
   }
 }
