@@ -3,3 +3,7 @@ mark {
   font-weight: bold;
   color: inherit;
 }
+.govuk-caption-s {
+  @extend .govuk-caption-m;
+  @include govuk-font($size: 16);
+}
