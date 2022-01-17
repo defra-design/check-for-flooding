@@ -44,7 +44,6 @@ module.exports = {
     // Round start and end dates to completed 15 minute interval
     const pageStartDateRounded = moment(pageStartDate).minute(Math.floor(moment(pageStartDate).minute() / 15) * 15).second(0).milliseconds(0)
     const pageEndDateRounded = moment(pageEndDate).minute(Math.floor(moment(pageEndDate).minute() / 15) * 15).second(0).milliseconds(0)
-    console.log(pageStartDateRounded, pageEndDateRounded)
 
     // Get readings
     uri = baseUri + `?_sorted&startdate=${pageStartDate.toISOString().split('T')[0]}&enddate=${pageEndDate.toISOString().split('T')[0]}`
@@ -57,7 +56,7 @@ module.exports = {
           value: item.value
         }
       // Public api date range doesnt include time so we need additional filtering
-      }).filter(item => moment(item.dateTime) > pageStartDateRounded && moment(item.dateTime) <= pageEndDateRounded)
+      }).filter(item => moment(item.dateTime) >= pageStartDateRounded && moment(item.dateTime) <= pageEndDateRounded)
     } else {
       return response
     }

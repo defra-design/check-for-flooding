@@ -14,6 +14,7 @@ function BarChart (containerId, telemetryId) {
   const renderChart = () => {
     // Mobile media query
     // isMobile = mobileMediaQuery.matches
+
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
@@ -131,12 +132,17 @@ function BarChart (containerId, telemetryId) {
     toolTipY = toolTipY.toFixed(0)
   }
 
-  const showTooltip = (event) => {
+  const toggleTooltip = (event) => {
     // Choose which value to show
     const mouseDateTime = event ? scaleBandInvert(xScale)(pointer(event)[0]) : null
     const dataItem = mouseDateTime ? data.find(x => x.dateTime === mouseDateTime) : null
     dataCurrent = event && dataItem ? dataItem : data.find(x => x.isLatest)
-    if (!dataCurrent) return
+    if (!dataCurrent) {
+      svg.selectAll('.bar--selected').classed('bar--selected', false)
+      toolTip.classed('tool-tip--visible', false)
+      locator.classed('locator--visible', false)
+      return
+    }
 
     // Get tooltip position and content
     toolTipX = Math.round(xScale(dataCurrent.dateTime)) + (xScale.bandwidth() / 2)
@@ -166,9 +172,8 @@ function BarChart (containerId, telemetryId) {
   const togglePagingControls = () => {
     pagingControl.style.display = period === 'minutes' ? 'inline-block' : 'none'
     if (period !== 'minutes') return
-    pageForward.disabled = paging.nextStart && paging.nextEnd
-    pageBackWard.disabled = paging.previousStart && paging.previousEnd
-    console.log(paging)
+    pageForward.disabled = !(paging.nextStart && paging.nextEnd)
+    pageBackWard.disabled = !(paging.previousStart && paging.previousEnd)
   }
 
   const setPeriod = (event) => {
@@ -187,14 +192,10 @@ function BarChart (containerId, telemetryId) {
 
   const setPage = (event) => {
     const direction = event.target.getAttribute('data-direction')
-    console.log(direction)
+    const pageStartDate = direction === 'forward' ? paging.nextStart : paging.previousStart
+    const pageEndDate = direction === 'forward' ? paging.nextEnd : paging.previousEnd
+    xhr(`/service/telemetry/rainfall/${telemetryId}/${pageStartDate}/${pageEndDate}/minutes`, initChart, 'json')
   }
-
-  // const hideTooltip = () => {
-  //   svg.selectAll('.bar--selected').classed('bar--selected', false)
-  //   toolTip.classed('tool-tip--visible', false)
-  //   locator.classed('locator--visible', false)
-  // }
 
   // D3 doesnt currently support inverting of a scaleBand
   const scaleBandInvert = (scale) => {
@@ -237,7 +238,7 @@ function BarChart (containerId, telemetryId) {
       renderBars()
       renderChart()
       // Show default tooltip
-      showTooltip(null)
+      toggleTooltip(null)
     }
   }
 
@@ -328,7 +329,7 @@ function BarChart (containerId, telemetryId) {
   // let isMobile
 
   // Get mobile media query list
-  const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
+  // const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
   // XMLHttpRequest
   xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/hours`, initChart, 'json')
@@ -337,14 +338,14 @@ function BarChart (containerId, telemetryId) {
   // Events
   //
 
-  mobileMediaQuery.addEventListener('change', renderChart)
+  // mobileMediaQuery.addEventListener('change', renderChart)
 
   window.addEventListener('resize', () => {
     const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
     renderChart()
-    showTooltip(null)
+    toggleTooltip(null)
   })
 
   document.addEventListener('click', (e) => {
@@ -357,11 +358,11 @@ function BarChart (containerId, telemetryId) {
   })
 
   svg.on('mousemove', (e) => {
-    showTooltip(e)
+    toggleTooltip(e)
   })
 
   svg.on('mouseleave', (e) => {
-    showTooltip(null)
+    toggleTooltip(null)
   })
 
   this.chart = chart

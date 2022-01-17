@@ -65,16 +65,10 @@ class RainfallTelemetry {
     const startDate = valuesRange[valuesRange.length - 1].dateTime
     const endDate = valuesRange[0].dateTime
     const duration = moment.duration(moment(endDate).diff(startDate)).asMinutes()
-    let nextStartDate = moment(endDate).add(valueDuration, 'minutes')
-    let nextEndDate = moment(endDate).add(duration + valueDuration, 'minutes')
-    let previousEndDate = moment(startDate).subtract(valueDuration, 'minutes')
-    let previousStartDate = moment(startDate).subtract(duration + valueDuration, 'minutes')
-
-    // Clear dates if pages shouldn't exist
-    nextStartDate = nextStartDate <= nowDateRounded ? nextStartDate.toDate() : null
-    previousEndDate = previousEndDate > dataStartDateRounded ? previousEndDate.toDate() : null
-    if (!nextStartDate) nextEndDate = null
-    if (!previousEndDate) previousStartDate = null
+    const pageNextStartDate = moment(endDate).add(valueDuration, 'minutes')
+    const pageNextEndDate = moment(endDate).add(duration + valueDuration, 'minutes')
+    const pagePreviousEndDate = moment(startDate).subtract(valueDuration, 'minutes')
+    const pagePreviousStartDate = moment(startDate).subtract(duration + valueDuration, 'minutes')
 
     // Set values to hourly or minute readings
     let values
@@ -92,10 +86,16 @@ class RainfallTelemetry {
     this.period = period
     this.availablePeriods = availablePeriods
     this.values = values
-    this.pagePreviousStartDateTime = previousStartDate
-    this.pagePreviousEndDateTime = previousEndDate
-    this.pageNextStartDateTime = nextStartDate
-    this.pageNextEndDateTime = nextEndDate
+    // Format dates and set to null if page is invalid
+    this.pageNextStartDateTime = pageNextStartDate <= nowDateRounded ? pageNextStartDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
+    this.pageNextEndDateTime = pageNextStartDate <= nowDateRounded ? pageNextEndDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
+    this.pagePreviousStartDateTime = pagePreviousEndDate > dataStartDateRounded ? pagePreviousStartDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
+    this.pagePreviousEndDateTime = pagePreviousEndDate > dataStartDateRounded ? pagePreviousEndDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
+
+    console.log('=========')
+    console.log('nextStart: ', this.pageNextStartDateTime, 'nextEnd: ', this.pageNextEndDateTime)
+    console.log('currentStart: ', startDate, 'currentEnd: ', endDate)
+    console.log('previousStart: ', this.pagePreviousStartDateTime, 'previousEnd: ', this.pagePreviousEndDateTime)
   }
 }
 module.exports = RainfallTelemetry

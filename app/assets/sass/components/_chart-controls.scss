@@ -72,6 +72,9 @@
     border-style: solid;
     color: $govuk-link-colour;
   }
+  &__button:disabled:after {
+    color: govuk-colour('mid-grey');
+  }
   &__button--forward:after {
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
