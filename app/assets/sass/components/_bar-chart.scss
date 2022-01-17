@@ -20,6 +20,17 @@
 .defra-bar-chart__container {
   position:relative;
   margin:0;
+  outline: 0px;
+  &:focus .background {
+    stroke: $govuk-focus-colour;
+    stroke-width: 3;
+    shape-rendering: crispEdges;
+  }
+  &:focus .border {
+    stroke: govuk-colour('black');
+    stroke-width: 3;
+    shape-rendering: crispEdges;
+  }
 }
 .defra-bar-chart svg {
   position:relative;
@@ -29,7 +40,7 @@
   @include mq ($from: desktop) {
     height:450px;
   }
-  .background {
+  .background, .border {
     fill: transparent;
   }
   .axis.y { 

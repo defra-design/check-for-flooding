@@ -28,7 +28,6 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics govuk-!-margin-top-4">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Totals upto {{ model.time }}</h2>
       <dl class="defra-flood-statistics__list">
         <div class="defra-flood-statistics__column-one-third"> 
           <dt class="defra-flood-statistics__key">
@@ -41,7 +40,7 @@
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
           <dt class="defra-flood-statistics__key">
-            6 hour
+            6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.latest6hr }}mm
@@ -50,7 +49,7 @@
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
           <dt class="defra-flood-statistics__key">
-            24 hour
+            24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.latest24hr }}mm
@@ -58,6 +57,7 @@
           </dd>
         </div>
       </dl>
+      <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Rainfall upto {{ model.time }}. We get measurements more often as the risk of flooding increases.</h2>
     </div>
   </div>
 </div>
@@ -85,13 +85,15 @@
       </table>
       {# Bar chart #}
       <figure class="defra-bar-chart__visualisation" style="display: none" aria-hidden="true"><!-- hidden by default, removed with js -->
-        <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Totals over the last 5 days in millimetres</figcaption>
-        <div id="bar-chart" class="defra-bar-chart__container" role="presentation"></div>
+        <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</figcaption>
+        <div id="bar-chart" class="defra-bar-chart__container" role="application" tabindex="0"></div>
       </figure>
-      <p class="govuk-body-s govuk-!-margin-top-2">We take measurements more often as the risk of flooding increases.</p>
     </div>
   </div>
 </div>
+
+{# Download CSV #}
+<a href="" class="defra-button-download-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">Download rainfall data CSV 123KB</a>
 
 {# Station Details #}
 <div class="govuk-grid-row">
@@ -137,6 +139,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
+    {% include "partials/social.html" %}
     {% include "partials/context-footer.html" %}
     {% include "partials/related-content.html" %}
   </div>

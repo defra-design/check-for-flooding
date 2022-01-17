@@ -57,7 +57,8 @@ function BarChart (containerId, telemetryId) {
       .attr('height', (d) => { return height - yScale(d.value) })
 
     // Position background
-    background.attr('x', 0).attr('y', 0).attr('width', width).attr('height', height)
+    background.attr('x', -4).attr('y', -4).attr('width', width + 8).attr('height', height + 8)
+    border.attr('x', -1).attr('y', -1).attr('width', width + 2).attr('height', height + 2)
 
     // Draw latest reading line
     const xLatest = Math.round(xScale.bandwidth() / 2)
@@ -299,6 +300,7 @@ function BarChart (containerId, telemetryId) {
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
   const background = svg.append('rect').attr('class', 'background')
+  const border = svg.append('rect').attr('class', 'border')
   svg.append('g').attr('class', 'y grid')
   svg.append('g').attr('class', 'x axis')
   svg.append('g').attr('class', 'y axis')
@@ -318,7 +320,7 @@ function BarChart (containerId, telemetryId) {
   const toolTipDescription = toolTipText.append('tspan').attr('class', 'tool-tip-text__small')
 
   // Get width and height
-  const margin = { top: 0, bottom: 45, left: 0, right: 24 }
+  const margin = { top: 0, bottom: 45, left: 0, right: 26 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
