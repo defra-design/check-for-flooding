@@ -5,7 +5,7 @@ const moment = require('moment-timezone')
 module.exports = {
   getRainfall: async (id, pageStart, pageEnd, period) => {
     // Set how many days we want to restrict
-    const dataLimit = 5
+    const dataRangeLimit = 5
 
     const baseUri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${id}/readings`
 
@@ -24,7 +24,7 @@ module.exports = {
       return response
     }
     // Ensure start and end dates are valid
-    const dataStartDate = moment().subtract(dataLimit, 'days')
+    const dataStartDate = moment().subtract(dataRangeLimit, 'days')
     const dataEndDate = moment()
     let pageStartDate = moment(pageStart)
     let pageEndDate = moment(pageEnd)
@@ -38,7 +38,7 @@ module.exports = {
       pageStartDate = dataStartDate
       pageEndDate = moment(dataStartDate.toDate()).add(duration, 'minutes')
     }
-    // Ensure start and end dates are within data
+    // Ensure start and end dates are within data range
     pageStartDate = pageStartDate < dataStartDate ? dataStartDate : pageStartDate
     pageEndDate = pageEndDate > dataEndDate ? dataEndDate : pageEndDate
     // Round start and end dates to completed 15 minute interval

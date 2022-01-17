@@ -3,7 +3,7 @@ const moment = require('moment-timezone')
 class RainfallTelemetry {
   constructor (valuesLatest, valuesRange, pageEndDate, period) {
     // Set how many days we want to restrict
-    const dataLimit = 5
+    const dataRangeLimit = 5
 
     // Get latest reading and latest hour
     const latestDateTime = valuesLatest[0].dateTime
@@ -61,7 +61,7 @@ class RainfallTelemetry {
 
     // Set next/previous page dates
     const nowDateRounded = moment().minute(Math.floor(moment().minute() / 15) * 15).second(0).milliseconds(0)
-    const dataStartDateRounded = moment(nowDateRounded.toDate()).subtract(dataLimit, 'days')
+    const dataStartDateRounded = moment(nowDateRounded.toDate()).subtract(dataRangeLimit, 'days')
     const startDate = valuesRange[valuesRange.length - 1].dateTime
     const endDate = valuesRange[0].dateTime
     const duration = moment.duration(moment(endDate).diff(startDate)).asMinutes()
@@ -91,11 +91,6 @@ class RainfallTelemetry {
     this.pageNextEndDateTime = pageNextStartDate <= nowDateRounded ? pageNextEndDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
     this.pagePreviousStartDateTime = pagePreviousEndDate > dataStartDateRounded ? pagePreviousStartDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
     this.pagePreviousEndDateTime = pagePreviousEndDate > dataStartDateRounded ? pagePreviousEndDate.toDate().toISOString().replace(/.\d+Z$/g, 'Z') : null
-
-    console.log('=========')
-    console.log('nextStart: ', this.pageNextStartDateTime, 'nextEnd: ', this.pageNextEndDateTime)
-    console.log('currentStart: ', startDate, 'currentEnd: ', endDate)
-    console.log('previousStart: ', this.pagePreviousStartDateTime, 'previousEnd: ', this.pagePreviousEndDateTime)
   }
 }
 module.exports = RainfallTelemetry
