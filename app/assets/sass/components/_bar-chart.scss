@@ -1,11 +1,8 @@
 // Bar graph
-.js-enabled .defra-bar-chart__visualisation {
+.js-enabled .defra-bar-chart {
   position:relative;
   display: block !important;
   margin: 0;
-}
-.js-enabled .defra-bar-chart__table {
-  @extend .govuk-visually-hidden;
 }
 .defra-bar-chart__caption {
   display:block;

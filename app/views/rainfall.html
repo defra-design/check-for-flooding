@@ -57,38 +57,17 @@
           </dd>
         </div>
       </dl>
-      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Rainfall upto {{ model.time }}. We get measurements more often as the risk of flooding increases.</h2>
+      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Latest reading at {{ model.time }}. We get measurements more often as the risk of flooding increases.</h2>
     </div>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    {# Data table #}
-    <div class="defra-bar-chart">
-      <table class="govuk-table defra-bar-chart__table">
-        <caption class="govuk-table__caption govuk-table__caption--s govuk-!-margin-top-4">Rainfall in millimetres</caption>
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Period</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Accumulation</th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-          {% for item in model.telemetry.hourly %}
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">{{ item.dateTimeHour }}</th>
-            <td class="govuk-table__cell govuk-table__cell--numeric">{{ item.value }}mm</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      {# Bar chart #}
-      <figure class="defra-bar-chart__visualisation" style="display: none" aria-hidden="true"><!-- hidden by default, removed with js -->
-        <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</figcaption>
-        <div id="bar-chart" class="defra-bar-chart__container" role="application" tabindex="0"></div>
-      </figure>
-    </div>
+    <figure class="defra-bar-chart" style="display: none"><!-- hidden by default, removed with js -->
+      <figcaption class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</figcaption>
+      <div id="bar-chart" class="defra-bar-chart__container" role="application" tabindex="0"></div>
+    </figure>
   </div>
 </div>
 

@@ -88,7 +88,7 @@ function BarChart (containerId, telemetryId) {
     return scaleLinear().domain([0, maxData])
   }
 
-  const updatetooltipBackground = () => {
+  const setTooltipPosition = (x, y) => {
     // Set Background size
     const text = tooltip.select('text')
     const txtHeight = Math.round(text.node().getBBox().height) + 23
@@ -97,52 +97,41 @@ function BarChart (containerId, telemetryId) {
     const pathRight = `M8,${(txtHeight / 2) - 8}l0,-${(txtHeight / 2) - 8}l${pathLength},0l-0,${txtHeight}l-${pathLength},0l-0,-${(txtHeight / 2) - 8}l-8,-8l8,-8Z`
     const pathCentre = `M${pathLength},${txtHeight}l0,-${txtHeight}l-${pathLength},0l0,${txtHeight}l${pathLength},0Z`
     const pathWidth = pathLength + 8
-    // const textWidth = Math.round(text.node().getBBox().width)
     // Set tooltip layout
     tooltipText.attr('x', 0).attr('y', 20)
-    if (tooltipX >= width - (pathWidth + 10)) {
+    if (x >= width - (pathWidth + 10)) {
       // tooltip on the left
-      tooltipX -= (pathWidth + 3)
+      x -= (pathWidth + 3)
       tooltipPath.attr('d', pathLeft)
       tooltipValue.attr('x', 12)
       tooltipDescription.attr('x', 12)
     } else {
       // tooltip on the right
-      tooltipX += 3
+      x += 3
       tooltipPath.attr('d', pathRight)
       tooltipValue.attr('x', 20)
       tooltipDescription.attr('x', 20)
     }
     // tooltip centred
-    if (tooltipX <= 0) {
-      tooltipX = 0
+    if (x <= 0) {
+      x = 0
       tooltipPath.attr('d', pathCentre)
     }
-
     // Set background above or below position
     const tooltipHeight = tooltipPath.node().getBBox().height
     const tooltipMarginTop = 10
     const tooltipMarginBottom = height - (tooltipHeight + 10)
-    tooltipY -= tooltipHeight / 2
-    tooltipY = tooltipY < tooltipMarginTop ? tooltipMarginTop : tooltipY > tooltipMarginBottom ? tooltipMarginBottom : tooltipY
-    tooltipX = tooltipX.toFixed(0)
-    tooltipY = tooltipY.toFixed(0)
+    y -= tooltipHeight / 2
+    y = y < tooltipMarginTop ? tooltipMarginTop : y > tooltipMarginBottom ? tooltipMarginBottom : y
+    tooltip.attr('transform', 'translate(' + x.toFixed(0) + ',' + y.toFixed(0) + ')')
+    tooltip.classed('tooltip--visible', true)
+    locatorLine.classed('locator__line--visible', !dataTooltip.isLatest)
   }
 
-  const toggleTooltip = (event) => {
+  const showTooltip = (tooltipY = 10) => {
     // Choose which value to show
-    const mouseDateTime = event ? scaleBandInvert(xScale)(pointer(event)[0]) : null
-    const dataItem = mouseDateTime ? data.find(x => x.dateTime === mouseDateTime) : null
-    dataTooltip = event && dataItem ? dataItem : data.find(x => x.isLatest)
-    if (!dataTooltip) {
-      svg.selectAll('.bar--selected').classed('bar--selected', false)
-      tooltip.classed('tooltip--visible', false)
-      locator.classed('locator--visible', false)
-      return
-    }
+    if (!dataTooltip) return
     // Get tooltip position and content
-    tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
-    tooltipY = event ? pointer(event)[1] : 0
     const periodStartDateTime = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     const timeStart = formatTime(periodStartDateTime).toLowerCase()
@@ -156,15 +145,20 @@ function BarChart (containerId, telemetryId) {
     locator.attr('transform', 'translate(' + Math.round(xScale(dataTooltip.dateTime)) + ', 0)')
     locatorBackground.attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
     locatorLine.attr('transform', 'translate(' + Math.round(xScale.bandwidth() / 2) + ', 0)').attr('y1', 0).attr('y2', height)
-    // Update tooltip left/right background
-    updatetooltipBackground()
     // Update bar selected state
     svg.selectAll('.bar--selected').classed('bar--selected', false)
     svg.select('[data-datetime="' + dataTooltip.dateTime + '"]').classed('bar--selected', true)
     // Update tooltip location
-    tooltip.attr('transform', 'translate(' + tooltipX + ',' + tooltipY + ')')
-    tooltip.classed('tooltip--visible', true)
-    locatorLine.classed('locator__line--visible', !dataTooltip.isLatest)
+    const tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
+    setTooltipPosition(tooltipX, tooltipY)
+  }
+
+  const hideTooltip = () => {
+    svg.selectAll('.bar--selected').classed('bar--selected', false)
+    tooltip.classed('tooltip--visible', false)
+    locator.classed('locator--visible', false)
+    locatorLine.classed('locator__line--visible', false)
+    locatorBackground.classed('locator__background--visible', false)
   }
 
   const togglePagingControls = () => {
@@ -235,19 +229,11 @@ function BarChart (containerId, telemetryId) {
       // Render bars and chart
       renderBars()
       renderChart()
+      hideTooltip()
       // Show default tooltip
-      toggleTooltip(null)
+      dataTooltip = data.find(x => x.isLatest)
+      showTooltip()
     }
-  }
-
-  const moveTooltipKeyboard = (e) => {
-    if (!dataTooltip) {
-      dataTooltip = data.find(x => x.isLatest) || data[data.length - 1]
-    }
-    console.log(dataTooltip)
-    locatorBackground.classed('locator__background--visible', true)
-    toggleTooltip(null)
-    // console.log('isTooltipVisible: ', !!dataTooltip)
   }
 
   //
@@ -309,7 +295,6 @@ function BarChart (containerId, telemetryId) {
   const locatorLine = locator.append('line').attr('class', 'locator__line')
 
   // Add tooltip container
-  let tooltipX, tooltipY
   const tooltip = svg.append('g').attr('class', 'tooltip')
   // tooltip.append('rect').attr('class', 'tooltip-bg').attr('width', 147)
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
@@ -353,7 +338,7 @@ function BarChart (containerId, telemetryId) {
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
     renderChart()
-    toggleTooltip(null)
+    showTooltip()
   })
 
   document.addEventListener('click', (e) => {
@@ -365,20 +350,53 @@ function BarChart (containerId, telemetryId) {
     }
   })
 
-  container.addEventListener('keyup', moveTooltipKeyboard)
-  container.addEventListener('keydown', moveTooltipKeyboard)
+  container.addEventListener('keyup', (e) => {
+    if (e.key !== 'Tab') return
+    const dataItemIndex = direction === 'backward' ? 0 : data.length - 1
+    dataTooltip = dataTooltip || data.find(x => x.isLatest) || data[dataItemIndex]
+    locatorBackground.classed('locator__background--visible', true)
+    showTooltip()
+  })
+
+  container.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+    locatorBackground.classed('locator__background--visible', true)
+    const currentIndex = data.findIndex(x => x === dataTooltip)
+    // Move 1 or 10 items
+    let newIndex = e.key === 'ArrowRight' ? currentIndex - (e.shiftKey ? 10 : 1) : currentIndex + (e.shiftKey ? 10 : 1)
+    // Contrain index to array length
+    newIndex = newIndex > data.length - 1 ? data.length - 1 : newIndex < 0 ? 0 : newIndex
+    dataTooltip = data[newIndex]
+    showTooltip()
+  })
 
   container.addEventListener('blur', () => {
+    dataTooltip = data.find(x => x.isLatest)
+    if (dataTooltip) {
+      showTooltip()
+    } else {
+      dataTooltip = null
+      hideTooltip()
+    }
     locatorBackground.classed('locator__background--visible', false)
   })
 
   svg.on('mousemove', (e) => {
-    toggleTooltip(e)
+    if (!xScale) return
+    const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
+    dataTooltip = data.find(x => x.dateTime === mouseDateTime)
+    locatorBackground.classed('locator__background--visible', false)
+    showTooltip(pointer(e)[1])
   })
 
   svg.on('mouseleave', (e) => {
-    toggleTooltip(null)
-    locatorBackground.classed('locator__background--visible', false)
+    dataTooltip = data.find(x => x.isLatest)
+    if (dataTooltip) {
+      showTooltip()
+    } else {
+      dataTooltip = null
+      hideTooltip()
+    }
   })
 
   this.chart = chart
