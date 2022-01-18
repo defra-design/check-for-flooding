@@ -150,6 +150,8 @@ function BarChart (containerId, telemetryId) {
     svg.select('[data-datetime="' + dataTooltip.dateTime + '"]').classed('bar--selected', true)
     // Update tooltip location
     const tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
+    // Update screen reader description
+    chartDescription.innerHTML = `${value}, ${description}`
     setTooltipPosition(tooltipX, tooltipY)
   }
 
@@ -159,6 +161,7 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', false)
     locatorLine.classed('locator__line--visible', false)
     locatorBackground.classed('locator__background--visible', false)
+    chartDescription.innerHTML = ''
   }
 
   const togglePagingControls = () => {
@@ -254,11 +257,11 @@ function BarChart (containerId, telemetryId) {
   segmentedControl.className = 'defra-chart-segmented-control'
   segmentedControl.innerHTML = `
   <div class="defra-chart-segmented-control__segment defra-chart-segmented-control__segment--selected">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" checked/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" aria-controls="bar-chart" checked/>
     <label for="timeHours">Hourly</label>
   </div>
   <div class="defra-chart-segmented-control__segment">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes"/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" aria-controls="bar-chart"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
@@ -272,10 +275,12 @@ function BarChart (containerId, telemetryId) {
   pageBackWard.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
   pageBackWard.setAttribute('data-direction', 'backward')
   pageBackWard.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
+  pageBackWard.setAttribute('aria-controls', 'bar-chart')
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
   pageForward.setAttribute('data-direction', 'forward')
   pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
+  pageForward.setAttribute('aria-controls', 'bar-chart')
   pagingControl.appendChild(pageBackWard)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
@@ -283,6 +288,7 @@ function BarChart (containerId, telemetryId) {
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
+  svg.attr('aria-hidden', true)
   svg.append('g').attr('class', 'y grid')
   svg.append('g').attr('class', 'x axis')
   svg.append('g').attr('class', 'y axis')
@@ -296,11 +302,16 @@ function BarChart (containerId, telemetryId) {
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip')
-  // tooltip.append('rect').attr('class', 'tooltip-bg').attr('width', 147)
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
+
+  // Screen reader descriptions
+  const chartDescription = document.createElement('div')
+  chartDescription.className = 'govuk-visually-hidden'
+  chartDescription.setAttribute('aria-live', 'assertive')
+  container.append(chartDescription)
 
   // Get width and height
   const margin = { top: 0, bottom: 45, left: 0, right: 26 }
