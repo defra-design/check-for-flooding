@@ -135,13 +135,12 @@ function BarChart (containerId, telemetryId) {
     // Choose which value to show
     if (!dataTooltip) return
     // Get tooltip position and content
-    const periodStart = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
-    const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
-    const timeStart = formatTime(periodStart).toLowerCase()
-    const timeEnd = formatTime(new Date(dataTooltip.dateTime)).toLowerCase()
-    const date = timeFormat('%e %b')(periodStart)
+    const formatTime12 = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
+    const formatTime24 = timeFormat('%H:%M')
+    const timeStart = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
+    const timeEnd = new Date(dataTooltip.dateTime)
     const value = dataTooltip.isValid ? dataTooltip.value + 'mm' + (dataTooltip.isLatest ? ' latest' : '') : 'No data'
-    const description = `${timeStart} - ${timeEnd}, ${date}`
+    const description = `${formatTime12(timeStart).toLowerCase()} - ${formatTime12(timeEnd).toLowerCase()}, ${timeFormat('%e %b')(timeEnd)}`
     tooltipValue.attr('dy', '0.5em').text(value)
     tooltipDescription.attr('dy', '1.4em').text(description)
     // Update locator
@@ -154,8 +153,41 @@ function BarChart (containerId, telemetryId) {
     // Update tooltip location
     const tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
     // Update screen reader description
-    chartDescription.innerHTML = `${value}, ${description}`
+    chartDescription.innerHTML = `
+      ${value},
+      <time datetime="${formatTime24(timeStart)}">${formatTime12(timeStart).toLowerCase()}</time> to
+      <time datetime="${formatTime24(timeEnd)}">${formatTime12(timeEnd).toLowerCase()}</time>,
+      <time datetime="${timeFormat('%Y-%m-%d')(timeEnd)}">${timeFormat('%e %B')(timeEnd)}</time>
+    `
     setTooltipPosition(tooltipX, tooltipY)
+  }
+
+  const getNextDataTooltip = (isForeward, hasShift) => {
+    let index = dataPage.findIndex(x => x === dataTooltip)
+    if (hasShift) {
+      // Shift plus arrow keys jumps > 0mm or isLatests
+      if (isForeward) {
+        for (let i = index; i > 0; i--) {
+          if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
+            index = i - 1
+            break
+          }
+        }
+      } else {
+        for (let i = index; i < dataPage.length - 1; i++) {
+          if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
+            index = i + 1
+            break
+          }
+        }
+      }
+    } else {
+      // Arrow keys without shift move one bar at a time
+      index = isForeward ? index - 1 : index + 1
+      index = index > dataPage.length - 1 ? dataPage.length - 1 : index < 0 ? 0 : index
+    }
+    // Contrain index to array length
+    dataTooltip = dataPage[index]
   }
 
   const hideTooltip = () => {
@@ -414,12 +446,7 @@ function BarChart (containerId, telemetryId) {
   container.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
     locatorBackground.classed('locator__background--visible', true)
-    const currentIndex = dataPage.findIndex(x => x === dataTooltip)
-    // Move 1 or 10 items
-    let newIndex = e.key === 'ArrowRight' ? currentIndex - (e.shiftKey ? 10 : 1) : currentIndex + (e.shiftKey ? 10 : 1)
-    // Contrain index to array length
-    newIndex = newIndex > dataPage.length - 1 ? dataPage.length - 1 : newIndex < 0 ? 0 : newIndex
-    dataTooltip = dataPage[newIndex]
+    getNextDataTooltip(e.key === 'ArrowRight', e.shiftKey)
     showTooltip()
   })
 
