@@ -27,15 +27,18 @@ window.flood.utils = {
     const xmlhttp = new window.XMLHttpRequest()
     xmlhttp.onreadystatechange = () => {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+        // ie11 doesnt respect json responseType, parsing string instead
+        const xmlhttpResponse = responseType === 'json' ? JSON.parse(xmlhttp.response) : xmlhttp.response
         try {
-          callback(null, xmlhttp.response)
+          callback(null, xmlhttpResponse)
         } catch (err) {
           callback(err)
         }
       }
     }
     xmlhttp.open('GET', url, true)
-    xmlhttp.responseType = responseType
+    // ie11 doesn't respect json responseType
+    if (responseType !== 'json') xmlhttp.responseType = responseType
     xmlhttp.send()
   },
   forEach: (items, callback) => {

@@ -393,7 +393,7 @@ function BarChart (containerId, telemetryId) {
   const chartDescription = document.createElement('div')
   chartDescription.className = 'govuk-visually-hidden'
   chartDescription.setAttribute('aria-live', 'assertive')
-  container.append(chartDescription)
+  container.appendChild(chartDescription)
 
   // Get width and height
   const margin = { top: 0, bottom: 45, left: 0, right: 26 }
@@ -470,12 +470,9 @@ function BarChart (containerId, telemetryId) {
   })
 
   svg.on('mouseleave', (e) => {
-    dataTooltip = dataPage.find(x => x.isLatest)
-    if (dataTooltip) {
-      showTooltip()
-    } else {
-      dataTooltip = null
-      hideTooltip()
+    if (dataPage) {
+      dataTooltip = dataPage.find(x => x.isLatest)
+      dataTooltip ? showTooltip() : hideTooltip()
     }
   })
 
