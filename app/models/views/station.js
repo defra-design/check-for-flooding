@@ -18,17 +18,10 @@ class ViewModel {
     // Keep presentation logic in the ViewModel
     let time = station.date ? utils.formatTimeDate(station.date) : ''
     if (station.type === 'rainfall') {
-      telemetry.values = telemetry.values.map(item => {
-        return {
-          ...item,
-          dateTimeHour: utils.formatTimeHour(item.dateTime)
-        }
-      })
       time = utils.formatTimeDate(telemetry.latestDateTime)
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
-      this.telemetry = telemetry.values
     } else {
       this.telemetry = telemetry.fiveDays
     }

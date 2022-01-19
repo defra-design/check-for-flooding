@@ -15,6 +15,10 @@ function BarChart (containerId, telemetryId) {
     // Mobile media query
     // isMobile = mobileMediaQuery.matches
 
+    // Setup scales with domains
+    xScale = setScaleX()
+    yScale = setScaleY(period === 'minutes' ? 1 : 4)
+
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
@@ -47,6 +51,15 @@ function BarChart (containerId, telemetryId) {
       .attr('transform', 'translate(0,' + 0 + ')')
       .call(axisLeft(yScale).tickSizeOuter(0).ticks(5).tickSize(-width, 0, 0).tickFormat(''))
 
+    // Add bars
+    clipInner.selectAll('.bar').remove()
+    const bars = clipInner.selectAll('.bar').data(dataPage).enter()
+      .append('g').attr('class', 'bar').attr('data-datetime', (d) => { return d.dateTime })
+      .classed('bar--incomplete', (d) => { return d.isInComplete })
+      .classed('bar--latest', (d) => { return d.isLatest })
+    bars.filter((d) => { return d.isLatest }).append('line').attr('class', 'latest-line')
+    bars.append('rect').attr('class', 'bar__fill')
+
     // Position bars
     svg.selectAll('.bar')
       .attr('transform', (d) => { return 'translate(' + xScale(d.dateTime) + ', 0)' })
@@ -64,23 +77,13 @@ function BarChart (containerId, telemetryId) {
     clip.attr('width', width).attr('height', height)
   }
 
-  const renderBars = () => {
-    clipInner.selectAll('.bar').remove()
-    const bars = clipInner.selectAll('.bar').data(data).enter()
-      .append('g').attr('class', 'bar').attr('data-datetime', (d) => { return d.dateTime })
-      .classed('bar--incomplete', (d) => { return d.isInComplete })
-      .classed('bar--latest', (d) => { return d.isLatest })
-    bars.filter((d) => { return d.isLatest }).append('line').attr('class', 'latest-line')
-    bars.append('rect').attr('class', 'bar__fill')
-  }
-
   const setScaleX = () => {
-    return scaleBand().domain(data.map((d) => { return d.dateTime }).reverse())
+    return scaleBand().domain(dataPage.map((d) => { return d.dateTime }).reverse())
   }
 
   const setScaleY = (minimum) => {
     // Get max from data or minimum
-    let maxData = Math.max(max(data, (d) => { return d.value }), minimum)
+    let maxData = Math.max(max(dataPage, (d) => { return d.value }), minimum)
     // Buffer 25% and round to nearest integer
     maxData = Math.ceil((maxData * 1.25) * 10 / 10)
     // Ensure y scale always divides by 5
@@ -164,32 +167,75 @@ function BarChart (containerId, telemetryId) {
     chartDescription.innerHTML = ''
   }
 
-  const togglePagingControls = () => {
-    pagingControl.style.display = period === 'minutes' ? 'inline-block' : 'none'
-    if (period !== 'minutes') return
-    pageForward.disabled = !(paging.nextStart && paging.nextEnd)
-    pageBackWard.disabled = !(paging.previousStart && paging.previousEnd)
+  const getDataPage = (start, end) => {
+    const now = new Date()
+    const dataStart = new Date(dataCache.dataStartDateTime)
+    const pageStart = new Date(start)
+    const pageEnd = new Date(end)
+    // Determin which resolution and telemetry set to use
+    const duration = pageEnd.getTime() - pageStart.getTime()
+    const durationHours = duration / (1000 * 60 * 60)
+    period = durationHours > 24 ? 'hours' : 'minutes'
+    dataPage = period === 'hours' ? dataCache.telemetryHours : dataCache.telemetryMinutes
+    // Value duration
+    const valueStartDate = new Date(dataPage[1].dateTime)
+    const valueEndDate = new Date(dataPage[0].dateTime)
+    const valueDuration = valueEndDate.getTime() - valueStartDate.getTime()
+    dataPage = dataPage.filter(x => {
+      const date = new Date(x.dateTime)
+      return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
+    })
+    // Set paging values and ensure they are within data range
+    let nextStart = new Date(pageStart.getTime() + duration)
+    let nextEnd = new Date(pageEnd.getTime() + duration)
+    let previousStart = new Date(pageStart.getTime() - duration)
+    let previousEnd = new Date(pageEnd.getTime() - duration)
+    nextEnd = nextEnd.getTime() <= now.getTime() ? nextEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    nextStart = nextEnd ? nextStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    previousEnd = previousStart ? previousEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    // Set properties
+    pagingControl.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
+    pageForward.setAttribute('data-start', nextStart)
+    pageForward.setAttribute('data-end', nextEnd)
+    pageBackward.setAttribute('data-start', previousStart)
+    pageBackward.setAttribute('data-end', previousEnd)
+    pageForward.disabled = !(nextStart && nextEnd)
+    pageBackward.disabled = !(previousStart && previousEnd)
   }
 
   const setPeriod = (event) => {
+    const button = event.target
     const siblings = event.target.parentNode.parentNode.children
     for (let i = 0; i < siblings.length; i++) {
       siblings[i].classList.remove('defra-chart-segmented-control__segment--selected')
     }
     event.target.parentNode.classList.add('defra-chart-segmented-control__segment--selected')
-    period = event.target.getAttribute('data-period')
-    startDate = new Date()
-    startDate.setHours(startDate.getHours() - (period === 'hours' ? 120 : 24))
-    startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
-    // New xhr request
-    xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/${period}`, initChart, 'json')
+    startDate = new Date(button.getAttribute('data-start'))
+    endDate = new Date(button.getAttribute('data-end'))
+    // Move into existing or new methods
+    getDataPage(startDate, endDate)
+    // Render bars and chart
+    renderChart()
+    hideTooltip()
+    // Show default tooltip
+    dataTooltip = dataPage.find(x => x.isLatest)
+    showTooltip()
   }
 
-  const setPage = (event) => {
-    direction = event.target.getAttribute('data-direction')
-    const pageStartDate = direction === 'forward' ? paging.nextStart : paging.previousStart
-    const pageEndDate = direction === 'forward' ? paging.nextEnd : paging.previousEnd
-    xhr(`/service/telemetry/rainfall/${telemetryId}/${pageStartDate}/${pageEndDate}/minutes`, initChart, 'json')
+  const changePage = (event) => {
+    const button = event.target
+    direction = button.getAttribute('data-direction')
+    startDate = new Date(button.getAttribute('data-start'))
+    endDate = new Date(button.getAttribute('data-end'))
+    // Move into existing or new methods
+    getDataPage(startDate, endDate)
+    // Render bars and chart
+    renderChart()
+    hideTooltip()
+    // Show default tooltip
+    dataTooltip = dataPage.find(x => x.isLatest)
+    showTooltip()
   }
 
   // D3 doesnt currently support inverting of a scaleBand
@@ -216,25 +262,16 @@ function BarChart (containerId, telemetryId) {
     if (err) {
       console.log('Error: ' + err)
     } else {
-      data = response.values
-      paging = {
-        nextStart: response.pageNextStartDateTime,
-        nextEnd: response.pageNextEndDateTime,
-        previousStart: response.pagePreviousStartDateTime,
-        previousEnd: response.pagePreviousEndDateTime
-      }
+      dataCache = response
       // Show controls
-      controlsContainer.style.display = response.availablePeriods.length > 1 ? 'block' : 'none'
-      togglePagingControls()
-      // Setup scales with domains
-      xScale = setScaleX()
-      yScale = setScaleY(period === 'minutes' ? 1 : 4)
+      controlsContainer.style.display = dataCache.telemetryMinutes.length > 1 ? 'block' : 'none'
+      // Move into existing or new methods
+      getDataPage(startDate, endDate)
       // Render bars and chart
-      renderBars()
       renderChart()
       hideTooltip()
       // Show default tooltip
-      dataTooltip = data.find(x => x.isLatest)
+      dataTooltip = dataPage.find(x => x.isLatest)
       showTooltip()
     }
   }
@@ -252,16 +289,26 @@ function BarChart (containerId, telemetryId) {
   controlsContainer.className = 'defra-chart-controls'
   container.parentNode.insertBefore(controlsContainer, container)
 
+  // Set initial dates
+  let startDate = new Date()
+  let endDate = new Date()
+  startDate.setHours(startDate.getHours() - 120)
+  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
+  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
+  let startDateMinutes = new Date()
+  startDateMinutes.setHours(startDateMinutes.getHours() - 24)
+  startDateMinutes = startDateMinutes.toISOString().replace(/.\d+Z$/g, 'Z')
+
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-chart-segmented-control'
   segmentedControl.innerHTML = `
   <div class="defra-chart-segmented-control__segment defra-chart-segmented-control__segment--selected">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" aria-controls="bar-chart" checked/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-start="${startDate}" data-end="${endDate}" aria-controls="bar-chart" checked/>
     <label for="timeHours">Hourly</label>
   </div>
   <div class="defra-chart-segmented-control__segment">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" aria-controls="bar-chart"/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-start="${startDateMinutes}" data-end="${endDate}" aria-controls="bar-chart"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
@@ -271,17 +318,17 @@ function BarChart (containerId, telemetryId) {
   const pagingControl = document.createElement('div')
   pagingControl.style.display = 'none'
   pagingControl.className = 'defra-chart-paging-control'
-  const pageBackWard = document.createElement('button')
-  pageBackWard.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
-  pageBackWard.setAttribute('data-direction', 'backward')
-  pageBackWard.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
-  pageBackWard.setAttribute('aria-controls', 'bar-chart')
+  const pageBackward = document.createElement('button')
+  pageBackward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
+  pageBackward.setAttribute('data-direction', 'backward')
+  pageBackward.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
+  pageBackward.setAttribute('aria-controls', 'bar-chart')
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
   pageForward.setAttribute('data-direction', 'forward')
   pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
   pageForward.setAttribute('aria-controls', 'bar-chart')
-  pagingControl.appendChild(pageBackWard)
+  pagingControl.appendChild(pageBackward)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
   controlsContainer.appendChild(pagingControl)
@@ -318,25 +365,17 @@ function BarChart (containerId, telemetryId) {
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
-
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
-  // Set initial dates
-  let endDate = new Date()
-  let startDate = new Date()
-  startDate.setHours(startDate.getHours() - 120)
-  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
-  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
 
   // Set defaults
-  let period = segmentedControl.querySelector('input[checked]').getAttribute('data-period')
-  let xScale, yScale, data, dataTooltip, paging, direction
+  let xScale, yScale, dataCache, dataPage, dataTooltip, period, direction
   // let isMobile
 
   // Get mobile media query list
   // const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
   // XMLHttpRequest
-  xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}/hours`, initChart, 'json')
+  xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}`, initChart, 'json')
 
   //
   // Events
@@ -357,14 +396,14 @@ function BarChart (containerId, telemetryId) {
       setPeriod(e)
     }
     if (e.target.classList.contains('defra-chart-paging-control__button')) {
-      setPage(e)
+      changePage(e)
     }
   })
 
   container.addEventListener('keyup', (e) => {
     if (e.key !== 'Tab') return
-    const dataItemIndex = direction === 'backward' ? 0 : data.length - 1
-    dataTooltip = dataTooltip || data.find(x => x.isLatest) || data[dataItemIndex]
+    const dataItemIndex = direction === 'backward' ? 0 : dataPage.length - 1
+    dataTooltip = dataTooltip || dataPage.find(x => x.isLatest) || dataPage[dataItemIndex]
     locatorBackground.classed('locator__background--visible', true)
     showTooltip()
   })
@@ -372,17 +411,17 @@ function BarChart (containerId, telemetryId) {
   container.addEventListener('keydown', (e) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
     locatorBackground.classed('locator__background--visible', true)
-    const currentIndex = data.findIndex(x => x === dataTooltip)
+    const currentIndex = dataPage.findIndex(x => x === dataTooltip)
     // Move 1 or 10 items
     let newIndex = e.key === 'ArrowRight' ? currentIndex - (e.shiftKey ? 10 : 1) : currentIndex + (e.shiftKey ? 10 : 1)
     // Contrain index to array length
-    newIndex = newIndex > data.length - 1 ? data.length - 1 : newIndex < 0 ? 0 : newIndex
-    dataTooltip = data[newIndex]
+    newIndex = newIndex > dataPage.length - 1 ? dataPage.length - 1 : newIndex < 0 ? 0 : newIndex
+    dataTooltip = dataPage[newIndex]
     showTooltip()
   })
 
   container.addEventListener('blur', () => {
-    dataTooltip = data.find(x => x.isLatest)
+    dataTooltip = dataPage.find(x => x.isLatest)
     if (dataTooltip) {
       showTooltip()
     } else {
@@ -395,13 +434,13 @@ function BarChart (containerId, telemetryId) {
   svg.on('mousemove', (e) => {
     if (!xScale) return
     const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
-    dataTooltip = data.find(x => x.dateTime === mouseDateTime)
+    dataTooltip = dataPage.find(x => x.dateTime === mouseDateTime)
     locatorBackground.classed('locator__background--visible', false)
     showTooltip(pointer(e)[1])
   })
 
   svg.on('mouseleave', (e) => {
-    dataTooltip = data.find(x => x.isLatest)
+    dataTooltip = dataPage.find(x => x.isLatest)
     if (dataTooltip) {
       showTooltip()
     } else {

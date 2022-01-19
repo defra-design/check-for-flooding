@@ -24,9 +24,9 @@ router.get('/station/:id', async (req, res) => {
     if (station.type === 'rainfall') {
       // Rainfall telemetry
       const telemetryId = /[^/]*$/.exec(station.telemetryId)[0]
-      const endDate = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-      const startDate = moment().subtract({ hours: 120 }).toISOString().replace(/.\d+Z$/g, 'Z')
-      telemetry = await telemetryServices.getRainfallTelemetry(telemetryId, startDate, endDate, 'hours')
+      const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
+      const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
+      telemetry = await telemetryServices.getRainfallTelemetry(telemetryId, start, end)
       telemetry = telemetry.data
     } else {
       // River, tide and groundwater telemetry

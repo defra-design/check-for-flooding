@@ -17,8 +17,8 @@ module.exports = {
     }
     return response
   },
-  getRainfallTelemetry: async (id, startDate, endDate, period) => {
-    const url = `/telemetry/rainfall/${id}/${startDate}/${endDate}/${period}`
+  getRainfallTelemetry: async (id, start, end) => {
+    const url = `/telemetry/rainfall/${id}/${start}/${end}`
     try {
       const response = await axios.get(url, {
         auth: {
