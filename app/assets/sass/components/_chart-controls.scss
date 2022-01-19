@@ -32,6 +32,9 @@
     outline: 3px solid transparent;
     color: govuk-colour('blue');
   }
+  input:hover + label {
+    color: $govuk-link-hover-colour;
+  }
   input:checked + label {
     border-bottom: 5px solid govuk-colour('blue');
   }
@@ -43,6 +46,13 @@
 }
 .defra-chart-paging-control {
   display: inline-block;
+  @include mq ($from: desktop) {
+    text-align: center;
+    width: 130px;
+    position: absolute;
+    left: 50%;
+    margin-left: -65px;
+  }
   &__button {
     border: 0px;
     background-color: white;
@@ -53,14 +63,40 @@
     outline: 3px solid transparent;
     color: $govuk-link-colour;
     @include govuk-font($size: 16);
+    @include mq ($from: desktop) {
+      width: auto;
+    }
+    span {
+      pointer-events: none;
+      @include mq ($until: desktop) {
+        @include defra-visually-hidden();
+      }
+    }
+    &:disabled,
+    &:disabled:after,
+    &:disabled:before {
+      color: govuk-colour('mid-grey');
+    }
+    &--back {
+      @include mq ($from: desktop) {
+        margin-right: 10px;
+      }
+    }
   }
   &__button:not([disabled]) {
     cursor: pointer;
   }
+  &__button:hover:not([disabled]) {
+    color: $govuk-link-hover-colour;
+    &:after, &:before {
+      color: $govuk-link-hover-colour;
+    }
+  }
   &__button:focus {
     background-color: $govuk-focus-colour;
   }
-  &__button:after {
+  &__button--forward:after,
+  &__button--back:before {
     display: inline-block;
     content: '';
     border-width: 0 2px 2px 0;
@@ -69,20 +105,26 @@
     border-style: solid;
     color: $govuk-link-colour;
   }
-  &__button:disabled:after {
-    color: govuk-colour('mid-grey');
-  }
   &__button--forward:after {
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
+    @include mq ($from: desktop) {
+      margin-right: 2px;
+    }
   }
-  &__button--backward:after {
+  &__button--back:before {
     -webkit-transform: rotate(135deg);
     -ms-transform: rotate(135deg);
     transform: rotate(135deg);
+    @include mq ($from: desktop) {
+      margin-left: 2px;
+    }
   }
-  &__button:focus:after {
+  &__button:focus {
     color: $govuk-focus-text-colour;
+    &:after, &:before {
+      color: $govuk-focus-text-colour;
+    }
   }
 }

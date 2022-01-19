@@ -23,8 +23,8 @@ function BarChart (containerId, telemetryId) {
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
       const hourMinute = timeFormat('%H:%M')(new Date(d))
-      const labelsHours = ['01:00']
-      const labelsMinutes = ['00:15', '06:15', '12:15', '18:15']
+      const labelsHours = ['00:00']
+      const labelsMinutes = ['00:00', '06:00', '12:00', '18:00']
       const labels = period === 'hours' ? labelsHours : labelsMinutes
       return labels.includes(hourMinute) && i >= 2 // Don't show lable if before 3rd tick
     }))
@@ -219,10 +219,10 @@ function BarChart (containerId, telemetryId) {
     pagingControl.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
     pageForward.setAttribute('data-start', nextStart)
     pageForward.setAttribute('data-end', nextEnd)
-    pageBackward.setAttribute('data-start', previousStart)
-    pageBackward.setAttribute('data-end', previousEnd)
+    pageBack.setAttribute('data-start', previousStart)
+    pageBack.setAttribute('data-end', previousEnd)
     pageForward.disabled = !(nextStart && nextEnd)
-    pageBackward.disabled = !(previousStart && previousEnd)
+    pageBack.disabled = !(previousStart && previousEnd)
   }
 
   const changePage = (event) => {
@@ -254,7 +254,8 @@ function BarChart (containerId, telemetryId) {
   // Format X Axis labels
   const formatLabelsX = (d, i, nodes) => {
     const element = select(nodes[i])
-    const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
+    // const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
+    const formattedTime = timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
     const formattedDate = timeFormat('%-e %b')(new Date(d))
     element.append('tspan').text(formattedTime)
     element.append('tspan').attr('x', 0).attr('dy', '15').text(formattedDate)
@@ -320,17 +321,17 @@ function BarChart (containerId, telemetryId) {
   const pagingControl = document.createElement('div')
   pagingControl.style.display = 'none'
   pagingControl.className = 'defra-chart-paging-control'
-  const pageBackward = document.createElement('button')
-  pageBackward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--backward'
-  pageBackward.setAttribute('data-direction', 'backward')
-  pageBackward.innerHTML = '<span class="govuk-visually-hidden">Backward</span>'
-  pageBackward.setAttribute('aria-controls', 'bar-chart')
+  const pageBack = document.createElement('button')
+  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--back'
+  pageBack.setAttribute('data-direction', 'back')
+  pageBack.innerHTML = '<span>Back</span>'
+  pageBack.setAttribute('aria-controls', 'bar-chart')
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
   pageForward.setAttribute('data-direction', 'forward')
-  pageForward.innerHTML = '<span class="govuk-visually-hidden">Forward</span>'
+  pageForward.innerHTML = '<span>Forward</span>'
   pageForward.setAttribute('aria-controls', 'bar-chart')
-  pagingControl.appendChild(pageBackward)
+  pagingControl.appendChild(pageBack)
   pagingControl.appendChild(pageForward)
   // container.parentNode.insertBefore(pagingControl, container)
   controlsContainer.appendChild(pagingControl)
@@ -404,7 +405,7 @@ function BarChart (containerId, telemetryId) {
 
   container.addEventListener('keyup', (e) => {
     if (e.key !== 'Tab') return
-    const dataItemIndex = direction === 'backward' ? 0 : dataPage.length - 1
+    const dataItemIndex = direction === 'back' ? 0 : dataPage.length - 1
     dataTooltip = dataTooltip || dataPage.find(x => x.isLatest) || dataPage[dataItemIndex]
     locatorBackground.classed('locator__background--visible', true)
     showTooltip()
