@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = (env, argv) => ({
   mode: 'production', // 'development',
-  devtool: 'source-map', // false,
+  devtool: false, // 'source-map'
   entry: {
     core: './app/assets/javascripts/core',
     levels: './app/assets/javascripts/pages/levels',
