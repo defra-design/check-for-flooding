@@ -7,7 +7,6 @@ import { timeFormat } from 'd3-time-format'
 import { select, pointer } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
-import { easeExpInOut } from 'd3'
 
 const { xhr } = window.flood.utils
 
@@ -175,7 +174,7 @@ function BarChart (containerId, telemetryId) {
     const pageEnd = new Date(end)
     // If dates are outside rsange we need to load another data set
     if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
-      console.log('Get new data')
+      // Rebuild the cache when we have more data
       // const cacheStart = ?
       // const cacheEnd = ?
       // xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
