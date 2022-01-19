@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 
 class RainfallTelemetry {
-  constructor (latest, range, dataStart, dataEnd, rangeEnd) {
+  constructor (latest, range, dataStart, dataEnd, rangeStart, rangeEnd) {
     // Get latest reading and latest hour
     const latestDateTime = latest[0].dateTime
     const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
@@ -49,8 +49,8 @@ class RainfallTelemetry {
 
     // Set properties
     this.latestDateTime = latest[0].dateTime
-    this.rangeStartDateTime = range[range.length - 1].dateTime
-    this.rangeEndDateTime = range[0].dateTime
+    this.rangeStartDateTime = rangeStart.toISOString().replace(/.\d+Z$/g, 'Z')
+    this.rangeEndDateTime = rangeEnd.toISOString().replace(/.\d+Z$/g, 'Z')
     this.dataStartDateTime = dataStart.toISOString().replace(/.\d+Z$/g, 'Z')
     this.dataEndDateTime = dataEnd.toISOString().replace(/.\d+Z$/g, 'Z')
     this.latest1hr = Math.round(latest.slice(0, isMinutes ? 4 : 1).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10

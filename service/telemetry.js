@@ -40,6 +40,6 @@ module.exports = {
     } else {
       return response
     }
-    return new RainfallTelemetry(latest, range, dataStart, dataEnd, rangeEnd)
+    return new RainfallTelemetry(latest, range, dataStart, dataEnd, rangeStart, rangeEnd)
   }
 }

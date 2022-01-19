@@ -7,6 +7,7 @@ import { timeFormat } from 'd3-time-format'
 import { select, pointer } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
+import { easeExpInOut } from 'd3'
 
 const { xhr } = window.flood.utils
 
@@ -168,22 +169,45 @@ function BarChart (containerId, telemetryId) {
   }
 
   const getDataPage = (start, end) => {
-    const now = new Date()
-    const dataStart = new Date(dataCache.dataStartDateTime)
+    const rangeStart = new Date(dataCache.rangeStartDateTime)
+    const rangeEnd = new Date(dataCache.rangeEndDateTime)
     const pageStart = new Date(start)
     const pageEnd = new Date(end)
+    // If dates are outside rsange we need to load another data set
+    if (pageStart.getTime() < rangeStart.getTime() || pageEnd.getTime() > rangeEnd.getTime()) {
+      console.log('Get new data')
+      // startDate = pageStart.toISOString().replace(/.\d+Z$/g, 'Z')
+      // endDate = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
+      // const rangeStart =
+      // const rangeEnd =
+      // xhr(`/service/telemetry/rainfall/${telemetryId}/${rangeStart}/${rangeEnd}`, initChart, 'json')
+      return
+    }
+    const now = new Date()
+    const dataStart = new Date(dataCache.dataStartDateTime)
     // Determin which resolution and telemetry set to use
     const duration = pageEnd.getTime() - pageStart.getTime()
     const durationHours = duration / (1000 * 60 * 60)
     period = durationHours > 24 ? 'hours' : 'minutes'
     dataPage = period === 'hours' ? dataCache.telemetryHours : dataCache.telemetryMinutes
-    // Value duration
+    // Get value duration
     const valueStartDate = new Date(dataPage[1].dateTime)
     const valueEndDate = new Date(dataPage[0].dateTime)
     const valueDuration = valueEndDate.getTime() - valueStartDate.getTime()
     dataPage = dataPage.filter(x => {
       const date = new Date(x.dateTime)
       return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
+    })
+    // Set segemented control html properties
+    segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
+      const selectedClass = 'defra-chart-segmented-control__segment--selected'
+      if (period === input.getAttribute('data-period')) {
+        input.parentNode.classList.add(selectedClass)
+        input.checked = true
+      } else {
+        input.parentNode.classList.remove(selectedClass)
+        input.checked = false
+      }
     })
     // Set paging values and ensure they are within data range
     let nextStart = new Date(pageStart.getTime() + duration)
@@ -206,11 +230,6 @@ function BarChart (containerId, telemetryId) {
 
   const setPeriod = (event) => {
     const button = event.target
-    const siblings = event.target.parentNode.parentNode.children
-    for (let i = 0; i < siblings.length; i++) {
-      siblings[i].classList.remove('defra-chart-segmented-control__segment--selected')
-    }
-    event.target.parentNode.classList.add('defra-chart-segmented-control__segment--selected')
     startDate = new Date(button.getAttribute('data-start'))
     endDate = new Date(button.getAttribute('data-end'))
     // Move into existing or new methods
@@ -289,7 +308,7 @@ function BarChart (containerId, telemetryId) {
   controlsContainer.className = 'defra-chart-controls'
   container.parentNode.insertBefore(controlsContainer, container)
 
-  // Set initial dates
+  // Set initial page dates
   let startDate = new Date()
   let endDate = new Date()
   startDate.setHours(startDate.getHours() - 120)
@@ -303,12 +322,12 @@ function BarChart (containerId, telemetryId) {
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-chart-segmented-control'
   segmentedControl.innerHTML = `
-  <div class="defra-chart-segmented-control__segment defra-chart-segmented-control__segment--selected">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-start="${startDate}" data-end="${endDate}" aria-controls="bar-chart" checked/>
+  <div class="defra-chart-segmented-control__segment">
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" data-start="${startDate}" data-end="${endDate}" aria-controls="bar-chart"/>
     <label for="timeHours">Hourly</label>
   </div>
   <div class="defra-chart-segmented-control__segment">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-start="${startDateMinutes}" data-end="${endDate}" aria-controls="bar-chart"/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" data-start="${startDateMinutes}" data-end="${endDate}" aria-controls="bar-chart"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
@@ -375,7 +394,9 @@ function BarChart (containerId, telemetryId) {
   // const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
   // XMLHttpRequest
-  xhr(`/service/telemetry/rainfall/${telemetryId}/${startDate}/${endDate}`, initChart, 'json')
+  const rangeStart = startDate // This is effectively the cache date start
+  const rangeEnd = endDate // This is effectively the cache date end
+  xhr(`/service/telemetry/rainfall/${telemetryId}/${rangeStart}/${rangeEnd}`, initChart, 'json')
 
   //
   // Events
