@@ -1,10 +1,8 @@
 const path = require('path')
-// const env = process.env.NODE_ENV
-const inDev = false // env === 'dev' || env === 'development'
 
 module.exports = (env, argv) => ({
-  mode: !inDev ? 'production' : 'development',
-  devtool: !inDev ? false : 'source-map',
+  mode: 'production', // 'development',
+  devtool: 'source-map', // false,
   entry: {
     core: './app/assets/javascripts/core',
     levels: './app/assets/javascripts/pages/levels',
