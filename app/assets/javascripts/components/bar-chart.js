@@ -136,11 +136,11 @@ function BarChart (containerId, telemetryId) {
     // Choose which value to show
     if (!dataTooltip) return
     // Get tooltip position and content
-    const periodStartDateTime = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
+    const periodStart = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
     const formatTime = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
-    const timeStart = formatTime(periodStartDateTime).toLowerCase()
+    const timeStart = formatTime(periodStart).toLowerCase()
     const timeEnd = formatTime(new Date(dataTooltip.dateTime)).toLowerCase()
-    const date = timeFormat('%e %b')(periodStartDateTime)
+    const date = timeFormat('%e %b')(periodStart)
     const value = dataTooltip.isValid ? dataTooltip.value + 'mm' + (dataTooltip.isLatest ? ' latest' : '') : 'No data'
     const description = `${timeStart} - ${timeEnd}, ${date}`
     tooltipValue.attr('dy', '0.5em').text(value)
@@ -169,31 +169,29 @@ function BarChart (containerId, telemetryId) {
   }
 
   const getDataPage = (start, end) => {
-    const rangeStart = new Date(dataCache.rangeStartDateTime)
-    const rangeEnd = new Date(dataCache.rangeEndDateTime)
+    const cacheStart = new Date(dataCache.cacheStartDateTime)
+    const cacheEnd = new Date(dataCache.cacheEndDateTime)
     const pageStart = new Date(start)
     const pageEnd = new Date(end)
     // If dates are outside rsange we need to load another data set
-    if (pageStart.getTime() < rangeStart.getTime() || pageEnd.getTime() > rangeEnd.getTime()) {
+    if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
       console.log('Get new data')
-      // startDate = pageStart.toISOString().replace(/.\d+Z$/g, 'Z')
-      // endDate = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
-      // const rangeStart =
-      // const rangeEnd =
-      // xhr(`/service/telemetry/rainfall/${telemetryId}/${rangeStart}/${rangeEnd}`, initChart, 'json')
+      // const cacheStart = ?
+      // const cacheEnd = ?
+      // xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
       return
     }
     const now = new Date()
     const dataStart = new Date(dataCache.dataStartDateTime)
     // Determin which resolution and telemetry set to use
-    const duration = pageEnd.getTime() - pageStart.getTime()
-    const durationHours = duration / (1000 * 60 * 60)
-    period = durationHours > 24 ? 'hours' : 'minutes'
+    const pageDuration = pageEnd.getTime() - pageStart.getTime()
+    const pageDurationHours = pageDuration / (1000 * 60 * 60)
+    period = pageDurationHours > 24 ? 'hours' : 'minutes'
     dataPage = period === 'hours' ? dataCache.telemetryHours : dataCache.telemetryMinutes
     // Get value duration
-    const valueStartDate = new Date(dataPage[1].dateTime)
-    const valueEndDate = new Date(dataPage[0].dateTime)
-    const valueDuration = valueEndDate.getTime() - valueStartDate.getTime()
+    const valueStart = new Date(dataPage[1].dateTime)
+    const valueEnd = new Date(dataPage[0].dateTime)
+    const valueDuration = valueEnd.getTime() - valueStart.getTime()
     dataPage = dataPage.filter(x => {
       const date = new Date(x.dateTime)
       return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
@@ -210,10 +208,10 @@ function BarChart (containerId, telemetryId) {
       }
     })
     // Set paging values and ensure they are within data range
-    let nextStart = new Date(pageStart.getTime() + duration)
-    let nextEnd = new Date(pageEnd.getTime() + duration)
-    let previousStart = new Date(pageStart.getTime() - duration)
-    let previousEnd = new Date(pageEnd.getTime() - duration)
+    let nextStart = new Date(pageStart.getTime() + pageDuration)
+    let nextEnd = new Date(pageEnd.getTime() + pageDuration)
+    let previousStart = new Date(pageStart.getTime() - pageDuration)
+    let previousEnd = new Date(pageEnd.getTime() - pageDuration)
     nextEnd = nextEnd.getTime() <= now.getTime() ? nextEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
     nextStart = nextEnd ? nextStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
     previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
@@ -228,27 +226,13 @@ function BarChart (containerId, telemetryId) {
     pageBackward.disabled = !(previousStart && previousEnd)
   }
 
-  const setPeriod = (event) => {
-    const button = event.target
-    startDate = new Date(button.getAttribute('data-start'))
-    endDate = new Date(button.getAttribute('data-end'))
-    // Move into existing or new methods
-    getDataPage(startDate, endDate)
-    // Render bars and chart
-    renderChart()
-    hideTooltip()
-    // Show default tooltip
-    dataTooltip = dataPage.find(x => x.isLatest)
-    showTooltip()
-  }
-
   const changePage = (event) => {
     const button = event.target
     direction = button.getAttribute('data-direction')
-    startDate = new Date(button.getAttribute('data-start'))
-    endDate = new Date(button.getAttribute('data-end'))
+    pageStart = new Date(button.getAttribute('data-start'))
+    pageEnd = new Date(button.getAttribute('data-end'))
     // Move into existing or new methods
-    getDataPage(startDate, endDate)
+    getDataPage(pageStart, pageEnd)
     // Render bars and chart
     renderChart()
     hideTooltip()
@@ -285,7 +269,7 @@ function BarChart (containerId, telemetryId) {
       // Show controls
       controlsContainer.style.display = dataCache.telemetryMinutes.length > 1 ? 'block' : 'none'
       // Move into existing or new methods
-      getDataPage(startDate, endDate)
+      getDataPage(pageStart, pageEnd)
       // Render bars and chart
       renderChart()
       hideTooltip()
@@ -309,25 +293,25 @@ function BarChart (containerId, telemetryId) {
   container.parentNode.insertBefore(controlsContainer, container)
 
   // Set initial page dates
-  let startDate = new Date()
-  let endDate = new Date()
-  startDate.setHours(startDate.getHours() - 120)
-  startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z')
-  endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z')
-  let startDateMinutes = new Date()
-  startDateMinutes.setHours(startDateMinutes.getHours() - 24)
-  startDateMinutes = startDateMinutes.toISOString().replace(/.\d+Z$/g, 'Z')
+  let pageStart = new Date()
+  let pageEnd = new Date()
+  pageStart.setHours(pageStart.getHours() - 120)
+  pageStart = pageStart.toISOString().replace(/.\d+Z$/g, 'Z')
+  pageEnd = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
+  let pageStartMinutes = new Date()
+  pageStartMinutes.setHours(pageStartMinutes.getHours() - 24)
+  pageStartMinutes = pageStartMinutes.toISOString().replace(/.\d+Z$/g, 'Z')
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-chart-segmented-control'
   segmentedControl.innerHTML = `
   <div class="defra-chart-segmented-control__segment">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" data-start="${startDate}" data-end="${endDate}" aria-controls="bar-chart"/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" data-start="${pageStart}" data-end="${pageEnd}" aria-controls="bar-chart"/>
     <label for="timeHours">Hourly</label>
   </div>
   <div class="defra-chart-segmented-control__segment">
-    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" data-start="${startDateMinutes}" data-end="${endDate}" aria-controls="bar-chart"/>
+    <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" data-start="${pageStartMinutes}" data-end="${pageEnd}" aria-controls="bar-chart"/>
     <label for="timeMinutes">15 minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
@@ -394,9 +378,9 @@ function BarChart (containerId, telemetryId) {
   // const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
   // XMLHttpRequest
-  const rangeStart = startDate // This is effectively the cache date start
-  const rangeEnd = endDate // This is effectively the cache date end
-  xhr(`/service/telemetry/rainfall/${telemetryId}/${rangeStart}/${rangeEnd}`, initChart, 'json')
+  const cacheStart = pageStart // This is effectively the cache date start
+  const cacheEnd = pageEnd // This is effectively the cache date end
+  xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
 
   //
   // Events
@@ -413,10 +397,8 @@ function BarChart (containerId, telemetryId) {
   })
 
   document.addEventListener('click', (e) => {
-    if (e.target.className === 'defra-chart-segmented-control__input') {
-      setPeriod(e)
-    }
-    if (e.target.classList.contains('defra-chart-paging-control__button')) {
+    const classNames = ['defra-chart-segmented-control__input', 'defra-chart-paging-control__button']
+    if (classNames.some(className => e.target.classList.contains(className))) {
       changePage(e)
     }
   })
