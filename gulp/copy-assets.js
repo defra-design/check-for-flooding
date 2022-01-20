@@ -13,7 +13,8 @@ gulp.task('copy-assets', function () {
     `${config.paths.assets}/**`,
     `!${config.paths.assets}/sass/**`,
     `!${config.paths.assets}/javascripts/**`,
-    `!${config.paths.assets}/templates/**`
+    `!${config.paths.assets}/templates/**`,
+    `${config.paths.nodeModules}/govuk-frontend/govuk/all.js`
   ])
     .pipe(gulp.dest(config.paths.public))
 })
