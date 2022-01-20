@@ -153,7 +153,7 @@ function BarChart (containerId, telemetryId) {
     // Update tooltip location
     const tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
     // Update screen reader description
-    chartDescription.innerHTML = `
+    tooltipAccessibleDescription.innerHTML = `
       ${value},
       <time datetime="${formatTime24(timeStart)}">${formatTime12(timeStart).toLowerCase()}</time> to
       <time datetime="${formatTime24(timeEnd)}">${formatTime12(timeEnd).toLowerCase()}</time>,
@@ -196,7 +196,7 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', false)
     locatorLine.classed('locator__line--visible', false)
     locatorBackground.classed('locator__background--visible', false)
-    chartDescription.innerHTML = ''
+    tooltipAccessibleDescription.innerHTML = ''
   }
 
   const getDataPage = (start, end) => {
@@ -204,11 +204,12 @@ function BarChart (containerId, telemetryId) {
     const cacheEnd = new Date(dataCache.cacheEndDateTime)
     const pageStart = new Date(start)
     const pageEnd = new Date(end)
-    // If dates are outside rsange we need to load another data set
+    // If dates are outside range we need to load another data set
     if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
       // Rebuild the cache when we have more data
-      // const cacheStart = ?
-      // const cacheEnd = ?
+      // Set cache start and end
+      // Set page start and end
+      // Load new data and reinitialise the chart
       // xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
       return
     }
@@ -217,15 +218,16 @@ function BarChart (containerId, telemetryId) {
     // Determin which resolution and telemetry set to use
     const pageDuration = pageEnd.getTime() - pageStart.getTime()
     const pageDurationHours = pageDuration / (1000 * 60 * 60)
+    const pageDurationDays = pageDuration / (1000 * 60 * 60 * 24)
     period = pageDurationHours > 24 ? 'hours' : 'minutes'
     dataPage = period === 'hours' ? dataCache.telemetryHours : dataCache.telemetryMinutes
     // Get value duration
     const valueStart = new Date(dataPage[1].dateTime)
     const valueEnd = new Date(dataPage[0].dateTime)
-    const valueDuration = valueEnd.getTime() - valueStart.getTime()
+    const valueDurationMinutes = (valueEnd.getTime() / (1000 * 60)) - (valueStart.getTime() / (1000 * 60))
     dataPage = dataPage.filter(x => {
       const date = new Date(x.dateTime)
-      return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
+      return date.getTime() > (pageStart.getTime() + valueDurationMinutes) && date.getTime() <= (pageEnd.getTime() + valueDurationMinutes)
     })
     // Set segemented control html properties
     segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
@@ -255,6 +257,17 @@ function BarChart (containerId, telemetryId) {
     pageBack.setAttribute('data-end', previousEnd)
     pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
     pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
+    const pageForwardText = `View next ${pageDurationHours > 1 ? pageDurationHours : pageDuration} ${pageDurationHours > 1 ? 'hours' : 'minutes'}`
+    const pageBackText = `View previous ${pageDurationHours > 1 ? pageDurationHours : pageDuration} ${pageDurationHours > 1 ? 'hours' : 'minutes'}`
+    pageForwardDescription.innerText = nextStart && nextEnd ? pageForwardText : 'No more data'
+    pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
+    // Update screen reader description
+    const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
+    pageAccessbileDescription.innerHTML = `
+      Showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
+      from ${pageStart.toLocaleString()} to ${pageEnd.toLocaleString()} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
+      There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
+    `
   }
 
   const changePage = (event) => {
@@ -356,17 +369,42 @@ function BarChart (containerId, telemetryId) {
   const pageBack = document.createElement('button')
   pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--back'
   pageBack.setAttribute('data-direction', 'back')
-  pageBack.innerHTML = '<span>Back</span>'
   pageBack.setAttribute('aria-controls', 'bar-chart')
+  pageBack.setAttribute('aria-describedby', 'page-back-description')
+  pageBack.innerHTML = '<span class="defra-chart-paging-control__text">Back</span>'
+  const pageBackDescription = document.createElement('span')
+  pageBackDescription.id = 'page-back-description'
+  pageBackDescription.className = 'govuk-visually-hidden'
+  pageBackDescription.setAttribute('aria-live', 'asertive')
+  pageBack.appendChild(pageBackDescription)
   const pageForward = document.createElement('button')
   pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
   pageForward.setAttribute('data-direction', 'forward')
-  pageForward.innerHTML = '<span>Forward</span>'
   pageForward.setAttribute('aria-controls', 'bar-chart')
+  pageForward.setAttribute('aria-describedby', 'page-forward-description')
+  pageForward.innerHTML = '<span class="defra-chart-paging-control__text">Forward</span>'
+  const pageForwardDescription = document.createElement('span')
+  pageForwardDescription.id = 'page-forward-description'
+  pageForwardDescription.className = 'govuk-visually-hidden'
+  pageForwardDescription.setAttribute('aria-live', 'asertive')
+  pageForward.appendChild(pageForwardDescription)
   pagingControl.appendChild(pageBack)
   pagingControl.appendChild(pageForward)
-  // container.parentNode.insertBefore(pagingControl, container)
   controlsContainer.appendChild(pagingControl)
+
+  // Screen reader descriptions
+  const chartAccessibleDescription = document.createElement('div')
+  chartAccessibleDescription.id = 'chart-description'
+  chartAccessibleDescription.className = 'govuk-visually-hidden'
+  chartAccessibleDescription.innerHTML = 'Interactive bar chart. Use left and right arrow keys to select bars with more than 0mm. Shift plus left and right arrow keys to select each bar.'
+  const pageAccessbileDescription = document.createElement('span')
+  chartAccessibleDescription.appendChild(pageAccessbileDescription)
+  container.appendChild(chartAccessibleDescription)
+
+  const tooltipAccessibleDescription = document.createElement('div')
+  tooltipAccessibleDescription.className = 'govuk-visually-hidden'
+  tooltipAccessibleDescription.setAttribute('aria-live', 'assertive')
+  container.appendChild(tooltipAccessibleDescription)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
@@ -388,12 +426,6 @@ function BarChart (containerId, telemetryId) {
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
-
-  // Screen reader descriptions
-  const chartDescription = document.createElement('div')
-  chartDescription.className = 'govuk-visually-hidden'
-  chartDescription.setAttribute('aria-live', 'assertive')
-  container.appendChild(chartDescription)
 
   // Get width and height
   const margin = { top: 0, bottom: 45, left: 0, right: 26 }
