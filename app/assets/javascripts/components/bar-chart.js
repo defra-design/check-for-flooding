@@ -403,7 +403,7 @@ function BarChart (containerId, telemetryId) {
 
   const tooltipAccessibleDescription = document.createElement('div')
   tooltipAccessibleDescription.className = 'govuk-visually-hidden'
-  tooltipAccessibleDescription.setAttribute('aria-live', 'assertive')
+  tooltipAccessibleDescription.setAttribute('aria-live', 'polite')
   container.appendChild(tooltipAccessibleDescription)
 
   // Create chart container elements
