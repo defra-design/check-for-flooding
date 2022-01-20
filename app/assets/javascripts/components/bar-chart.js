@@ -253,8 +253,8 @@ function BarChart (containerId, telemetryId) {
     pageForward.setAttribute('data-end', nextEnd)
     pageBack.setAttribute('data-start', previousStart)
     pageBack.setAttribute('data-end', previousEnd)
-    pageForward.disabled = !(nextStart && nextEnd)
-    pageBack.disabled = !(previousStart && previousEnd)
+    pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
+    pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
   }
 
   const changePage = (event) => {
@@ -429,6 +429,7 @@ function BarChart (containerId, telemetryId) {
   })
 
   document.addEventListener('click', (e) => {
+    if (e.target.getAttribute('aria-disabled') === 'true') return
     const classNames = ['defra-chart-segmented-control__input', 'defra-chart-paging-control__button']
     if (classNames.some(className => e.target.classList.contains(className))) {
       changePage(e)

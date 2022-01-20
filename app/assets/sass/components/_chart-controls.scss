@@ -72,9 +72,9 @@
         @include defra-visually-hidden();
       }
     }
-    &:disabled,
-    &:disabled:after,
-    &:disabled:before {
+    &[aria-disabled="true"],
+    &[aria-disabled="true"]:after,
+    &[aria-disabled="true"]:before {
       color: govuk-colour('mid-grey');
     }
     &--back {
@@ -83,10 +83,10 @@
       }
     }
   }
-  &__button:not([disabled]) {
+  &__button:not([aria-disabled="true"]) {
     cursor: pointer;
   }
-  &__button:hover:not([disabled]) {
+  &__button:hover:not([aria-disabled="true"]) {
     color: $govuk-link-hover-colour;
     &:after, &:before {
       color: $govuk-link-hover-colour;
