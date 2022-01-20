@@ -83,8 +83,11 @@
       }
     }
   }
-  &__button:not([aria-disabled="true"]) {
+  &__button {
     cursor: pointer;
+  }
+  &__button[aria-disabled="true"] {
+    cursor: not-allowed;
   }
   &__button:hover:not([aria-disabled="true"]) {
     color: $govuk-link-hover-colour;
