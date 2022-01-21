@@ -7,7 +7,6 @@ import { timeFormat } from 'd3-time-format'
 import { select, pointer } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
-
 const { xhr } = window.flood.utils
 
 function BarChart (containerId, telemetryId) {
@@ -51,14 +50,26 @@ function BarChart (containerId, telemetryId) {
       .attr('transform', 'translate(0,' + 0 + ')')
       .call(axisLeft(yScale).tickSizeOuter(0).ticks(5).tickSize(-width, 0, 0).tickFormat(''))
 
+    // Update grid container
+    grid.attr('width', width).attr('height', height)
+
     // Add bars
-    clipInner.selectAll('.bar').remove()
-    const bars = clipInner.selectAll('.bar').data(dataPage).enter()
-      .append('g').attr('class', 'bar').attr('data-datetime', (d) => { return d.dateTime })
+    gridRow.selectAll('.bar').remove()
+    const bars = gridRow.selectAll('.bar').data(dataPage).enter()
+      .append('g')
+      .attr('role', 'cell')
+      .attr('tabindex', (d) => { return d === dataItem ? 0 : -1 })
+      .attr('data-index', (d, i) => { return i })
+      .attr('class', 'bar')
+      .attr('aria-hidden', (d) => { return !(d.value > 0 || d.isLatest) })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
       .classed('bar--latest', (d) => { return d.isLatest })
-    bars.filter((d) => { return d.isLatest }).append('line').attr('class', 'latest-line')
+    bars.filter((d) => { return d.isLatest }).append('line').attr('aria-hidden', true).attr('class', 'latest-line')
     bars.append('rect').attr('class', 'bar__fill')
+    bars.append('text').attr('class', 'govuk-visually-hidden').text((d) => {
+      const text = getItemText(d)
+      return `${text.value}, ${text.period}, ${text.monthLong} `
+    })
 
     // Position bars
     svg.selectAll('.bar')
@@ -72,9 +83,6 @@ function BarChart (containerId, telemetryId) {
     // Draw latest reading line
     const xLatest = Math.round(xScale.bandwidth() / 2)
     svg.select('.latest-line').attr('transform', 'translate(' + xLatest + ', 0)').attr('y1', 0).attr('y2', height)
-
-    // Update clip container
-    clip.attr('width', width).attr('height', height)
   }
 
   const setScaleX = () => {
@@ -128,66 +136,62 @@ function BarChart (containerId, telemetryId) {
     y = y < tooltipMarginTop ? tooltipMarginTop : y > tooltipMarginBottom ? tooltipMarginBottom : y
     tooltip.attr('transform', 'translate(' + x.toFixed(0) + ',' + y.toFixed(0) + ')')
     tooltip.classed('tooltip--visible', true)
-    locatorLine.classed('locator__line--visible', !dataTooltip.isLatest)
+    locatorLine.classed('locator__line--visible', !dataItem.isLatest)
   }
 
   const showTooltip = (tooltipY = 10) => {
     // Choose which value to show
-    if (!dataTooltip) return
+    if (!dataItem) return
     // Get tooltip position and content
-    const formatTime12 = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
-    const formatTime24 = timeFormat('%H:%M')
-    const timeStart = timeMinute.offset(new Date(dataTooltip.dateTime), period === 'minutes' ? -15 : -60)
-    const timeEnd = new Date(dataTooltip.dateTime)
-    const value = dataTooltip.isValid ? dataTooltip.value + 'mm' + (dataTooltip.isLatest ? ' latest' : '') : 'No data'
-    const description = `${formatTime12(timeStart).toLowerCase()} - ${formatTime12(timeEnd).toLowerCase()}, ${timeFormat('%e %b')(timeEnd)}`
-    tooltipValue.attr('dy', '0.5em').text(value)
-    tooltipDescription.attr('dy', '1.4em').text(description)
+    const text = getItemText(dataItem)
+    tooltipValue.attr('dy', '0.5em').text(text.value)
+    tooltipDescription.attr('dy', '1.4em').text(`${text.period}, ${text.monthShort}`)
     // Update locator
-    locator.attr('transform', 'translate(' + Math.round(xScale(dataTooltip.dateTime)) + ', 0)')
+    locator.attr('transform', 'translate(' + Math.round(xScale(dataItem.dateTime)) + ', 0)')
     locatorBackground.attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
     locatorLine.attr('transform', 'translate(' + Math.round(xScale.bandwidth() / 2) + ', 0)').attr('y1', 0).attr('y2', height)
     // Update bar selected state
     svg.selectAll('.bar--selected').classed('bar--selected', false)
-    svg.select('[data-datetime="' + dataTooltip.dateTime + '"]').classed('bar--selected', true)
+    svg.select('[data-datetime="' + dataItem.dateTime + '"]').classed('bar--selected', true)
     // Update tooltip location
-    const tooltipX = Math.round(xScale(dataTooltip.dateTime)) + (xScale.bandwidth() / 2)
-    // Update screen reader description
-    tooltipAccessibleDescription.innerHTML = `
-      ${value},
-      <time datetime="${formatTime24(timeStart)}">${formatTime12(timeStart).toLowerCase()}</time> to
-      <time datetime="${formatTime24(timeEnd)}">${formatTime12(timeEnd).toLowerCase()}</time>,
-      <time datetime="${timeFormat('%Y-%m-%d')(timeEnd)}">${timeFormat('%e %B')(timeEnd)}</time>
-    `
+    const tooltipX = Math.round(xScale(dataItem.dateTime)) + (xScale.bandwidth() / 2)
     setTooltipPosition(tooltipX, tooltipY)
   }
 
-  const getNextDataTooltip = (isForeward, hasShift) => {
-    let index = dataPage.findIndex(x => x === dataTooltip)
-    if (hasShift) {
-      // Shift plus arrow keys jumps > 0mm or isLatests
-      if (isForeward) {
-        for (let i = index; i > 0; i--) {
-          if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
-            index = i - 1
-            break
-          }
-        }
-      } else {
-        for (let i = index; i < dataPage.length - 1; i++) {
-          if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
-            index = i + 1
-            break
-          }
+  const getItemText = (item) => {
+    const timeStart = timeMinute.offset(new Date(item.dateTime), period === 'minutes' ? -15 : -60)
+    const timeEnd = new Date(item.dateTime)
+    const formatTime12 = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
+    return {
+      value: item.isValid ? item.value + 'mm' + (item.isLatest ? ' latest' : '') : 'No data',
+      period: `${formatTime12(timeStart).toLowerCase()} - ${formatTime12(timeEnd).toLowerCase()}`,
+      monthShort: timeFormat('%e %b')(timeEnd),
+      monthLong: timeFormat('%e %B')(timeEnd)
+    }
+  }
+
+  const getNextDataItemIndex = (isForeward) => {
+    let index = dataPage.findIndex(x => x === dataItem)
+    // Shift plus arrow keys jumps > 0mm or isLatests
+    if (isForeward) {
+      for (let i = index; i > 0; i--) {
+        if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
+          index = i - 1
+          break
         }
       }
     } else {
-      // Arrow keys without shift move one bar at a time
-      index = isForeward ? index - 1 : index + 1
-      index = index > dataPage.length - 1 ? dataPage.length - 1 : index < 0 ? 0 : index
+      for (let i = index; i < dataPage.length - 1; i++) {
+        if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
+          index = i + 1
+          break
+        }
+      }
     }
+    return index
+    // index = index > dataPage.length - 1 ? dataPage.length - 1 : index < 0 ? 0 : index
     // Contrain index to array length
-    dataTooltip = dataPage[index]
+    dataItem = dataPage[index]
   }
 
   const hideTooltip = () => {
@@ -196,7 +200,7 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', false)
     locatorLine.classed('locator__line--visible', false)
     locatorBackground.classed('locator__background--visible', false)
-    tooltipAccessibleDescription.innerHTML = ''
+    // tooltipAccessibleDescription.innerHTML = ''
   }
 
   const getDataPage = (start, end) => {
@@ -229,6 +233,12 @@ function BarChart (containerId, telemetryId) {
       const date = new Date(x.dateTime)
       return date.getTime() > (pageStart.getTime() + valueDurationMinutes) && date.getTime() <= (pageEnd.getTime() + valueDurationMinutes)
     })
+    // Set current data item depending on direction and presence of latest
+    dataItem = dataPage.find(x => x.isLatest)
+    const positiveDataItems = dataPage.map((x, i) => { return x.value > 0 || x.isLatest ? i : -1 }).filter(x => x >= 0)
+    if (direction && positiveDataItems.length) {
+      dataItem = direction === 'forward' ? dataPage[positiveDataItems[positiveDataItems.length - 1]] : dataPage[positiveDataItems[0]]
+    }
     // Set segemented control html properties
     segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
       const selectedClass = 'defra-chart-segmented-control__segment--selected'
@@ -261,28 +271,29 @@ function BarChart (containerId, telemetryId) {
     const pageBackText = `View previous ${pageDurationHours > 1 ? pageDurationHours : pageDuration} ${pageDurationHours > 1 ? 'hours' : 'minutes'}`
     pageForwardDescription.innerText = nextStart && nextEnd ? pageForwardText : 'No more data'
     pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
-    // Update screen reader description
+    // Update grid properites
+    grid.attr('aria-rowcount', 1)
+    grid.attr('aria-colcount', dataPage.length)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
-    pageAccessbileDescription.innerHTML = `
-      Showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
+    svgDesc.text(`
+      Bar chart showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
       from ${pageStart.toLocaleString()} to ${pageEnd.toLocaleString()} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
       There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
-    `
+    `)
   }
 
   const changePage = (event) => {
-    const button = event.target
-    direction = button.getAttribute('data-direction')
-    pageStart = new Date(button.getAttribute('data-start'))
-    pageEnd = new Date(button.getAttribute('data-end'))
+    const target = event.target
+    direction = target.getAttribute('data-direction')
+    pageStart = new Date(target.getAttribute('data-start'))
+    pageEnd = new Date(target.getAttribute('data-end'))
     // Move into existing or new methods
     getDataPage(pageStart, pageEnd)
     // Render bars and chart
     renderChart()
     hideTooltip()
     // Show default tooltip
-    dataTooltip = dataPage.find(x => x.isLatest)
-    showTooltip()
+    if (dataItem && dataItem.isLatest) showTooltip()
   }
 
   // D3 doesnt currently support inverting of a scaleBand
@@ -319,8 +330,7 @@ function BarChart (containerId, telemetryId) {
       renderChart()
       hideTooltip()
       // Show default tooltip
-      dataTooltip = dataPage.find(x => x.isLatest)
-      showTooltip()
+      if (dataItem && dataItem.isLatest) showTooltip()
     }
   }
 
@@ -329,13 +339,12 @@ function BarChart (containerId, telemetryId) {
   //
 
   const container = document.querySelector(`#${containerId}`)
-  const chart = document.getElementById(containerId)
 
   // Add controls container
   const controlsContainer = document.createElement('div')
   controlsContainer.style.display = 'none'
   controlsContainer.className = 'defra-chart-controls'
-  container.parentNode.insertBefore(controlsContainer, container)
+  container.appendChild(controlsContainer)
 
   // Set initial page dates
   let pageStart = new Date()
@@ -392,36 +401,24 @@ function BarChart (containerId, telemetryId) {
   pagingControl.appendChild(pageForward)
   controlsContainer.appendChild(pagingControl)
 
-  // Screen reader descriptions
-  const chartAccessibleDescription = document.createElement('div')
-  chartAccessibleDescription.id = 'chart-description'
-  chartAccessibleDescription.className = 'govuk-visually-hidden'
-  chartAccessibleDescription.innerHTML = 'Interactive bar chart. Use left and right arrow keys to select bars with more than 0mm. Shift plus left and right arrow keys to select each bar.'
-  const pageAccessbileDescription = document.createElement('span')
-  chartAccessibleDescription.appendChild(pageAccessbileDescription)
-  container.appendChild(chartAccessibleDescription)
-
-  const tooltipAccessibleDescription = document.createElement('div')
-  tooltipAccessibleDescription.className = 'govuk-visually-hidden'
-  tooltipAccessibleDescription.setAttribute('aria-live', 'polite')
-  container.appendChild(tooltipAccessibleDescription)
-
   // Create chart container elements
-  const svg = select(`#${containerId}`).append('svg')
-  svg.attr('aria-hidden', true)
-  svg.append('g').attr('class', 'y grid')
-  svg.append('g').attr('class', 'x axis')
-  svg.append('g').attr('class', 'y axis')
-  const clip = svg.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
-  const clipInner = svg.append('g').attr('clip-path', 'url(#clip)')
+  const svg = select(`#${containerId}`).append('svg').attr('aria-describedby', 'svg-description')
+  const svgDesc = svg.append('desc').attr('id', 'svg-description')
+  svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
+  svg.append('g').attr('class', 'x axis').attr('aria-hidden', true)
+  svg.append('g').attr('class', 'y axis').attr('aria-hidden', true)
 
   // Add locator
-  const locator = clipInner.append('g').attr('class', 'locator')
+  const locator = svg.append('g').attr('class', 'locator').attr('aria-hidden', true)
   const locatorBackground = locator.append('rect').attr('class', 'locator__background')
   const locatorLine = locator.append('line').attr('class', 'locator__line')
 
+  // Add container for bars
+  const grid = svg.append('g').attr('role', 'grid')
+  const gridRow = grid.append('g').attr('role', 'row')
+
   // Add tooltip container
-  const tooltip = svg.append('g').attr('class', 'tooltip')
+  const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
@@ -435,7 +432,7 @@ function BarChart (containerId, telemetryId) {
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
   // Set defaults
-  let xScale, yScale, dataCache, dataPage, dataTooltip, period, direction
+  let xScale, yScale, dataCache, dataPage, dataItem, period, direction
   // let isMobile
 
   // Get mobile media query list
@@ -453,14 +450,16 @@ function BarChart (containerId, telemetryId) {
   // mobileMediaQuery.addEventListener('change', renderChart)
 
   window.addEventListener('resize', () => {
-    const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
+    const containerBoundingRect = container.getBoundingClientRect()
+    const controlsContainerBoundingRect = controlsContainer.getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
+    height -= Math.floor(controlsContainerBoundingRect.height)
     renderChart()
-    showTooltip()
+    if (dataItem && dataItem.isLatest) showTooltip()
   })
 
-  document.addEventListener('click', (e) => {
+  container.addEventListener('click', (e) => {
     if (e.target.getAttribute('aria-disabled') === 'true') return
     const classNames = ['defra-chart-segmented-control__input', 'defra-chart-paging-control__button']
     if (classNames.some(className => e.target.classList.contains(className))) {
@@ -469,26 +468,30 @@ function BarChart (containerId, telemetryId) {
   })
 
   container.addEventListener('keyup', (e) => {
-    if (e.key !== 'Tab') return
-    const dataItemIndex = direction === 'back' ? 0 : dataPage.length - 1
-    dataTooltip = dataTooltip || dataPage.find(x => x.isLatest) || dataPage[dataItemIndex]
+    if (!(e.key === 'Tab' && document.activeElement.getAttribute('role') === 'cell')) return
     locatorBackground.classed('locator__background--visible', true)
     showTooltip()
   })
 
   container.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
+    if (!(e.target.getAttribute('role') === 'cell' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft'))) return
+    e.preventDefault()
+    const nextIndex = getNextDataItemIndex(e.key === 'ArrowRight')
+    const cell = e.target
+    const nextCell = cell.parentNode.children[nextIndex]
+    nextCell.focus()
+    cell.tabIndex = -1
+    nextCell.tabIndex = 0
+    dataItem = dataPage[nextIndex]
     locatorBackground.classed('locator__background--visible', true)
-    getNextDataTooltip(e.key === 'ArrowRight', e.shiftKey)
     showTooltip()
   })
 
-  container.addEventListener('blur', () => {
-    dataTooltip = dataPage.find(x => x.isLatest)
-    if (dataTooltip) {
+  container.addEventListener('focusout', (e) => {
+    if (e.target.getAttribute('role') !== 'cell') return
+    if (dataItem && dataItem.isLatest) {
       showTooltip()
     } else {
-      dataTooltip = null
       hideTooltip()
     }
     locatorBackground.classed('locator__background--visible', false)
@@ -497,19 +500,19 @@ function BarChart (containerId, telemetryId) {
   svg.on('mousemove', (e) => {
     if (!xScale) return
     const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
-    dataTooltip = dataPage.find(x => x.dateTime === mouseDateTime)
+    dataItem = dataPage.find(x => x.dateTime === mouseDateTime)
     locatorBackground.classed('locator__background--visible', false)
     showTooltip(pointer(e)[1])
   })
 
   svg.on('mouseleave', (e) => {
     if (dataPage) {
-      dataTooltip = dataPage.find(x => x.isLatest)
-      dataTooltip ? showTooltip() : hideTooltip()
+      dataItem = dataPage.find(x => x.isLatest)
+      dataItem ? showTooltip() : hideTooltip()
     }
   })
 
-  this.chart = chart
+  this.container = container
 }
 
 window.flood.charts = {
