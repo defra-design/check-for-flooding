@@ -346,7 +346,7 @@ function BarChart (containerId, telemetryId) {
   // Description
   const description = document.createElement('span')
   description.className = 'govuk-visually-hidden'
-  description.setAttribute('arial-live', 'assertive')
+  description.setAttribute('aria-live', 'assertive')
   description.setAttribute('id', 'bar-chart-description')
   container.appendChild(description)
 
