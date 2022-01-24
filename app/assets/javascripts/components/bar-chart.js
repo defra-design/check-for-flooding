@@ -276,9 +276,11 @@ function BarChart (containerId, telemetryId) {
     grid.attr('aria-rowcount', 1)
     grid.attr('aria-colcount', dataPage.length)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
+    const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
+    const pageValueEnd = new Date(dataPage[0].dateTime)
     description.innerHTML = `
       Bar chart showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
-      from ${pageStart.toLocaleString()} to ${pageEnd.toLocaleString()} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
+      from ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueStart)} to ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueEnd)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
       There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
     `
   }
@@ -344,6 +346,7 @@ function BarChart (containerId, telemetryId) {
   // Description
   const description = document.createElement('span')
   description.className = 'govuk-visually-hidden'
+  description.setAttribute('arial-live', 'assertive')
   description.setAttribute('id', 'bar-chart-description')
   container.appendChild(description)
 
