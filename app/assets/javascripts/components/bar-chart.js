@@ -60,6 +60,7 @@ function BarChart (containerId, telemetryId) {
       .attr('role', 'cell')
       .attr('tabindex', (d) => { return d === dataItem ? 0 : -1 })
       .attr('data-index', (d, i) => { return i })
+      .attr('data-datetime', (d) => { return d.dateTime })
       .attr('class', 'bar')
       .attr('aria-hidden', (d) => { return !(d.value > 0 || d.isLatest) })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
@@ -208,7 +209,7 @@ function BarChart (containerId, telemetryId) {
     const cacheEnd = new Date(dataCache.cacheEndDateTime)
     const pageStart = new Date(start)
     const pageEnd = new Date(end)
-    // If dates are outside range we need to load another data set
+    // If dates are outside range we need to load another data cache
     if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
       // Rebuild the cache when we have more data
       // Set cache start and end
@@ -228,10 +229,10 @@ function BarChart (containerId, telemetryId) {
     // Get value duration
     const valueStart = new Date(dataPage[1].dateTime)
     const valueEnd = new Date(dataPage[0].dateTime)
-    const valueDurationMinutes = (valueEnd.getTime() / (1000 * 60)) - (valueStart.getTime() / (1000 * 60))
+    const valueDuration = valueEnd.getTime() - valueStart.getTime()
     dataPage = dataPage.filter(x => {
       const date = new Date(x.dateTime)
-      return date.getTime() > (pageStart.getTime() + valueDurationMinutes) && date.getTime() <= (pageEnd.getTime() + valueDurationMinutes)
+      return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
     })
     // Set current data item depending on direction and presence of latest
     dataItem = dataPage.find(x => x.isLatest)
@@ -275,11 +276,11 @@ function BarChart (containerId, telemetryId) {
     grid.attr('aria-rowcount', 1)
     grid.attr('aria-colcount', dataPage.length)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
-    svgDesc.text(`
+    description.innerHTML = `
       Bar chart showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
       from ${pageStart.toLocaleString()} to ${pageEnd.toLocaleString()} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
       There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
-    `)
+    `
   }
 
   const changePage = (event) => {
@@ -339,6 +340,12 @@ function BarChart (containerId, telemetryId) {
   //
 
   const container = document.querySelector(`#${containerId}`)
+
+  // Description
+  const description = document.createElement('span')
+  description.className = 'govuk-visually-hidden'
+  description.setAttribute('id', 'bar-chart-description')
+  container.appendChild(description)
 
   // Add controls container
   const controlsContainer = document.createElement('div')
@@ -402,8 +409,11 @@ function BarChart (containerId, telemetryId) {
   controlsContainer.appendChild(pagingControl)
 
   // Create chart container elements
-  const svg = select(`#${containerId}`).append('svg').attr('aria-describedby', 'svg-description')
-  const svgDesc = svg.append('desc').attr('id', 'svg-description')
+  const svg = select(`#${containerId}`).append('svg')
+    .attr('aria-labelledby', 'bar-chart-title')
+    .attr('aria-describedby', 'bar-chart-description')
+
+  // Add x and y grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
   svg.append('g').attr('class', 'x axis').attr('aria-hidden', true)
   svg.append('g').attr('class', 'y axis').attr('aria-hidden', true)

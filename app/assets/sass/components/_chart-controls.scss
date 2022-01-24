@@ -95,9 +95,6 @@
       color: $govuk-link-hover-colour;
     }
   }
-  &__button:focus {
-    background-color: $govuk-focus-colour;
-  }
   &__button--forward:after,
   &__button--back:before {
     display: inline-block;
@@ -125,9 +122,15 @@
     }
   }
   &__button:focus {
+    background-color: $govuk-focus-colour;
     color: $govuk-focus-text-colour;
     &:after, &:before {
       color: $govuk-focus-text-colour;
+    }
+  }
+  &__button[aria-disabled="true"]:focus {
+    &:after, &:before {
+      color: white;
     }
   }
 }

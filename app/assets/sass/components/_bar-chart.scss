@@ -1,23 +1,20 @@
 // Bar graph
-.js-enabled .defra-bar-chart {
-  position:relative;
-  display: block !important;
-  margin: 0;
-}
-.defra-bar-chart__caption {
-  display:block;
-  @extend .govuk-body;
-  margin-bottom:30px;
-  @include mq ($from: tablet) {
-    margin-bottom:40px;
+.defra-bar-chart {
+  &__caption {
+    display:block;
+    @extend .govuk-body;
+    margin-bottom:30px;
+    @include mq ($from: tablet) {
+      margin-bottom:40px;
+    }
+    margin-right:0px;
+    text-align:left;
   }
-  margin-right:0px;
-  text-align:left;
-}
-.defra-bar-chart__container {
-  position:relative;
-  margin:0;
-  outline: 0px;
+  &__container {
+    position:relative;
+    margin:0;
+    outline: 0px;
+  }
 }
 .defra-bar-chart svg {
   position:relative;
@@ -51,6 +48,7 @@
   }
   .bar {
     pointer-events: none;
+    outline: 0px;
   }
   .bar__fill {
     fill: govuk-colour('blue');
