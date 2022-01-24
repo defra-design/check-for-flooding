@@ -39,7 +39,7 @@
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
-          <dt class="defra-flood-statistics__key">
+          <dt class="defra-flood-statistics__key" aria-describedby="total-description">
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
@@ -48,7 +48,7 @@
           </dd>
         </div>
         <div class="defra-flood-statistics__column-one-third"> 
-          <dt class="defra-flood-statistics__key">
+          <dt class="defra-flood-statistics__key" aria-describedby="total-description">
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
@@ -57,7 +57,7 @@
           </dd>
         </div>
       </dl>
-      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Latest reading at {{ model.time }}. We get measurements more often as the risk of flooding increases.</h2>
+      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Latest reading at {{ model.time }}</p>
     </div>
   </div>
 </div>
@@ -66,11 +66,10 @@
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</h2>
     <div id="bar-chart" class="defra-bar-chart"></div>
+    <a href="" class="defra-button-download-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">Download rainfall data for the last 5 days CSV (123KB)</a>
+    <p class="govuk-caption-s govuk-!-margin-top-4">We get measurements more often as the risk of flooding increases.</p>
   </div>
 </div>
-
-{# Download CSV #}
-<a href="" class="defra-button-download-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">Download rainfall data for the last 5 days CSV (123KB)</a>
 
 {# Station Details #}
 <div class="govuk-grid-row">
