@@ -9,6 +9,7 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
+import '../components/toggletip'
 
 // Create LiveMap
 if (document.getElementById('map')) {
@@ -25,4 +26,9 @@ if (document.getElementById('map')) {
 // Create bar chart
 if (document.getElementById('bar-chart')) {
   window.flood.charts.createBarChart('bar-chart', window.flood.model.telemetryId, window.flood.model.period)
+}
+
+// Add toggletips
+if (document.querySelectorAll('.defra-toggletip')) {
+  window.flood.createToggletips()
 }

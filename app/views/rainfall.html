@@ -57,7 +57,15 @@
           </dd>
         </div>
       </dl>
-      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Latest reading at {{ model.time }}</p>
+      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">
+        Latest reading at {{ model.time }}
+        <span class="defra-toggletip">
+          <button class="defra-toggletip__button" type="button" aria-label="More information" data-toggletip-content="This clarifies whatever needs clarifying">
+            <span>i</span>
+          </button>
+          <span class="defra-toggletip__info" role="status"></span>
+        </span>
+      </p>
     </div>
   </div>
 </div>
@@ -67,7 +75,7 @@
     <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</h2>
     <div id="bar-chart" class="defra-bar-chart"></div>
     <a href="" class="defra-button-download-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">Download rainfall data for the last 5 days CSV (123KB)</a>
-    <p class="govuk-caption-s govuk-!-margin-top-4">We get measurements more often as the risk of flooding increases.</p>
+    <!--<p class="govuk-caption-s govuk-!-margin-top-4">We get measurements more often as the risk of flooding increases.</p>-->
   </div>
 </div>
 
