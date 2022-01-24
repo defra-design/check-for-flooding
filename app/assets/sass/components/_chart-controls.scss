@@ -129,6 +129,7 @@
     }
   }
   &__button[aria-disabled="true"]:focus {
+    color: white;
     &:after, &:before {
       color: white;
     }

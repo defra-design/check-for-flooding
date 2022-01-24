@@ -279,7 +279,7 @@ function BarChart (containerId, telemetryId) {
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
     description.innerHTML = `
-      Bar chart showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
+      Showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
       from ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueStart)} to ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueEnd)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
       There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
     `
@@ -346,7 +346,7 @@ function BarChart (containerId, telemetryId) {
   // Description
   const description = document.createElement('span')
   description.className = 'govuk-visually-hidden'
-  description.setAttribute('aria-live', 'assertive')
+  description.setAttribute('aria-live', 'polite')
   description.setAttribute('id', 'bar-chart-description')
   container.appendChild(description)
 
@@ -413,7 +413,7 @@ function BarChart (containerId, telemetryId) {
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
-    .attr('aria-labelledby', 'bar-chart-title')
+    .attr('aria-label', 'Bar chart')
     .attr('aria-describedby', 'bar-chart-description')
 
   // Add x and y grid containers
