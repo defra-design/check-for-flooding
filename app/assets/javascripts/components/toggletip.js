@@ -15,32 +15,36 @@ const toggletips = () => {
     const info = button.nextElementSibling
     const text = info.querySelector('span:first-child')
     const arrow = info.querySelector('.defra-toggletip__arrow')
-    text.innerHTML = button.parentNode.getAttribute('data-toggletip-content')
-    button.parentNode.classList.add('defra-toggletip--open')
-    const buttonLeft = button.getBoundingClientRect().left
-    const buttonWidth = button.getBoundingClientRect().width
-    const viewportWidth = window.innerWidth
-    let infoWidth = info.getBoundingClientRect().width
-    infoWidth = infoWidth > (viewportWidth - (viewportMargin * 2)) ? viewportWidth - (viewportMargin * 2) : infoWidth
+    text.innerHTML = ''
+    // Timeout recommend to ensure aria-live region is re-read
+    window.setTimeout(() => {
+      text.innerHTML = button.parentNode.getAttribute('data-toggletip-content')
+      button.parentNode.classList.add('defra-toggletip--open')
+      const buttonLeft = button.getBoundingClientRect().left
+      const buttonWidth = button.getBoundingClientRect().width
+      const viewportWidth = window.innerWidth
+      let infoWidth = info.getBoundingClientRect().width
+      infoWidth = infoWidth > (viewportWidth - (viewportMargin * 2)) ? viewportWidth - (viewportMargin * 2) : infoWidth
 
-    // Centre tip
-    let infoOffsetX = ((infoWidth - buttonWidth) / 2) - (((infoWidth - buttonWidth) / 2) * 2)
-    // Correct offset if near sides
-    if ((buttonLeft + infoOffsetX) < viewportMargin) {
-      // Left side
-      infoOffsetX = viewportMargin - buttonLeft
-    } else if ((buttonLeft + infoWidth + infoOffsetX) > (viewportWidth - viewportMargin)) {
-      // Right side
-      infoOffsetX = (viewportWidth - viewportMargin - buttonLeft) - infoWidth
-    }
-    arrow.style.left = `${Math.abs(infoOffsetX) + Math.round((buttonWidth / 2))}px`
-    info.style.marginLeft = `${infoOffsetX}px`
-    // Overide width so it doesn't truncate at zoom levels
-    info.style.width = `${infoWidth}px`
-    // Switch position if near top
-    if (info.getBoundingClientRect().top < viewportMargin) {
-      button.parentNode.classList.add('defra-toggletip--bottom')
-    }
+      // Centre tip
+      let infoOffsetX = ((infoWidth - buttonWidth) / 2) - (((infoWidth - buttonWidth) / 2) * 2)
+      // Correct offset if near sides
+      if ((buttonLeft + infoOffsetX) < viewportMargin) {
+        // Left side
+        infoOffsetX = viewportMargin - buttonLeft
+      } else if ((buttonLeft + infoWidth + infoOffsetX) > (viewportWidth - viewportMargin)) {
+        // Right side
+        infoOffsetX = (viewportWidth - viewportMargin - buttonLeft) - infoWidth
+      }
+      arrow.style.left = `${Math.abs(infoOffsetX) + Math.round((buttonWidth / 2))}px`
+      info.style.marginLeft = `${infoOffsetX}px`
+      // Overide width so it doesn't truncate at zoom levels
+      info.style.width = `${infoWidth}px`
+      // Switch position if near top
+      if (info.getBoundingClientRect().top < viewportMargin) {
+        button.parentNode.classList.add('defra-toggletip--bottom')
+      }
+    }, 100)
   }
 
   // Remove tooltip
