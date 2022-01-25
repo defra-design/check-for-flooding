@@ -2,7 +2,7 @@ const bingApiKey = process.env.BING_API_KEY
 const utils = require('../../utils')
 
 class ViewModel {
-  constructor (station, telemetry) {
+  constructor (station, telemetry, place) {
     this.title = (() => {
       if (station.type === 'rainfall') {
         return `Rainfall at ${station.name}`
@@ -27,6 +27,7 @@ class ViewModel {
     }
     this.time = time
     this.bingApiKey = bingApiKey
+    this.nearby = place.name
   }
 }
 module.exports = ViewModel

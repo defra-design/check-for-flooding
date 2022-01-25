@@ -78,6 +78,9 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
   // Default name
   let name = gazetteerEntry.name
 
+  // Remove ', GB' from reverse geocode name
+  name = name.substring(0, name.lastIndexOf(', GB'))
+
   if (coreCities.includes(name)) {
     // If core city remove local authority
     name = gazetteerEntry.address.locality
