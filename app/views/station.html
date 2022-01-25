@@ -28,7 +28,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+    <h1 class="govuk-heading-xl">
       {{ model.title }}
     </h1>
     <!-- {% if model.station.status == 'active' and model.station.state != 'error' %}
@@ -120,18 +120,18 @@
     <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
       {% if model.station.upstreamId %}
-      <a href="/station/{{ model.station.upstreamId }}" class="defra-button-secondary defra-button-secondary--icon" role="button" data-module="govuk-button">
-        <svg width="14" height="18" viewBox="0 0 14 18" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,17L6,17L6,4.828Z" style="fill:currentColor;fill-rule:nonzero;"/></svg>
+      <a href="/station/{{ model.station.upstreamId }}" class="defra-link-icon-s" role="button" data-module="govuk-button">
+        <svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,5.828l-3.586,3.586l-1.414,-1.414l6,-6l6,6l-1.414,1.414l-3.586,-3.586l0,12.172l-2,0l0,-12.172Z" style="fill: currentColor"/></svg>
         Upstream
       </a>
       {% endif %}
       {% if model.station.downstreamId %}
-      <a href="/station/{{ model.station.downstreamId }}" class="defra-button-secondary defra-button-secondary--icon" role="button" data-module="govuk-button">
-        <svg width="14" height="18" viewBox="0 0 14 18" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M6,13.172L2.414,9.586L1,11L7,17L13,11L11.586,9.586L8,13.172L8,1L6,1L6,13.172Z" style="fill:currentColor;fill-rule:nonzero;"/></svg>
+      <a href="/station/{{ model.station.downstreamId }}" class="defra-link-icon-s" role="button" data-module="govuk-button">
+        <svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,14.172l-3.586,-3.586l-1.414,1.414l6,6l6,-6l-1.414,-1.414l-3.586,3.586l0,-12.172l-2,0l0,12.172Z" style="fill: currentColor"/></svg>
         Downstream
       </a>
       {% endif %}
-      <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-button-secondary" role="button" data-module="govuk-button">
+      <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">
         Nearby levels
       </a>
     </nav>
@@ -142,8 +142,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-flood-statistics govuk-!-margin-top-4">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">Latest measurements at {{ model.time }}</h2>
+    <div class="defra-flood-statistics govuk-!-margin-top-2">
       <dl class="defra-flood-statistics__list">
       {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.rangeTop and model.station.rangeBottom  %}
@@ -184,6 +183,15 @@
           </dd>
         </div>
       </dl>
+      <p class="govuk-caption-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">
+        Latest reading: {{ model.time }}
+        <span class="defra-toggletip">
+          <button class="defra-toggletip__button" type="button" aria-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases">
+            <span>i</span>
+          </button>
+          <span class="defra-toggletip__info" role="status"></span>
+        </span>
+      </p>
     </div>
   </div>
 </div>
@@ -290,7 +298,10 @@
   </div>
 </div>
 
-<a href="/station-csv/{{model.station.id}}{% if model.station.qualifier == 'd' %}/downstream{% endif %}" class="defra-button-download-s govuk-!-margin-bottom-2 govuk-!-margin-top-2">Download height data CSV ({% if model.isFfoi %}16{% else %}12{% endif %}KB)</a>
+<a href="" class="defra-link-icon-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">
+  <svg width="13" height="20" viewBox="0 0 13 20"><rect x="0" y="1.5" width="10.5" height="14.5" style="fill: currentColor"/><path d="M2,18.5L13,18.5L13,3.5L11.5,3.5L11.5,17.009L2,17.009L2,18.5Z" style="fill: currentColor"/></svg>
+  Download height data CSV (123KB)
+</a>
 
 {# Impacts and thresholds #}
 {% if model.thresholds.length > 0 %}

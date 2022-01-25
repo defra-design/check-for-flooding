@@ -90,7 +90,7 @@
     </div>
     {% endif %}
     {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
-    <p class="defra-map-info__meta">Latest measurements at {{ model.date }}</p>
+    <p class="defra-map-info__meta">Latest reading: {{ model.date }}</p>
     {% endif %}
 </div>
 {% else %}
@@ -132,6 +132,6 @@
         </div>
     </dl>
     {% endif %}
-    <p class="defra-map-info__meta">Upto {{ model.date }}</p>
+    <p class="defra-map-info__meta">Latest reading: {{ model.date }}</p>
 </div>
 {% endif %}

@@ -22,6 +22,7 @@
 // Text button
 .defra-button-text {
     @extend .govuk-body;
+    position: relative;
     margin:0px;
     color:$govuk-link-colour;
     background-color: transparent;
@@ -46,6 +47,7 @@
     }
 }
 
+// Secondoary button
 .defra-button-secondary {
     position: relative;
     display: inline-block;
@@ -92,44 +94,34 @@
     }
 }
 
-// Download button
-.defra-button-download {
-    @extend .defra-button-text;
+// Text buttons with icons
+.defra-link-s {
     position:relative;
     display:inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    @include govuk-font($size: 16);
+    &:last-of-type {
+        margin-right: 0px;
+    }
+}
+.defra-link-icon-s {
+    @extend .defra-link-s;
     padding-left:21px;
-    color: govuk-color('black');
-    &:before {
-        content: "";
+    svg {
         position: absolute;
-        top:0px;
+        top:-2px;
         left:1px;
-        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:currentColor;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:currentColor;"/></svg>');
-        background-color:transparent;
-        background-size:13px 17px;
-        background-repeat: no-repeat;
-        background-position: top left;
-        height:17px;
-        width:13px;
+        color: govuk-colour('black');
         @include mq ($from: tablet) {
-            top: 1px;
+            top: -1px;
         }
     }
-    &:hover:before {
-        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:#003078"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:#003078"/></svg>');
+    &:hover svg {
+        color: $govuk-link-hover-colour;
     }
-    &:focus:before,
-    &:active:before {
-        background-image: svg-url('<svg width="13" height="17" viewBox="0 0 13 17"><rect x="0" y="0" width="10.5" height="14.5" style="fill:currentColor;"/><path d="M2,17L13,17L13,2L11.5,2L11.5,15.509L2,15.509L2,17Z" style="fill:currentColor;"/></svg>');
-    }
-    &-s {
-        @extend .defra-button-download;
-        @include govuk-font($size: 16);
-    }
-    &-s:before {
-        top:0px;
-        @include mq ($from: tablet) {
-            top: 1px;
-        }
+    &:focus svg,
+    &:active svg {
+        color: govuk-colour('black');
     }
 }

@@ -46,6 +46,7 @@
 }
 .defra-chart-paging-control {
   display: inline-block;
+  margin-top: -3px;
   @include mq ($from: desktop) {
     text-align: center;
     width: 130px;

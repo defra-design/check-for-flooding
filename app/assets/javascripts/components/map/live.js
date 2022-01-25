@@ -694,9 +694,17 @@ maps.createLiveMap = (mapId, options = {}) => {
     window.history.replaceState(data, title, uri)
   }
 
+  // Build default uri
+  let uri = window.location.href
+  uri = addOrUpdateParameter(uri, 'v', mapId)
+  uri = addOrUpdateParameter(uri, 'lyr', options.layers || '')
+  uri = addOrUpdateParameter(uri, 'ext', options.extent || '')
+  uri = addOrUpdateParameter(uri, 'fid', options.selectedId || '')
+
   // Create map button
   const btnContainer = document.getElementById(mapId)
-  const button = document.createElement('button')
+  const button = document.createElement('a')
+  button.setAttribute('href', uri)
   button.id = mapId + '-btn'
   button.innerHTML = `<svg width="15" height="20" viewBox="0 0 15 20"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="currentColor"/></svg><span>${options.btnText || 'View map'}</span><span class="govuk-visually-hidden">(Visual only)</span>`
   button.className = options.btnClasses || 'defra-button-secondary defra-button-secondary--icon'
@@ -726,15 +734,10 @@ maps.createLiveMap = (mapId, options = {}) => {
 
   // Create map on button press
   button.addEventListener('click', (e) => {
+    e.preventDefault()
     // Advance history
     const data = { v: mapId, isBack: true }
     const title = options.title // document.title
-    let uri = window.location.href
-    uri = addOrUpdateParameter(uri, 'v', mapId)
-    // Add any querystring parameters from constructor
-    if (options.layers) { uri = addOrUpdateParameter(uri, 'lyr', options.layers) }
-    if (options.extent) { uri = addOrUpdateParameter(uri, 'ext', options.extent) }
-    if (options.selectedId) { uri = addOrUpdateParameter(uri, 'fid', options.selectedId) }
     window.history.pushState(data, title, uri)
     options.isBack = true
     return new LiveMap(mapId, options)

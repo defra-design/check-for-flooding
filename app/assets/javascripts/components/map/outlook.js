@@ -413,6 +413,10 @@ maps.createOutlookMap = (mapId, options = {}) => {
     window.history.replaceState(data, title, uri)
   }
 
+  // Build default uri
+  let uri = window.location.href
+  uri = addOrUpdateParameter(uri, 'v', mapId)
+
   // Create map button
   const btnContainer = document.getElementById(mapId)
   const button = document.createElement('button')
@@ -456,8 +460,6 @@ maps.createOutlookMap = (mapId, options = {}) => {
     // Advance history
     const data = { v: mapId, isBack: true }
     const title = options.title
-    let uri = window.location.href
-    uri = addOrUpdateParameter(uri, 'v', mapId)
     window.history.pushState(data, title, uri)
     options.isBack = true
     return new OutlookMap(mapId, options)
