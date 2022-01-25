@@ -64,7 +64,7 @@ const Toggletips = () => {
 
   // Add on click
   document.addEventListener('click', (e) => {
-    const isButton = e.target.classList.contains('defra-toggletip__button')
+    const isButton = e.target.classList && e.target.classList.contains('defra-toggletip__button')
     isButton ? openToggletip(e.target) : closeToggletips()
   })
 
@@ -77,7 +77,7 @@ const Toggletips = () => {
 
   // Add on mouse enter
   document.addEventListener('mouseenter', (e) => {
-    if (e.target.classList.contains('defra-toggletip__button')) {
+    if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
       closeToggletips()
       openToggletip(e.target)
     }
@@ -85,14 +85,14 @@ const Toggletips = () => {
 
   // Remove on mouse leave
   document.addEventListener('mouseleave', (e) => {
-    if (e.target.classList.contains('defra-toggletip__button')) {
+    if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
       closeToggletips()
     }
   }, true)
 
   // Add on focus
   document.addEventListener('focusin', (e) => {
-    if (e.target.classList.contains('defra-toggletip__button')) {
+    if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
       closeToggletips()
       openToggletip(e.target)
     }
@@ -100,7 +100,7 @@ const Toggletips = () => {
 
   // Remove on blur
   document.addEventListener('focusout', (e) => {
-    if (e.target.classList.contains('defra-toggletip__button')) {
+    if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
       closeToggletips()
     }
   })
