@@ -18,7 +18,9 @@ router.post('/find-location', async (req, res) => {
     if (locationResponse.status === 200) {
       if (locationResponse.data.results && locationResponse.data.results.length) {
         // We have some matches
-        locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+        locationResponse.data.results.forEach(result => {
+          places.push(new Place(result))
+        })
       }
     } else {
       // Log 500 error
