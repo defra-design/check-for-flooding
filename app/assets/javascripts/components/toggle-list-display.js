@@ -1,5 +1,5 @@
 'use strict'
-// ToggleTip component
+// Toggle list display component
 
 const { forEach } = window.flood.utils
 

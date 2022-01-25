@@ -2,7 +2,9 @@
 
 // Toggletip component
 
-const Toggletips = () => {
+const { forEach } = window.flood.utils
+
+const toggletips = () => {
   // Add tooltip
   const openToggletip = (button) => {
     // Update reference
@@ -11,7 +13,9 @@ const Toggletips = () => {
     const viewportMargin = 15
     // Determin position of overlay
     const info = button.nextElementSibling
-    info.innerHTML = button.getAttribute('data-toggletip-content')
+    const text = info.querySelector('span:first-child')
+    const arrow = info.querySelector('.defra-toggletip__arrow')
+    text.innerHTML = button.parentNode.getAttribute('data-toggletip-content')
     button.parentNode.classList.add('defra-toggletip--open')
     const buttonLeft = button.getBoundingClientRect().left
     const buttonWidth = button.getBoundingClientRect().width
@@ -25,14 +29,12 @@ const Toggletips = () => {
     if ((buttonLeft + infoOffsetX) < viewportMargin) {
       // Left side
       infoOffsetX = viewportMargin - buttonLeft
-      info.style.marginLeft = `${infoOffsetX}px`
     } else if ((buttonLeft + infoWidth + infoOffsetX) > (viewportWidth - viewportMargin)) {
       // Right side
       infoOffsetX = (viewportWidth - viewportMargin - buttonLeft) - infoWidth
-      info.style.marginLeft = `${infoOffsetX}px`
-    } else {
-      info.style.marginLeft = `${infoOffsetX}px`
     }
+    arrow.style.left = `${Math.abs(infoOffsetX) + Math.round((buttonWidth / 2))}px`
+    info.style.marginLeft = `${infoOffsetX}px`
     // Overide width so it doesn't truncate at zoom levels
     info.style.width = `${infoWidth}px`
     // Switch position if near top
@@ -54,13 +56,32 @@ const Toggletips = () => {
         const info = toggletip.querySelector('.defra-toggletip__info')
         info.style.removeProperty('width')
         info.style.removeProperty('margin-left')
-        info.innerHTML = ''
+        const text = info.querySelector('span:first-child')
+        text.innerHTML = ''
+        const arrow = info.querySelector('.defra-toggletip__arrow')
+        arrow.style.removeProperty('left')
       })
     }
   }
 
   // Reference to current button
   let currentButton
+
+  // Create toggletips
+  const toggletips = document.querySelectorAll('.defra-toggletip')
+  forEach(toggletips, (toggletip) => {
+    console.log(toggletip)
+    const button = document.createElement('button')
+    button.className = 'defra-toggletip__button'
+    button.setAttribute('aria-label', toggletip.getAttribute('data-label'))
+    button.innerHTML = '<span>i</span>'
+    const info = document.createElement('span')
+    info.className = 'defra-toggletip__info'
+    info.setAttribute('role', 'status')
+    info.innerHTML = '<span></span><span class="defra-toggletip__arrow"></span>'
+    toggletip.appendChild(button)
+    toggletip.appendChild(info)
+  })
 
   // Add on click
   document.addEventListener('click', (e) => {
@@ -114,5 +135,5 @@ const Toggletips = () => {
 }
 
 window.flood.createToggletips = () => {
-  return Toggletips()
+  return toggletips()
 }
