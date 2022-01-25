@@ -70,7 +70,6 @@ const toggletips = () => {
   // Create toggletips
   const toggletips = document.querySelectorAll('.defra-toggletip')
   forEach(toggletips, (toggletip) => {
-    console.log(toggletip)
     const button = document.createElement('button')
     button.className = 'defra-toggletip__button'
     button.setAttribute('aria-label', toggletip.getAttribute('data-label'))
@@ -91,6 +90,7 @@ const toggletips = () => {
 
   // Remove on escape
   document.addEventListener('keyup', (e) => {
+    console.log('*', e.key)
     if (e.key === 'Escape' || e.key === 'Esc') {
       closeToggletips()
     }
@@ -112,12 +112,12 @@ const toggletips = () => {
   }, true)
 
   // Add on focus
-  document.addEventListener('focusin', (e) => {
-    if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
-      closeToggletips()
-      openToggletip(e.target)
-    }
-  })
+  // document.addEventListener('focusin', (e) => {
+  //   if (e.target.classList && e.target.classList.contains('defra-toggletip__button')) {
+  //     closeToggletips()
+  //     openToggletip(e.target)
+  //   }
+  // })
 
   // Remove on blur
   document.addEventListener('focusout', (e) => {
