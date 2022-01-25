@@ -148,12 +148,13 @@
         {% if model.station.rangeTop and model.station.rangeBottom  %}
         <div class="defra-flood-statistics__column-one-quarter"> 
           <dt class="defra-flood-statistics__key">
-            <span class="defra-tooltip">
+            State
+            <!--<span class="defra-tooltip">
               <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#state" class="defra-tooltip__tool" aria-label="How we define state">
                 State
               </a>
               <span class="defra-tooltip__tip" role="status"></span>
-            </span>
+            </span>-->
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.state | capitalize }}
@@ -171,12 +172,13 @@
         {% endif %}
         <div class="defra-flood-statistics__column-one-quarter">
           <dt class="defra-flood-statistics__key">
-            <span class="defra-tooltip">
+            Height
+            <!--<span class="defra-tooltip">
               <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#river-height" class="defra-tooltip__tool" aria-label="How we measure height">
                 Height
               </a>
               <span class="defra-tooltip__tip" role="status"></span>
-            </span>
+            </span>-->
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.height }}m
