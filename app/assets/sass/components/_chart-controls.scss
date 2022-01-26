@@ -124,14 +124,9 @@
   &__button:focus {
     background-color: $govuk-focus-colour;
     color: $govuk-focus-text-colour;
+    border-bottom: 5px solid govuk-colour('black');
     &:after, &:before {
       color: $govuk-focus-text-colour;
-    }
-  }
-  &__button[aria-disabled="true"]:focus {
-    color: white;
-    &:after, &:before {
-      color: white;
     }
   }
 }

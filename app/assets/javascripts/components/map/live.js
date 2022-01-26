@@ -392,7 +392,7 @@ function LiveMap (mapId, options) {
   // Day format function
   const formatDayMonth = (date) => {
     const day = date.getDate()
-    const month = date.toLocaleString('default', { month: 'long' })
+    const month = date.toLocaleString('en-GB', { month: 'long' })
     return `${day} ${month}`
   }
 
