@@ -253,6 +253,8 @@ function LiveMap (mapId, options) {
       name = `River level: ${feature.get('name')}, ${feature.get('river')}`
     } else if (feature.get('type') === 'G') {
       name = `Groundwater level: ${feature.get('name')}`
+    } else if (feature.get('type') === 'R') {
+      name = `Rainfall: ${feature.get('name')}`
     } else if (feature.getId().startsWith('rainfall_stations')) {
       name = `Rainfall: ${feature.get('station_name')}`
     } else if (feature.get('severity_value') === 3) {
@@ -278,7 +280,7 @@ function LiveMap (mapId, options) {
     }
     layers.forEach((layer) => {
       layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
-        if (layer.get('ref') === 'warnings' && !feature.get('isVisible')) { return false }
+        if (layer.get('ref') === 'warnings') { return false }
         features.push({
           id: feature.getId(),
           name: featureName(feature),
