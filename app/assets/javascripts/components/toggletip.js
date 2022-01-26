@@ -94,7 +94,6 @@ const toggletips = () => {
 
   // Remove on escape
   document.addEventListener('keyup', (e) => {
-    console.log('*', e.key)
     if (e.key === 'Escape' || e.key === 'Esc') {
       closeToggletips()
     }

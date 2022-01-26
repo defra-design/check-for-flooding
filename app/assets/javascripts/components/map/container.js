@@ -585,7 +585,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       const layers = map.getLayers()
       layers.forEach((layer) => {
         if (layer instanceof Vector || layer instanceof VectorTile || layer instanceof VectorImage) {
-          console.log('windowResize: ', layer.get('ref'))
           layer.setStyle(layer.getStyle())
         }
       })
@@ -599,7 +598,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   let isMobileBrowserZoom = false
   const visualViewportResize = (e) => {
     if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
-      console.log('visualViewportResize')
       map.updateSize()
       isMobileBrowserZoom = true
     }
