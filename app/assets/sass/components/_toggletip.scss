@@ -45,7 +45,8 @@
 	}
 	&__info {
 		position:absolute;
-		width:200px;
+		width:0px;
+		overflow: hidden;
 		box-sizing: border-box;
 		visibility: hidden;
 		top: auto;
@@ -84,5 +85,7 @@
 	}
 	&--open &__info {
 		visibility: visible;
+		width:200px;
+		overflow: visible;
 	}
 }

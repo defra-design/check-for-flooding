@@ -50,7 +50,7 @@ function BarChart (containerId, telemetryId) {
       .attr('transform', 'translate(0,' + 0 + ')')
       .call(axisLeft(yScale).tickSizeOuter(0).ticks(5).tickSize(-width, 0, 0).tickFormat(''))
 
-    // Update grid container and tex cliop
+    // Update grid container and text clip
     grid.attr('width', width).attr('height', height)
     clipText.attr('width', width).attr('height', height)
 
@@ -191,9 +191,6 @@ function BarChart (containerId, telemetryId) {
       }
     }
     return index
-    // index = index > dataPage.length - 1 ? dataPage.length - 1 : index < 0 ? 0 : index
-    // Contrain index to array length
-    dataItem = dataPage[index]
   }
 
   const hideTooltip = () => {
@@ -454,7 +451,7 @@ function BarChart (containerId, telemetryId) {
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
 
   // Get width and height
-  const margin = { top: 0, bottom: 45, left: 0, right: 26 }
+  const margin = { top: 5, bottom: 45, left: 0, right: 26 }
   const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
   let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
   let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
