@@ -11,12 +11,20 @@ const { xhr } = window.flood.utils
 
 function BarChart (containerId, telemetryId) {
   const renderChart = () => {
-    // Mobile media query
-    // isMobile = mobileMediaQuery.matches
-
     // Setup scales with domains
     xScale = setScaleX()
     yScale = setScaleY(period === 'minutes' ? 1 : 4)
+
+    // Set right margin depending on length of labels
+    const numChars = yScale.domain()[1].toString().length
+    const margin = { top: 5, bottom: 45, left: 0, right: 8 + (numChars * 9) }
+
+    // Define width and height
+    const containerBoundingRect = container.getBoundingClientRect()
+    const controlsContainerBoundingRect = controlsContainer.getBoundingClientRect()
+    width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
+    height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
+    height -= Math.floor(controlsContainerBoundingRect.height)
 
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
@@ -98,6 +106,7 @@ function BarChart (containerId, telemetryId) {
     maxData = Math.ceil((maxData * 1.25) * 10 / 10)
     // Ensure y scale always divides by 5
     maxData = Math.ceil(maxData / 5) * 5
+    // return scaleLinear().domain([0, maxData])
     return scaleLinear().domain([0, maxData])
   }
 
@@ -460,14 +469,10 @@ function BarChart (containerId, telemetryId) {
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
 
   // Get width and height
-  const margin = { top: 5, bottom: 45, left: 0, right: 26 }
-  const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-  let width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
-  let height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
   // Set defaults
-  let xScale, yScale, dataCache, dataPage, dataItem, period, direction, interfaceType
+  let width, height, xScale, yScale, dataCache, dataPage, dataItem, period, direction, interfaceType
   // let isMobile
 
   // Get mobile media query list
@@ -485,11 +490,6 @@ function BarChart (containerId, telemetryId) {
   // mobileMediaQuery.addEventListener('change', renderChart)
 
   window.addEventListener('resize', () => {
-    const containerBoundingRect = container.getBoundingClientRect()
-    const controlsContainerBoundingRect = controlsContainer.getBoundingClientRect()
-    width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
-    height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
-    height -= Math.floor(controlsContainerBoundingRect.height)
     renderChart()
     if (dataItem && dataItem.isLatest) showTooltip()
   })
