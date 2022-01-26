@@ -16,6 +16,7 @@ if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
     btnText: 'View map',
     btnClasses: 'defra-link-icon-s',
+    btnType: 'link',
     layers: 'mv,rf',
     centre: window.flood.model.centroid,
     zoom: 14,
