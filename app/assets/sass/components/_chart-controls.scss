@@ -46,11 +46,11 @@
 }
 .defra-chart-paging-control {
   display: inline-block;
-  margin-top: -3px;
   @include mq ($from: desktop) {
     text-align: center;
     width: 130px;
     position: absolute;
+    top: 0px;
     left: 50%;
     margin-left: -65px;
   }
@@ -58,9 +58,8 @@
     border: 0px;
     background-color: white;
     margin: 0px;
-    padding: 0px;
+    padding: 10px 0px;
     width: 40px;
-    height: 40px;
     outline: 3px solid transparent;
     color: $govuk-link-colour;
     @include govuk-font($size: 16);
