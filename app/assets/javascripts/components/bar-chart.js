@@ -541,6 +541,14 @@ function BarChart (containerId, telemetryId) {
     }
   })
 
+  svg.on('touchmove', (e) => {
+    if (!xScale) return
+    const touchDateTime = scaleBandInvert(xScale)(pointer(e)[0])
+    dataItem = dataPage.find(x => x.dateTime === touchDateTime)
+    locatorBackground.classed('locator__background--visible', false)
+    showTooltip(pointer(e)[1])
+  })
+
   this.container = container
 }
 
