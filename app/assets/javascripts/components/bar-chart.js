@@ -205,6 +205,56 @@ function BarChart (containerId, telemetryId) {
     // tooltipAccessibleDescription.innerHTML = ''
   }
 
+  const updateSegmentedControl = () => {
+    segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
+      const selectedClass = 'defra-chart-segmented-control__segment--selected'
+      if (period === input.getAttribute('data-period')) {
+        input.parentNode.classList.add(selectedClass)
+        input.checked = true
+      } else {
+        input.parentNode.classList.remove(selectedClass)
+        input.checked = false
+      }
+    })
+  }
+
+  const updatePagingControl = (start, end, duration, durationHours) => {
+    // Set paging values and ensure they are within data range
+    const now = new Date()
+    const dataStart = new Date(dataCache.dataStartDateTime)
+    let nextStart = new Date(start.getTime() + duration)
+    let nextEnd = new Date(end.getTime() + duration)
+    let previousStart = new Date(start.getTime() - duration)
+    let previousEnd = new Date(end.getTime() - duration)
+    nextEnd = nextEnd.getTime() <= now.getTime() ? nextEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    nextStart = nextEnd ? nextStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    previousEnd = previousStart ? previousEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
+    // Set properties
+    pagingControl.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
+    pageForward.setAttribute('data-start', nextStart)
+    pageForward.setAttribute('data-end', nextEnd)
+    pageBack.setAttribute('data-start', previousStart)
+    pageBack.setAttribute('data-end', previousEnd)
+    pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
+    pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
+    const pageForwardText = `View next ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    const pageBackText = `View previous ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    pageForwardDescription.innerText = nextStart && nextEnd ? pageForwardText : 'No more data'
+    pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
+  }
+
+  const updateGrid = (colcount, total, hours, days, start, end) => {
+    // Update grid properites
+    grid.attr('aria-rowcount', 1)
+    grid.attr('aria-colcount', colcount)
+    description.innerHTML = `
+    Showing ${hours > 24 ? days : hours} ${hours > 24 ? 'days' : 'hours'}
+    from ${timeFormat('%e %B %Y at %-I:%M%p')(start)} to ${timeFormat('%e %B %Y at %-I:%M%p')(end)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
+    There was ${total > 0 ? total.toFixed(1) + 'mm' : 'no rainfall'} in this period.
+  `
+  }
+
   const getDataPage = (start, end) => {
     const cacheStart = new Date(dataCache.cacheStartDateTime)
     const cacheEnd = new Date(dataCache.cacheEndDateTime)
@@ -219,15 +269,13 @@ function BarChart (containerId, telemetryId) {
       // xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
       return
     }
-    const now = new Date()
-    const dataStart = new Date(dataCache.dataStartDateTime)
     // Determin which resolution and telemetry set to use
     const pageDuration = pageEnd.getTime() - pageStart.getTime()
     const pageDurationHours = pageDuration / (1000 * 60 * 60)
     const pageDurationDays = pageDuration / (1000 * 60 * 60 * 24)
     period = pageDurationHours > 24 ? 'hours' : 'minutes'
     dataPage = period === 'hours' ? dataCache.telemetryHours : dataCache.telemetryMinutes
-    // Get value duration
+    // Get the durartion between values, typically 15 or 60 mins
     const valueStart = new Date(dataPage[1].dateTime)
     const valueEnd = new Date(dataPage[0].dateTime)
     const valueDuration = valueEnd.getTime() - valueStart.getTime()
@@ -235,55 +283,19 @@ function BarChart (containerId, telemetryId) {
       const date = new Date(x.dateTime)
       return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
     })
-    // Set current data item depending on direction and presence of latest
+    // Set current data item depending on paging direction and presence of latest reading
     dataItem = dataPage.find(x => x.isLatest)
     const positiveDataItems = dataPage.map((x, i) => { return x.value > 0 || x.isLatest ? i : -1 }).filter(x => x >= 0)
     if (direction && positiveDataItems.length) {
       dataItem = direction === 'forward' ? dataPage[positiveDataItems[positiveDataItems.length - 1]] : dataPage[positiveDataItems[0]]
     }
-    // Set segemented control html properties
-    segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
-      const selectedClass = 'defra-chart-segmented-control__segment--selected'
-      if (period === input.getAttribute('data-period')) {
-        input.parentNode.classList.add(selectedClass)
-        input.checked = true
-      } else {
-        input.parentNode.classList.remove(selectedClass)
-        input.checked = false
-      }
-    })
-    // Set paging values and ensure they are within data range
-    let nextStart = new Date(pageStart.getTime() + pageDuration)
-    let nextEnd = new Date(pageEnd.getTime() + pageDuration)
-    let previousStart = new Date(pageStart.getTime() - pageDuration)
-    let previousEnd = new Date(pageEnd.getTime() - pageDuration)
-    nextEnd = nextEnd.getTime() <= now.getTime() ? nextEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
-    nextStart = nextEnd ? nextStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
-    previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
-    previousEnd = previousStart ? previousEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
-    // Set properties
-    pagingControl.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
-    pageForward.setAttribute('data-start', nextStart)
-    pageForward.setAttribute('data-end', nextEnd)
-    pageBack.setAttribute('data-start', previousStart)
-    pageBack.setAttribute('data-end', previousEnd)
-    pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
-    pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
-    const pageForwardText = `View next ${pageDurationHours > 1 ? pageDurationHours : pageDuration} ${pageDurationHours > 1 ? 'hours' : 'minutes'}`
-    const pageBackText = `View previous ${pageDurationHours > 1 ? pageDurationHours : pageDuration} ${pageDurationHours > 1 ? 'hours' : 'minutes'}`
-    pageForwardDescription.innerText = nextStart && nextEnd ? pageForwardText : 'No more data'
-    pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
-    // Update grid properites
-    grid.attr('aria-rowcount', 1)
-    grid.attr('aria-colcount', positiveDataItems.length)
+    // Update html control properties
+    updateSegmentedControl()
+    updatePagingControl(pageStart, pageEnd, pageDuration, pageDurationHours)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
-    description.innerHTML = `
-      Showing ${pageDurationHours > 24 ? pageDurationDays : pageDurationHours} ${pageDurationHours > 24 ? 'days' : 'hours'}
-      from ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueStart)} to ${timeFormat('%e %B %Y at %-I:%M%p')(pageValueEnd)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
-      There was ${totalPageRainfall > 0 ? totalPageRainfall.toFixed(1) + 'mm' : 'no rainfall'} in this period.
-    `
+    updateGrid(positiveDataItems.length, totalPageRainfall, pageDurationHours, pageDurationDays, pageValueStart, pageValueEnd)
   }
 
   const changePage = (event) => {
@@ -300,8 +312,8 @@ function BarChart (containerId, telemetryId) {
     if (dataItem && dataItem.isLatest) showTooltip()
   }
 
-  // D3 doesnt currently support inverting of a scaleBand
   const scaleBandInvert = (scale) => {
+    // D3 doesnt currently support inverting of a scaleBand
     const domain = scale.domain()
     const paddingOuter = scale(domain[0])
     const eachBand = scale.step()
@@ -311,8 +323,8 @@ function BarChart (containerId, telemetryId) {
     }
   }
 
-  // Format X Axis labels
   const formatLabelsX = (d, i, nodes) => {
+    // Format X Axis labels
     const element = select(nodes[i])
     // const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
     const formattedTime = timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
