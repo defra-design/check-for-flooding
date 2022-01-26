@@ -150,7 +150,9 @@ function BarChart (containerId, telemetryId) {
     tooltipDescription.attr('dy', '1.4em').text(`${text.period}, ${text.monthShort}`)
     // Update locator
     locator.attr('transform', 'translate(' + Math.round(xScale(dataItem.dateTime)) + ', 0)')
-    locatorBackground.attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
+    locatorBackground
+      .attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
+      .classed('locator__background--visible', (interfaceType === 'keyboard' && document.activeElement.tagName.toLocaleLowerCase() === 'g'))
     locatorLine.attr('transform', 'translate(' + Math.round(xScale.bandwidth() / 2) + ', 0)').attr('y1', 0).attr('y2', height)
     // Update bar selected state
     svg.selectAll('.bar--selected').classed('bar--selected', false)
@@ -170,6 +172,12 @@ function BarChart (containerId, telemetryId) {
       monthShort: timeFormat('%e %b')(timeEnd),
       monthLong: timeFormat('%e %B')(timeEnd)
     }
+  }
+
+  const getDataItemByX = (x) => {
+    const dateTime = scaleBandInvert(xScale)(x)
+    dataItem = dataPage.find(x => x.dateTime === dateTime)
+    locatorBackground.classed('locator__background--visible', false)
   }
 
   const getNextDataItemIndex = (isForeward) => {
@@ -199,7 +207,6 @@ function BarChart (containerId, telemetryId) {
     locator.classed('locator--visible', false)
     locatorLine.classed('locator__line--visible', false)
     locatorBackground.classed('locator__background--visible', false)
-    // tooltipAccessibleDescription.innerHTML = ''
   }
 
   const updateSegmentedControl = () => {
@@ -460,7 +467,7 @@ function BarChart (containerId, telemetryId) {
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
   // Set defaults
-  let xScale, yScale, dataCache, dataPage, dataItem, period, direction
+  let xScale, yScale, dataCache, dataPage, dataItem, period, direction, interfaceType
   // let isMobile
 
   // Get mobile media query list
@@ -497,11 +504,11 @@ function BarChart (containerId, telemetryId) {
 
   container.addEventListener('keyup', (e) => {
     if (!(e.key === 'Tab' && document.activeElement.getAttribute('role') === 'cell')) return
-    locatorBackground.classed('locator__background--visible', true)
     showTooltip()
   })
 
   container.addEventListener('keydown', (e) => {
+    interfaceType = 'keyboard'
     if (!(e.target.getAttribute('role') === 'cell' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft'))) return
     e.preventDefault()
     const nextIndex = getNextDataItemIndex(e.key === 'ArrowRight')
@@ -511,7 +518,6 @@ function BarChart (containerId, telemetryId) {
     cell.tabIndex = -1
     nextCell.tabIndex = 0
     dataItem = dataPage[nextIndex]
-    locatorBackground.classed('locator__background--visible', true)
     showTooltip()
   })
 
@@ -522,14 +528,15 @@ function BarChart (containerId, telemetryId) {
     } else {
       hideTooltip()
     }
-    locatorBackground.classed('locator__background--visible', false)
   })
 
   svg.on('mousemove', (e) => {
     if (!xScale) return
-    const mouseDateTime = scaleBandInvert(xScale)(pointer(e)[0])
-    dataItem = dataPage.find(x => x.dateTime === mouseDateTime)
-    locatorBackground.classed('locator__background--visible', false)
+    if (interfaceType === 'touch') {
+      interfaceType = 'mouse'
+      return
+    }
+    getDataItemByX(pointer(e)[0])
     showTooltip(pointer(e)[1])
   })
 
@@ -540,12 +547,19 @@ function BarChart (containerId, telemetryId) {
     }
   })
 
-  svg.on('touchmove', (e) => {
+  svg.on('touchstart', (e) => {
+    interfaceType = 'touch'
+    const touchEvent = e.targetTouches[0]
     if (!xScale) return
-    const touchDateTime = scaleBandInvert(xScale)(pointer(e)[0])
-    dataItem = dataPage.find(x => x.dateTime === touchDateTime)
-    locatorBackground.classed('locator__background--visible', false)
-    showTooltip(pointer(e)[1])
+    getDataItemByX(pointer(touchEvent)[0])
+    showTooltip(10)
+  })
+
+  svg.on('touchmove', (e) => {
+    const touchEvent = e.targetTouches[0]
+    if (!xScale) return
+    getDataItemByX(pointer(touchEvent)[0])
+    showTooltip(10)
   })
 
   this.container = container
