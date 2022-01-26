@@ -250,6 +250,8 @@ function BarChart (containerId, telemetryId) {
     from ${timeFormat('%e %B %Y at %-I:%M%p')(start)} to ${timeFormat('%e %B %Y at %-I:%M%p')(end)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
     There was ${total > 0 ? total.toFixed(1) + 'mm' : 'no rainfall'} in this period.
   `
+    const hasLatest = !!dataPage.find(x => x.isLatest)
+    description.innerHTML += hasLatest ? `Last reading received at ${timeFormat('%-I:%M%p, %e %B %Y')(new Date(dataCache.latestDateTime))}` : ''
   }
 
   const getDataPage = (start, end) => {
