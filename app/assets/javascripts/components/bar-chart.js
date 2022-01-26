@@ -50,8 +50,9 @@ function BarChart (containerId, telemetryId) {
       .attr('transform', 'translate(0,' + 0 + ')')
       .call(axisLeft(yScale).tickSizeOuter(0).ticks(5).tickSize(-width, 0, 0).tickFormat(''))
 
-    // Update grid container
+    // Update grid container and tex cliop
     grid.attr('width', width).attr('height', height)
+    clipText.attr('width', width).attr('height', height)
 
     // Add bars
     gridRow.selectAll('.bar').remove()
@@ -67,7 +68,7 @@ function BarChart (containerId, telemetryId) {
       .classed('bar--latest', (d) => { return d.isLatest })
     bars.filter((d) => { return d.isLatest }).append('line').attr('aria-hidden', true).attr('class', 'latest-line')
     bars.append('rect').attr('class', 'bar__fill')
-    bars.append('text').attr('class', 'govuk-visually-hidden').text((d) => {
+    bars.append('text').text((d) => {
       const text = getItemText(d)
       return `${text.value}, ${text.period}, ${text.monthLong} `
     })
@@ -274,7 +275,7 @@ function BarChart (containerId, telemetryId) {
     pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
     // Update grid properites
     grid.attr('aria-rowcount', 1)
-    grid.attr('aria-colcount', dataPage.length)
+    grid.attr('aria-colcount', positiveDataItems.length)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
@@ -416,6 +417,9 @@ function BarChart (containerId, telemetryId) {
     .attr('aria-label', 'Bar chart')
     .attr('aria-describedby', 'bar-chart-description')
 
+  // Clip path to visually hide text
+  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
+
   // Add x and y grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
   svg.append('g').attr('class', 'x axis').attr('aria-hidden', true)
@@ -427,7 +431,7 @@ function BarChart (containerId, telemetryId) {
   const locatorLine = locator.append('line').attr('class', 'locator__line')
 
   // Add container for bars
-  const grid = svg.append('g').attr('role', 'grid')
+  const grid = svg.append('g').attr('role', 'grid').attr('clip-path', 'url(#clip-text)')
   const gridRow = grid.append('g').attr('role', 'row')
 
   // Add tooltip container

@@ -49,6 +49,9 @@
   .bar {
     pointer-events: none;
     outline: 0px;
+    text {
+      visibility: hidden;
+    }
   }
   .bar__fill {
     fill: govuk-colour('blue');
