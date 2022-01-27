@@ -281,7 +281,7 @@ function BarChart (containerId, telemetryId) {
       // Set cache start and end
       // Set page start and end
       // Load new data and reinitialise the chart
-      // xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
+      // xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
       return
     }
     // Determin which resolution and telemetry set to use
@@ -481,7 +481,7 @@ function BarChart (containerId, telemetryId) {
   // XMLHttpRequest
   const cacheStart = pageStart // This is effectively the cache date start
   const cacheEnd = pageEnd // This is effectively the cache date end
-  xhr(`/service/telemetry/rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
+  xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
 
   //
   // Events

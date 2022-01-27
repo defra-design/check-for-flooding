@@ -106,8 +106,20 @@ router.get('/service/river-detail/:slug', async (req, res, next) => {
 
 // Get a single station with all its details
 router.get('/service/station/:id', async (req, res, next) => {
+  const stage = req.params.id.includes('-downstream') ? 'downstream' : ''
+  const id = req.params.id.replace('-downstream', '').replace('-upstream', '')
   try {
-    res.status(200).json(await stationServices.getStation(req.params.id))
+    res.status(200).json(await stationServices.getStation(id, stage))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+// Get a single rain guage with all its details
+router.get('/service/station-rain/:id', async (req, res, next) => {
+  try {
+    res.status(200).json(await stationServices.getStationRain(req.params.id))
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -139,7 +151,16 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
 // Telemetry
 //
 
-router.get('/service/telemetry/rainfall/:id/:start/:end', async (req, res, next) => {
+router.get('/service/telemetry/:id/:start/:end/:stage', async (req, res, next) => {
+  try {
+    res.status(200).json(await telemetryServices.getTelemetry(req.params.id, req.params.start, req.params.end, req.params.stage))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+router.get('/service/telemetry-rainfall/:id/:start/:end', async (req, res, next) => {
   try {
     res.status(200).json(await telemetryServices.getRainfall(req.params.id, req.params.start, req.params.end))
   } catch (err) {

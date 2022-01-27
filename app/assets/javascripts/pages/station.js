@@ -47,7 +47,7 @@ if (chart && window.flood.model.telemetry.length) {
     now: new Date(),
     observed: window.flood.model.telemetry,
     forecast: [],
-    plotNegativeValues: false,
+    plotNegativeValues: ['groundwater', 'tide'].includes(window.flood.model.type),
     type: window.flood.model.type
   })
   if (Object.keys(lineChart).length) {

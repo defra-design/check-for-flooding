@@ -16,16 +16,14 @@ class ViewModel {
     })()
     this.station = station
     // Keep presentation logic in the ViewModel
-    let time = station.date ? utils.formatTimeDate(station.date) : ''
     if (station.type === 'rainfall') {
-      time = utils.formatTimeDate(telemetry.latestDateTime)
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
     } else {
-      this.telemetry = telemetry.fiveDays
+      this.telemetry = telemetry.minutes
     }
-    this.time = time
+    this.time = utils.formatTimeDate(telemetry.latestDateTime)
     this.bingApiKey = bingApiKey
     this.nearby = place.name
   }

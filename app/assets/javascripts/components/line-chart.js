@@ -15,7 +15,6 @@ const svgBreakPoint = 576
 
 function LineChart (containerId, data) {
   const chart = document.getElementById(containerId)
-
   // Setup array to combine observed and forecast points and identify startPoint for locator
   let lines = []
   let dataPoint
@@ -24,8 +23,8 @@ function LineChart (containerId, data) {
   if (data.observed.length) {
     const errorFilter = l => !l.err
     const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
-    const filterFunction = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
-    lines = data.observed.filter(filterFunction).map(l => ({ ...l, type: 'observed' })).reverse()
+    const filterNegativeValues = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
+    lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
     dataPoint = lines[lines.length - 1] ? JSON.parse(JSON.stringify(lines[lines.length - 1])) : null
     hasObserved = lines.length > 0
   }

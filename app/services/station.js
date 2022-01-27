@@ -16,5 +16,20 @@ module.exports = {
     } catch (error) {
       console.log(error)
     }
+  },
+  getStationRain: async (id) => {
+    const url = `/station-rain/${id}`
+    try {
+      const response = await axios.get(url, {
+        auth: {
+          username: process.env.USERNAME,
+          password: process.env.PASSWORD
+        },
+        baseURL: serviceUrl
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
