@@ -65,7 +65,7 @@ function BarChart (containerId, telemetryId) {
 
     // Add bars
     gridRow.selectAll('.bar').remove()
-    const bars = gridRow.selectAll('.bar').data(dataPage).enter()
+    const bars = gridRow.selectAll('.bar').data(dataPage.reverse()).enter()
       .append('g')
       .attr('role', 'cell')
       .attr('tabindex', (d) => { return d === dataItem ? 0 : -1 })
@@ -190,10 +190,10 @@ function BarChart (containerId, telemetryId) {
     locatorBackground.classed('locator__background--visible', false)
   }
 
-  const getNextDataItemIndex = (isForeward) => {
+  const getNextDataItemIndex = (isBackward) => {
     let index = dataPage.findIndex(x => x === dataItem)
     // Shift plus arrow keys jumps > 0mm or isLatests
-    if (isForeward) {
+    if (isBackward) {
       for (let i = index; i > 0; i--) {
         if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
           index = i - 1
@@ -519,7 +519,7 @@ function BarChart (containerId, telemetryId) {
     interfaceType = 'keyboard'
     if (!(e.target.getAttribute('role') === 'cell' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft'))) return
     e.preventDefault()
-    const nextIndex = getNextDataItemIndex(e.key === 'ArrowRight')
+    const nextIndex = getNextDataItemIndex(e.key === 'ArrowLeft')
     const cell = e.target
     const nextCell = cell.parentNode.children[nextIndex]
     nextCell.focus()
