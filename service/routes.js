@@ -117,7 +117,7 @@ router.get('/service/station/:id', async (req, res, next) => {
 })
 
 // Get a single rain guage with all its details
-router.get('/service/station-rain/:id', async (req, res, next) => {
+router.get('/service/raingauge/:id', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationRain(req.params.id))
   } catch (err) {

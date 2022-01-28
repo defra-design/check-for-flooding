@@ -44,7 +44,7 @@ router.get('/station/:id', async (req, res) => {
   return res.render('station', { model })
 })
 
-router.get('/station-rain/:id', async (req, res) => {
+router.get('/raingauge/:id', async (req, res) => {
   const id = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStationRain(id)
   let telemetry, station, place

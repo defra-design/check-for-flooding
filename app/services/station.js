@@ -18,7 +18,7 @@ module.exports = {
     }
   },
   getStationRain: async (id) => {
-    const url = `/station-rain/${id}`
+    const url = `/raingauge/${id}`
     try {
       const response = await axios.get(url, {
         auth: {

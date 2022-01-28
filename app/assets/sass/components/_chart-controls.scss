@@ -44,33 +44,23 @@
     color: govuk-colour('black');
   }
 }
-.defra-chart-paging-control {
-  display: inline-block;
-  @include mq ($from: desktop) {
-    text-align: center;
-    width: 130px;
-    position: absolute;
-    top: 0px;
-    left: 50%;
-    margin-left: -65px;
-  }
+.defra-chart-pagination {
+  display: block;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $govuk-border-colour;
   &__button {
     border: 0px;
     background-color: white;
     margin: 0px;
-    padding: 10px 0px;
-    width: 40px;
+    padding: 5px 0px;
+    width: auto;
     outline: 3px solid transparent;
+    border-bottom: 5px solid transparent;
     color: $govuk-link-colour;
+    cursor: pointer;
     @include govuk-font($size: 16);
-    @include mq ($from: desktop) {
-      width: auto;
-    }
-    .defra-chart-paging-control__text {
+    .defra-chart-pagination__text {
       pointer-events: none;
-      @include mq ($until: desktop) {
-        @include defra-visually-hidden();
-      }
     }
     &[aria-disabled="true"],
     &[aria-disabled="true"]:after,
@@ -78,13 +68,8 @@
       color: govuk-colour('mid-grey');
     }
     &--back {
-      @include mq ($from: desktop) {
-        margin-right: 10px;
-      }
+      margin-right: 10px;
     }
-  }
-  &__button {
-    cursor: pointer;
   }
   &__button[aria-disabled="true"] {
     cursor: not-allowed;
@@ -104,22 +89,18 @@
     height: 8px;
     border-style: solid;
     color: $govuk-link-colour;
+    margin-right: 2px;
+    margin-left: 2px;
   }
   &__button--forward:after {
     -webkit-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     transform: rotate(-45deg);
-    @include mq ($from: desktop) {
-      margin-right: 2px;
-    }
   }
   &__button--back:before {
     -webkit-transform: rotate(135deg);
     -ms-transform: rotate(135deg);
     transform: rotate(135deg);
-    @include mq ($from: desktop) {
-      margin-left: 2px;
-    }
   }
   &__button:focus {
     background-color: $govuk-focus-colour;

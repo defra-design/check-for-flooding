@@ -32,9 +32,15 @@ tide
   <!-- Location -->
   <td class="defra-flood-table__cell defra-flood-table__cell--location">
     {% if item.hasDetail %}
-    <a href="/station{% if item.type === 'rainfall' %}-rain{% endif %}/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">
+    {% if item.type === 'rainfall' %}
+    <a href="/raingauge/{{ item.id | urlencode }}">
       {{ name }}
     </a>
+    {% else %}
+    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">
+      {{ name }}
+    </a>
+    {% endif %}
     {% else %}
     {{ name }}
     {% endif %}

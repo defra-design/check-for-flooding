@@ -21,10 +21,11 @@ function BarChart (containerId, telemetryId) {
 
     // Define width and height
     const containerBoundingRect = container.getBoundingClientRect()
-    const controlsContainerBoundingRect = controlsContainer.getBoundingClientRect()
+    const controlsBoundingRect = controls.getBoundingClientRect()
+    const paginationBoundingRect = pagination.getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
-    height -= Math.floor(controlsContainerBoundingRect.height)
+    height -= (Math.floor(controlsBoundingRect.height) + Math.floor(paginationBoundingRect.height))
 
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
@@ -231,7 +232,7 @@ function BarChart (containerId, telemetryId) {
     })
   }
 
-  const updatePagingControl = (start, end, duration, durationHours) => {
+  const updatepagination = (start, end, duration, durationHours) => {
     // Set paging values and ensure they are within data range
     const now = new Date()
     const dataStart = new Date(dataCache.dataStartDateTime)
@@ -244,17 +245,17 @@ function BarChart (containerId, telemetryId) {
     previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
     previousEnd = previousStart ? previousEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
     // Set properties
-    pagingControl.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
+    paginationInner.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
     pageForward.setAttribute('data-start', nextStart)
     pageForward.setAttribute('data-end', nextEnd)
     pageBack.setAttribute('data-start', previousStart)
     pageBack.setAttribute('data-end', previousEnd)
     pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
     pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
-    const pageForwardText = `View next ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
-    const pageBackText = `View previous ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
-    pageForwardDescription.innerText = nextStart && nextEnd ? pageForwardText : 'No more data'
-    pageBackDescription.innerText = previousStart && previousEnd ? pageBackText : 'No previous data'
+    pageForwardText.innerText = `Next ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    pageBackText.innerText = `Previous ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    pageForwardDescription.innerText = nextStart && nextEnd ? '' : 'No more data'
+    pageBackDescription.innerText = previousStart && previousEnd ? '' : 'No previous data'
   }
 
   const updateGrid = (colcount, total, hours, days, start, end) => {
@@ -306,7 +307,7 @@ function BarChart (containerId, telemetryId) {
     }
     // Update html control properties
     updateSegmentedControl()
-    updatePagingControl(pageStart, pageEnd, pageDuration, pageDurationHours)
+    updatepagination(pageStart, pageEnd, pageDuration, pageDurationHours)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
@@ -354,7 +355,7 @@ function BarChart (containerId, telemetryId) {
     } else {
       dataCache = response
       // Show controls
-      controlsContainer.style.display = dataCache.telemetryMinutes.length > 1 ? 'block' : 'none'
+      controls.style.display = dataCache.telemetryMinutes.length > 1 ? 'block' : 'none'
       // Move into existing or new methods
       getDataPage(pageStart, pageEnd)
       // Render bars and chart
@@ -379,10 +380,10 @@ function BarChart (containerId, telemetryId) {
   container.appendChild(description)
 
   // Add controls container
-  const controlsContainer = document.createElement('div')
-  controlsContainer.style.display = 'none'
-  controlsContainer.className = 'defra-chart-controls'
-  container.appendChild(controlsContainer)
+  const controls = document.createElement('div')
+  controls.style.display = 'none'
+  controls.className = 'defra-chart-controls'
+  container.appendChild(controls)
 
   // Set initial page dates
   let pageStart = new Date()
@@ -400,44 +401,14 @@ function BarChart (containerId, telemetryId) {
   segmentedControl.innerHTML = `
   <div class="defra-chart-segmented-control__segment">
     <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" data-start="${pageStart}" data-end="${pageEnd}" aria-controls="bar-chart"/>
-    <label for="timeHours">Hourly</label>
+    <label for="timeHours">Hours</label>
   </div>
   <div class="defra-chart-segmented-control__segment">
     <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" data-start="${pageStartMinutes}" data-end="${pageEnd}" aria-controls="bar-chart"/>
-    <label for="timeMinutes">15 minutes</label>
+    <label for="timeMinutes">Minutes</label>
   </div>`
   // container.parentNode.insertBefore(segmentedControl, container)
-  controlsContainer.appendChild(segmentedControl)
-
-  // Add paging buttons
-  const pagingControl = document.createElement('div')
-  pagingControl.style.display = 'none'
-  pagingControl.className = 'defra-chart-paging-control'
-  const pageBack = document.createElement('button')
-  pageBack.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--back'
-  pageBack.setAttribute('data-direction', 'back')
-  pageBack.setAttribute('aria-controls', 'bar-chart')
-  pageBack.setAttribute('aria-describedby', 'page-back-description')
-  pageBack.innerHTML = '<span class="defra-chart-paging-control__text">Back</span>'
-  const pageBackDescription = document.createElement('span')
-  pageBackDescription.id = 'page-back-description'
-  pageBackDescription.className = 'govuk-visually-hidden'
-  pageBackDescription.setAttribute('aria-live', 'asertive')
-  pageBack.appendChild(pageBackDescription)
-  const pageForward = document.createElement('button')
-  pageForward.className = 'defra-chart-paging-control__button defra-chart-paging-control__button--forward'
-  pageForward.setAttribute('data-direction', 'forward')
-  pageForward.setAttribute('aria-controls', 'bar-chart')
-  pageForward.setAttribute('aria-describedby', 'page-forward-description')
-  pageForward.innerHTML = '<span class="defra-chart-paging-control__text">Forward</span>'
-  const pageForwardDescription = document.createElement('span')
-  pageForwardDescription.id = 'page-forward-description'
-  pageForwardDescription.className = 'govuk-visually-hidden'
-  pageForwardDescription.setAttribute('aria-live', 'asertive')
-  pageForward.appendChild(pageForwardDescription)
-  pagingControl.appendChild(pageBack)
-  pagingControl.appendChild(pageForward)
-  controlsContainer.appendChild(pagingControl)
+  controls.appendChild(segmentedControl)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
@@ -468,6 +439,43 @@ function BarChart (containerId, telemetryId) {
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
 
+  // Add paging control
+  const pagination = document.createElement('div')
+  pagination.className = 'defra-chart-pagination'
+  const paginationInner = document.createElement('div')
+  paginationInner.style.display = 'none'
+  paginationInner.className = 'defra-chart-pagination_inner'
+  const pageBack = document.createElement('button')
+  pageBack.className = 'defra-chart-pagination__button defra-chart-pagination__button--back'
+  pageBack.setAttribute('data-direction', 'back')
+  pageBack.setAttribute('aria-controls', 'bar-chart')
+  pageBack.setAttribute('aria-describedby', 'page-back-description')
+  const pageBackText = document.createElement('span')
+  pageBackText.className = 'defra-chart-pagination__text'
+  pageBack.appendChild(pageBackText)
+  const pageBackDescription = document.createElement('span')
+  pageBackDescription.id = 'page-back-description'
+  pageBackDescription.className = 'govuk-visually-hidden'
+  pageBackDescription.setAttribute('aria-live', 'polite')
+  pageBack.appendChild(pageBackDescription)
+  const pageForward = document.createElement('button')
+  pageForward.className = 'defra-chart-pagination__button defra-chart-pagination__button--forward'
+  pageForward.setAttribute('data-direction', 'forward')
+  pageForward.setAttribute('aria-controls', 'bar-chart')
+  pageForward.setAttribute('aria-describedby', 'page-forward-description')
+  const pageForwardText = document.createElement('span')
+  pageForwardText.className = 'defra-chart-pagination__text'
+  pageForward.appendChild(pageForwardText)
+  const pageForwardDescription = document.createElement('span')
+  pageForwardDescription.id = 'page-forward-description'
+  pageForwardDescription.className = 'govuk-visually-hidden'
+  pageForwardDescription.setAttribute('aria-live', 'polite')
+  pageForward.appendChild(pageForwardDescription)
+  paginationInner.appendChild(pageBack)
+  paginationInner.appendChild(pageForward)
+  pagination.appendChild(paginationInner)
+  container.appendChild(pagination)
+
   // Get width and height
   telemetryId = /[^/]*$/.exec(telemetryId)[0]
 
@@ -496,7 +504,7 @@ function BarChart (containerId, telemetryId) {
 
   container.addEventListener('click', (e) => {
     if (e.target.getAttribute('aria-disabled') === 'true') return
-    const classNames = ['defra-chart-segmented-control__input', 'defra-chart-paging-control__button']
+    const classNames = ['defra-chart-segmented-control__input', 'defra-chart-pagination__button']
     if (classNames.some(className => e.target.classList.contains(className))) {
       changePage(e)
     }
