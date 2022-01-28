@@ -69,7 +69,7 @@ function BarChart (containerId, telemetryId) {
       .append('g')
       .attr('role', 'cell')
       .attr('tabindex', (d) => { return d === dataItem ? 0 : -1 })
-      .attr('focusable', (d) => { return d === dataItem })
+      // .attr('focusable', (d) => { return d === dataItem })
       .attr('data-index', (d, i) => { return i })
       .attr('data-datetime', (d) => { return d.dateTime })
       .attr('class', 'bar')
@@ -509,6 +509,7 @@ function BarChart (containerId, telemetryId) {
     if (!classNames.some(className => e.target.classList.contains(className))) return
     if (e.target.getAttribute('aria-disabled') === 'true') {
       const container = e.target.classList.contains('defra-chart-pagination__button--back') ? pageBackDescription : pageForwardDescription
+      container.innerText = ''
       window.setTimeout(() => {
         container.innerText = container === pageBackDescription ? 'No previous data' : 'No more data'
       }, 100)
@@ -529,8 +530,8 @@ function BarChart (containerId, telemetryId) {
     const nextIndex = getNextDataItemIndex(e.key === 'ArrowRight')
     const cell = e.target
     const nextCell = cell.parentNode.children[nextIndex]
-    cell.setAttribute('focusable', false)
-    nextCell.setAttribute('focusable', true)
+    // cell.setAttribute('focusable', false)
+    // nextCell.setAttribute('focusable', true)
     cell.tabIndex = -1
     nextCell.tabIndex = 0
     nextCell.focus()
