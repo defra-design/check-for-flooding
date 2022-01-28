@@ -415,6 +415,7 @@ function BarChart (containerId, telemetryId) {
   const svg = select(`#${containerId}`).append('svg')
     .attr('aria-label', 'Bar chart')
     .attr('aria-describedby', 'bar-chart-description')
+    .attr('focusable', 'false')
 
   // Clip path to visually hide text
   const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
