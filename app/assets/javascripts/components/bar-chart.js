@@ -69,11 +69,11 @@ function BarChart (containerId, telemetryId) {
       .append('g')
       .attr('role', 'cell')
       .attr('tabindex', (d) => { return d === dataItem ? 0 : -1 })
+      .attr('focusable', (d) => { return d === dataItem })
       .attr('data-index', (d, i) => { return i })
       .attr('data-datetime', (d) => { return d.dateTime })
       .attr('class', 'bar')
       .attr('aria-hidden', (d) => { return !(d.value > 0 || d.isLatest) })
-      .attr('focusable', (d) => { return !(d.value > 0 || d.isLatest) })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
       .classed('bar--latest', (d) => { return d.isLatest })
     bars.filter((d) => { return d.isLatest }).append('line').attr('aria-hidden', true).attr('class', 'latest-line')
@@ -233,7 +233,7 @@ function BarChart (containerId, telemetryId) {
     })
   }
 
-  const updatepagination = (start, end, duration, durationHours) => {
+  const updatePagination = (start, end, duration, durationHours) => {
     // Set paging values and ensure they are within data range
     const now = new Date()
     const dataStart = new Date(dataCache.dataStartDateTime)
@@ -255,8 +255,8 @@ function BarChart (containerId, telemetryId) {
     pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
     pageForwardText.innerText = `Next ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
     pageBackText.innerText = `Previous ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
-    pageForwardDescription.innerText = nextStart && nextEnd ? '' : 'No more data'
-    pageBackDescription.innerText = previousStart && previousEnd ? '' : 'No previous data'
+    pageForwardDescription.innerText = ''
+    pageBackDescription.innerText = ''
   }
 
   const updateGrid = (colcount, total, hours, days, start, end) => {
@@ -308,7 +308,7 @@ function BarChart (containerId, telemetryId) {
     }
     // Update html control properties
     updateSegmentedControl()
-    updatepagination(pageStart, pageEnd, pageDuration, pageDurationHours)
+    updatePagination(pageStart, pageEnd, pageDuration, pageDurationHours)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
@@ -504,11 +504,16 @@ function BarChart (containerId, telemetryId) {
   })
 
   container.addEventListener('click', (e) => {
-    if (e.target.getAttribute('aria-disabled') === 'true') return
     const classNames = ['defra-chart-segmented-control__input', 'defra-chart-pagination__button']
-    if (classNames.some(className => e.target.classList.contains(className))) {
-      changePage(e)
+    if (!classNames.some(className => e.target.classList.contains(className))) return
+    if (e.target.getAttribute('aria-disabled') === 'true') {
+      const container = e.target.classList.contains('defra-chart-pagination__button--back') ? pageBackDescription : pageForwardDescription
+      window.setTimeout(() => {
+        container.innerText = container === pageBackDescription ? 'No previous data' : 'No more data'
+      }, 100)
+      return
     }
+    changePage(e)
   })
 
   container.addEventListener('keyup', (e) => {
@@ -523,9 +528,11 @@ function BarChart (containerId, telemetryId) {
     const nextIndex = getNextDataItemIndex(e.key === 'ArrowLeft')
     const cell = e.target
     const nextCell = cell.parentNode.children[nextIndex]
-    nextCell.focus()
+    cell.setAttribute('focusable', false)
+    nextCell.setAttribute('focusable', true)
     cell.tabIndex = -1
     nextCell.tabIndex = 0
+    nextCell.focus()
     dataItem = dataPage[nextIndex]
     showTooltip()
   })
