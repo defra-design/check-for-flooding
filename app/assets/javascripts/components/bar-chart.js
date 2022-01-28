@@ -73,6 +73,7 @@ function BarChart (containerId, telemetryId) {
       .attr('data-datetime', (d) => { return d.dateTime })
       .attr('class', 'bar')
       .attr('aria-hidden', (d) => { return !(d.value > 0 || d.isLatest) })
+      .attr('focusable', (d) => { return !(d.value > 0 || d.isLatest) })
       .classed('bar--incomplete', (d) => { return d.isInComplete })
       .classed('bar--latest', (d) => { return d.isLatest })
     bars.filter((d) => { return d.isLatest }).append('line').attr('aria-hidden', true).attr('class', 'latest-line')
