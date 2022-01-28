@@ -1,5 +1,6 @@
 .defra-chart-controls {
   position: relative;
+  z-index: 1;
 }
 .defra-chart-segmented-control {
   margin: auto;
@@ -46,16 +47,15 @@
 }
 .defra-chart-pagination {
   display: block;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   border-bottom: 1px solid $govuk-border-colour;
   &__button {
     border: 0px;
     background-color: white;
     margin: 0px;
-    padding: 5px 0px;
+    padding: 0px;
     width: auto;
     outline: 3px solid transparent;
-    border-bottom: 5px solid transparent;
     color: $govuk-link-colour;
     cursor: pointer;
     @include govuk-font($size: 16);
@@ -102,12 +102,16 @@
     -ms-transform: rotate(135deg);
     transform: rotate(135deg);
   }
-  &__button:focus {
-    background-color: $govuk-focus-colour;
+  &__button:focus:not([aria-disabled="true"]) {
     color: $govuk-focus-text-colour;
-    border-bottom: 5px solid govuk-colour('black');
+    background-color: $govuk-focus-colour;
+    box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour('black');
     &:after, &:before {
       color: $govuk-focus-text-colour;
     }
+  }
+  &__button:focus[aria-disabled="true"] {
+    background-color: transparent;
+    box-shadow: 0px 0px 0px 2px govuk-colour('black'), 0px 0px 0px 6px $govuk-focus-colour;
   }
 }
