@@ -221,6 +221,10 @@ function BarChart (containerId, telemetryId) {
   }
 
   const updateSegmentedControl = () => {
+    // Determin which controls to display
+    hourControl.style.display = dataCache.telemetryMinutes.length ? 'inline-block' : 'none'
+    minuteControl.style.display = dataCache.telemetryMinutes.length ? 'inline-block' : 'none'
+    // Set active control
     segmentedControl.querySelectorAll('.defra-chart-segmented-control__segment input').forEach(input => {
       const selectedClass = 'defra-chart-segmented-control__segment--selected'
       if (period === input.getAttribute('data-period')) {
@@ -320,13 +324,7 @@ function BarChart (containerId, telemetryId) {
     direction = target.getAttribute('data-direction')
     pageStart = new Date(target.getAttribute('data-start'))
     pageEnd = new Date(target.getAttribute('data-end'))
-    // Move into existing or new methods
-    getDataPage(pageStart, pageEnd)
-    // Render bars and chart
-    renderChart()
-    hideTooltip()
-    // Show default tooltip
-    if (dataItem && dataItem.isLatest) showTooltip()
+    initChart()
   }
 
   const scaleBandInvert = (scale) => {
@@ -350,21 +348,14 @@ function BarChart (containerId, telemetryId) {
     element.append('tspan').attr('x', 0).attr('dy', '15').text(formattedDate)
   }
 
-  const initChart = (err, response) => {
-    if (err) {
-      console.log('Error: ' + err)
-    } else {
-      dataCache = response
-      // Show controls
-      controls.style.display = dataCache.telemetryMinutes.length > 1 ? 'block' : 'none'
-      // Move into existing or new methods
-      getDataPage(pageStart, pageEnd)
-      // Render bars and chart
-      renderChart()
-      hideTooltip()
-      // Show default tooltip
-      if (dataItem && dataItem.isLatest) showTooltip()
-    }
+  const initChart = () => {
+    // Get page data
+    getDataPage(pageStart, pageEnd)
+    // Render bars and chart
+    renderChart()
+    hideTooltip()
+    // Show default tooltip
+    if (dataItem && dataItem.isLatest) showTooltip()
   }
 
   //
@@ -382,7 +373,6 @@ function BarChart (containerId, telemetryId) {
 
   // Add controls container
   const controls = document.createElement('div')
-  controls.style.display = 'none'
   controls.className = 'defra-chart-controls'
   container.appendChild(controls)
 
@@ -399,16 +389,22 @@ function BarChart (containerId, telemetryId) {
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
   segmentedControl.className = 'defra-chart-segmented-control'
-  segmentedControl.innerHTML = `
-  <div class="defra-chart-segmented-control__segment">
+  const hourControl = document.createElement('div')
+  hourControl.className = 'defra-chart-segmented-control__segment'
+  hourControl.style.display = 'none'
+  hourControl.innerHTML = `
     <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeHours" data-period="hours" data-start="${pageStart}" data-end="${pageEnd}" aria-controls="bar-chart"/>
     <label for="timeHours">Hours</label>
-  </div>
-  <div class="defra-chart-segmented-control__segment">
+  `
+  const minuteControl = document.createElement('div')
+  minuteControl.className = 'defra-chart-segmented-control__segment'
+  minuteControl.style.display = 'none'
+  minuteControl.innerHTML = `
     <input class="defra-chart-segmented-control__input" name="time" type="radio" id="timeMinutes" data-period="minutes" data-start="${pageStartMinutes}" data-end="${pageEnd}" aria-controls="bar-chart"/>
     <label for="timeMinutes">Minutes</label>
-  </div>`
-  // container.parentNode.insertBefore(segmentedControl, container)
+  `
+  segmentedControl.appendChild(hourControl)
+  segmentedControl.appendChild(minuteControl)
   controls.appendChild(segmentedControl)
 
   // Create chart container elements
@@ -491,7 +487,14 @@ function BarChart (containerId, telemetryId) {
   // XMLHttpRequest
   const cacheStart = pageStart // This is effectively the cache date start
   const cacheEnd = pageEnd // This is effectively the cache date end
-  xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, initChart, 'json')
+  xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, (err, response) => {
+    if (err) {
+      console.log('Error: ' + err)
+    } else {
+      dataCache = response
+      initChart()
+    }
+  }, 'json')
 
   //
   // Events
