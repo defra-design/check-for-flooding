@@ -191,10 +191,13 @@ function BarChart (containerId, telemetryId, telemetry) {
     locatorBackground.classed('locator__background--visible', false)
   }
 
-  const getNextDataItemIndex = (isForward) => {
+  const getNextDataItemIndex = (key) => {
     let index = dataPage.findIndex(x => x === dataItem)
-    // Shift plus arrow keys jumps > 0mm or isLatests
-    if (isForward) {
+    if (key === 'Home') {
+      index = positiveDataItems[positiveDataItems.length - 1]
+    } else if (key === 'End') {
+      index = positiveDataItems[0]
+    } else if (key === 'ArrowRight') {
       for (let i = index; i > 0; i--) {
         if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
           index = i - 1
@@ -210,6 +213,18 @@ function BarChart (containerId, telemetryId, telemetry) {
       }
     }
     return index
+  }
+
+  const swapCell = (e) => {
+    const nextIndex = getNextDataItemIndex(e.key)
+    const cell = e.target
+    const nextCell = cell.parentNode.children[nextIndex]
+    // cell.setAttribute('focusable', false)
+    // nextCell.setAttribute('focusable', true)
+    cell.tabIndex = -1
+    nextCell.tabIndex = 0
+    nextCell.focus()
+    dataItem = dataPage[nextIndex]
   }
 
   const hideTooltip = () => {
@@ -312,7 +327,7 @@ function BarChart (containerId, telemetryId, telemetry) {
     })
     // Set current data item depending on paging direction and presence of latest reading
     dataItem = dataPage.find(x => x.isLatest)
-    const positiveDataItems = dataPage.map((x, i) => { return x.value > 0 || x.isLatest ? i : -1 }).filter(x => x >= 0)
+    positiveDataItems = dataPage.map((x, i) => { return x.value > 0 || x.isLatest ? i : -1 }).filter(x => x >= 0)
     if (direction && positiveDataItems.length) {
       dataItem = direction === 'forward' ? dataPage[positiveDataItems[positiveDataItems.length - 1]] : dataPage[positiveDataItems[0]]
     }
@@ -473,7 +488,7 @@ function BarChart (containerId, telemetryId, telemetry) {
   container.appendChild(pagination)
 
   // Set defaults
-  let width, height, xScale, yScale, dataStart, dataPage, dataItem, period, direction, interfaceType
+  let width, height, xScale, yScale, dataStart, dataPage, dataItem, period, positiveDataItems, direction, interfaceType
   // let isMobile
 
   // Get mobile media query list
@@ -529,23 +544,20 @@ function BarChart (containerId, telemetryId, telemetry) {
   })
 
   document.addEventListener('keyup', (e) => {
-    if (!(e.key === 'Tab' && document.activeElement.getAttribute('role') === 'cell')) return
+    const keys = ['Tab']
+    if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
+    console.log('keyup')
+    e.preventDefault()
     showTooltip()
   })
 
   document.addEventListener('keydown', (e) => {
     interfaceType = 'keyboard'
-    if (!(e.target.getAttribute('role') === 'cell' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft'))) return
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
+    console.log('keydown')
     e.preventDefault()
-    const nextIndex = getNextDataItemIndex(e.key === 'ArrowRight')
-    const cell = e.target
-    const nextCell = cell.parentNode.children[nextIndex]
-    // cell.setAttribute('focusable', false)
-    // nextCell.setAttribute('focusable', true)
-    cell.tabIndex = -1
-    nextCell.tabIndex = 0
-    nextCell.focus()
-    dataItem = dataPage[nextIndex]
+    swapCell(e)
     showTooltip()
   })
 
