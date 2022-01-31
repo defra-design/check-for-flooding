@@ -70,6 +70,9 @@
     &--back {
       margin-right: 10px;
     }
+    @include mq ($from: tablet) {
+      margin-top: 5px;
+    }
   }
   &__button[aria-disabled="true"] {
     cursor: not-allowed;
