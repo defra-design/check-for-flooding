@@ -57,7 +57,7 @@ class RainfallTelemetry {
     this.latest6hr = Math.round(latest.slice(0, isMinutes ? 24 : 6).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
     this.latest24hr = Math.round(latest.slice(0, isMinutes ? 96 : 24).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
     if (isMinutes) {
-      this.minutes = isMinutes
+      this.minutes = range
     }
     this.hours = isMinutes ? hours : range
   }

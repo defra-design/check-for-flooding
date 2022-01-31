@@ -228,7 +228,6 @@ function BarChart (containerId, telemetryId) {
     for (let i = 0; i < bands.length; i++) {
       numBands += Object.getOwnPropertyDescriptor(dataCache, bands[i].period) ? 1 : 0
     }
-    console.log(numBands)
     // Determin which controls to display
     segmentedControl.querySelectorAll('.defra-chart-segmented-control input').forEach(input => {
       const isBand = period === input.getAttribute('data-period')
