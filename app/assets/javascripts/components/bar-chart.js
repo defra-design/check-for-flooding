@@ -529,12 +529,12 @@ function BarChart (containerId, telemetryId) {
     changePage(e)
   })
 
-  container.addEventListener('keyup', (e) => {
+  document.addEventListener('keyup', (e) => {
     if (!(e.key === 'Tab' && document.activeElement.getAttribute('role') === 'cell')) return
     showTooltip()
   })
 
-  container.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', (e) => {
     interfaceType = 'keyboard'
     if (!(e.target.getAttribute('role') === 'cell' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft'))) return
     e.preventDefault()
@@ -565,6 +565,7 @@ function BarChart (containerId, telemetryId) {
       interfaceType = 'mouse'
       return
     }
+    interfaceType = 'mouse'
     getDataItemByX(pointer(e)[0])
     showTooltip(pointer(e)[1])
   })
