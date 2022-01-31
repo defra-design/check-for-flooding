@@ -57,6 +57,7 @@
     outline: 3px solid transparent;
     color: $govuk-link-colour;
     cursor: pointer;
+    touch-action: manipulation;
     @include govuk-font($size: 16);
     .defra-chart-pagination__text {
       pointer-events: none;
