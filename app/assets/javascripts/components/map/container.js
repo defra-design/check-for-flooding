@@ -67,7 +67,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   })
 
   // Render map
-  const map = new Map({
+  let map = new Map({
     target: containerElement,
     layers: options.layers,
     view: options.view,
@@ -262,6 +262,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   const removeContainer = () => {
     if (containerElement) { // Safari fires popstate on page load
+      // Clear referecne to map
+      this.map = null
       // Reinstate document properties
       document.title = options.originalTitle
       // Unlock body scroll
