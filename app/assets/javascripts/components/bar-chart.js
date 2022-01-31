@@ -9,7 +9,7 @@ import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 const { xhr } = window.flood.utils
 
-function BarChart (containerId, telemetryId) {
+function BarChart (containerId, telemetryId, telemetry) {
   const renderChart = () => {
     // Setup scales with domains
     xScale = setScaleX()
@@ -472,11 +472,8 @@ function BarChart (containerId, telemetryId) {
   pagination.appendChild(paginationInner)
   container.appendChild(pagination)
 
-  // Get width and height
-  telemetryId = /[^/]*$/.exec(telemetryId)[0]
-
   // Set defaults
-  let width, height, xScale, yScale, dataStart, dataCache, dataPage, dataItem, period, direction, interfaceType
+  let width, height, xScale, yScale, dataStart, dataPage, dataItem, period, direction, interfaceType
   // let isMobile
 
   // Get mobile media query list
@@ -489,19 +486,22 @@ function BarChart (containerId, telemetryId) {
   pageStart = pageStart.toISOString().replace(/.\d+Z$/g, 'Z')
   pageEnd = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
 
-  // Currently the cache and page ranges are both 5 days but they could be different
-  const cacheStart = pageStart
-  const cacheEnd = pageEnd
-
-  // XMLHttpRequest to get data
-  xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, (err, response) => {
-    if (err) {
-      console.log('Error: ' + err)
-    } else {
-      dataCache = response
-      initChart()
-    }
-  }, 'json')
+  // XMLHttpRequest to get data if hasn't already been passed through
+  let dataCache = telemetry
+  if (dataCache) {
+    initChart()
+  } else {
+    const cacheStart = pageStart
+    const cacheEnd = pageEnd
+    xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, (err, response) => {
+      if (err) {
+        console.log('Error: ' + err)
+      } else {
+        dataCache = response
+        initChart()
+      }
+    }, 'json')
+  }
 
   //
   // Events
@@ -595,7 +595,7 @@ function BarChart (containerId, telemetryId) {
 }
 
 window.flood.charts = {
-  createBarChart: (containerId, telemetryId) => {
-    return new BarChart(containerId, telemetryId)
+  createBarChart: (containerId, telemetryId, telemetry = null) => {
+    return new BarChart(containerId, telemetryId, telemetry)
   }
 }

@@ -55,10 +55,9 @@ router.get('/raingauge/:id', async (req, res) => {
     // Station details
     station = new Station(stationResponse.data)
     // Rainfall telemetry
-    const telemetryId = /[^/]*$/.exec(station.telemetryId)[0]
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getRainfallTelemetry(telemetryId, start, end)
+    telemetry = await telemetryServices.getRainfallTelemetry(station.telemetryId, start, end)
     telemetry = telemetry.data
   } else {
     // Return 500 error

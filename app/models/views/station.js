@@ -20,6 +20,7 @@ class ViewModel {
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
+      this.telemetry = telemetry
     } else {
       this.telemetry = telemetry.minutes
     }

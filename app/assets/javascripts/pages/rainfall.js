@@ -26,7 +26,7 @@ if (document.getElementById('map')) {
 
 // Create bar chart
 if (document.getElementById('bar-chart')) {
-  window.flood.charts.createBarChart('bar-chart', window.flood.model.telemetryId, window.flood.model.period)
+  window.flood.charts.createBarChart('bar-chart', window.flood.model.telemetryId, window.flood.model.telemetry)
 }
 
 // Add toggletips

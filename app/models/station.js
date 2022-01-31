@@ -8,6 +8,7 @@ class Station {
       this.rainfall1hr = data.rainfall_1hr
       this.rainfall6hr = data.rainfall_6hr
       this.rainfall24hr = data.rainfall_24hr
+      this.telemetryId = /[^/]*$/.exec(data.measure_id)[0]
     } else {
       this.wiskiId = data.wiski_id
       this.river = data.river || (type === 'river' ? (data.river_name_wiski) : '')
@@ -27,8 +28,8 @@ class Station {
       if (data.downstream_id) {
         this.downstreamId = data.downstream_id
       }
+      this.telemetryId = data.measure_id
     }
-    this.telemetryId = data.measure_id
     this.date = data.date
     this.isWales = data.is_wales === 'TRUE'
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)
