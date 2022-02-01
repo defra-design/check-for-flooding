@@ -120,19 +120,19 @@
     <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
       {% if model.station.upstreamId %}
-      <a href="/station/{{ model.station.upstreamId }}" class="defra-link-icon-s" role="button" data-module="govuk-button">
-        <svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,5.828l-3.586,3.586l-1.414,-1.414l6,-6l6,6l-1.414,1.414l-3.586,-3.586l0,12.172l-2,0l0,-12.172Z" style="fill: currentColor"/></svg>
+      <a href="/station/{{ model.station.upstreamId }}" class="defra-link-s" role="button" data-module="govuk-button">
+        <!--<svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,5.828l-3.586,3.586l-1.414,-1.414l6,-6l6,6l-1.414,1.414l-3.586,-3.586l0,12.172l-2,0l0,-12.172Z" style="fill: currentColor"/></svg>-->
         Upstream
       </a>
       {% endif %}
       {% if model.station.downstreamId %}
-      <a href="/station/{{ model.station.downstreamId }}" class="defra-link-icon-s" role="button" data-module="govuk-button">
-        <svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,14.172l-3.586,-3.586l-1.414,1.414l6,6l6,-6l-1.414,-1.414l-3.586,3.586l0,-12.172l-2,0l0,12.172Z" style="fill: currentColor"/></svg>
+      <a href="/station/{{ model.station.downstreamId }}" class="defra-link-s" role="button" data-module="govuk-button">
+        <!--<svg width="14" height="20" viewBox="0 0 14 20"><path d="M6,14.172l-3.586,-3.586l-1.414,1.414l6,6l6,-6l-1.414,-1.414l-3.586,3.586l0,-12.172l-2,0l0,12.172Z" style="fill: currentColor"/></svg>-->
         Downstream
       </a>
       {% endif %}
       <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">
-        Nearby levels
+        Nearby
       </a>
     </nav>
   </div>
