@@ -9,7 +9,7 @@ import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 const { xhr } = window.flood.utils
 
-function BarChart (containerId, stationId, telemetry) {
+function BarChart (containerId, stationId, data) {
   const renderChart = () => {
     // Setup scales with domains
     xScale = setScaleX()
@@ -509,7 +509,7 @@ function BarChart (containerId, stationId, telemetry) {
   pageEnd = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
 
   // XMLHttpRequest to get data if hasn't already been passed through
-  let dataCache = telemetry
+  let dataCache = data
   if (dataCache) {
     initChart()
   } else {
@@ -612,7 +612,7 @@ function BarChart (containerId, stationId, telemetry) {
 }
 
 window.flood.charts = {
-  createBarChart: (containerId, stationId, telemetry = null) => {
-    return new BarChart(containerId, stationId, telemetry)
+  createBarChart: (containerId, stationId, data = null) => {
+    return new BarChart(containerId, stationId, data)
   }
 }
