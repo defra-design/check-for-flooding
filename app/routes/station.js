@@ -26,7 +26,7 @@ router.get('/station/:id', async (req, res) => {
     // Station telemetry
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.stage)
+    telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.measure)
     telemetry = new StationTelemetry(telemetry.data)
   } else {
     // Return 500 error

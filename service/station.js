@@ -142,7 +142,7 @@ module.exports = {
   },
 
   // Used on detail page
-  getStation: async (id, stage) => {
+  getStation: async (id, isDownstage) => {
     const response = await db.query(`
     SELECT
     station.id,
@@ -154,23 +154,25 @@ module.exports = {
     ELSE false
     END AS is_multi,
     CASE
-    WHEN $2 = 'downstream' AND station.type = 'm' THEN 'downstream'
-    ELSE 'upstream' END AS stage,
+    WHEN $2 = true AND station.type = 'm' THEN 'downstream'
+    WHEN station.type = 'c' THEN 'tidal'
+    WHEN station.type = 'g' THEN 'groundwater'
+    ELSE 'upstream' END AS measure,
     river.display AS river,
     station.river AS river_name_wiski,
     station.state,
     station.status,
     CASE
-    WHEN $2 = 'downstream' AND station.type = 'm' THEN NULL
+    WHEN $2 = true AND station.type = 'm' THEN NULL
     ELSE station.percentile_95 END AS range_bottom,
     CASE
-    WHEN $2 = 'downstream' AND station.type = 'm' THEN NULL
+    WHEN $2 = true AND station.type = 'm' THEN NULL
     ELSE station.percentile_5 END AS range_top,
     CASE
-    WHEN $2 = 'downstream' AND station.type = 'm' THEN NULL
+    WHEN $2 = true AND station.type = 'm' THEN NULL
     ELSE station.value END AS height,
     CASE
-    WHEN $2 = 'downstream' AND station.type = 'm' THEN station.value_downstream
+    WHEN $2 = true AND station.type = 'm' THEN station.value_downstream
     ELSE station.value END AS height,
     station.value_date AS date,
     station.value_status AS value_status,
@@ -178,12 +180,12 @@ module.exports = {
     station.down AS downstream_id,
     CONCAT(station.lon,',',station.lat) AS centroid,
     station.is_wales,
-    CASE WHEN $2 = 'downstream' THEN station.measure_downstream_id ELSE station.measure_id END AS measure_id
+    CASE WHEN $2 = true THEN station.measure_downstream_id ELSE station.measure_id END AS measure_id
     FROM station
     LEFT JOIN river_station ON river_station.station_id = station.id
     LEFT JOIN river ON river.slug = river_station.slug
     WHERE lower(station.id) = lower($1)
-    `, [id, stage])
+    `, [id, isDownstage])
     return response.rows[0]
   },
 

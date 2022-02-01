@@ -20,7 +20,7 @@ class Station {
         this.rangeTop = data.range_top
         this.rangeBottom = data.range_bottom
       }
-      this.stage = data.stage
+      this.measure = data.measure
       this.isMulti = data.is_multi === 'TRUE'
       if (data.upstream_id) {
         this.upstreamId = data.upstream_id

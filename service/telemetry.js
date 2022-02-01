@@ -3,18 +3,31 @@ const RainfallTelemetry = require('./models/rainfall-telemetry')
 const moment = require('moment-timezone')
 
 module.exports = {
-  getTelemetry: async (id, start, end, stage = 'upstream') => {
-    stage = stage === 'downstream' ? 'level-downstage' : 'level-stage'
+  getTelemetry: async (id, start, end, measure) => {
+    switch (measure) {
+      case 'downstream':
+        measure = 'Downstream Stage'
+        break
+      case 'tidal':
+        // measure = 'Tidal Level' // Some tidal appear to have stage measures
+        measure = ''
+        break
+      case 'groundwater':
+        measure = 'Groundwater'
+        break
+      default:
+        measure = 'Stage'
+    }
     const dataStart = moment().subtract(5, 'days') // Currently 5 days, could be 10 years ago
     const baseUri = `https://environment.data.gov.uk/flood-monitoring/id/stations/${id}/readings`
     // Get a range of data
     const rangeStart = moment(start).isBefore(dataStart) ? dataStart : moment(start)
     const rangeEnd = moment(end).isAfter(moment()) ? moment() : moment(end)
-    const uri = baseUri + `?_sorted&startdate=${rangeStart.toISOString().split('T')[0]}&enddate=${rangeEnd.toISOString().split('T')[0]}`
+    const uri = baseUri + `?_sorted&startdate=${rangeStart.toISOString().split('T')[0]}&enddate=${rangeEnd.toISOString().split('T')[0]}&qualifier=${encodeURI(measure)}`
+    console.log(uri)
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200 && response.data) {
       const range = response.data.items
-        .filter(item => item.measure.includes(stage))
         .map(item => {
           return {
             dateTime: item.dateTime,
@@ -35,12 +48,11 @@ module.exports = {
     const baseUri = `https://environment.data.gov.uk/flood-monitoring/id/stations/${id}/readings`
 
     // Get latest 96 readings (24 hours)
-    let uri = baseUri + '?_sorted&_limit=96'
+    let uri = `${baseUri}?_sorted&_limit=96`
     let response = await axios.get(uri).then((response) => { return response })
     let latest
     if (response.status === 200 && response.data) {
       latest = response.data.items
-        .filter(item => item.measure.includes('rain'))
         .map(item => {
           return {
             dateTime: item.dateTime,
@@ -59,7 +71,6 @@ module.exports = {
     let range
     if (response.status === 200 && response.data) {
       range = response.data.items
-        .filter(item => item.measure.includes('rain'))
         .map(item => {
           return {
             dateTime: item.dateTime,
