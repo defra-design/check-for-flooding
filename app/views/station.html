@@ -169,7 +169,7 @@
             Height
           </dt>
           <dd class="defra-flood-statistics__value">
-            {% if model.station.height < 0 %}&le; 0m{% else %}{{ model.station.height }}m{% endif %}
+            {% if model.station.height < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.height }}m{% endif %}
           </dd>
         </div>
       </dl>
