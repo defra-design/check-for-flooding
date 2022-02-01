@@ -48,6 +48,7 @@ module.exports = {
 
     // Get latest 96 readings (24 hours)
     let uri = `${baseUri}?_sorted&_limit=96`
+    console.log(uri)
     let response = await axios.get(uri).then((response) => { return response })
     let latest
     if (response.status === 200 && response.data) {

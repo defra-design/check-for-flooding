@@ -10,20 +10,12 @@ class RainfallTelemetry {
     const latestDateTime = latest[0].dateTime
     const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
 
-    // Add additional properties to values
-    // range.forEach(value => {
-    //   value.isValid = true
-    //   value.isLatest = value.dateTime === latestDateTime
-    // })
-
     // Extend telemetry upto latest interval, could be 15 or 60 minute intervals
     while (moment(range[0].dateTime).isSameOrBefore(rangeEnd)) {
       const nextDateTime = moment(range[0].dateTime).add(valueDuration, 'minutes').toDate()
       range.unshift({
         dateTime: nextDateTime,
         value: 0
-        // isValid: false,
-        // isLatest: false
       })
     }
 
@@ -39,8 +31,6 @@ class RainfallTelemetry {
           hours.push({
             dateTime: batchDateTime,
             value: Math.round(batchTotal * 100) / 100
-            // isValid: item.isValid,
-            // isLatest: batchDateTime.getTime() === latestHourDateTime.getTime()
           })
           batchTotal = 0
         }
