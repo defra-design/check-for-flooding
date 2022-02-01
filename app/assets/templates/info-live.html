@@ -76,14 +76,14 @@
     {% if model.up or model.down %}
     <div class="defra-map-info__buttons">
         {% if model.up %}
-        <button class="defra-button-secondary defra-button-secondary--river-up" data-id="stations.{{ model.up }}" aria-controls="viewport infoDescription">
-            <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,13L6,13L6,4.828Z" style="fill:currentColor;"/></svg>
+        <button class="defra-button-secondary-s" data-id="stations.{{ model.up }}" aria-controls="viewport infoDescription">
+            <!--<svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14"><path d="M6,4.828L2.414,8.414L1,7L7,1L13,7L11.586,8.414L8,4.828L8,13L6,13L6,4.828Z" style="fill:currentColor;"/></svg>-->
             <span class="govuk-visually-hidden">Select next</span> Upstream  <span class="govuk-visually-hidden">measurement</span>
         </button>
         {% endif %}
         {% if model.down %}
-        <button class="defra-button-secondary defra-button-secondary--river-down" data-id="stations.{{ model.down }}" aria-controls="viewport infoDescription">
-            <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14"><path d="M6,9.172L2.414,5.586L1,7L7,13L13,7L11.586,5.586L8,9.172L8,1L6,1L6,9.172Z" style="fill:currentColor;"/></svg>
+        <button class="defra-button-secondary-s" data-id="stations.{{ model.down }}" aria-controls="viewport infoDescription">
+            <!--<svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14"><path d="M6,9.172L2.414,5.586L1,7L7,13L13,7L11.586,5.586L8,9.172L8,1L6,1L6,9.172Z" style="fill:currentColor;"/></svg>-->
             <span class="govuk-visually-hidden">Select next</span> Downstream <span class="govuk-visually-hidden">measurement</span>
         </button>
         {% endif %}
