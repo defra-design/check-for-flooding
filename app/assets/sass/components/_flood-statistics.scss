@@ -33,7 +33,8 @@
         }
     }
     &__key {
-        @include govuk-font($size: 19, $weight: bold);
+        // @include govuk-font($size: 19, $weight: bold);
+        @include govuk-font($size: 19);
         padding-top: 20px;
         margin-bottom: 5px;
     }

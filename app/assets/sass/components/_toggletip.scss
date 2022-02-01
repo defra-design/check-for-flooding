@@ -6,6 +6,7 @@
 	z-index: 1;
 	vertical-align: middle;
 	margin-top: -1px;
+	@include govuk-font($size: 16);
 	&--open {
 		z-index: 99;
 	}
@@ -17,7 +18,7 @@
 		outline: 3px solid transparent;
 		border: 0px;
 		text-align: center;
-		color: $govuk-secondary-text-colour;
+		color: $govuk-text-colour;
 		cursor: pointer;
 		span {
 			position: absolute;
@@ -26,9 +27,9 @@
 			width: 18px;
 			height: 18px;
 			line-height: 18px;
-			font-weight: 900;
+			font-weight: 1000;
 			border-radius: 100%;
-			border: 1px solid govuk-colour('dark-grey');
+			border: 1px solid govuk-colour('black');
 			font-size: 12px;
 		}
 		&:hover, &:focus {
@@ -36,11 +37,9 @@
 		}
 		&:hover span {
 			box-shadow: 0 0 0 5px govuk-colour('mid-grey');
-			border-color: govuk-colour('black');
 		}
 		&:focus span {
 			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
-			border-color: govuk-colour('black');
 		}
 	}
 	&__info {
