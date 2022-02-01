@@ -2,6 +2,7 @@ class Station {
   constructor (data) {
     const type = data.type
     this.id = data.id
+    this.ref = data.ref
     this.name = data.name
     this.type = type
     if (type === 'rainfall') {
@@ -10,7 +11,6 @@ class Station {
       this.rainfall24hr = data.rainfall_24hr
       this.telemetryId = /[^/]*$/.exec(data.measure_id)[0]
     } else {
-      this.wiskiId = data.wiski_id
       this.river = data.river || (type === 'river' ? (data.river_name_wiski) : '')
       this.state = data.state
       this.status = data.status

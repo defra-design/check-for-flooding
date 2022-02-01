@@ -135,7 +135,7 @@
       id: {{ model.station.id | dump | safe }},
       centroid: {{ model.station.centroid | dump | safe }},
       bingApiKey: {{ model.bingApiKey | dump | safe }},
-      telemetryId: {{ model.station.telemetryId | dump | safe }},
+      stationId: {{ model.station.ref | dump | safe }},
       telemetry: {{ model.telemetry | dump | safe }}
     }
   }

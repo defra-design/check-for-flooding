@@ -9,7 +9,7 @@ import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
 const { xhr } = window.flood.utils
 
-function BarChart (containerId, telemetryId, telemetry) {
+function BarChart (containerId, stationId, telemetry) {
   const renderChart = () => {
     // Setup scales with domains
     xScale = setScaleX()
@@ -508,7 +508,7 @@ function BarChart (containerId, telemetryId, telemetry) {
   } else {
     const cacheStart = pageStart
     const cacheEnd = pageEnd
-    xhr(`/service/telemetry-rainfall/${telemetryId}/${cacheStart}/${cacheEnd}`, (err, response) => {
+    xhr(`/service/telemetry-rainfall/${stationId}/${cacheStart}/${cacheEnd}`, (err, response) => {
       if (err) {
         console.log('Error: ' + err)
       } else {
@@ -546,7 +546,6 @@ function BarChart (containerId, telemetryId, telemetry) {
   document.addEventListener('keyup', (e) => {
     const keys = ['Tab']
     if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
-    console.log('keyup')
     e.preventDefault()
     showTooltip()
   })
@@ -555,7 +554,6 @@ function BarChart (containerId, telemetryId, telemetry) {
     interfaceType = 'keyboard'
     const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
     if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
-    console.log('keydown')
     e.preventDefault()
     swapCell(e)
     showTooltip()
@@ -607,7 +605,7 @@ function BarChart (containerId, telemetryId, telemetry) {
 }
 
 window.flood.charts = {
-  createBarChart: (containerId, telemetryId, telemetry = null) => {
-    return new BarChart(containerId, telemetryId, telemetry)
+  createBarChart: (containerId, stationId, telemetry = null) => {
+    return new BarChart(containerId, stationId, telemetry)
   }
 }

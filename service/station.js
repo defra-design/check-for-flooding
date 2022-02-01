@@ -7,6 +7,7 @@ module.exports = {
     const response = await db.query(`
     (SELECT station.name,
     station.id,
+    station.ref,
     station.state,
     station.value,
     station.value_downstream,
@@ -42,6 +43,7 @@ module.exports = {
     UNION ALL
     (SELECT station.name,
     station.id,
+    station.ref,
     station.state,
     station.value,
     station.value_downstream,
@@ -85,6 +87,7 @@ module.exports = {
     const response = await db.query(`
     (SELECT station.name,
     station.id,
+    station.ref,
     station.state,
     station.value,
     station.value_downstream,
@@ -108,6 +111,7 @@ module.exports = {
     UNION ALL
     (SELECT station.name,
     station.id,
+    station.ref,
     station.state,
     station.value,
     station.value_downstream,
@@ -142,8 +146,8 @@ module.exports = {
     const response = await db.query(`
     SELECT
     station.id,
+    station.ref,
     station.name,
-    station.wiski_id,
     station.type_name AS type,
     CASE
     WHEN station.type = 'm' THEN true
@@ -188,6 +192,7 @@ module.exports = {
     const response = await db.query(`
     SELECT
     station.id,
+    station.ref,
     station.type_name AS type,
     station.name,
     station.value_1hr AS rainfall_1hr,

@@ -26,7 +26,7 @@ router.get('/station/:id', async (req, res) => {
     // Station telemetry
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(station.wiskiId, start, end, station.stage)
+    telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.stage)
     telemetry = new StationTelemetry(telemetry.data)
   } else {
     // Return 500 error
@@ -57,7 +57,7 @@ router.get('/raingauge/:id', async (req, res) => {
     // Rainfall telemetry
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getRainfallTelemetry(station.telemetryId, start, end)
+    telemetry = await telemetryServices.getRainfallTelemetry(station.ref, start, end)
     telemetry = telemetry.data
   } else {
     // Return 500 error
