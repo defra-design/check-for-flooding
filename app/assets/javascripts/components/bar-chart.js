@@ -313,7 +313,8 @@ function BarChart (containerId, stationId, telemetry) {
     for (let i = 0; i < bands.length; i++) {
       if (pageDurationDays <= bands[i].days) {
         period = bands[i].period
-        dataPage = dataCache[period]
+        dataPage = dataCache[period].values
+        latestDateTime = dataCache[period].latestDateTime
         break
       }
     }
@@ -321,9 +322,15 @@ function BarChart (containerId, stationId, telemetry) {
     const valueStart = new Date(dataPage[1].dateTime)
     const valueEnd = new Date(dataPage[0].dateTime)
     const valueDuration = valueEnd.getTime() - valueStart.getTime()
+    // Remove items outside page range
     dataPage = dataPage.filter(x => {
       const date = new Date(x.dateTime)
       return date.getTime() > (pageStart.getTime() + valueDuration) && date.getTime() <= (pageEnd.getTime() + valueDuration)
+    })
+    // Add latest and valid properties to items
+    dataPage.forEach(item => {
+      item.isLatest = (new Date(item.dateTime)).getTime() === (new Date(latestDateTime)).getTime()
+      item.isValid = (new Date(item.dateTime)).getTime() <= (new Date(latestDateTime)).getTime()
     })
     // Set current data item depending on paging direction and presence of latest reading
     dataItem = dataPage.find(x => x.isLatest)
@@ -488,7 +495,7 @@ function BarChart (containerId, stationId, telemetry) {
   container.appendChild(pagination)
 
   // Set defaults
-  let width, height, xScale, yScale, dataStart, dataPage, dataItem, period, positiveDataItems, direction, interfaceType
+  let width, height, xScale, yScale, dataStart, dataPage, dataItem, latestDateTime, period, positiveDataItems, direction, interfaceType
   // let isMobile
 
   // Get mobile media query list
