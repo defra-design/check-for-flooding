@@ -21,6 +21,7 @@ module.exports = {
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     station.river AS river_wiski_name,
+    ROUND (ST_Distance(ST_Centroid(ST_MakeEnvelope($1, $2, $3, $4, 4326))::geography, station.geom::geography)) AS distance,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
@@ -57,6 +58,7 @@ module.exports = {
     CASE WHEN river.display is NOT NULL THEN river.display ELSE null END AS river_display,
     CASE WHEN river.display is NOT NULL THEN river.slug ELSE NULL END AS river_slug,
     station.river AS river_wiski_name,
+    ROUND (ST_Distance(ST_Centroid(ST_MakeEnvelope($1, $2, $3, $4, 4326))::geography, station.geom::geography)) AS distance,
     CASE
     WHEN station.type_name = 'tide' AND river.id is NULL THEN 2
     WHEN station.type_name = 'groundwater' THEN 3
@@ -76,8 +78,8 @@ module.exports = {
     RIGHT JOIN river_station ON river_station.slug = river.slug
     RIGHT JOIN station ON river_station.station_id = station.id
     WHERE (ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom)) AND station.type = 'm')
-    ORDER BY group_order, river_name, station_order, is_downstream;   
-    `, bbox)
+    ORDER BY distance, is_downstream;   
+    `, bbox) // ORDER BY group_order, river_name, station_order, is_downstream;
     return response.rows || {}
   },
 

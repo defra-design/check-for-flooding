@@ -11,6 +11,8 @@ class Level {
     this.value6hr = data.value_6hr
     this.value24hr = data.value_24hr
     this.valueDate = data.value_date
+    this.time = data.value_date ? utils.formatTime(data.value_date) : ''
+    this.date = data.value_date ? utils.formatDate(data.value_date) : ''
     this.elapsedTime = data.value_date ? utils.formatTimeElapsed(data.value_date) : ''
     this.type = data.type
     this.riverName = data.river_name

@@ -55,6 +55,14 @@ const formatTimeDate = (date) => {
   return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D MMMM')}`
 }
 
+const formatTime = (date) => {
+  return `${moment(date).tz('Europe/London').format('h:mma')}`
+}
+
+const formatDate = (date) => {
+  return `${moment(date).format('D MMM')}`
+}
+
 const bufferBbox = (bbox, m) => {
   // Convert bbox (binding box) )into polygon, add buffer, and convert back to bbox as db query needs a bbox envelope
   return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
@@ -99,6 +107,8 @@ module.exports = {
   formatTimeRecent,
   formatTimeHour,
   formatTimeDate,
+  formatTime,
+  formatDate,
   getSlug,
   groupBy,
   bufferBbox,
