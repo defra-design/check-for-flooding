@@ -71,71 +71,68 @@ River, sea, groundwater and rainfall levels - GOV.UK
 </div>
 
 {% elif model.levels  %}
-{% if model.querySearchType === 'place' %}
-<h2 class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-0">
-  Results for '{{ model.queryTerm }}'
-</h2>
+  <h2 class="govuk-heading-m govuk-!-margin-top-7 govuk-!-margin-bottom-0">
+    {% if model.querySearchType === 'place' %}
+    Results for '{{ model.queryTerm }}'
+    {% else %}
+    Levels on the {{ model.river.name }}
+    {% endif %}
+  </h2>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <nav class="defra-navbar govuk-!-margin-top-4 govuk-!-margin-bottom-4" aria-label="Show levels by type" role="navigation">
-      <ul class="defra-navbar__list">
-        {% for filter in model.levels.filters %}
-        <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-          <a href="/river-sea-groundwater-rainfall-levels?place={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
-        </li>
-        {% endfor %}
-      </ul>
-    </nav>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <nav class="defra-navbar govuk-!-margin-top-4 govuk-!-margin-bottom-4" aria-label="Show levels by type" role="navigation">
+        <ul class="defra-navbar__list">
+          {% for filter in model.levels.filters %}
+          <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
+            <a href="/river-sea-groundwater-rainfall-levels?place={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
   </div>
-</div>
-{% endif %}
+  
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <table class="defra-flood-table">
-      {% if model.querySearchType === 'river' %}
-      <caption class="govuk-table__caption govuk-table__caption--m govuk-!-margin-top-7">
-        Levels on the {{ model.river.name }}
-      </caption>
-      {% else %}
-      <caption class="govuk-visually-hidden">
-        {{ model.queryType | capitalize }} {% if model.queryType != 'rainfall' %}levels{% endif %}
-      </caption>
-      {% endif %}
-      <thead class="defra-flood-table__head">
-        <tr class="defra-flood-table__row">
-        {% if model.queryType == 'rainfall' %}
-          <th class="defra-flood-table__header defra-flood-table__header--location-rainfall" scope="col">Location</th>
-          <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">1 h<span>ou</span>r</th>
-          <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">6 h<span>ou</span>rs</th>
-          <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">24 h<span>ou</span>rs</th>
-        {% else %}
-          <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
-          <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">
-            <span class="defra-tooltip">
-              <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#river-height" class="defra-tooltip__tool">Height</a>
-              <span class="defra-tooltip__tip" role="status"></span>
-            </span>
-          </th>
-          {% if model.queryType != 'sea' %}
-          <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">
-            <span class="defra-tooltip">
-              <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#state" class="defra-tooltip__tool">State</a>
-              <span class="defra-tooltip__tip" role="status"></span>
-            </span>
-          </th>
-          <th class="defra-flood-table__header defra-flood-table__header--trend" scope="col">Trend</th>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <table class="defra-flood-table">
+        <caption class="govuk-visually-hidden">
+          Captoion to follow..
+        </caption>
+        <thead class="defra-flood-table__head">
+          <tr class="defra-flood-table__row">
+          {% if model.queryType == 'rainfall' %}
+            <th class="defra-flood-table__header defra-flood-table__header--location-rainfall" scope="col">Location</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">1 h<span>ou</span>r</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">6 h<span>ou</span>rs</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">24 h<span>ou</span>rs</th>
+          {% else %}
+            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
+            <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">
+              <span class="defra-tooltip">
+                <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#river-height" class="defra-tooltip__tool">Height</a>
+                <span class="defra-tooltip__tip" role="status"></span>
+              </span>
+            </th>
+            {% if model.queryType != 'sea' %}
+            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">
+              <span class="defra-tooltip">
+                <a href="/how-we-measure-river-sea-groundwater-rainfall-levels#state" class="defra-tooltip__tool">State</a>
+                <span class="defra-tooltip__tip" role="status"></span>
+              </span>
+            </th>
+            <th class="defra-flood-table__header defra-flood-table__header--trend" scope="col">Trend</th>
+            {% endif %}
           {% endif %}
-        {% endif %}
-        </tr>
-      </thead>
-      {% for item in model.levels.items %}
-      {% include "partials/level-row.html" %}
-      {% endfor %}
-    </table>
+          </tr>
+        </thead>
+        {% for item in model.levels.items %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
+      </table>
+    </div>
   </div>
-</div>
 {% endif %}
 
 <div class="govuk-grid-row">

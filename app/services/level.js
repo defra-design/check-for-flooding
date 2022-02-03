@@ -6,6 +6,7 @@ module.exports = {
   getLevelsWithin: async (bbox) => {
     const coords = bbox.join('/')
     const url = `/stations-within/${coords}`
+    console.log(url)
     try {
       const response = await axios.get(url, {
         auth: {
@@ -22,6 +23,7 @@ module.exports = {
   getLevelsByRiver: async (query) => {
     const slug = utils.getSlug(query)
     const url = `/stations-by-river/${slug}`
+    console.log(url)
     try {
       const response = await axios.get(url, {
         auth: {

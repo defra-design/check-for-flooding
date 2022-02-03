@@ -13,51 +13,7 @@ import { bisector, extent } from 'd3-array'
 const windowBreakPoint = 640
 const svgBreakPoint = 576
 
-function LineChart (containerId, data) {
-  const chart = document.getElementById(containerId)
-  // Setup array to combine observed and forecast points and identify startPoint for locator
-  let lines = []
-  let dataPoint
-  let hasObserved = false
-  let hasForecast = false
-  if (data.observed.length) {
-    const errorFilter = l => !l.err
-    const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
-    const filterNegativeValues = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
-    lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
-    dataPoint = lines[lines.length - 1] ? JSON.parse(JSON.stringify(lines[lines.length - 1])) : null
-    hasObserved = lines.length > 0
-  }
-  if (data.forecast.length) {
-    lines = lines.concat(data.forecast.map(l => ({ ...l, type: 'forecast' })))
-    hasForecast = true
-  }
-
-  // Set dataPointLatest
-  const dataPointLatest = JSON.parse(JSON.stringify(dataPoint))
-  let dataPointLocator = dataPointLatest
-
-  // Area generator
-  const area = d3Area().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.dateTime)) })
-    .y0((d) => { return height })
-    .y1((d) => { return yScale(d.value) })
-
-  // Line generator
-  const line = d3Line().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.dateTime)) })
-    .y((d) => { return yScale(d.value) })
-
-  // Set level and date formats
-  const parseTime = timeFormat('%-I:%M%p')
-  const parseDate = timeFormat('%e %b')
-  const parseDateShort = timeFormat('%-e/%-m')
-  const parseDateLong = timeFormat('%a, %e %b')
-
-  //
-  // Private methods
-  //
-
+function LineChart (containerId, stationId, data) {
   const renderChart = () => {
     // Set isMobile boolean
     const parentWidth = Math.floor(select('#' + containerId).node().getBoundingClientRect().width)
@@ -289,6 +245,50 @@ function LineChart (containerId, data) {
   // Setup
   //
 
+  const chart = document.getElementById(containerId)
+  // Setup array to combine observed and forecast points and identify startPoint for locator
+  let lines = []
+  let dataPoint
+  let hasObserved = false
+  let hasForecast = false
+
+  if (data.observed.length) {
+    const errorFilter = l => !l.err
+    const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
+    const filterNegativeValues = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
+    lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
+    dataPoint = lines[lines.length - 1] ? JSON.parse(JSON.stringify(lines[lines.length - 1])) : null
+    hasObserved = lines.length > 0
+  }
+
+  if (data.forecast.length) {
+    lines = lines.concat(data.forecast.map(l => ({ ...l, type: 'forecast' })))
+    hasForecast = true
+  }
+
+  if (!(hasObserved || hasForecast)) return
+
+  // Set dataPointLatest
+  const dataPointLatest = JSON.parse(JSON.stringify(dataPoint))
+  let dataPointLocator = dataPointLatest
+
+  // Area generator
+  const area = d3Area().curve(curveMonotoneX)
+    .x((d) => { return xScale(new Date(d.dateTime)) })
+    .y0((d) => { return height })
+    .y1((d) => { return yScale(d.value) })
+
+  // Line generator
+  const line = d3Line().curve(curveMonotoneX)
+    .x((d) => { return xScale(new Date(d.dateTime)) })
+    .y((d) => { return yScale(d.value) })
+
+  // Set level and date formats
+  const parseTime = timeFormat('%-I:%M%p')
+  const parseDate = timeFormat('%e %b')
+  const parseDateShort = timeFormat('%-e/%-m')
+  const parseDateLong = timeFormat('%a, %e %b')
+
   const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
   const svgInner = svg.append('g').style('pointer-events', 'all')
   svgInner.append('g').classed('y grid', true)
@@ -387,77 +387,72 @@ function LineChart (containerId, data) {
   let toolTipX, toolTipY, yAxis
   let thresholds = []
 
-  if (hasObserved || hasForecast) {
+  renderChart()
+  //
+  // Public methods
+  //
+
+  this.removeThreshold = (id) => {
+    removeThreshold(id)
+  }
+
+  this.addThreshold = (threshold) => {
+    addThreshold(threshold)
+  }
+
+  this.chart = chart
+
+  //
+  // Events
+  //
+
+  window.addEventListener('resize', () => {
+    const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
+    width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
+    height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+    xScale.range([0, width])
+    yScale.range([height, 0])
+    hideTooltip()
+    updateLocator()
     renderChart()
-    //
-    // Public methods
-    //
+    renderThresholds()
+  })
 
-    this.removeThreshold = (id) => {
-      removeThreshold(id)
-    }
+  svgInner.on('click', (e) => {
+    if (e.target.closest('.threshold')) return
+    updateLocator()
+    showTooltip(e)
+  })
 
-    this.addThreshold = (threshold) => {
+  svgInner.on('mousemove', (e) => {
+    if (e.target.closest('.threshold')) return
+    updateLocator()
+    showTooltip(e)
+  })
+
+  svgInner.on('mouseleave', (e) => {
+    hideTooltip()
+    resetLocator()
+  })
+
+  thresholdsContainer.on('click', (e) => {
+    e.stopPropagation()
+    const thresholdContainer = e.target.closest('.threshold')
+    if (e.target.closest('.threshold__remove')) {
+      removeThreshold(thresholdContainer.getAttribute('data-id'))
+    } else if (thresholdContainer) {
+      const threshold = thresholds.find((x) => { return x.id === thresholdContainer.getAttribute('data-id') })
       addThreshold(threshold)
     }
+  })
 
-    this.chart = chart
-
-    //
-    // Events
-    //
-
-    window.addEventListener('resize', () => {
-      const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-      width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
-      height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
-      xScale.range([0, width])
-      yScale.range([height, 0])
-      hideTooltip()
-      updateLocator()
-      renderChart()
-      renderThresholds()
-    })
-
-    svgInner.on('click', (e) => {
-      if (e.target.closest('.threshold')) return
-      updateLocator()
-      showTooltip(e)
-    })
-
-    svgInner.on('mousemove', (e) => {
-      if (e.target.closest('.threshold')) return
-      updateLocator()
-      showTooltip(e)
-    })
-
-    svgInner.on('mouseleave', (e) => {
-      hideTooltip()
-      resetLocator()
-    })
-
-    thresholdsContainer.on('click', (e) => {
-      e.stopPropagation()
-      const thresholdContainer = e.target.closest('.threshold')
-      if (e.target.closest('.threshold__remove')) {
-        removeThreshold(thresholdContainer.getAttribute('data-id'))
-      } else if (thresholdContainer) {
-        const threshold = thresholds.find((x) => { return x.id === thresholdContainer.getAttribute('data-id') })
-        addThreshold(threshold)
-      }
-    })
-
-    thresholdsContainer.on('mouseover', (e) => {
-      if (e.target.closest('.threshold')) hideTooltip()
-    })
-  } else {
-    // no Values so hide chart div
-    document.getElementsByClassName('defra-line-chart')[0].style.display = 'none'
-  }
+  thresholdsContainer.on('mouseover', (e) => {
+    if (e.target.closest('.threshold')) hideTooltip()
+  })
 }
 
 window.flood.charts = {
-  createLineChart: (containerId, data) => {
-    return new LineChart(containerId, data)
+  createLineChart: (containerId, stationId, data) => {
+    return new LineChart(containerId, stationId, data)
   }
 }
