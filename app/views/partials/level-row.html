@@ -33,7 +33,7 @@ tide
     {% endif %}
     <span class="defra-flood-table__item-meta">
       {% if item.type == 'river' %}
-      <a href="">{{ item.riverDisplay }}</a>
+      <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
       {% endif %}
     </span>
   </td>
