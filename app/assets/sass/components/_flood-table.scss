@@ -45,8 +45,7 @@
   }
   &__row {
     @include mq ($until: tablet) {
-      display: flex;
-      flex-flow: row wrap;
+      display: block;
       border-bottom: 1px solid govuk-colour('mid-grey');
     }
   }
@@ -59,11 +58,6 @@
     vertical-align: middle;
     text-align:center;
     border: 0px;
-    @include mq ($until: tablet) {
-      display: block;
-      padding-left: 0px;
-      padding-right: 0px;
-    }
     @include mq ($from: tablet) {
       border-bottom: 1px solid govuk-colour('mid-grey'); 
     }
@@ -76,15 +70,19 @@
     text-align:left;
     @include mq ($until: tablet) {
       display: block;
-      flex: 100%;
+      width: 100%;
     }
   }
   &__cell:not(.defra-flood-table__cell--location) {
     @include mq ($until: tablet) {
-      display: block;
-      flex: 1;
-      padding: 0px 0px 10px 0px;
+      display: inline-block;
+      padding: 0px 15px 10px 0px;
       text-align: left;
+    }
+  }
+  &__cell:last-child {
+    @include mq ($until: tablet) {
+      padding-right: 0px;
     }
   }
   &__cell--rainfall {
