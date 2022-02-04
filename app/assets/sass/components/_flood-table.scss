@@ -1,5 +1,25 @@
 .defra-flood-table {
   @extend .govuk-table;
+  margin-bottom: 0px;
+  @include mq ($until: tablet) {
+    display: block;
+  }
+  &__caption {
+    @include govuk-font($size: 19, $weight: bold);
+    text-align: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  &__head {
+    @include mq ($until: tablet) {
+      @include defra-visually-hidden();
+    }
+  }
+  &__body {
+    @include mq ($until: tablet) {
+      display: block;
+    }
+  }
   &__header {
     @extend .govuk-table__header;
     @include govuk-font($size: 16, $weight: bold);
@@ -23,8 +43,14 @@
       width: 35%;
     }
   }
-  &__row--subgroup td {
-    border-top: 1px solid govuk-colour('light-grey');
+  &__row {
+    @include mq ($until: tablet) {
+      display: flex;
+      flex-flow: row wrap;
+      border-bottom: 1px solid govuk-colour('mid-grey');
+    }
+  }
+  &__row:last-child {
     border-bottom: 0px;
   }
   &__cell {
@@ -32,6 +58,15 @@
     padding-right: 10px;
     vertical-align: middle;
     text-align:center;
+    border: 0px;
+    @include mq ($until: tablet) {
+      display: block;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    @include mq ($from: tablet) {
+      border-bottom: 1px solid govuk-colour('mid-grey'); 
+    }
     .govuk-tag {
       @include govuk-font($size: 14, $weight: bold);
     }
@@ -39,6 +74,18 @@
   &__cell--location {
     @include govuk-font($size: 19, $weight: bold);
     text-align:left;
+    @include mq ($until: tablet) {
+      display: block;
+      flex: 100%;
+    }
+  }
+  &__cell:not(.defra-flood-table__cell--location) {
+    @include mq ($until: tablet) {
+      display: block;
+      flex: 1;
+      padding: 0px 0px 10px 0px;
+      text-align: left;
+    }
   }
   &__cell--rainfall {
     text-align: left;
@@ -60,6 +107,11 @@
     a {
       color: $govuk-text-colour;
     }
+  }
+  &__item-supporting {
+    display: block;
+    @include govuk-font($size: 14);
+    color: $govuk-secondary-text-colour;
   }
   &__row:last-child &__cell {
     border-bottom: 0px;

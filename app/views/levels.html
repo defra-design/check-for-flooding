@@ -81,7 +81,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
         <ul class="defra-navbar__list">
           {% for filter in model.levels.filters %}
           <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-            <a href="/river-sea-groundwater-rainfall-levels?place={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+            {% if filter.count %}
+            <a href="/river-sea-groundwater-rainfall-levels?{{ model.querySearchType }}={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+            {% else %}
+            {{ filter.type | capitalize }} ({{ filter.count }})
+            {% endif %}
           </li>
           {% endfor %}
         </ul>
@@ -92,11 +96,15 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      {% if model.levels.items.length %}
+      {% if model.levels.items %}
       <table class="defra-flood-table">
-        <caption class="govuk-visually-hidden">
-          Caption to follow..
-        </caption>
+        <!-- <caption class="defra-flood-table__caption">
+          {% if model.queryType == 'rainfall' %}
+          Rain gauages with 1, 6 and 24 hour totals upto latest reading
+          {% elif model.queryType == 'river' %}
+          River levels with latest measurements
+          {% endif %}
+        </caption> -->
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
           {% if model.queryType == 'rainfall' %}
@@ -107,14 +115,16 @@ River, sea, groundwater and rainfall levels - GOV.UK
           {% else %}
             <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
             <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">Height</th>
-            <th class="defra-flood-table__header" scope="col">River</th>
             <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">State</th>
+            <th class="defra-flood-table__header" scope="col">River</th>
           {% endif %}
           </tr>
         </thead>
+        <tbody class="defra-flood-table__body">
         {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
+        </tbody>
       </table>
       {% else %}
       <p class="govuk-body">Copy</p>
