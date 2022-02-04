@@ -39,7 +39,7 @@ tide
   </td>
 
   <!-- Time -->
-  <td class="defra-flood-table__cell defra-flood-table__cell--time">
+  <td class="defra-flood-table__cell">
     {% if item.state != 'error' %}
     {{ item.time }} <span class="defra-flood-table__item-secondary">{{ item.date }}</span>
     {% endif %}
@@ -71,19 +71,9 @@ tide
     n/a
   </td>
   {% endif %}
-  <td class="defra-flood-table__cell defra-flood-table__cell--error">
-    n/a
-  </td>
 
   <!-- River or groundwater -->
   {% else %}
-  <td class="defra-flood-table__cell defra-flood-table__cell--height{% if item.state == 'error' %} defra-flood-table__cell--error{% endif %}">
-    {% if item.state == 'error' %}
-    n/a
-    {% else %}
-    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
-    {% endif %}
-  </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--state{% if item.state == 'error' %} defra-flood-table__cell--error{% elif item.state == 'high' %} defra-flood-table__cell--high{% endif %}">
     {% if item.state == 'error' %}
     n/a
@@ -93,12 +83,18 @@ tide
     {% if item.state == 'high' %}
     <strong>{{ item.state | capitalize }}</strong>
     {% else %}
+    <strong class="govuk-tag govuk-tag--grey">
     {{ item.state | capitalize }}
+    </strong>
     {% endif %}
     {% endif %}
   </td>
-  <td class="defra-flood-table__cell defra-flood-table__cell--trend">
-    Stable
+  <td class="defra-flood-table__cell defra-flood-table__cell--height{% if item.state == 'error' %} defra-flood-table__cell--error{% endif %}">
+    {% if item.state == 'error' %}
+    n/a
+    {% else %}
+    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+    {% endif %}
   </td>
   {% endif %}
 </tr>

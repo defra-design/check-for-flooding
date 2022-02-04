@@ -60,7 +60,7 @@ const formatTime = (date) => {
 }
 
 const formatDate = (date) => {
-  return `${moment(date).format('D MMM')}`
+  return `${moment(date).format('D/M/YY')}`
 }
 
 const bufferBbox = (bbox, m) => {

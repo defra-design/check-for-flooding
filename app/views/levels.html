@@ -92,32 +92,28 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+      {% if model.levels.items.length %}
       <table class="defra-flood-table">
         <caption class="govuk-visually-hidden">
-          Captoion to follow..
+          Caption to follow..
         </caption>
         <thead class="defra-flood-table__head">
           <tr class="defra-flood-table__row">
           {% if model.queryType == 'rainfall' %}
             <th class="defra-flood-table__header defra-flood-table__header--location-rainfall" scope="col">Location</th>
-            <th class="defra-flood-table__header defra-flood-table__header--time" scope="col">Latest</th>
+            <th class="defra-flood-table__header" scope="col">Time</th>
             <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">1 h<span>ou</span>r</th>
             <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">6 h<span>ou</span>rs</th>
             <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">24 h<span>ou</span>rs</th>
           {% else %}
             <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Location</th>
-            <th class="defra-flood-table__header defra-flood-table__header--time" scope="col">
-              Latest
+            <th class="defra-flood-table__header" scope="col">Time</th>
+            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">
+              State
             </th>
             <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">
               Height
             </th>
-            {% if model.queryType != 'sea' %}
-            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">
-              State
-            </th>
-            <th class="defra-flood-table__header defra-flood-table__header--trend" scope="col">Trend</th>
-            {% endif %}
           {% endif %}
           </tr>
         </thead>
@@ -125,8 +121,12 @@ River, sea, groundwater and rainfall levels - GOV.UK
         {% include "partials/level-row.html" %}
         {% endfor %}
       </table>
+      {% else %}
+      <p class="govuk-body">Copy</p>
+      {% endif %}
     </div>
   </div>
+
 {% endif %}
 
 <div class="govuk-grid-row">

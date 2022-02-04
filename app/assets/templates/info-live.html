@@ -33,7 +33,7 @@
     <strong class="defra-map-info__name">
         <a href="/station/{{ model.id }}">
             {% if model.type === 'C' %}Tide{% elif model.type === 'G' %}Groundwater{% else %}{{ model.river }}{% endif %} at
-            {{ model.name }} {% if model.type === 'G' %}borehole{% else %}gauge{% endif %}
+            {{ model.name }}
             {% if model.iswales %} (Natural Resources Wales){% endif %}
         </a>
     </strong>
@@ -47,13 +47,6 @@
     </p>
     {% else %}
     <dl class="defra-flood-list-data">
-        <div class="defra-flood-list-data__column">
-            <dt class="govuk-visually-hidden">Height</dt>
-            <dd>
-                <span class="defra-flood-list-data__description">Height</span>
-                <span class="defra-flood-list-data__value">{{ model.value | round(2) }}m</span>
-            </dd>
-        </div>
         {% if model.value and model.type !== 'C' and model.status !== 'Closed' and model.status !== 'Suspended' and not model.iswales %}
         <div class="defra-flood-list-data__column">
             <dt class="govuk-visually-hidden">State</dt>
@@ -71,6 +64,13 @@
             </dd>
         </div>
         {% endif %}
+        <div class="defra-flood-list-data__column">
+            <dt class="govuk-visually-hidden">Height</dt>
+            <dd>
+                <span class="defra-flood-list-data__description">Height</span>
+                <span class="defra-flood-list-data__value">{{ model.value | round(2) }}m</span>
+            </dd>
+        </div>
     {% endif %}
     </dl>
     {% if model.up or model.down %}
@@ -97,7 +97,7 @@
 <!-- Rainfall -->
 <div id="infoDescription">
     <strong class="defra-map-info__name">
-        <a href="/raingauge/{{ model.id }}">Rainfall at {{ model.name }} gauge</a>
+        <a href="/raingauge/{{ model.id }}">Rainfall at {{ model.name }}</a>
     </strong>
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
     <p class="defra-flood-list-item__error">
