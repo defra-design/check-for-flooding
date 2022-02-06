@@ -46,12 +46,15 @@ tide
   {% if item.type == 'rainfall' %}
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
     {{ item.value1hr }}mm
+    <span class="defra-flood-table__item-secondary">1hr at {{ item.time }}</span>
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
     {{ item.value6hr }}mm
+    <span class="defra-flood-table__item-secondary">6hrs at {{ item.time }}</span>
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
     {{ item.value24hr }}mm
+    <span class="defra-flood-table__item-secondary">24hrs at {{ item.time }}</span>
   </td>
 
   <!-- Sea or tide -->

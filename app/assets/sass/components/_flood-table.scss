@@ -105,10 +105,8 @@
   }
   &__item-secondary {
     display: block;
-    @include govuk-font($size: 16);
-    a {
-      color: $govuk-text-colour;
-    }
+    @include govuk-font($size: 14);
+    color: $govuk-text-colour;
   }
   &__item-prep, &__item-tertiary { 
     @include govuk-font($size: 14);
