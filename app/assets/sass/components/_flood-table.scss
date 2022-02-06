@@ -46,43 +46,47 @@
   &__row {
     @include mq ($until: tablet) {
       display: block;
-      border-bottom: 1px solid govuk-colour('mid-grey');
+      border-top: 1px solid govuk-colour('mid-grey');
     }
   }
-  &__row:last-child {
-    border-bottom: 0px;
+  &__row:first-child {
+    @include mq ($until: tablet) {
+      border: 0px;
+    }
   }
   &__cell {
     @extend .govuk-table__cell;
-    padding-right: 10px;
     vertical-align: middle;
     text-align:center;
-    border: 0px;
-    @include mq ($from: tablet) {
-      border-bottom: 1px solid govuk-colour('mid-grey'); 
+    @include mq ($until: tablet) {
+      border: 0px;
+      padding-top: 0px;
+      padding-bottom: 10px;
+      display: inline-block;
+      width: 60%;
+      text-align: left;
     }
     .govuk-tag {
       @include govuk-font($size: 14, $weight: bold);
+      @include mq ($until: tablet) {
+        padding-top: 4px;
+      }
     }
   }
   &__cell--location {
     @include govuk-font($size: 19, $weight: bold);
     text-align:left;
     @include mq ($until: tablet) {
+      padding-top: 10px;
       display: block;
       width: 100%;
     }
   }
-  &__cell:not(.defra-flood-table__cell--location) {
-    @include mq ($until: tablet) {
-      display: block;
-      padding: 0px 0px 5px 0px;
-      text-align: left;
-    }
-  }
+
   &__cell:last-child {
     @include mq ($until: tablet) {
       padding-right: 0px;
+      width: auto;
     }
   }
   &__cell--rainfall {
@@ -106,17 +110,28 @@
       color: $govuk-text-colour;
     }
   }
-  &__item-supporting {
-    display: block;
+  &__item-prep, &__item-tertiary { 
     @include govuk-font($size: 14);
     color: $govuk-secondary-text-colour;
   }
-  &__row:last-child &__cell {
-    border-bottom: 0px;
+  &__item-prep {
+    @include mq ($from: tablet) {
+      @include defra-visually-hidden();
+    }
   }
-  tbody tr:first-child .defra-flood-table__cell {
-    border-top: 0px;
+  &__item-supporting {
+    @include mq ($from: tablet) {
+      display: block;
+      @include govuk-font($size: 14);
+      color: $govuk-secondary-text-colour;
+    }
   }
+  // &__row:last-child &__cell {
+  //   border-bottom: 0px;
+  // }
+  // tbody tr:first-child .defra-flood-table__cell {
+  //   border-top: 0px;
+  // }
 }
 
 // Tooltip overides

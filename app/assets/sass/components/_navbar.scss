@@ -10,6 +10,11 @@
   &__item {
     display: inline-block;
     margin-right: 10px;
+    color: $govuk-secondary-text-colour;
+    span {
+      display: block;
+      padding: 10px 0px;
+    }
     @include mq ($from: tablet) {
       margin-right: 15px;
     }

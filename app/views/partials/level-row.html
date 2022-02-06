@@ -32,7 +32,13 @@ tide
     {{ name }}
     {% endif %}
     {% if item.state != 'error' %}
-    <span class="defra-flood-table__item-meta">{{ item.time }} {{ item.date }}</span>
+    <span class="defra-flood-table__item-meta">
+      {% if model.querySearchType == 'river' %}
+      {{ item.riverName }}
+      {% else %}
+      <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
+      {% endif %}
+    </span>
     {% endif %}
   </td>
 
@@ -56,12 +62,12 @@ tide
     {% else %}
     {% if item.value %}{{ item.value }}m{% endif %}
     {% if item.state != 'error' %}
-    <!-- <span class="defra-flood-table__item-supporting">{{ item.time }} {{ item.date }}</span> -->
+    <span class="defra-flood-table__item-prep">at</span>
+    <span class="defra-flood-table__item-supporting">
+      {{ item.time }} <span class="defra-flood-table__item-tertiary">{{ item.date }}</span>
+    </span>
     {% endif %}
     {% endif %}
-  </td>
-  <td class="defra-flood-table__cell">
-    <span class="defra-flood-table__item-na">n/a</a>
   </td>
   <td class="defra-flood-table__cell">
     <span class="defra-flood-table__item-na">n/a</a>
@@ -75,7 +81,10 @@ tide
     {% else %}
     {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
     {% if item.state != 'error' %}
-    <!-- <span class="defra-flood-table__item-supporting">{{ item.time }} {{ item.date }}</span> -->
+    <span class="defra-flood-table__item-prep">at</span>
+    <span class="defra-flood-table__item-supporting">
+      {{ item.time }} <span class="defra-flood-table__item-tertiary">{{ item.date }}</span>
+    </span>
     {% endif %}
     {% endif %}
   </td>
@@ -90,19 +99,6 @@ tide
     {% else %}
     <strong class="govuk-tag govuk-tag--grey">{{ item.state | capitalize }}</strong>
     {% endif %}
-    {% endif %}
-  </td>
-  <td class="defra-flood-table__cell">
-    {% if item.riverSlug != '' %}
-    <span class="defra-flood-table__item-secondary">
-      {% if model.querySearchType == 'river' %}
-      {{ item.riverName }}
-      {% else %}
-      <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
-      {% endif %}
-    </span>
-    {% else %}
-    <span class="defra-flood-table__item-na">n/a</a>
     {% endif %}
   </td>
   {% endif %}
