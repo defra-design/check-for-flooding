@@ -53,7 +53,7 @@ function LineChart (containerId, stationId, data) {
       )
 
     // Update time line
-    const timeX = Math.floor(xScale(new Date(data.now)))
+    const timeX = Math.floor(xScale(new Date()))
     svg.select('.time-line').attr('y1', 0).attr('y2', height)
     timeLine.attr('y1', 0).attr('y2', height).attr('transform', 'translate(' + timeX + ',0)')
     timeLabel.attr('y', height + 12).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
@@ -251,13 +251,14 @@ function LineChart (containerId, stationId, data) {
   let dataPoint
   let hasObserved = false
   let hasForecast = false
+  const plotNegativeValues = ['groundwater', 'tide'].includes(data.type)
 
   if (data.observed.length) {
     const errorFilter = l => !l.err
     const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
-    const filterNegativeValues = data.plotNegativeValues ? errorFilter : errorAndNegativeFilter
+    const filterNegativeValues = plotNegativeValues ? errorFilter : errorAndNegativeFilter
     lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
-    dataPoint = lines[lines.length - 1] ? JSON.parse(JSON.stringify(lines[lines.length - 1])) : null
+    dataPoint = lines[lines.length - 1] || null
     hasObserved = lines.length > 0
   }
 
@@ -269,7 +270,7 @@ function LineChart (containerId, stationId, data) {
   if (!(hasObserved || hasForecast)) return
 
   // Set dataPointLatest
-  const dataPointLatest = JSON.parse(JSON.stringify(dataPoint))
+  const dataPointLatest = dataPoint
   let dataPointLocator = dataPointLatest
 
   // Area generator
@@ -345,9 +346,9 @@ function LineChart (containerId, stationId, data) {
   // Set x scale extent
   const xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
   // Increase x extent by 5% from now value
-  let date = new Date(data.now)
+  let date = new Date()
   const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
-  date = new Date(Number(data.now) + Number(percentile))
+  date = new Date(Number(date) + Number(percentile))
   const xRange = [xExtent[0], xExtent[1]]
   xRange.push(date)
   xExtent[0] = Math.min.apply(Math, xRange)

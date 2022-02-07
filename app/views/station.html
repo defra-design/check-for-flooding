@@ -148,7 +148,15 @@
         <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
       </p>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
-      {# if station has hasPercentiles, this should exclude Coastal #}
+        <div class="defra-flood-statistics__column-one-quarter">
+          <dt class="defra-flood-statistics__key">
+            Height
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            {% if model.station.height < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.height }}m{% endif %}
+          </dd>
+        </div>
+        {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.rangeTop and model.station.rangeBottom  %}
         <div class="defra-flood-statistics__column-one-quarter"> 
           <dt class="defra-flood-statistics__key">
@@ -168,14 +176,6 @@
           </dd>
         </div>
         {% endif %}
-        <div class="defra-flood-statistics__column-one-quarter">
-          <dt class="defra-flood-statistics__key">
-            Height
-          </dt>
-          <dd class="defra-flood-statistics__value">
-            {% if model.station.height < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.height }}m{% endif %}
-          </dd>
-        </div>
       </dl>
     </div>
   </div>
@@ -263,9 +263,9 @@
               Normal range
             </dt>
             <dd class="govuk-summary-list__value">
-          {% if model.station.hasPercentiles %}
-              {{ model.station.percentile95 }}m to {{ model.station.percentile5 }}m
-          {% endif %}
+            {% if model.station.hasPercentiles %}
+                {{ model.station.percentile95 }}m to {{ model.station.percentile5 }}m
+            {% endif %}
             </dd>
           </div>
           <div class="govuk-summary-list__row">
@@ -302,8 +302,8 @@
     model: {
       id: {{ model.station.id | dump | safe }},
       centroid: {{ model.station.centroid | dump | safe }},
-      type: {{ model.station.type | dump | safe }},
       bingApiKey: {{ model.bingApiKey | dump | safe }},
+      stationId: {{ model.station.ref | dump | safe }},
       telemetry: {{ model.telemetry | dump | safe }}
     }
   }

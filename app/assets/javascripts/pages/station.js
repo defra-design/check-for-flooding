@@ -25,76 +25,12 @@ if (document.getElementById('map')) {
   })
 }
 
-// Add tooltips
-if (document.querySelectorAll('[data-tooltip]')) {
-  window.flood.createTooltips()
-}
-
 // Add toggletips
 if (document.querySelectorAll('.defra-toggletip')) {
   window.flood.createToggletips()
 }
 
-// Chart
-const chart = document.querySelector('.defra-line-chart')
-if (chart && window.flood.model.telemetry.length) {
-  // If javascript is enabled make content visible to all but assitive technology
-  // var figure = chart.parentNode
-  chart.setAttribute('aria-hidden', true)
-  chart.removeAttribute('hidden')
-  // Create line chart instance
-  const lineChart = window.flood.charts.createLineChart('line-chart', {
-    now: new Date(),
-    observed: window.flood.model.telemetry,
-    forecast: [],
-    plotNegativeValues: ['groundwater', 'tide'].includes(window.flood.model.type),
-    type: window.flood.model.type
-  })
-  if (Object.keys(lineChart).length) {
-    if (window.flood.utils.getParameterByName('t')) {
-      // Find threshold in model
-      const thresholdId = window.flood.utils.getParameterByName('t')
-      let matchedThresholds = []
-      window.flood.model.thresholds.forEach(function (threshold) {
-        matchedThresholds = matchedThresholds.concat(threshold.values.filter(function (value) {
-          return (value.id.toString() === thresholdId)
-        }))
-      })
-      const threshold = matchedThresholds[0]
-      lineChart.addThreshold({
-        id: threshold.id,
-        level: threshold.value,
-        name: threshold.shortname
-      })
-    } else {
-      const typical = document.querySelector('.defra-flood-impact-list__value[data-id="pc5"]:last-child')
-      if (typical) {
-        lineChart.addThreshold({
-          id: typical.getAttribute('data-id'),
-          level: Number(typical.getAttribute('data-level')),
-          name: typical.getAttribute('data-name')
-        })
-      }
-    }
-    // Add threshold buttons
-    Array.from(document.querySelectorAll('.defra-flood-impact-list__value')).forEach(value => {
-      const button = document.createElement('button')
-      button.innerHTML = 'Show on chart<span class="govuk-visually-hidden"> (Visual only)</span>'
-      button.className = 'defra-button-text-s'
-      button.addEventListener('click', function (e) {
-        lineChart.addThreshold({
-          id: value.getAttribute('data-id'),
-          level: Number(value.getAttribute('data-level')),
-          name: value.getAttribute('data-name')
-        })
-        // Scroll viewport to chart
-        const offsetTop = chart.getBoundingClientRect().top + window.pageYOffset
-        window.scrollTo(0, offsetTop)
-      })
-      const action = value.querySelector('.defra-flood-impact-list__action')
-      if (action) {
-        action.appendChild(button)
-      }
-    })
-  }
+// Line chart
+if (document.querySelector('.defra-line-chart')) {
+  window.flood.charts.createLineChart('line-chart', window.flood.model.stationId, window.flood.model.telemetry)
 }

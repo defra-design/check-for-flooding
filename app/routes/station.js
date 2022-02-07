@@ -4,7 +4,6 @@ const stationServices = require('../services/station')
 const telemetryServices = require('../services/telemetry')
 const locationServices = require('../services/location')
 const Station = require('../models/station')
-const StationTelemetry = require('../models/station-telemetry')
 const Place = require('../models/place')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
@@ -27,7 +26,7 @@ router.get('/station/:id', async (req, res) => {
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
     telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.measure)
-    telemetry = new StationTelemetry(telemetry.data)
+    telemetry = telemetry.data
   } else {
     // Return 500 error
   }
