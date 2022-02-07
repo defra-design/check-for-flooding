@@ -15,9 +15,9 @@ tide
 {% endif %}
 {% endset %}
 
-<tr class="defra-flood-table__row">
+<tr class="defra-flood-table__row" role="row">
   <!-- Location -->
-  <td class="defra-flood-table__cell defra-flood-table__cell--location">
+  <td class="defra-flood-table__cell defra-flood-table__cell--location" role="rowheader">
     {% if item.hasDetail %}
     {% if item.type === 'rainfall' %}
     <a href="/raingauge/{{ item.id | urlencode }}">
@@ -46,22 +46,22 @@ tide
 
   <!-- Rainfall -->
   {% if item.type == 'rainfall' %}
-  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
+  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall" role="cell">
     <span class="defra-flood-table__item-numeric">{{ item.value1hr }}mm</span>
     <span class="defra-flood-table__item-secondary">1 hour</span>
   </td>
-  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
+  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall" role="cell">
     <span class="defra-flood-table__item-numeric">{{ item.value6hr }}mm</span>
     <span class="defra-flood-table__item-secondary">6 hours</span>
   </td>
-  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
+  <td class="defra-flood-table__cell defra-flood-table__cell--rainfall" role="cell">
     <span class="defra-flood-table__item-numeric">{{ item.value24hr }}mm</span>
     <span class="defra-flood-table__item-secondary">24 hours</span>
   </td>
 
   <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
-  <td class="defra-flood-table__cell">
+  <td class="defra-flood-table__cell" role="cell">
     {% if item.state == 'error' %}
     <span class="defra-flood-table__item-na">n/a</a>
     {% else %}
@@ -73,13 +73,13 @@ tide
     </span>
     {% endif %}
   </td>
-  <td class="defra-flood-table__cell">
+  <td class="defra-flood-table__cell" role="cell">
     <span class="defra-flood-table__item-na">n/a</a>
   </td>
 
   <!-- River or groundwater -->
   {% else %}
-  <td class="defra-flood-table__cell">
+  <td class="defra-flood-table__cell" role="cell">
     {% if item.state == 'error' %}
     <span class="defra-flood-table__item-na">n/a</a>
     {% else %}
@@ -91,7 +91,7 @@ tide
     </span>
     {% endif %}
   </td>
-  <td class="defra-flood-table__cell">
+  <td class="defra-flood-table__cell" role="cell">
     {% if item.state == 'error' %}
     <span class="defra-flood-table__item-na">n/a</a>
     {% elif item.isDownstream %}

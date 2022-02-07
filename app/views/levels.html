@@ -96,29 +96,33 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       {% if model.levels.items %}
-      <table class="defra-flood-table">
-        <!-- <caption class="defra-flood-table__caption">
-          {% if model.queryType == 'rainfall' %}
-          Rain gauages with 1, 6 and 24 hour totals upto latest reading
-          {% elif model.queryType == 'river' %}
-          River levels with latest measurements
-          {% endif %}
-        </caption> -->
-        <thead class="defra-flood-table__head">
-          <tr class="defra-flood-table__row">
-          {% if model.queryType == 'rainfall' %}
-            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Gauge</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">1 h<span>ou</span>r</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">6 h<span>ou</span>rs</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col">24 h<span>ou</span>rs</th>
+      <table class="defra-flood-table" role="table" aria-describedby="flood-table-caption">
+        <caption id="flood-table-caption" class="govuk-visually-hidden">
+          {% if model.queryType == 'river' %}
+          River level gauges with latest measurements
+          {% elif model.queryType == 'sea' %}
+          Sea level guages with latest measurements
+          {% elif model.queryType == 'groundwater' %}
+          Groundwater boreholes with latest measurements
           {% else %}
-            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col">Gauge</th>
-            <th class="defra-flood-table__header defra-flood-table__header--height" scope="col">Height</th>
-            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col">State</th>
+          Rain gauages with 1, 6 and 24 hour totals upto the latest reading
+          {% endif %}
+        </caption>
+        <thead class="defra-flood-table__head" role="rowgroup">
+          <tr class="defra-flood-table__row" role="row">
+          {% if model.queryType == 'rainfall' %}
+            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col" role="columnheader">Gauge</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">1 h<span>ou</span>r</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">6 h<span>ou</span>rs</th>
+            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">24 h<span>ou</span>rs</th>
+          {% else %}
+            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col" role="columnheader">Gauge</th>
+            <th class="defra-flood-table__header defra-flood-table__header--height" scope="col" role="columnheader">Height</th>
+            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col" role="columnheader">State</th>
           {% endif %}
           </tr>
         </thead>
-        <tbody class="defra-flood-table__body">
+        <tbody class="defra-flood-table__body" role="rowgroup">
         {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
