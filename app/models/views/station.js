@@ -20,9 +20,12 @@ class ViewModel {
       this.latest1hr = telemetry.latest1hr
       this.latest6hr = telemetry.latest6hr
       this.latest24hr = telemetry.latest24hr
+    } else {
+      this.valueStatus = telemetry.observed.length ? 'success' : 'missing'
     }
     this.telemetry = telemetry
     this.time = utils.formatTimeDate(telemetry.latestDateTime)
+    this.timeShort = `${utils.formatTime(telemetry.latestDateTime)} ${utils.formatDate(telemetry.latestDateTime)}`
     this.bingApiKey = bingApiKey
     this.nearby = place.name
   }

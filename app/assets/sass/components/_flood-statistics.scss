@@ -33,14 +33,11 @@
         }
     }
     &__key {
-        // @include govuk-font($size: 19, $weight: bold);
         @include govuk-font($size: 19);
         padding-top: 20px;
-        margin-bottom: 5px;
     }
     &__value {
         @include govuk-font($size: 36);
-        // color: govuk-colour('blue');
         margin:0;
         display: block;
         box-sizing: border-box;
@@ -55,7 +52,7 @@
     }
     &__value-detail {
         @include govuk-font($size: 16);
-        color: $govuk-text-colour;
+        color: $govuk-secondary-text-colour;
         margin-top: 5px;
         display: block;
     }

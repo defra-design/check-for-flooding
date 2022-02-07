@@ -29,6 +29,7 @@ module.exports = {
     const rangeStart = moment(start).isBefore(dataStart) ? dataStart : moment(start)
     const rangeEnd = moment(end).isAfter(moment()) ? moment() : moment(end)
     const uri = baseUri + `?_sorted&startdate=${rangeStart.toISOString().split('T')[0]}&enddate=${rangeEnd.toISOString().split('T')[0]}&qualifier=${encodeURI(measure)}`
+    console.log(uri)
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200 && response.data) {
       const observed = response.data.items

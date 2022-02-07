@@ -55,7 +55,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-top-6">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
       <h2 class="defra-service-error__title" id="error-summary-title">
         This measuring station is offline
       </h2>
@@ -76,7 +76,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-top-6">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
       <h2 class="defra-service-error__title" id="error-summary-title">
         This measuring station is closed
       </h2>
@@ -88,10 +88,10 @@
 </div>
 
 {# No recent value #}
-{% elif model.station.valueStatus == 'missing' %}
+{% elif model.valueStatus == 'missing' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-top-6">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
       <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
       <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
     </div>
@@ -99,10 +99,10 @@
 </div>
 
 {# Latest mesurement unrelaible #}
-{% elif model.station.valueStatus == 'unreliable' %}
+{% elif model.valueStatus == 'unreliable' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-top-6">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
       <h2 class="defra-service-error__title" id="error-summary-title">
         There's a problem with the latest measurement
       </h2>
@@ -138,15 +138,14 @@
   </div>
 </div>
 
-{% if model.station.status == 'active' and model.station.valueStatus != 'error' %}
-
+{% if model.station.status == 'active' and model.valueStatus == 'success' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics govuk-!-margin-top-2">
-      <p class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+      <!-- <p class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
         Latest reading at {{ model.time }}
         <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
-      </p>
+      </p> -->
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
         <div class="defra-flood-statistics__column-one-quarter">
           <dt class="defra-flood-statistics__key">
@@ -154,6 +153,9 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             {% if model.station.height < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.height }}m{% endif %}
+            <span class="defra-flood-statistics__value-detail">
+            at {{ model.timeShort }}
+            </span>
           </dd>
         </div>
         {# if station has hasPercentiles, this should exclude Coastal #}
@@ -180,11 +182,11 @@
     </div>
   </div>
 </div>
-
 {% endif %}
 
 {# Graph #}
 
+{% if model.station.status == 'active' and model.valueStatus == 'success' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</h2>
@@ -195,6 +197,7 @@
     </a>
   </div>
 </div>
+{% endif %}
 
 {# Impacts and thresholds #}
 {% if model.thresholds.length > 0 %}
