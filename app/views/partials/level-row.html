@@ -45,15 +45,15 @@ tide
   <!-- Rainfall -->
   {% if item.type == 'rainfall' %}
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
-    {{ item.value1hr }}mm
+    <span class="defra-flood-table__item-numeric">{{ item.value1hr }}mm</span>
     <span class="defra-flood-table__item-secondary">1hr at {{ item.time }}</span>
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
-    {{ item.value6hr }}mm
+    <span class="defra-flood-table__item-numeric">{{ item.value6hr }}mm</span>
     <span class="defra-flood-table__item-secondary">6hrs at {{ item.time }}</span>
   </td>
   <td class="defra-flood-table__cell defra-flood-table__cell--rainfall">
-    {{ item.value24hr }}mm
+    <span class="defra-flood-table__item-numeric">{{ item.value24hr }}mm</span>
     <span class="defra-flood-table__item-secondary">24hrs at {{ item.time }}</span>
   </td>
 
@@ -63,13 +63,12 @@ tide
     {% if item.state == 'error' %}
     <span class="defra-flood-table__item-na">n/a</a>
     {% else %}
-    {% if item.value %}{{ item.value }}m{% endif %}
-    {% if item.state != 'error' %}
-    <span class="defra-flood-table__item-prep">at</span>
-    <span class="defra-flood-table__item-supporting">
-      {{ item.time }} <span class="defra-flood-table__item-tertiary">{{ item.date }}</span>
+    <span class="defra-flood-table__item-numeric">
+      {{ item.value }}m
+      <span class="defra-flood-table__item-secondary">at</span>
+      {{ item.time }}
+      <span class="defra-flood-table__item-secondary">{{ item.date }}</span>
     </span>
-    {% endif %}
     {% endif %}
   </td>
   <td class="defra-flood-table__cell">
@@ -82,13 +81,12 @@ tide
     {% if item.state == 'error' %}
     <span class="defra-flood-table__item-na">n/a</a>
     {% else %}
-    {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
-    {% if item.state != 'error' %}
-    <span class="defra-flood-table__item-prep">at</span>
-    <span class="defra-flood-table__item-supporting">
-      {{ item.time }} <span class="defra-flood-table__item-tertiary">{{ item.date }}</span>
+    <span class="defra-flood-table__item-numeric">
+      {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
+      <span class="defra-flood-table__item-secondary">at</span>
+      {{ item.time }}
+      <span class="defra-flood-table__item-secondary">{{ item.date }}</span>
     </span>
-    {% endif %}
     {% endif %}
   </td>
   <td class="defra-flood-table__cell">
@@ -97,11 +95,11 @@ tide
     {% elif item.isDownstream %}
     &nbsp;
     {% else %}
-    {% if item.state == 'high' %}
-    <strong class="govuk-tag govuk-tag--blue">{{ item.state | capitalize }}</strong>
-    {% else %}
-    <strong class="govuk-tag govuk-tag--grey">{{ item.state | capitalize }}</strong>
-    {% endif %}
+      {% if item.state == 'high' %}
+      <strong class="govuk-tag govuk-tag--blue">{{ item.state | capitalize }}</strong>
+      {% else %}
+      <strong class="govuk-tag govuk-tag--grey">{{ item.state | capitalize }}</strong>
+      {% endif %}
     {% endif %}
   </td>
   {% endif %}

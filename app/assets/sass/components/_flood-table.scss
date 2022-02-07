@@ -43,6 +43,11 @@
       width: 35%;
     }
   }
+  &__header--state {
+    @include mq ($from: tablet) {
+      width: 20%;
+    }
+  }
   &__row {
     @include mq ($until: tablet) {
       display: block;
@@ -50,9 +55,10 @@
     }
   }
   &__row:first-child {
-    @include mq ($until: tablet) {
-      border: 0px;
-    }
+    border: 0px;
+  }
+  &__row:last-child &__cell {
+    border-bottom: 0px;
   }
   &__cell {
     @extend .govuk-table__cell;
@@ -89,9 +95,6 @@
       width: auto;
     }
   }
-  &__cell--rainfall {
-    text-align: left;
-  }
   &__item-meta {
     display: block;
     @include govuk-font($size: 14);
@@ -103,33 +106,22 @@
   &__item-na {
     @include govuk-font($size: 14);
   }
-  &__item-secondary {
-    display: block;
-    @include govuk-font($size: 14);
-    color: $govuk-text-colour;
+  &__item-numeric {
+    @include govuk-font($size: 19, $tabular: true);
   }
-  &__item-prep, &__item-tertiary { 
-    @include govuk-font($size: 14);
+  &__item-secondary {
+    @include govuk-font($size: 14, $tabular: true);
     color: $govuk-secondary-text-colour;
   }
-  &__item-prep {
-    @include mq ($from: tablet) {
-      @include defra-visually-hidden();
-    }
-  }
-  &__item-supporting {
-    @include mq ($from: tablet) {
+
+  // Rainfall
+
+  &__cell--rainfall {
+    text-align: left;
+    .defra-flood-table__item-secondary {
       display: block;
-      @include govuk-font($size: 14);
-      color: $govuk-secondary-text-colour;
     }
   }
-  // &__row:last-child &__cell {
-  //   border-bottom: 0px;
-  // }
-  // tbody tr:first-child .defra-flood-table__cell {
-  //   border-top: 0px;
-  // }
 }
 
 // Tooltip overides
