@@ -26,17 +26,6 @@
     padding-right: 10px;
     text-align: center;
   }
-  &__header--rainfall {
-    text-align: left;
-    @include mq ($from: tablet) {
-      width: 20%;
-    }
-    span {
-      @include mq ($until: tablet) {
-        @include defra-visually-hidden();
-      }
-    }
-  }
   &__header--location {
     text-align: left;
     @include mq ($from: tablet) {
@@ -88,7 +77,6 @@
       width: 100%;
     }
   }
-
   &__cell:last-child {
     @include mq ($until: tablet) {
       padding-right: 0px;
@@ -115,47 +103,30 @@
   }
 
   // Rainfall
-
-  &__cell--rainfall {
+  &__header--rainfall {
     text-align: left;
-    .defra-flood-table__item-secondary {
-      display: block;
+    @include mq ($from: tablet) {
+      width: 20%;
+    }
+    span {
+      @include mq ($until: tablet) {
+        @include defra-visually-hidden();
+      }
     }
   }
-}
-
-// Tooltip overides
-.defra-flood-table {
-  &__cell--state, &__cell--trend {
-    .defra-tooltip:before, .defra-tooltip:after {
-      @include mq ($from: tablet) {
-        content: none;
-      }
+  &__cell--rainfall {
+    text-align: left;
+    @include mq ($until: tablet) {
+      box-sizing: border-box;
+      vertical-align: top;
+      width: 30%;
+      min-width: 4em;
     }
-    .defra-tooltip__tip {
+    .defra-flood-table__item-secondary {
+      display: block;
+      @include govuk-font($size: 14, $tabular: false);
       @include mq ($from: tablet) {
-        position: static !important;
-        width: auto !important;
-        height: auto !important;
-        overflow: visible !important;
-        clip: auto !important;
-        -webkit-clip-path: none !important;
-        clip-path: none !important;
-        border: 0 !important;
-        white-space: normal !important;
-        box-shadow: none;
-        top: auto;
-        right: auto;
-        margin: 0px !important;
-        background-color:transparent;
-        padding: 0px;
-        text-align: center;
-        @include govuk-font($size: 19);
-      }
-    }
-    .defra-tooltip--open strong {
-      @include mq ($until: tablet) {
-        font-weight: normal;
+        @include defra-visually-hidden();
       }
     }
   }
