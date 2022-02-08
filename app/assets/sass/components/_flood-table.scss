@@ -65,6 +65,9 @@
         padding-top: 4px;
       }
     }
+    a:not(:hover) {
+      text-decoration: none;
+    }
   }
   &__cell--location {
     @include govuk-font($size: 19, $weight: bold);
@@ -73,9 +76,6 @@
       padding-right: 0px;
       display: block;
       width: 100%;
-      a:not(:hover) {
-        text-decoration: none;
-      }
     }
   }
   &__cell:not(.defra-flood-table__cell--location) {
