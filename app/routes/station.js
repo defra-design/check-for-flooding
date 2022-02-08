@@ -76,7 +76,7 @@ router.get('/raingauge/:id', async (req, res) => {
   } else {
     // Return 500 error
   }
-  const model = new ViewModel(station, telemetry, place)
+  const model = new ViewModel(station, telemetry, null, place)
   return res.render('rainfall', { model })
 })
 
