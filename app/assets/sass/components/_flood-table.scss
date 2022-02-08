@@ -73,9 +73,9 @@
       padding-right: 0px;
       display: block;
       width: 100%;
-    }
-    a:not(:hover) {
-      text-decoration: none;
+      a:not(:hover) {
+        text-decoration: none;
+      }
     }
   }
   &__cell:not(.defra-flood-table__cell--location) {
