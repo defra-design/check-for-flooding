@@ -74,6 +74,9 @@
       display: block;
       width: 100%;
     }
+    a:not(:hover) {
+      text-decoration: none;
+    }
   }
   &__cell:not(.defra-flood-table__cell--location) {
     @include mq ($until: tablet) {
@@ -91,8 +94,9 @@
     margin-top: 5px;
     @include govuk-font($size: 16);
     color: $govuk-secondary-text-colour;
-    a {
-      color: $govuk-secondary-text-colour;
+    a:not(:hover) {
+      text-decoration: none;
+      // color: $govuk-secondary-text-colour;
     }
   }
   &__item-na {
