@@ -53,8 +53,6 @@
     @extend .govuk-table__cell;
     vertical-align: middle;
     text-align:center;
-    padding-top: 15px;
-    padding-bottom: 15px;
     @include mq ($until: tablet) {
       border: 0px;
       display: inline-block;
@@ -72,6 +70,7 @@
     @include govuk-font($size: 19, $weight: bold);
     text-align:left;
     @include mq ($until: tablet) {
+      padding-right: 0px;
       display: block;
       width: 100%;
     }
