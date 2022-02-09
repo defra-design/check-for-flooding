@@ -21,7 +21,7 @@ class Threshold {
     const bands = []
     Object.entries(groups).forEach(([key, value]) => {
       const band = {
-        level: Number(key),
+        level: Number(key).toFixed(2),
         isLatest: Number(key) === latest,
         isExceeded: Number(key) <= latest,
         values: value.map(x => {
