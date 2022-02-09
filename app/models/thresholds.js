@@ -27,7 +27,7 @@ class Threshold {
         values: value.map(x => {
           return {
             name: x.name,
-            type: 'threshold',
+            type: '',
             description: x.description || this.createDescription(x)
           }
         })
