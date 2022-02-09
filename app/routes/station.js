@@ -6,6 +6,7 @@ const thresholdServices = require('../services/threshold')
 const locationServices = require('../services/location')
 const Station = require('../models/station')
 const Place = require('../models/place')
+const Thresholds = require('../models/thresholds')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
 
@@ -29,9 +30,9 @@ router.get('/station/:id', async (req, res) => {
     telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.measure)
     telemetry = telemetry.data
     // Station thresholds only for river and groundwater stations
-    if (['upstream', 'downstream', 'groundwater'].includes(station.measure)) {
+    if (['upstream', 'downstream', 'groundwater'].includes(station.measure) && telemetry.observed.length) {
       thresholds = await thresholdServices.getThresholds(station.id, station.measure === 'downstream')
-      thresholds = thresholds.data
+      thresholds = new Thresholds(thresholds.data, Number(telemetry.observed[0].value))
     }
   } else {
     // Return 500 error

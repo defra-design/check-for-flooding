@@ -52,7 +52,7 @@ const formatTimeHour = (date) => {
 }
 
 const formatTimeDate = (date) => {
-  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D MMMM')}`
+  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D\xa0MMMM')}`
 }
 
 const formatTime = (date) => {
@@ -60,7 +60,11 @@ const formatTime = (date) => {
 }
 
 const formatDate = (date) => {
-  return `${moment(date).format('D MMM')}`
+  return `${moment(date).format('D\xa0MMM')}`
+}
+
+const formatDatePast = (date) => {
+  return `${moment(date).format('D\xa0MMMM\xa0YYYY')}`
 }
 
 const bufferBbox = (bbox, m) => {
@@ -109,6 +113,7 @@ module.exports = {
   formatTimeDate,
   formatTime,
   formatDate,
+  formatDatePast,
   getSlug,
   groupBy,
   bufferBbox,
