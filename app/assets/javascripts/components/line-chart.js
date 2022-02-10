@@ -13,15 +13,15 @@ const { xhr } = window.flood.utils
 function LineChart (containerId, stationId, data) {
   const renderChart = () => {
     // Set right margin depending on length of labels
-    const numChars = yScale.domain()[1].toString().length + 2
-    const margin = { top: 5, bottom: 25, left: 0, right: 8 + (numChars * 9) }
+    const numChars = yScale.domain()[1].toString().length
+    const margin = { top: 5, bottom: 25, left: 0, right: 12 + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = chart.getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
     height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
 
-    // Calculate new xScale and yScales using new height and width
+    // Calculate new xScale and yScales height and width
     xScale.range([0, width])
     yScale.range([height, 0])
 
@@ -40,6 +40,11 @@ function LineChart (containerId, stationId, data) {
     svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
     svg.selectAll('.x.axis text').attr('y', 12)
     clipText.attr('width', width).attr('height', height)
+
+    // Position y ticks
+    svg.select('.y.axis').style('text-anchor', 'start')
+    svg.selectAll('.y.axis .tick line').attr('x2', 6)
+    svg.selectAll('.y.axis .tick text').attr('x', 9)
 
     // Update grid lines
     svg.select('.x.grid')
