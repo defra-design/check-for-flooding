@@ -12,6 +12,10 @@ const { xhr } = window.flood.utils
 
 function LineChart (containerId, stationId, data) {
   const renderChart = () => {
+    // Set scales
+    setScaleX()
+    setScaleY()
+
     // Set right margin depending on length of labels
     const numChars = yScale.domain()[1].toString().length
     const margin = { top: 5, bottom: 25, left: 0, right: 12 + (numChars * 9) }
@@ -88,6 +92,40 @@ function LineChart (containerId, stationId, data) {
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
     locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
 
+    // Add thresholds
+    thresholdsContainer.selectAll('*').remove()
+    thresholds.forEach(threshold => {
+      const thresholdContainer = thresholdsContainer
+        .append('g').attr('class', 'threshold  threshold--' + threshold.id)
+        .attr('data-id', threshold.id)
+        .classed('threshold--selected', !!threshold.isSelected)
+      thresholdContainer.append('rect')
+        .attr('class', 'threshold__bg')
+        .attr('x', 0).attr('y', -4).attr('height', 8)
+        .attr('width', xScale(xExtent[1]))
+      thresholdContainer.append('line')
+        .attr('class', 'threshold__line')
+        .attr('x2', xScale(xExtent[1])).attr('y2', 0)
+      const label = thresholdContainer.append('g')
+        .attr('class', 'threshold-label')
+        .attr('transform', 'translate(' + Math.round(width / 8) + ',' + -46 + ')')
+      const text = label.append('text')
+        .attr('class', 'threshold-label__text')
+        .text(threshold.name)
+        .attr('x', 10).attr('y', 22)
+      const textWidth = text.node().getBBox().width
+      label.append('path')
+        .attr('class', 'threshold-label__bg')
+        .attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${(Math.round(textWidth + 40) - 50)},0 l-7.5,7.5 l-7.5,-7.5 l-35,0 l0,-36 l0,0`)
+      label.append('g').attr('class', 'threshold__remove')
+        .attr('transform', 'translate(' + Math.round(textWidth + 20) + ',' + 14 + ')')
+        .append('rect').attr('x', -6).attr('y', -6).attr('width', 20).attr('height', 20)
+        .append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
+        .append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
+      // Set individual elements size and position
+      thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
+    })
+
     // Hide x axis labels that overlap with time now label
     const timeNowX = timeLabel.node().getBoundingClientRect().left
     const timeNowWidth = timeLabel.node().getBoundingClientRect().width
@@ -98,37 +136,6 @@ function LineChart (containerId, stationId, data) {
       const tickWidth = tick.getBoundingClientRect().width
       const isOverlap = (tickX + tickWidth + 5) > timeNowX && tickX <= (timeNowX + timeNowWidth + 5)
       select(tick).classed('tick--hidden', isOverlap)
-    })
-  }
-
-  const renderThresholds = () => {
-    if (!thresholds) return
-    // Empty thresholds container
-    thresholdsContainer.selectAll('*').remove()
-    // Add thresholds
-    thresholds.forEach(threshold => {
-      const thresholdContainer = thresholdsContainer.append('g').attr('class', 'threshold  threshold--' + threshold.id)
-      thresholdContainer.attr('data-id', threshold.id)
-      thresholdContainer.classed('threshold--selected', !!threshold.isSelected)
-      const bg = thresholdContainer.append('rect').attr('class', 'threshold__bg').attr('x', 0).attr('y', -4).attr('height', 8)
-      const line = thresholdContainer.append('line').attr('class', 'threshold__line')
-      const label = thresholdContainer.append('g').attr('class', 'threshold-label')
-      const labelBgPath = label.append('path').attr('class', 'threshold-label__bg')
-      const text = label.append('text').attr('class', 'threshold-label__text').text(threshold.name)
-      const remove = label.append('g').attr('class', 'threshold__remove')
-      remove.append('rect').attr('x', -6).attr('y', -6).attr('width', 20).attr('height', 20)
-      remove.append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
-      remove.append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
-      // Set individual elements size and position
-      const textWidth = text.node().getBBox().width
-      labelBgPath.attr('d', 'm-0.5,-0.5 l' + Math.round(textWidth + 40) + ',0 l0,36 l-' + (Math.round(textWidth + 40) - 50) + ',0 l-7.5,7.5 l-7.5,-7.5 l-35,0 l0,-36 l0,0')
-      text.attr('x', 10).attr('y', 22)
-      remove.attr('transform', 'translate(' + Math.round(textWidth + 20) + ',' + 14 + ')')
-      const labelX = Math.round(width / 8)
-      label.attr('transform', 'translate(' + labelX + ',' + -46 + ')')
-      thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
-      bg.attr('width', xScale(xExtent[1]))
-      line.attr('x2', xScale(xExtent[1])).attr('y2', 0)
     })
   }
 
@@ -214,7 +221,43 @@ function LineChart (containerId, stationId, data) {
     dataPointLocator = dataPointLatest
   }
 
-  const updateAxisY = () => {
+  const addThreshold = (threshold) => {
+    // Update thresholds array
+    thresholds = thresholds.filter((x) => { return x.id !== threshold.id })
+    thresholds.forEach(x => { x.isSelected = false })
+    threshold.isSelected = true
+    thresholds.push(threshold)
+    // Re-render
+    resetLocator()
+    renderChart()
+  }
+
+  const removeThreshold = (id) => {
+    // Update thresholds array
+    thresholds = thresholds.filter((x) => { return x.id !== id })
+    // Re-render
+    updateLocator()
+    renderChart()
+  }
+
+  const setScaleX = () => {
+    // Set x scale extent
+    xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
+    // Increase x extent by 5% from now value
+    let date = new Date()
+    const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
+    date = new Date(Number(date) + Number(percentile))
+    const xRange = [xExtent[0], xExtent[1]]
+    xRange.push(date)
+    xExtent[0] = Math.min.apply(Math, xRange)
+    xExtent[1] = Math.max.apply(Math, xRange)
+    // Set x input domain
+    xScaleInitial = scaleTime().domain(xExtent)
+    xScaleInitial.range([0, width])
+    xScale = scaleTime().domain(xExtent)
+  }
+
+  const setScaleY = () => {
     // Extend or reduce y extent
     const maxThreshold = Math.max.apply(Math, thresholds.map((x) => { return x.level }))
     const minThreshold = Math.min.apply(Math, thresholds.map((x) => { return x.level }))
@@ -227,6 +270,7 @@ function LineChart (containerId, stationId, data) {
     const yRangeLowerBuffered = (minData - (range / 3)).toFixed(2)
     yExtent[1] = yExtentDataMax <= yRangeUpperBuffered ? yRangeUpperBuffered : yExtentDataMax
     yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
+    console.log(yExtent)
     // Update y scale
     yScale = scaleLinear().domain(yExtent).nice()
     yScale.range([height, 0])
@@ -236,35 +280,13 @@ function LineChart (containerId, stationId, data) {
     yAxis.scale(yScale)
   }
 
-  const addThreshold = (threshold) => {
-    // Update thresholds array
-    thresholds = thresholds.filter((x) => { return x.id !== threshold.id })
-    thresholds.forEach(x => { x.isSelected = false })
-    threshold.isSelected = true
-    thresholds.push(threshold)
-    updateAxisY()
-    // Re-render
-    resetLocator()
-    renderChart()
-    renderThresholds()
-  }
-
-  const removeThreshold = (id) => {
-    // Update thresholds array
-    thresholds = thresholds.filter((x) => { return x.id !== id })
-    updateAxisY()
-    // Re-render
-    updateLocator()
-    renderChart()
-    renderThresholds()
-  }
-
   const getDataPage = (start, end) => {
     dataStart = new Date(dataCache.dataStartDateTime)
     const cacheStart = new Date(dataCache.cacheStartDateTime)
     const cacheEnd = new Date(dataCache.cacheEndDateTime)
     const pageStart = new Date(start)
     const pageEnd = new Date(end)
+
     // If page dates are outside cache range then load another data cache
     if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
       // Rebuild the cache when we have more data
@@ -310,37 +332,10 @@ function LineChart (containerId, stationId, data) {
     // start or end as -ve since we still need to determine the datetime span of the graph even if the
     // values are excluded from plotting by virtue of being -ve
 
-    // Set x scale extent
-    xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
-    // Increase x extent by 5% from now value
-    let date = new Date()
-    const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
-    date = new Date(Number(date) + Number(percentile))
-    const xRange = [xExtent[0], xExtent[1]]
-    xRange.push(date)
-    xExtent[0] = Math.min.apply(Math, xRange)
-    xExtent[1] = Math.max.apply(Math, xRange)
-    // Set x input domain
-    xScaleInitial = scaleTime().domain(xExtent)
-    xScaleInitial.range([0, width])
-    xScale = scaleTime().domain(xExtent)
-
-    // Set y scale extent
+    // Set referecne to yExtent before any thresholds are added
     yExtent = extent(lines, (d, i) => { return d.value })
-    // Adjust y extent to highest and lowest values from the data
-    yExtent[0] = Math.min.apply(Math, yExtent)
-    yExtent[1] = Math.max.apply(Math, yExtent)
-    // Reference to intial y extent min and max used when removing thresholds
     yExtentDataMin = yExtent[0]
     yExtentDataMax = yExtent[1]
-    // Add 1/3rd or range above and below, capped at zero for non-negative ranges
-    let yRange = yExtent[1] - yExtent[0]
-    yRange = yRange < 1 ? 1 : yRange // make range minimum 1m to stop zigzag
-    const yRangeUpperBuffer = (yExtent[1] + (yRange / 3)).toFixed(2)
-    const yRangeLowerBuffer = (yExtent[0] - (yRange / 3)).toFixed(2)
-    yExtent[0] = data.type === 'river' ? (yRangeLowerBuffer < 0 ? 0 : yRangeLowerBuffer) : yRangeLowerBuffer
-    yExtent[1] = yRangeUpperBuffer
-    yScale = scaleLinear().domain(yExtent).nice()
   }
 
   const initChart = () => {
@@ -403,7 +398,7 @@ function LineChart (containerId, stationId, data) {
   let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
   let lines, area, line, observedPoints, forecastPoints
   let locatorX, locatorY, toolTipX, toolTipY
-  let thresholds
+  let thresholds = []
 
   // Create a mobile width media query
   const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
@@ -457,14 +452,12 @@ function LineChart (containerId, stationId, data) {
     hideTooltip()
     updateLocator()
     renderChart()
-    renderThresholds()
   })
 
   window.addEventListener('resize', () => {
     hideTooltip()
     updateLocator()
     renderChart()
-    renderThresholds()
   })
 
   svg.on('click', (e) => {
