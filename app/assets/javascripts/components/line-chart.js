@@ -8,33 +8,38 @@ import { timeFormat } from 'd3-time-format'
 import { timeDay } from 'd3-time'
 import { select, selectAll, pointer } from 'd3-selection'
 import { bisector, extent } from 'd3-array'
-
-// Settings
-const windowBreakPoint = 640
-const svgBreakPoint = 576
+const { xhr } = window.flood.utils
 
 function LineChart (containerId, stationId, data) {
   const renderChart = () => {
-    // Set isMobile boolean
-    const parentWidth = Math.floor(select('#' + containerId).node().getBoundingClientRect().width)
-    const isMobile = window.innerWidth <= windowBreakPoint && parentWidth <= svgBreakPoint
+    // Set right margin depending on length of labels
+    const numChars = yScale.domain()[1].toString().length + 2
+    const margin = { top: 5, bottom: 25, left: 0, right: 8 + (numChars * 9) }
+
+    // Get width and height
+    const containerBoundingRect = chart.getBoundingClientRect()
+    width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
+    height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+
+    // Calculate new xScale and yScales using new height and width
+    xScale.range([0, width])
+    yScale.range([height, 0])
 
     // Draw axis
     const xAxis = axisBottom().tickSizeOuter(0)
     xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => {
-      return isMobile ? parseDateShort(d) : parseDateLong(d)
+      return isMobile ? timeFormat('%-e/%-m')(d) : timeFormat('%a, %e %b')(d)
     })
     yAxis = axisLeft().ticks(5).tickFormat((d) => {
       return parseFloat(d).toFixed(2) + 'm'
     }).tickSizeOuter(0)
     yAxis.scale(yScale)
 
-    // Update svg and clip elements with new dimensions
+    // Position axis bottom and right
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
-    svg.select('.y.axis').call(yAxis)
+    svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
     svg.selectAll('.x.axis text').attr('y', 12)
-    svgInner.attr('transform', 'translate(' + (margin.left + margin.right) + ',' + 0 + ')')
-    clip.attr('width', width).attr('height', height)
+    clipText.attr('width', width).attr('height', height)
 
     // Update grid lines
     svg.select('.x.grid')
@@ -58,17 +63,20 @@ function LineChart (containerId, stationId, data) {
     timeLine.attr('y1', 0).attr('y2', height).attr('transform', 'translate(' + timeX + ',0)')
     timeLabel.attr('y', height + 12).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
 
+    // X Axis time label
+    timeLabel.text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
+
     // Add height to locator line
     svg.select('.locator-line').attr('y1', 0).attr('y2', height)
 
     // Draw lines and areas
-    if (hasObserved) {
-      observed.attr('d', line)
-      observedArea.attr('d', area)
+    if (data.observed.length) {
+      observedArea.datum(observedPoints).attr('d', area)
+      observedLine.datum(observedPoints).attr('d', line)
     }
-    if (hasForecast) {
-      forecast.attr('d', line)
-      forecastArea.attr('d', area)
+    if (data.observed.length) {
+      forecastArea.datum(forecastPoints).attr('d', area)
+      forecastLine.datum(forecastPoints).attr('d', line)
     }
 
     // Update locator position
@@ -89,6 +97,7 @@ function LineChart (containerId, stationId, data) {
   }
 
   const renderThresholds = () => {
+    if (!thresholds) return
     // Empty thresholds container
     thresholdsContainer.selectAll('*').remove()
     // Add thresholds
@@ -151,7 +160,7 @@ function LineChart (containerId, stationId, data) {
     locatorX = Math.floor(xScale(new Date(dataPointLocator.dateTime)))
     locatorY = Math.floor(yScale(dataPointLocator.value))
     const latestX = Math.floor(xScale(new Date(dataPointLatest.dateTime)))
-    locator.classed('locator--offset', true)
+    locator.attr('class', 'locator--offset')
     locator.classed('locator--forecast', locatorX > latestX)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
     locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
@@ -171,8 +180,12 @@ function LineChart (containerId, stationId, data) {
     dataPoint.value = d.value
     toolTipX = xScale(new Date(dataPoint.dateTime))
     toolTipY = pointer(e)[1]
-    toolTip.select('text').append('tspan').attr('class', 'tool-tip-text__strong').attr('dy', '0.5em').text(Number(dataPoint.value).toFixed(2) + 'm')
-    toolTip.select('text').append('tspan').attr('x', 12).attr('dy', '1.4em').text(parseTime(new Date(dataPoint.dateTime)).toLowerCase() + ', ' + parseDate(new Date(dataPoint.dateTime)))
+    toolTip.select('text').append('tspan')
+      .attr('class', 'tool-tip-text__strong').attr('dy', '0.5em')
+      .text(Number(dataPoint.value).toFixed(2) + 'm')
+    toolTip.select('text').append('tspan')
+      .attr('x', 12).attr('dy', '1.4em')
+      .text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
     // Update tooltip left/right background
     updateToolTipBackground()
     // Update tooltip location
@@ -241,154 +254,181 @@ function LineChart (containerId, stationId, data) {
     renderThresholds()
   }
 
+  const getDataPage = (start, end) => {
+    dataStart = new Date(dataCache.dataStartDateTime)
+    const cacheStart = new Date(dataCache.cacheStartDateTime)
+    const cacheEnd = new Date(dataCache.cacheEndDateTime)
+    const pageStart = new Date(start)
+    const pageEnd = new Date(end)
+    // If page dates are outside cache range then load another data cache
+    if (pageStart.getTime() < cacheStart.getTime() || pageEnd.getTime() > cacheEnd.getTime()) {
+      // Rebuild the cache when we have more data
+      // Set cache start and end
+      // Set page start and end
+      // Load new data and reinitialise the chart
+      // New XMLHttp request
+      return
+    }
+
+    // Setup array to combine observed and forecast points and identify startPoint for locator
+    if (data.observed.length) {
+      const errorFilter = l => !l.err
+      const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
+      const filterNegativeValues = ['groundwater', 'tide'].includes(data.type) ? errorFilter : errorAndNegativeFilter
+      lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
+      dataPoint = lines[lines.length - 1] || null
+    }
+    if (data.forecast.length) {
+      lines = lines.concat(data.forecast.map(l => ({ ...l, type: 'forecast' })))
+    }
+
+    // Get reference to oberved and forecast sections
+    observedPoints = lines.filter(l => l.type === 'observed')
+    forecastPoints = lines.filter(l => l.type === 'forecast')
+
+    // Create area generator
+    area = d3Area().curve(curveMonotoneX)
+      .x((d) => { return xScale(new Date(d.dateTime)) })
+      .y0((d) => { return height })
+      .y1((d) => { return yScale(d.value) })
+
+    // Create line generator
+    line = d3Line().curve(curveMonotoneX)
+      .x((d) => { return xScale(new Date(d.dateTime)) })
+      .y((d) => { return yScale(d.value) })
+
+    // Set dataPointLatest
+    dataPointLatest = dataPoint
+    dataPointLocator = dataPointLatest
+
+    // Note: xExtent uses observed and forecast data rather than lines for the scenario where river levels
+    // start or end as -ve since we still need to determine the datetime span of the graph even if the
+    // values are excluded from plotting by virtue of being -ve
+
+    // Set x scale extent
+    xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
+    // Increase x extent by 5% from now value
+    let date = new Date()
+    const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
+    date = new Date(Number(date) + Number(percentile))
+    const xRange = [xExtent[0], xExtent[1]]
+    xRange.push(date)
+    xExtent[0] = Math.min.apply(Math, xRange)
+    xExtent[1] = Math.max.apply(Math, xRange)
+    // Set x input domain
+    xScaleInitial = scaleTime().domain(xExtent)
+    xScaleInitial.range([0, width])
+    xScale = scaleTime().domain(xExtent)
+
+    // Set y scale extent
+    yExtent = extent(lines, (d, i) => { return d.value })
+    // Adjust y extent to highest and lowest values from the data
+    yExtent[0] = Math.min.apply(Math, yExtent)
+    yExtent[1] = Math.max.apply(Math, yExtent)
+    // Reference to intial y extent min and max used when removing thresholds
+    yExtentDataMin = yExtent[0]
+    yExtentDataMax = yExtent[1]
+    // Add 1/3rd or range above and below, capped at zero for non-negative ranges
+    let yRange = yExtent[1] - yExtent[0]
+    yRange = yRange < 1 ? 1 : yRange // make range minimum 1m to stop zigzag
+    const yRangeUpperBuffer = (yExtent[1] + (yRange / 3)).toFixed(2)
+    const yRangeLowerBuffer = (yExtent[0] - (yRange / 3)).toFixed(2)
+    yExtent[0] = data.type === 'river' ? (yRangeLowerBuffer < 0 ? 0 : yRangeLowerBuffer) : yRangeLowerBuffer
+    yExtent[1] = yRangeUpperBuffer
+    yScale = scaleLinear().domain(yExtent).nice()
+  }
+
+  const initChart = () => {
+    // Get page data
+    getDataPage(pageStart, pageEnd)
+    // Render chart
+    renderChart()
+  }
+
   //
   // Setup
   //
 
   const chart = document.getElementById(containerId)
-  // Setup array to combine observed and forecast points and identify startPoint for locator
-  let lines = []
-  let dataPoint
-  let hasObserved = false
-  let hasForecast = false
-  const plotNegativeValues = ['groundwater', 'tide'].includes(data.type)
 
-  if (data.observed.length) {
-    const errorFilter = l => !l.err
-    const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
-    const filterNegativeValues = plotNegativeValues ? errorFilter : errorAndNegativeFilter
-    lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
-    dataPoint = lines[lines.length - 1] || null
-    hasObserved = lines.length > 0
-  }
+  // Create chart container elements
+  const svg = select(`#${containerId}`).append('svg')
+    .attr('aria-label', 'Bar chart')
+    .attr('aria-describedby', 'bar-chart-description')
+    .attr('focusable', 'false')
 
-  if (data.forecast.length) {
-    lines = lines.concat(data.forecast.map(l => ({ ...l, type: 'forecast' })))
-    hasForecast = true
-  }
+  // Clip path to visually hide text
+  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
 
-  if (!(hasObserved || hasForecast)) return
+  // Add grid containers
+  svg.append('g').attr('class', 'y grid')
+  svg.append('g').attr('class', 'x grid')
+  svg.append('g').attr('class', 'x axis')
+  svg.append('g').attr('class', 'y axis').style('text-anchor', 'start')
 
-  // Set dataPointLatest
-  const dataPointLatest = dataPoint
-  let dataPointLocator = dataPointLatest
-
-  // Area generator
-  const area = d3Area().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.dateTime)) })
-    .y0((d) => { return height })
-    .y1((d) => { return yScale(d.value) })
-
-  // Line generator
-  const line = d3Line().curve(curveMonotoneX)
-    .x((d) => { return xScale(new Date(d.dateTime)) })
-    .y((d) => { return yScale(d.value) })
-
-  // Set level and date formats
-  const parseTime = timeFormat('%-I:%M%p')
-  const parseDate = timeFormat('%e %b')
-  const parseDateShort = timeFormat('%-e/%-m')
-  const parseDateLong = timeFormat('%a, %e %b')
-
-  const svg = select('#' + containerId).append('svg').style('pointer-events', 'none')
-  const svgInner = svg.append('g').style('pointer-events', 'all')
-  svgInner.append('g').classed('y grid', true)
-  svgInner.append('g').classed('x grid', true)
-  svgInner.append('g').classed('x axis', true)
-  svgInner.append('g').classed('y axis', true)
-  const clip = svgInner.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('x', 0).attr('y', 0)
-  const clipInner = svgInner.append('g').attr('clip-path', 'url(#clip)')
-
-  // Add observed and forecast elements
-  let observedArea, observed, forecastArea, forecast
-  if (hasObserved) {
-    clipInner.append('g').classed('observed observed-focus', true)
-    const observedLine = lines.filter(l => l.type === 'observed')
-    observedArea = svg.select('.observed').append('path').datum(observedLine).classed('observed-area', true)
-    observed = svg.select('.observed').append('path').datum(observedLine).classed('observed-line', true)
-  }
-  if (hasForecast) {
-    clipInner.append('g').classed('forecast', true)
-    const forecastLine = lines.filter(l => l.type === 'forecast')
-    forecastArea = svg.select('.forecast').append('path').datum(forecastLine).classed('forecast-area', true)
-    forecast = svg.select('.forecast').append('path').datum(forecastLine).classed('forecast-line', true)
-  }
+  // Add containers for observed and forecast lines
+  const inner = svg.append('g').attr('clip-path', 'url(#clip-text)')
+  inner.append('g').attr('class', 'observed observed-focus')
+  inner.append('g').attr('class', 'forecast')
+  const observedArea = inner.select('.observed').append('path').attr('class', 'observed-area')
+  const observedLine = inner.select('.observed').append('path').attr('class', 'observed-line')
+  const forecastArea = inner.select('.forecast').append('path').attr('class', 'forecast-area')
+  const forecastLine = inner.select('.forecast').append('path').attr('class', 'forecast-line')
 
   // Add timeline
-  const timeLine = clipInner.append('line').classed('time-line', true)
-  const dateNow = new Date()
-  const time = (dateNow.getHours() % 12 || 12) + ':' + (dateNow.getMinutes() < 10 ? '0' : '') + dateNow.getMinutes() + (dateNow.getHours() >= 12 ? 'pm' : 'am')
-  const timeLabel = svgInner.append('text').attr('class', 'time-now-text').attr('x', -26).text(time)
+  const timeLine = svg.append('line').attr('class', 'time-line')
+  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26)
 
   // Add locator
-  const locator = clipInner.append('g').classed('locator', true)
-  locator.append('line').classed('locator-line', true)
-  locator.append('circle').attr('r', 4.5).classed('locator-point', true)
+  const locator = inner.append('g').attr('class', 'locator')
+  locator.append('line').attr('class', 'locator-line')
+  locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
   // Add thresholds group
-  const thresholdsContainer = clipInner.append('g').classed('thresholds', true)
+  const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
 
   // Add tooltip container
-  const toolTip = clipInner.append('g').attr('class', 'tool-tip')
+  const toolTip = inner.append('g').attr('class', 'tool-tip')
   toolTip.append('rect').attr('class', 'tool-tip-bg').attr('width', 147)
   toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
 
-  // Get width and height
-  const margin = { top: 25, bottom: 25, left: 28, right: 28 }
-  const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-  let width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
-  let height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
+  // Define globals
+  let isMobile, interfaceType
+  let dataStart, dataPage, dataPoint, dataPointLocator, dataPointLatest
+  let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
+  let lines, area, line, observedPoints, forecastPoints
+  let locatorX, locatorY, toolTipX, toolTipY
+  let thresholds
 
-  // Note: xExtent uses observed and forecast data rather than lines for the scenario where river levels
-  // start or end as -ve since we still need to determine the datetime span of the graph even if the
-  // values are excluded from plotting by virtue of being -ve
+  // Create a mobile width media query
+  const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
 
-  // Set x scale extent
-  const xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
-  // Increase x extent by 5% from now value
-  let date = new Date()
-  const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
-  date = new Date(Number(date) + Number(percentile))
-  const xRange = [xExtent[0], xExtent[1]]
-  xRange.push(date)
-  xExtent[0] = Math.min.apply(Math, xRange)
-  xExtent[1] = Math.max.apply(Math, xRange)
-  // Set x input domain
-  const xScaleInitial = scaleTime().domain(xExtent)
-  const xScale = scaleTime().domain(xExtent)
-  // Set x output range
-  xScaleInitial.range([0, width])
-  xScale.range([0, width])
+  // Default page size is 5 days
+  let pageStart = new Date()
+  let pageEnd = new Date()
+  pageStart.setHours(pageStart.getHours() - (5 * 24))
+  pageStart = pageStart.toISOString().replace(/.\d+Z$/g, 'Z')
+  pageEnd = pageEnd.toISOString().replace(/.\d+Z$/g, 'Z')
 
-  // Set y scale extent
-  const yExtent = extent(lines, (d, i) => { return d.value })
-  // Adjust y extent to highest and lowest values from the data
-  yExtent[0] = Math.min.apply(Math, yExtent)
-  yExtent[1] = Math.max.apply(Math, yExtent)
-  // Reference to intial y extent min and max used when removing thresholds
-  const yExtentDataMin = yExtent[0]
-  const yExtentDataMax = yExtent[1]
-  // Add 1/3rd or range above and below, capped at zero for non-negative ranges
-  let yRange = yExtent[1] - yExtent[0]
-  yRange = yRange < 1 ? 1 : yRange // make range minimum 1m to stop zigzag
-  const yRangeUpperBuffer = (yExtent[1] + (yRange / 3)).toFixed(2)
-  const yRangeLowerBuffer = (yExtent[0] - (yRange / 3)).toFixed(2)
-
-  yExtent[0] = data.type === 'river' ? (yRangeLowerBuffer < 0 ? 0 : yRangeLowerBuffer) : yRangeLowerBuffer
-
-  yExtent[1] = yRangeUpperBuffer
-  // Set y input domain
-  let yScale = scaleLinear().domain(yExtent).nice()
-  // Set y output range
-  yScale.range([height, 0])
-
-  // State properties
-  let locatorX = -1
-  let locatorY = -1
-  let toolTipX, toolTipY, yAxis
-  let thresholds = []
+  // XMLHttpRequest to get data if hasn't already been passed through
+  let dataCache = data
+  if (dataCache) {
+    initChart()
+  } else {
+    const cacheStart = pageStart
+    const cacheEnd = pageEnd
+    xhr(`/service/telemetry/${stationId}/${cacheStart}/${cacheEnd}`, (err, response) => {
+      if (err) {
+        console.log('Error: ' + err)
+      } else {
+        dataCache = response
+        initChart()
+      }
+    }, 'json')
+  }
 
   renderChart()
+
   //
   // Public methods
   //
@@ -407,31 +447,34 @@ function LineChart (containerId, stationId, data) {
   // Events
   //
 
-  window.addEventListener('resize', () => {
-    const containerBoundingRect = select('#' + containerId).node().getBoundingClientRect()
-    width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
-    height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
-    xScale.range([0, width])
-    yScale.range([height, 0])
+  mobileMediaQuery.addEventListener('change', (e) => {
+    isMobile = e.matches
     hideTooltip()
     updateLocator()
     renderChart()
     renderThresholds()
   })
 
-  svgInner.on('click', (e) => {
+  window.addEventListener('resize', () => {
+    hideTooltip()
+    updateLocator()
+    renderChart()
+    renderThresholds()
+  })
+
+  svg.on('click', (e) => {
     if (e.target.closest('.threshold')) return
     updateLocator()
     showTooltip(e)
   })
 
-  svgInner.on('mousemove', (e) => {
+  svg.on('mousemove', (e) => {
     if (e.target.closest('.threshold')) return
     updateLocator()
     showTooltip(e)
   })
 
-  svgInner.on('mouseleave', (e) => {
+  svg.on('mouseleave', (e) => {
     hideTooltip()
     resetLocator()
   })
