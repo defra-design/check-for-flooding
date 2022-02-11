@@ -17,8 +17,8 @@ function LineChart (containerId, stationId, data) {
     setScaleY()
 
     // Set right margin depending on length of labels
-    const numChars = yScale.domain()[1].toString().length
-    const margin = { top: 5, bottom: 25, left: 0, right: 12 + (numChars * 9) }
+    const numChars = yScale.domain()[1].toFixed(2).length - 1
+    const margin = { top: 5, bottom: 25, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = chart.getBoundingClientRect()
@@ -88,10 +88,6 @@ function LineChart (containerId, stationId, data) {
       forecastLine.datum(forecastPoints).attr('d', line)
     }
 
-    // Update locator position
-    locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
-    locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
-
     // Add thresholds
     thresholdsContainer.selectAll('*').remove()
     thresholds.forEach(threshold => {
@@ -139,86 +135,68 @@ function LineChart (containerId, stationId, data) {
     })
   }
 
-  const updateToolTipBackground = () => {
-    // Set Background size
-    const bg = toolTip.select('rect')
-    const text = toolTip.select('text')
-    // const textWidth = text.node().getBBox().width
-    const textHeight = Math.round(text.node().getBBox().height)
-    bg.attr('height', textHeight + 23)
-    const toolTipWidth = bg.node().getBBox().width
-    const toolTipHeight = bg.node().getBBox().height
-    // Set background left or right position
-    const containerWidth = xScale(xExtent[1])
-    if (toolTipX >= containerWidth - (toolTipWidth + 10)) {
-      // On the left
-      toolTipX -= (toolTipWidth + 10)
-    } else {
-      // On the right
-      toolTipX += 10
-    }
-    // Set background above or below position
-    if (toolTipY >= toolTipHeight + 10) {
-      toolTipY -= toolTipHeight + 10
-    } else {
-      toolTipY += 10
-    }
-    toolTipX = toolTipX.toFixed(0)
-    toolTipY = toolTipY.toFixed(0)
-  }
-
-  const updateLocator = () => {
-    dataPointLocator = dataPoint // Set locator position
-    locatorX = Math.floor(xScale(new Date(dataPointLocator.dateTime)))
-    locatorY = Math.floor(yScale(dataPointLocator.value))
-    const latestX = Math.floor(xScale(new Date(dataPointLatest.dateTime)))
-    locator.attr('class', 'locator--offset')
-    locator.classed('locator--forecast', locatorX > latestX)
-    locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
-    locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
-  }
-
-  const showTooltip = (e) => {
-    // Remove existing content
-    toolTip.select('text').selectAll('*').remove()
-    const mouseDate = xScale.invert(pointer(e)[0])
+  const getDataPointByX = (x) => {
+    const mouseDate = xScale.invert(x)
     const bisectDate = bisector((d) => { return new Date(d.dateTime) }).left
     const i = bisectDate(lines, mouseDate, 1) // returns the index to the current data item
     const d0 = lines[i - 1]
     const d1 = lines[i] || lines[i - 1]
     // Determine which date value is closest to the mouse
     const d = mouseDate - new Date(d0.dateTime) > new Date(d1.dateTime) - mouseDate ? d1 : d0
-    dataPoint.dateTime = d.dateTime
-    dataPoint.value = d.value
-    toolTipX = xScale(new Date(dataPoint.dateTime))
-    toolTipY = pointer(e)[1]
-    toolTip.select('text').append('tspan')
-      .attr('class', 'tool-tip-text__strong').attr('dy', '0.5em')
-      .text(Number(dataPoint.value).toFixed(2) + 'm')
-    toolTip.select('text').append('tspan')
-      .attr('x', 12).attr('dy', '1.4em')
-      .text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
+    dataPoint = d
+  }
+
+  const setTooltipPosition = (x, y) => {
+    // Set Background size
+    const text = tooltip.select('text')
+    const txtHeight = Math.round(text.node().getBBox().height) + 23
+    const pathLength = 130
+    const pathCentre = `M${pathLength},${txtHeight}l0,-${txtHeight}l-${pathLength},0l0,${txtHeight}l${pathLength},0Z`
+    // Set tooltip layout
+    tooltipText.attr('x', 0).attr('y', 20)
+    tooltipPath.attr('d', pathCentre)
+    // Centre tooltip
+    x -= pathLength / 2
+    if (x <= 10) {
+      // tooltip on the left
+      x = 10
+    } else if (x + ((pathLength / 2) + 10) >= width) {
+      // tooltip on the right
+      x = width - 10
+    }
+    // Set background above or below position
+    const tooltipHeight = tooltipPath.node().getBBox().height
+    const tooltipMarginTop = 10
+    const tooltipMarginBottom = height - (tooltipHeight + 10)
+    // Tooltip 40 px above cursor
+    y -= tooltipHeight + 40
+    y = y < tooltipMarginTop ? tooltipMarginTop : y > tooltipMarginBottom ? tooltipMarginBottom : y
+    tooltip.attr('transform', 'translate(' + x.toFixed(0) + ',' + y.toFixed(0) + ')')
+    tooltip.classed('tooltip--visible', true)
+    // Update locator
+    const locatorX = Math.floor(xScale(new Date(dataPoint.dateTime)))
+    const locatorY = Math.floor(yScale(dataPoint.value))
+    const latestX = Math.floor(xScale(new Date(dataPoint.dateTime)))
+    locator.classed('locator--forecast', locatorX > latestX)
+    locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
+    locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
+  }
+
+  const showTooltip = (tooltipY = 10) => {
+    if (!dataPoint) return
+    // Set tooltip text
+    tooltipValue.text(`${Number(dataPoint.value).toFixed(2)}m`)
+    tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
+    // Set locator properties
+    locator.classed('locator--visible', true)
     // Update tooltip left/right background
-    updateToolTipBackground()
-    // Update tooltip location
-    toolTip.attr('transform', 'translate(' + toolTipX + ',' + toolTipY + ')')
-    toolTip.classed('tool-tip--visible', true)
+    const tooltipX = xScale(new Date(dataPoint.dateTime))
+    setTooltipPosition(tooltipX, tooltipY)
   }
 
   const hideTooltip = () => {
-    toolTip.classed('tool-tip--visible', false)
-  }
-
-  const resetLocator = () => {
-    // Update locator location
-    locatorX = Math.floor(xScale(new Date(dataPointLatest.dateTime)))
-    locatorY = Math.floor(yScale(dataPointLatest.value))
-    locator.classed('locator--offset', false)
-    locator.classed('locator--forecast', false)
-    locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
-    locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
-    // Reset locator marker to latest
-    dataPointLocator = dataPointLatest
+    tooltip.classed('tooltip--visible', false)
+    locator.classed('locator--visible', false)
   }
 
   const addThreshold = (threshold) => {
@@ -228,7 +206,6 @@ function LineChart (containerId, stationId, data) {
     threshold.isSelected = true
     thresholds.push(threshold)
     // Re-render
-    resetLocator()
     renderChart()
   }
 
@@ -236,7 +213,6 @@ function LineChart (containerId, stationId, data) {
     // Update thresholds array
     thresholds = thresholds.filter((x) => { return x.id !== id })
     // Re-render
-    updateLocator()
     renderChart()
   }
 
@@ -270,13 +246,12 @@ function LineChart (containerId, stationId, data) {
     const yRangeLowerBuffered = (minData - (range / 3)).toFixed(2)
     yExtent[1] = yExtentDataMax <= yRangeUpperBuffered ? yRangeUpperBuffered : yExtentDataMax
     yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
-    console.log(yExtent)
     // Update y scale
-    yScale = scaleLinear().domain(yExtent).nice()
+    yScale = scaleLinear().domain(yExtent).nice(5)
     yScale.range([height, 0])
     // Update y axis
     yAxis = axisLeft()
-    yAxis.ticks(5).tickFormat((d) => { return parseFloat(d).toFixed(2) + 'm' }).tickSizeOuter(0)
+    yAxis.ticks(5).tickFormat((d) => { return parseFloat(d).toFixed(2) + 'm' })
     yAxis.scale(yScale)
   }
 
@@ -296,6 +271,10 @@ function LineChart (containerId, stationId, data) {
       // New XMLHttp request
       return
     }
+
+    // To follow
+    // Determin which resolution and range to displa
+    // Using raw data for now
 
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (data.observed.length) {
@@ -323,10 +302,6 @@ function LineChart (containerId, stationId, data) {
     line = d3Line().curve(curveMonotoneX)
       .x((d) => { return xScale(new Date(d.dateTime)) })
       .y((d) => { return yScale(d.value) })
-
-    // Set dataPointLatest
-    dataPointLatest = dataPoint
-    dataPointLocator = dataPointLatest
 
     // Note: xExtent uses observed and forecast data rather than lines for the scenario where river levels
     // start or end as -ve since we still need to determine the datetime span of the graph even if the
@@ -367,7 +342,7 @@ function LineChart (containerId, stationId, data) {
   svg.append('g').attr('class', 'y axis').style('text-anchor', 'start')
 
   // Add containers for observed and forecast lines
-  const inner = svg.append('g').attr('clip-path', 'url(#clip-text)')
+  const inner = svg.append('g') // .attr('clip-path', 'url(#clip-text)')
   inner.append('g').attr('class', 'observed observed-focus')
   inner.append('g').attr('class', 'forecast')
   const observedArea = inner.select('.observed').append('path').attr('class', 'observed-area')
@@ -388,16 +363,17 @@ function LineChart (containerId, stationId, data) {
   const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
 
   // Add tooltip container
-  const toolTip = inner.append('g').attr('class', 'tool-tip')
-  toolTip.append('rect').attr('class', 'tool-tip-bg').attr('width', 147)
-  toolTip.append('text').attr('class', 'tool-tip-text').attr('x', 12).attr('y', 20)
+  const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
+  const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
+  const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
+  const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong').attr('x', 12).attr('dy', '0.5em')
+  const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small').attr('x', 12).attr('dy', '1.4em')
 
   // Define globals
   let isMobile, interfaceType
-  let dataStart, dataPage, dataPoint, dataPointLocator, dataPointLatest
+  let dataStart, dataPage, dataPoint
   let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
   let lines, area, line, observedPoints, forecastPoints
-  let locatorX, locatorY, toolTipX, toolTipY
   let thresholds = []
 
   // Create a mobile width media query
@@ -450,31 +426,50 @@ function LineChart (containerId, stationId, data) {
   mobileMediaQuery.addEventListener('change', (e) => {
     isMobile = e.matches
     hideTooltip()
-    updateLocator()
     renderChart()
   })
 
   window.addEventListener('resize', () => {
     hideTooltip()
-    updateLocator()
     renderChart()
   })
 
   svg.on('click', (e) => {
     if (e.target.closest('.threshold')) return
-    updateLocator()
-    showTooltip(e)
+    getDataPointByX(pointer(e)[0])
+    showTooltip(pointer(e)[1])
   })
 
   svg.on('mousemove', (e) => {
-    if (e.target.closest('.threshold')) return
-    updateLocator()
-    showTooltip(e)
+    if (!xScale || e.target.closest('.threshold')) return
+    if (interfaceType === 'touch') {
+      interfaceType = 'mouse'
+      return
+    }
+    interfaceType = 'mouse'
+    getDataPointByX(pointer(e)[0])
+    showTooltip(pointer(e)[1])
   })
 
   svg.on('mouseleave', (e) => {
+    // if (dataPage) {
     hideTooltip()
-    resetLocator()
+    // }
+  })
+
+  svg.on('touchstart', (e) => {
+    interfaceType = 'touch'
+    const touchEvent = e.targetTouches[0]
+    if (!xScale) return
+    getDataPointByX(pointer(touchEvent)[0])
+    showTooltip(10)
+  })
+
+  svg.on('touchmove', (e) => {
+    const touchEvent = e.targetTouches[0]
+    if (!xScale) return
+    getDataPointByX(pointer(touchEvent)[0])
+    showTooltip(10)
   })
 
   thresholdsContainer.on('click', (e) => {

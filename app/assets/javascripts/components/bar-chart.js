@@ -149,22 +149,21 @@ function BarChart (containerId, stationId, data) {
     y = y < tooltipMarginTop ? tooltipMarginTop : y > tooltipMarginBottom ? tooltipMarginBottom : y
     tooltip.attr('transform', 'translate(' + x.toFixed(0) + ',' + y.toFixed(0) + ')')
     tooltip.classed('tooltip--visible', true)
-    locatorLine.classed('locator__line--visible', !dataItem.isLatest)
+    // Set locator position
+    locator.attr('transform', 'translate(' + Math.round(xScale(dataItem.dateTime)) + ', 0)')
+    locatorBackground.attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
+    locatorLine.attr('transform', 'translate(' + Math.round(xScale.bandwidth() / 2) + ', 0)').attr('y1', 0).attr('y2', height)
   }
 
   const showTooltip = (tooltipY = 10) => {
-    // Choose which value to show
     if (!dataItem) return
-    // Get tooltip position and content
+    // Set tooltip text
     const text = getItemText(dataItem)
     tooltipValue.attr('dy', '0.5em').text(text.value)
     tooltipDescription.attr('dy', '1.4em').text(`${text.period}, ${text.monthShort}`)
     // Update locator
-    locator.attr('transform', 'translate(' + Math.round(xScale(dataItem.dateTime)) + ', 0)')
-    locatorBackground
-      .attr('x', 0).attr('y', 0).attr('width', xScale.bandwidth()).attr('height', height)
-      .classed('locator__background--visible', (interfaceType === 'keyboard' && document.activeElement.tagName.toLocaleLowerCase() === 'g'))
-    locatorLine.attr('transform', 'translate(' + Math.round(xScale.bandwidth() / 2) + ', 0)').attr('y1', 0).attr('y2', height)
+    locatorLine.classed('locator__line--visible', !dataItem.isLatest)
+    locatorBackground.classed('locator__background--visible', (interfaceType === 'keyboard' && document.activeElement.tagName.toLocaleLowerCase() === 'g'))
     // Update bar selected state
     svg.selectAll('.bar--selected').classed('bar--selected', false)
     svg.select('[data-datetime="' + dataItem.dateTime + '"]').classed('bar--selected', true)

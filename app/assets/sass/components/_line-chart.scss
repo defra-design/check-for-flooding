@@ -1,220 +1,225 @@
 // Line graph
 .defra-line-chart {
-  position:relative;
-  // border-bottom:1px solid $govuk-border-colour;
-  // padding-bottom:15px;
-  margin:0;
+    position: relative;
+    // border-bottom:1px solid $govuk-border-colour;
+    // padding-bottom:15px;
+    margin: 0;
 }
 .defra-line-chart-data {
-  border-top:1px solid $govuk-border-colour;
-  padding-top:20px;
+    border-top: 1px solid $govuk-border-colour;
+    padding-top: 20px;
 }
 .js-enabled .defra-line-chart-data {
-  @extend .govuk-visually-hidden;
+    @extend .govuk-visually-hidden;
 }
 .defra-line-chart__caption {
-  display:block;
-  @extend .govuk-body;
-  margin-bottom:30px;
-  @include mq ($from: tablet) {
-      margin-bottom:40px;
-  }
-  margin-right:0px;
-  text-align:left;
+    display: block;
+    @extend .govuk-body;
+    margin-bottom: 30px;
+    @include mq($from: tablet) {
+        margin-bottom: 40px;
+    }
+    margin-right: 0px;
+    text-align: left;
 }
 .defra-line-chart__container {
-  position:relative;
-  margin:0;
+    position: relative;
+    margin: 0;
 }
 .defra-line-chart svg {
-  position:relative;
-  overflow:visible;
-  height:300px;
-  width:100%;
-  @include mq ($from: desktop) {
-      height:450px;
-  }
-  .axis.y { 
-      @include govuk-font($size: 14, $tabular: true);
-  }
-  .axis.x { 
-      @include govuk-font($size: 14); 
-  }
-  .axis.y text,
-  .axis.x text {
-      fill: $govuk-secondary-text-colour;
-  }
-  .axis path,
-  .axis line {
-      fill: none;
-      stroke: $govuk-border-colour;
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-  }
-  .axis.y path {
-      visibility:hidden;
-  }
-  .axis.x .tick--hidden {
-      visibility: hidden;
-      pointer-events: none;
-  }
-  .axis.x .tick line {
-      visibility:hidden;
-  }
-  .axis.y .tick line {
-      stroke: rgba($govuk-text-colour, 0.1);
-  }
-  .axis.y .tick:first-of-type line {
-      stroke: $govuk-border-colour;
-  }
-  .grid line {
-      fill: none;
-      stroke: rgba($govuk-text-colour, 0.1);
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-  }
-  .grid path {
-      visibility: hidden;
-  }
-  // Observed
-  .observed-line { 
-      stroke: $govuk-link-colour;
-      stroke-width: 3;
-      fill: none;
-  }
-  .observed-area { 
-      fill: rgba($govuk-link-colour, 0.1);
-  }
-  // Forecast
-  .forecast-line { 
-      stroke-dasharray: 4, 2; 
-      stroke: $govuk-secondary-text-colour;
-      stroke-width: 3;
-      fill: none;
-  }
-  .forecast-area { 
-      fill: rgba($govuk-border-colour, 0.1);
-  }
-  // Locator
-  .locator-point {
-      stroke-width: 3;
-      stroke: $govuk-link-colour;
-      fill: white; 
-  }
-  .locator-line {
-      display:none;
-      stroke-width: 1;
-      stroke: rgba($govuk-text-colour, 0.1);
-      shape-rendering: crispEdges; 
-  }
-  .locator--offset .locator-line {
-      display:block;
-  }
-  .locator--forecast .locator-point {
-      stroke: $govuk-secondary-text-colour;
-  }
-  // Tooltip
-  .tool-tip {
-      visibility: hidden;
-  }
-  .tool-tip--visible {
-      visibility: visible;
-  }
-  .tool-tip-bg {
-      fill:white;
-      stroke-width: 1;
-      stroke: $govuk-secondary-text-colour;
-      shape-rendering: crispEdges;
-  }
-  .tool-tip-text {
-      @include govuk-font($size: 16);
-  }
-  .tool-tip-text__strong {
-      @include govuk-font($size: 19, $weight:bold);
-  }
-  // Now
-  .time-line {
-      stroke-width: 1;
-      stroke: $govuk-secondary-text-colour;
-      shape-rendering: crispEdges; 
-  }
-  .time-now-text {
-      @include govuk-font($size: 14, $weight: bold);
-  }
-  // Thresholds
-  .threshold__line {
-      stroke: $govuk-border-colour;
-      stroke-width: 3;
-      shape-rendering: crispEdges;
-  }
-  .threshold__bg {
-      stroke: transparent;
-      fill: transparent; 
-  }
-  .threshold__remove {
-      display:none;
-  }
-  .threshold__remove line {
-      stroke-width: 2;
-      stroke: $govuk-text-colour;
-      shape-rendering: crispEdges;
-      stroke-linecap: square;
-  }
-  .threshold__remove rect {
-      stroke-width: 0;
-      stroke: transparent;
-      fill: white; 
-  }
-  .threshold__remove:hover {
-      cursor: pointer;
-  }
-  .threshold-label {
-      visibility: hidden;
-      pointer-events: none;
-  }
-  .threshold-label__bg {
-      fill:white;
-      stroke-width: 1;
-      stroke: govuk-colour('dark-grey');
-      shape-rendering: auto;
-      stroke-linecap: square;
-  }
-  .threshold-label__text {
-      @include govuk-font($size: 16);
-      fill: $govuk-text-colour;
-  }
-  .threshold.threshold--selected {
-      .threshold-label {
-          visibility: visible;
-          pointer-events: auto;
-      }
-      .threshold__remove {
-          display: block;
-      }
-      .threshold__line {
-          stroke: $govuk-text-colour;
-      }
-  }
-  .threshold.threshold--mouseover {
-      cursor:pointer;
-      .threshold__line {
-          stroke: $govuk-text-colour;
-      }
-  }
-  .threshold:not(.threshold--selected) .threshold__bg,
-  .threshold:not(.threshold--selected) .threshold__line {
-      cursor: pointer;
-  }
-  // Typical/Alert
-  .threshold--alert {
-      .threshold__line {
-          stroke: $govuk-border-colour;
-      }
-  }
-  .threshold.threshold--selected.threshold--alert,
-  .threshold.threshold--mouseover.threshold--alert {
-      .threshold__line {
-          stroke: $govuk-text-colour;
-      }
-  }
+    position: relative;
+    overflow: visible;
+    height: 300px;
+    width: 100%;
+    @include mq($from: desktop) {
+        height: 450px;
+    }
+    .axis.y {
+        @include govuk-font($size: 14, $tabular: true);
+    }
+    .axis.x {
+        @include govuk-font($size: 14);
+    }
+    .axis.y text,
+    .axis.x text {
+        fill: $govuk-secondary-text-colour;
+    }
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: $govuk-border-colour;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+    .axis.y path {
+        visibility: hidden;
+    }
+    .axis.x .tick--hidden {
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .axis.x .tick line {
+        visibility: hidden;
+    }
+    .axis.y .tick line {
+        stroke: rgba($govuk-text-colour, 0.1);
+    }
+    .axis.y .tick:first-of-type line {
+        stroke: $govuk-border-colour;
+    }
+    .grid line {
+        fill: none;
+        stroke: rgba($govuk-text-colour, 0.1);
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+    .grid path {
+        visibility: hidden;
+    }
+    // Observed
+    .observed-line {
+        stroke: $govuk-link-colour;
+        stroke-width: 3;
+        fill: none;
+    }
+    .observed-area {
+        fill: rgba($govuk-link-colour, 0.1);
+    }
+    // Forecast
+    .forecast-line {
+        stroke-dasharray: 4, 2;
+        stroke: $govuk-secondary-text-colour;
+        stroke-width: 3;
+        fill: none;
+    }
+    .forecast-area {
+        fill: rgba($govuk-border-colour, 0.1);
+    }
+    // Locator
+    .locator {
+        visibility: hidden;
+    }
+    .locator--visible {
+        visibility: visible;
+    }
+    .locator-point {
+        stroke-width: 3;
+        stroke: $govuk-link-colour;
+        fill: white;
+    }
+    .locator-line {
+        stroke-width: 1;
+        stroke: govuk-colour('mid-grey');
+        shape-rendering: crispEdges;
+    }
+    .locator--forecast .locator-point {
+        stroke: $govuk-secondary-text-colour;
+    }
+    // Tooltip
+    .tooltip {
+        visibility: hidden;
+    }
+    .tooltip--visible {
+        visibility: visible;
+    }
+    .tooltip-bg {
+        fill:white;
+        stroke-width: 1;
+        stroke: $govuk-secondary-text-colour;
+        shape-rendering: geometricPrecision;
+    }
+    .tooltip-text {
+        @include govuk-font($size: 16);
+    }
+    .tooltip-text__strong {
+        @include govuk-font($size: 19, $weight:bold);
+    }
+    .tooltip-text__small {
+        @include govuk-font($size: 14);
+    }
+    // Now
+    .time-line {
+        stroke-width: 1;
+        stroke: $govuk-secondary-text-colour;
+        shape-rendering: crispEdges;
+    }
+    .time-now-text {
+        @include govuk-font($size: 14, $weight: bold);
+    }
+    // Thresholds
+    .threshold__line {
+        stroke: $govuk-border-colour;
+        stroke-width: 3;
+        shape-rendering: crispEdges;
+    }
+    .threshold__bg {
+        stroke: transparent;
+        fill: transparent;
+    }
+    .threshold__remove {
+        display: none;
+    }
+    .threshold__remove line {
+        stroke-width: 2;
+        stroke: $govuk-text-colour;
+        shape-rendering: crispEdges;
+        stroke-linecap: square;
+    }
+    .threshold__remove rect {
+        stroke-width: 0;
+        stroke: transparent;
+        fill: white;
+    }
+    .threshold__remove:hover {
+        cursor: pointer;
+    }
+    .threshold-label {
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .threshold-label__bg {
+        fill: white;
+        stroke-width: 1;
+        stroke: govuk-colour("dark-grey");
+        shape-rendering: auto;
+        stroke-linecap: square;
+    }
+    .threshold-label__text {
+        @include govuk-font($size: 16);
+        fill: $govuk-text-colour;
+    }
+    .threshold.threshold--selected {
+        .threshold-label {
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .threshold__remove {
+            display: block;
+        }
+        .threshold__line {
+            stroke: $govuk-text-colour;
+        }
+    }
+    .threshold.threshold--mouseover {
+        cursor: pointer;
+        .threshold__line {
+            stroke: $govuk-text-colour;
+        }
+    }
+    .threshold:not(.threshold--selected) .threshold__bg,
+    .threshold:not(.threshold--selected) .threshold__line {
+        cursor: pointer;
+    }
+    // Typical/Alert
+    .threshold--alert {
+        .threshold__line {
+            stroke: $govuk-border-colour;
+        }
+    }
+    .threshold.threshold--selected.threshold--alert,
+    .threshold.threshold--mouseover.threshold--alert {
+        .threshold__line {
+            stroke: $govuk-text-colour;
+        }
+    }
 }
