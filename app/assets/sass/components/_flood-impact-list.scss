@@ -75,8 +75,7 @@
           padding-bottom:15px;
       }
   }
-  &__action {
-      display:block;
+  &__container button {
       margin-top:5px;
       @include mq ($from: tablet) {
           position:absolute;
