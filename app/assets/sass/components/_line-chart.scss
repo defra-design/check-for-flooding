@@ -118,6 +118,7 @@
     // Tooltip
     .tooltip {
         visibility: hidden;
+        pointer-events: none;
     }
     .tooltip--visible {
         visibility: visible;
@@ -185,7 +186,7 @@
         stroke-linecap: square;
     }
     .threshold-label__text {
-        @include govuk-font($size: 16);
+        @include govuk-font($size: 14);
         fill: $govuk-text-colour;
     }
     .threshold.threshold--selected {

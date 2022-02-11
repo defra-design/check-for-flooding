@@ -2,8 +2,8 @@ const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
-  getThresholds: async (id, isDownstream) => {
-    const url = `/thresholds/${id}/${isDownstream ? 'downstage' : 'stage'}`
+  getThresholds: async (stationId, isDownstream) => {
+    const url = `/thresholds/${stationId}/${isDownstream ? 'downstage' : 'stage'}`
     try {
       const response = await axios.get(url, {
         auth: {

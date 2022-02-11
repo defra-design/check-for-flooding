@@ -92,7 +92,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     thresholdsContainer.selectAll('*').remove()
     thresholds.forEach(threshold => {
       const thresholdContainer = thresholdsContainer
-        .append('g').attr('class', 'threshold  threshold--' + threshold.id)
+        .append('g').attr('class', 'threshold')
         .attr('data-id', threshold.id)
         .classed('threshold--selected', !!threshold.isSelected)
       thresholdContainer.append('rect')
@@ -105,19 +105,19 @@ function LineChart (containerId, stationId, data, options = {}) {
       const label = thresholdContainer.append('g')
         .attr('class', 'threshold-label')
         .attr('transform', 'translate(' + Math.round(width / 8) + ',' + -46 + ')')
+      const path = label.append('path')
+        .attr('class', 'threshold-label__bg')
       const text = label.append('text')
         .attr('class', 'threshold-label__text')
-        .text(threshold.name)
         .attr('x', 10).attr('y', 22)
+        .text(threshold.name)
       const textWidth = text.node().getBBox().width
-      label.append('path')
-        .attr('class', 'threshold-label__bg')
-        .attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${(Math.round(textWidth + 40) - 50)},0 l-7.5,7.5 l-7.5,-7.5 l-35,0 l0,-36 l0,0`)
-      label.append('g').attr('class', 'threshold__remove')
+      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${(Math.round(textWidth + 40) - 50)},0 l-7.5,7.5 l-7.5,-7.5 l-35,0 l0,-36 l0,0`)
+      const remove = label.append('g').attr('class', 'threshold__remove')
         .attr('transform', 'translate(' + Math.round(textWidth + 20) + ',' + 14 + ')')
-        .append('rect').attr('x', -6).attr('y', -6).attr('width', 20).attr('height', 20)
-        .append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
-        .append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
+      remove.append('rect').attr('x', -11).attr('y', -11).attr('width', 30).attr('height', 30)
+      remove.append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
+      remove.append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
       // Set individual elements size and position
       thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
     })
@@ -211,7 +211,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   const removeThreshold = (id) => {
     // Update thresholds array
-    thresholds = thresholds.filter((x) => { return x.id !== id })
+    thresholds = thresholds.filter(x => x.id.toString() !== id)
     // Re-render
     renderChart()
   }
@@ -380,7 +380,11 @@ function LineChart (containerId, stationId, data, options = {}) {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
     button.innerHTML = options.btnAddThresholdText
-    container.appendChild(button)
+    button.setAttribute('data-id', container.getAttribute('data-id'))
+    button.setAttribute('data-line-chart-threshold', '')
+    button.setAttribute('data-level', container.getAttribute('data-level'))
+    button.setAttribute('data-name', container.getAttribute('data-name'))
+    container.parentElement.replaceChild(button, container)
   })
 
   // Define globals
@@ -446,6 +450,16 @@ function LineChart (containerId, stationId, data, options = {}) {
   window.addEventListener('resize', () => {
     hideTooltip()
     renderChart()
+  })
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.hasAttribute('data-line-chart-threshold')) return
+    const button = e.target
+    addThreshold({
+      id: button.getAttribute('data-id'),
+      level: Number(button.getAttribute('data-level')),
+      name: button.getAttribute('data-name')
+    })
   })
 
   svg.on('click', (e) => {

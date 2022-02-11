@@ -32,5 +32,14 @@ if (document.querySelectorAll('.defra-toggletip')) {
 
 // Line chart
 if (document.querySelector('.defra-line-chart')) {
-  window.flood.charts.createLineChart('line-chart', window.flood.model.stationId, window.flood.model.telemetry)
+  const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.stationId, window.flood.model.telemetry)
+  const thresholdId = `threshold-${window.flood.model.stationId}-high`
+  const threshold = document.querySelector(`[data-id="${thresholdId}"]`)
+  if (threshold) {
+    lineChart.addThreshold({
+      id: thresholdId,
+      name: threshold.getAttribute('data-name'),
+      level: Number(threshold.getAttribute('data-level'))
+    })
+  }
 }

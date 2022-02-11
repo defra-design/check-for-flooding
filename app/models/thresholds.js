@@ -26,7 +26,8 @@ class Threshold {
         isExceeded: Number(key) <= latest,
         values: value.map(x => {
           return {
-            name: x.name,
+            id: x.id,
+            name: this.createName(x),
             type: '',
             description: x.description || this.createDescription(x)
           }
@@ -35,6 +36,16 @@ class Threshold {
       bands.push(band)
     })
     return bands
+  }
+
+  createName (item) {
+    let name = item.name
+    if (name === 'max') {
+      name = 'Highest level on record'
+    } else if (name === 'high') {
+      name = 'Top of the normal range'
+    }
+    return name
   }
 
   createDescription (item) {
