@@ -10,7 +10,7 @@ import { select, selectAll, pointer } from 'd3-selection'
 import { bisector, extent } from 'd3-array'
 const { xhr } = window.flood.utils
 
-function LineChart (containerId, stationId, data) {
+function LineChart (containerId, stationId, data, options = {}) {
   const renderChart = () => {
     // Set scales
     setScaleX()
@@ -324,6 +324,12 @@ function LineChart (containerId, stationId, data) {
   // Setup
   //
 
+  const defaults = {
+    btnAddThresholdClass: 'defra-button-text-s',
+    btnAddThresholdText: 'Show on chart'
+  }
+  options = Object.assign({}, defaults, options)
+
   const chart = document.getElementById(containerId)
 
   // Create chart container elements
@@ -368,6 +374,14 @@ function LineChart (containerId, stationId, data) {
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong').attr('x', 12).attr('dy', '0.5em')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small').attr('x', 12).attr('dy', '1.4em')
+
+  // Add optional 'Add threshold' buttons
+  document.querySelectorAll('[data-line-chart-threshold]').forEach(container => {
+    const button = document.createElement('button')
+    button.className = options.btnAddThresholdClass
+    button.innerHTML = options.btnAddThresholdText
+    container.appendChild(button)
+  })
 
   // Define globals
   let isMobile, interfaceType

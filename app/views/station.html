@@ -213,7 +213,7 @@
           <div class="defra-flood-impact-list__container">
             {{ threshold.description | safe }}
             {% if not band.isLatest %}
-            <span class="defra-flood-impact-list__button" data-threshold data-level="{{ band.level }}" data-name="{{ threshold.name }}"></span>
+            <span class="defra-flood-impact-list__action" data-line-chart-threshold data-level="{{ band.level }}" data-name="{{ threshold.name }}"></span>
             {% endif %}
           </div>
         </dd>

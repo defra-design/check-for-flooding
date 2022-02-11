@@ -46,6 +46,10 @@
         color:$govuk-link-hover-colour;
     }
 }
+.defra-button-text-s {
+    @extend .defra-button-text;
+    @include govuk-font($size: 16);
+}
 
 // Secondoary button
 .defra-button-secondary {
