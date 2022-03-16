@@ -1,7 +1,8 @@
 .defra-navbar {
   position: relative;
   @include govuk-font($size: 16);
-  border-bottom: 1px solid govuk-colour('light-grey');
+  // border-bottom: 1px solid govuk-colour('light-grey');
+  border-bottom: 1px solid $govuk-border-colour;
   &__list {
     list-style: none;
     margin: 0px 0px -1px;

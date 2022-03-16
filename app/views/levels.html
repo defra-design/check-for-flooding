@@ -77,7 +77,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <nav class="defra-navbar govuk-!-margin-top-4 govuk-!-margin-bottom-4" aria-label="Show results by type" role="navigation">
+      <nav class="defra-navbar govuk-!-margin-top-4" aria-label="Show results by type" role="navigation">
         <ul class="defra-navbar__list">
           {% for filter in model.levels.filters %}
           <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
@@ -96,38 +96,11 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       {% if model.levels.items %}
-      <table class="defra-flood-table" role="table" aria-labelledby="flood-table-caption">
-        <caption id="flood-table-caption" class="govuk-visually-hidden">
-          {% if model.queryType == 'river' %}
-          River level gauges with latest measurements
-          {% elif model.queryType == 'sea' %}
-          Sea level guages with latest measurements
-          {% elif model.queryType == 'groundwater' %}
-          Groundwater boreholes with latest measurements
-          {% else %}
-          Rain gauages with 1, 6 and 24 hour totals upto the latest reading
-          {% endif %}
-        </caption>
-        <thead class="defra-flood-table__head" role="rowgroup">
-          <tr class="defra-flood-table__row" role="row">
-          {% if model.queryType == 'rainfall' %}
-            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col" role="columnheader">Gauge</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">1 h<span>ou</span>r</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">6 h<span>ou</span>rs</th>
-            <th class="defra-flood-table__header defra-flood-table__header--rainfall" scope="col" role="columnheader">24 h<span>ou</span>rs</th>
-          {% else %}
-            <th class="defra-flood-table__header defra-flood-table__header--location" scope="col" role="columnheader">Gauge</th>
-            <th class="defra-flood-table__header defra-flood-table__header--height" scope="col" role="columnheader">Height</th>
-            <th class="defra-flood-table__header defra-flood-table__header--state" scope="col" role="columnheader">State</th>
-          {% endif %}
-          </tr>
-        </thead>
-        <tbody class="defra-flood-table__body" role="rowgroup">
+      <ul class="defra-flood-levels-list">
         {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
-        </tbody>
-      </table>
+      </ul>
       {% else %}
       <p class="govuk-body">Copy</p>
       {% endif %}
