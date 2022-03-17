@@ -415,7 +415,8 @@ function LiveMap (mapId, options) {
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
-    model.id = feature.getId().substring(feature.getId().indexOf('.') + 1)
+    const id = feature.getId().substring(feature.getId().indexOf('.') + 1)
+    model.id = id.includes('.') ? id.substring(0, id.indexOf('.')) : id
     // Format dates for river levels
     if (feature.getId().startsWith('stations')) {
       model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
