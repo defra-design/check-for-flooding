@@ -1,43 +1,26 @@
-{% set name %}
-{{ item.name }}
-{{ station.external_name }}
-{% if item.iswales %}
-(Natural Resources Wales)
-{% endif %}
-{% if item.isDownstream == true %}
-(downstream)
-{% endif %}
-{% if item.type == 'groundwater' %}
-borehole
-{% endif %}
-{% if item.riverSlug != '' and item.type == 'tide' %}
-tide
-{% endif %}
-{% endset %}
+{%- set name -%}{{ item.name }}{%- if item.iswales -%}(Natural Resources Wales){%- endif -%}
+{%- if item.isDownstream == true -%}(downstream){%- endif -%}
+{%- if item.type == 'groundwater' -%}borehole{%- endif -%}
+{%- if item.riverSlug != '' and item.type == 'tide' -%}tide{%- endif -%}
+{%- endset -%}
 
 <li class="defra-flood-levels-list__item defra-flood-levels-list__item--{{ model.queryType }}">
   <!-- Location -->
   <div class="defra-flood-levels-list__title">
     {% if item.hasDetail %}
     {% if item.type === 'rainfall' %}
-    <a href="/rainfall-station/{{ item.id | urlencode }}">
-      {{ name | safe }}
+    <a href="/rainfall-station/{{ item.id | urlencode }}">{{ name | safe }}</a>
+    {% else %}
+    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">
+      {% if item.type == 'river' %}
+      {% if item.riverName %}{{ item.riverName }}{% elif item.riverWiskiName %}{{ item.riverWiskiName }}{% endif %} at
+      {% endif %}
+      {{ name }}
     </a>
-    {% else %}
-    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">{{ name }}</a>{% if item.type == 'river' %},{% endif %}
-    {% if model.querySearchType == 'river' %}
-    {{ item.riverName }}
-    {% elif item.type == 'river' %}
-    <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
-    {% endif %}
-    {% endif %}
-    {% else %}
-    {{ name }}
     {% endif %}
     {% if item.state != 'error' %}
-    <span class="defra-flood-levels-list__item-meta">
-      Updated {{ item.time }} {{ item.date }}
-    </span>
+    <span class="defra-flood-levels-list__item-meta">Updated {{ item.time }} {{ item.date }}</span>
+    {% endif %}
     {% endif %}
   </div>
 
