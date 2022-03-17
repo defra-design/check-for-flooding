@@ -20,7 +20,7 @@ if (document.getElementById('map')) {
     layers: 'mv,rf',
     centre: window.flood.model.centroid,
     zoom: 14,
-    selectedId: `stations.${window.flood.model.id}`
+    selectedId: `stations.${window.flood.model.mapId}`
   })
 }
 

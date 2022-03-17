@@ -50,7 +50,7 @@ router.get('/station/:id', async (req, res) => {
   return res.render('station', { model })
 })
 
-router.get('/raingauge/:id', async (req, res) => {
+router.get('/rainfall-station/:id', async (req, res) => {
   const id = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStationRain(id)
   let telemetry, station, place
@@ -63,7 +63,7 @@ router.get('/raingauge/:id', async (req, res) => {
     // Rainfall telemetry
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getRainfallTelemetry(station.ref, start, end)
+    telemetry = await telemetryServices.getRainfallTelemetry(station.id, start, end)
     telemetry = telemetry.data
   } else {
     // Return 500 error

@@ -6,8 +6,10 @@ module.exports = {
     // Convert type names to chars
     const response = await db.query(`
     (SELECT station.name,
-    station.id,
-    station.ref,
+    CASE
+    WHEN station.type_name = 'rainfall' THEN station.ref
+    ELSE station.id END AS id,
+    station.id AS map_id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -43,8 +45,10 @@ module.exports = {
     WHERE ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom))
     UNION ALL
     (SELECT station.name,
-    station.id,
-    station.ref,
+    CASE
+    WHEN station.type_name = 'rainfall' THEN station.ref
+    ELSE station.id END AS id,
+    station.id AS map_id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -152,7 +156,8 @@ module.exports = {
     const response = await db.query(`
     SELECT
     station.id,
-    station.ref,
+    station.id AS map_id,
+    station.ref AS ref,
     station.name,
     station.type_name AS type,
     CASE
@@ -199,8 +204,9 @@ module.exports = {
   getStationRain: async (id) => {
     const response = await db.query(`
     SELECT
-    station.id,
-    station.ref,
+    station.ref AS id,
+    station.id AS map_id,
+    station.ref AS ref,
     station.type_name AS type,
     station.name,
     station.value_1hr AS rainfall_1hr,
@@ -211,7 +217,7 @@ module.exports = {
     station.is_wales,
     station.measure_rainfall_id AS measure_id
     FROM station
-    WHERE lower(station.id) = lower($1)
+    WHERE lower(station.ref) = lower($1)
     `, [id])
     return response.rows[0]
   }

@@ -2,6 +2,7 @@ class Station {
   constructor (data) {
     const type = data.type
     this.id = data.id
+    this.mapId = data.map_id
     this.ref = data.ref
     this.name = data.name
     this.type = type

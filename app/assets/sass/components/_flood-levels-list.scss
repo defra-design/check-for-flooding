@@ -20,11 +20,21 @@
     @include govuk-font($size: 19, $weight: bold);
     padding-bottom: 10px;
     @include mq ($from: tablet) {
-      width: 40%;
+      width: 50%;
       padding-bottom: 0px;
     }
   }
+  &__item--rainfall &__title {
+    @include mq ($from: tablet) {
+      width: 40%;
+    }
+  }
   &__detail {
+    @include mq ($from: tablet) {
+      width: 50%;
+    }
+  }
+  &__item--rainfall &__detail {
     @include mq ($from: tablet) {
       width: 60%;
     }
@@ -36,6 +46,9 @@
   }
   &__data {
     float: left;
+    @include mq ($from: tablet) {
+      text-align: center;
+    }
   }
   &__data--full {
     min-width: 100%;
@@ -43,6 +56,9 @@
   &__data--two-thirds {
     min-width: 66.66%;
   }
+  &__data--one-half {
+    width: 50%;
+  } 
   &__data--one-third {
     width: 33.33%;
   } 
@@ -68,6 +84,11 @@
   }
   &__item--rainfall &__detail &__item-secondary {
     display: block;
+  }
+  &__item--rainfall &__detail &__data {
+    @include mq ($from: tablet) {
+      text-align: left;
+    }
   }
   .govuk-tag {
     position: relative;

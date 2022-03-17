@@ -3,6 +3,7 @@ const utils = require('../utils')
 class Level {
   constructor (data, count, start) {
     this.id = data.id
+    this.mapId = data.map_id
     this.name = data.name
     this.state = data.state
     this.value = data.value

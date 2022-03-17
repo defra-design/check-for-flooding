@@ -15,31 +15,28 @@ tide
 {% endif %}
 {% endset %}
 
-<li class="defra-flood-levels-list__item{% if item.type == 'rainfall' %} defra-flood-levels-list__item--rainfall{% endif %}">
+<li class="defra-flood-levels-list__item defra-flood-levels-list__item--{{ model.queryType }}">
   <!-- Location -->
   <div class="defra-flood-levels-list__title">
     {% if item.hasDetail %}
     {% if item.type === 'rainfall' %}
-    <a href="/raingauge/{{ item.id | urlencode }}">
+    <a href="/rainfall-station/{{ item.id | urlencode }}">
       {{ name | safe }}
     </a>
     {% else %}
-    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">
-      {{ name }}
-    </a>
+    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% elif item.valueDownstream %}-upstream{% endif %}">{{ name }}</a>{% if item.type == 'river' %},{% endif %}
+    {% if model.querySearchType == 'river' %}
+    {{ item.riverName }}
+    {% elif item.type == 'river' %}
+    <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
+    {% endif %}
     {% endif %}
     {% else %}
     {{ name }}
     {% endif %}
-    {% if item.type === 'rainfall' or item.riverName %}
+    {% if item.state != 'error' %}
     <span class="defra-flood-levels-list__item-meta">
-      {% if item.type === 'rainfall' %}
       Updated {{ item.time }} {{ item.date }}
-      {% elif model.querySearchType == 'river' %}
-      {{ item.riverName }}
-      {% elif item.type == 'river' %}
-      <a href="/river-sea-groundwater-rainfall-levels?river={{ item.riverDisplay }}">{{ item.riverName }}</a>
-      {% endif %}
     </span>
     {% endif %}
   </div>
@@ -49,50 +46,46 @@ tide
     {% if item.type == 'rainfall' %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       <span class="defra-flood-levels-list__item-numeric">{{ item.value1hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">1 hr</span>
+      <span class="defra-flood-levels-list__item-secondary">last hour</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       <span class="defra-flood-levels-list__item-numeric">{{ item.value6hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">6 hrs</span>
+      <span class="defra-flood-levels-list__item-secondary">last 6 hours</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       <span class="defra-flood-levels-list__item-numeric">{{ item.value24hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">24 hrs</span>
+      <span class="defra-flood-levels-list__item-secondary">last 24 hours</span>
     </div>
 
     <!-- Sea or tide -->
     {% elif item.type == 'tide' %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--two-thirds">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% else %}
       <span class="defra-flood-levels-list__item-numeric">
         {{ item.value }}m
-        <span class="defra-flood-levels-list__item-secondary">at</span>
-        {{ item.time }}
-        <span class="defra-flood-levels-list__item-secondary">{{ item.date }}</span>
       </span>
       {% endif %}
     </div>
-    <div class="defra-flood-levels-list__data">
+    {% if model.queryType == 'river' %}
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
       <span class="defra-flood-levels-list__item-na">n/a</a>
     </div>
+    {% endif %}
 
     <!-- River or groundwater -->
     {% else %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--two-thirds">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% else %}
       <span class="defra-flood-levels-list__item-numeric">
         {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
-        <span class="defra-flood-levels-list__item-secondary">at</span>
-        {{ item.time }}
-        <span class="defra-flood-levels-list__item-secondary">{{ item.date }}</span>
       </span>
       {% endif %}
     </div>
-    <div class="defra-flood-levels-list__data">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% elif item.isDownstream %}
