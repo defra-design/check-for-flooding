@@ -1,7 +1,7 @@
 {%- set name -%}
 {% if model.queryType == 'sea' %}Sea level at {% endif %}
 {{ item.name }}{%- if item.iswales -%}(Natural Resources Wales){%- endif -%}
-{%- if item.isDownstream == true -%}(downstream){%- endif -%}
+{% if item.isDownstream == true %} (downstream){% endif %}
 {% if item.type == 'groundwater' %} borehole{% endif %}
 {%- endset -%}
 
