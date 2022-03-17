@@ -59,7 +59,7 @@ tide
 
     <!-- Sea or tide -->
     {% elif item.type == 'tide' %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% else %}
@@ -69,14 +69,17 @@ tide
       {% endif %}
     </div>
     {% if model.queryType == 'river' %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
+      <span class="defra-flood-levels-list__item-na">---</a>
+    </div>
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       <span class="defra-flood-levels-list__item-na">n/a</a>
     </div>
     {% endif %}
 
     <!-- River or groundwater -->
     {% else %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% else %}
@@ -85,7 +88,10 @@ tide
       </span>
       {% endif %}
     </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-half">
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
+      <span class="defra-flood-levels-list__item-na">---</a>
+    </div>
+    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list__item-na">n/a</a>
       {% elif item.isDownstream %}

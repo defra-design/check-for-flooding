@@ -78,6 +78,14 @@
   &__item-numeric {
     @include govuk-font($size: 19, $tabular: true);
   }
+  // &__item-height {
+  //   @include govuk-font($size: 24, $tabular: true);
+  //   display: inline-block;
+  //   position: relative;
+  //   @include mq ($from: tablet) {
+  //     margin-top: -1px;
+  //   }
+  // }
   &__item-secondary {
     @include govuk-font($size: 14, $tabular: true);
     color: $govuk-secondary-text-colour;
