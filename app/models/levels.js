@@ -6,7 +6,7 @@ class Levels {
       type: item,
       count: levels.filter(level => level.group_type === item).length
     }))
-    type = type || filters[0].type
+    type = type || filters.find(x => x.count > 0).type || filters[0].type
     levels = levels.filter(level => level.group_type === type)
     this.filters = filters
     this.type = type
