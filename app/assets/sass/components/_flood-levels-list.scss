@@ -83,7 +83,7 @@
     text-transform: uppercase;
     @include govuk-font($size: 14, $weight: normal);
     padding-left: 20px;
-    top: -2px;
+    top: -1px;
     @include mq ($from: tablet) {
       padding-top: 5px;
       top: 0px;
@@ -91,7 +91,7 @@
     svg {
       position: absolute;
       left: 0px;
-      top: 3px;
+      top: 2px;
       @include mq ($from: tablet) {
         top: 5px;
       }
@@ -113,7 +113,7 @@
     @include govuk-font($size: 14, $weight: bold);
     padding-top: 4px;
     padding-bottom: 4px;
-    top: -2px;
+    top: -1px;
     @include mq ($from: tablet) {
       top: 0px;
     }
