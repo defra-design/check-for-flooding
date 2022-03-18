@@ -48,19 +48,20 @@
   }
   &__data {
     float: left;
+    min-width: 5em;
   }
-  &__data--full {
-    min-width: 100%;
-  }
-  &__data--two-thirds {
-    min-width: 66.66%;
-  }
-  &__data--one-half {
-    width: 50%;
-  } 
-  &__data--one-third {
+  &__data--rainfall {
     width: 33.33%;
-  } 
+  }
+  &__data--height {
+    width: 32%;
+  }
+  &__data--trend {
+    width: 38%;
+  }
+  &__data--state {
+    width: 30%;
+  }
   &-item-meta {
     display: block;
     @include govuk-font($size: 14);
@@ -113,7 +114,6 @@
     padding-top: 4px;
     padding-bottom: 4px;
     top: -2px;
-    margin-left: 1.5em;
     @include mq ($from: tablet) {
       top: 0px;
     }
