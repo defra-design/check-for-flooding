@@ -62,7 +62,7 @@
   &__data--one-third {
     width: 33.33%;
   } 
-  &__item-meta {
+  &-item-meta {
     display: block;
     @include govuk-font($size: 14);
     color: $govuk-secondary-text-colour;
@@ -72,52 +72,73 @@
       margin-top: 5px;
     }
   }
-  &__item-na {
+  &-item-na {
     @include govuk-font($size: 16);
   }
-  &__item-trend {
-    @include govuk-font($size: 16);
+  &-item-trend {
+    padding: 4px;
     display: inline-block;
+    color: $govuk-text-colour;
+    position: relative;
+    text-transform: uppercase;
+    @include govuk-font($size: 14, $weight: normal);
+    padding-left: 23.5px;
+    top: -2px;
+    @include mq ($from: tablet) {
+      padding-top: 5px;
+      top: 0px;
+    }
     svg {
-      vertical-align: top;
-      position: relative;
-      margin-top: -2px;
+      position: absolute;
+      left: 0px;
+      top: 4px;
       @include mq ($from: tablet) {
-        margin-top: -1px;
+        top: 6px;
       }
+      color: #383f43;
     }
   }
-  &__item-height {
+  &-item-height {
     @include govuk-font($size: 24, $tabular: true);
     display: inline-block;
     position: relative;
-    margin-top: 2px;
+    margin-top: 1px;
     @include mq ($from: tablet) {
       @include govuk-font($size: 19, $tabular: true);
-      margin-top: 1px;
     }
   }
-  &__item-numeric {
+  &-item-state {
+    @extend .govuk-tag;
+    position: relative;
+    @include govuk-font($size: 14, $weight: bold);
+    padding-top: 4px;
+    padding-bottom: 4px;
+    top: -2px;
+    margin-left: 1em;
+    @include mq ($from: tablet) {
+      top: 0px;
+      margin-left: 0px;
+    }
+    &--grey {
+      @extend .govuk-tag--grey;
+    }
+    &--blue {
+      @extend .govuk-tag--blue;
+    }
+  }
+  &-item-numeric {
     @include govuk-font($size: 19, $tabular: true);
   }
-  &__item-secondary {
+  &-item-secondary {
     @include govuk-font($size: 14, $tabular: true);
     color: $govuk-secondary-text-colour;
   }
-  &__item--rainfall &__detail &__item-secondary {
+  &__item--rainfall &__detail &-item-secondary {
     display: block;
   }
   &__item--rainfall &__detail &__data {
     @include mq ($from: tablet) {
       text-align: left;
-    }
-  }
-  .govuk-tag {
-    position: relative;
-    @include govuk-font($size: 14, $weight: bold);
-    margin-top: -1px;
-    @include mq ($until: tablet) {
-      padding-top: 4px;
     }
   }
   a:not(:hover) {

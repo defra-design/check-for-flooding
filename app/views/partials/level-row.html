@@ -20,7 +20,7 @@
     </a>
     {% endif %}
     {% if item.state != 'error' %}
-    <span class="defra-flood-levels-list__item-meta">Updated {{ item.time }} {{ item.date }}</span>
+    <span class="defra-flood-levels-list-item-meta">Updated {{ item.time }} {{ item.date }}</span>
     {% endif %}
     {% endif %}
   </div>
@@ -29,35 +29,35 @@
     <!-- Rainfall -->
     {% if item.type == 'rainfall' %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-numeric">{{ item.value1hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">last hour</span>
+      <span class="defra-flood-levels-list-item-numeric">{{ item.value1hr }}mm</span>
+      <span class="defra-flood-levels-list-item-secondary">last hour</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-numeric">{{ item.value6hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">last 6 hours</span>
+      <span class="defra-flood-levels-list-item-numeric">{{ item.value6hr }}mm</span>
+      <span class="defra-flood-levels-list-item-secondary">last 6 hours</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-numeric">{{ item.value24hr }}mm</span>
-      <span class="defra-flood-levels-list__item-secondary">last 24 hours</span>
+      <span class="defra-flood-levels-list-item-numeric">{{ item.value24hr }}mm</span>
+      <span class="defra-flood-levels-list-item-secondary">last 24 hours</span>
     </div>
 
     <!-- Sea or tide -->
     {% elif item.type == 'tide' %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
-      <span class="defra-flood-levels-list__item-na">n/a</a>
+      <span class="defra-flood-levels-list-item-na">n/a</a>
       {% else %}
-      <span class="defra-flood-levels-list__item-height">
+      <span class="defra-flood-levels-list-item-height">
         {{ item.value }}m
       </span>
       {% endif %}
     </div>
     {% if model.queryType == 'river' %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-na">---</span>
+      <span class="defra-flood-levels-list-item-na">---</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-na">n/a</span>
+      <span class="defra-flood-levels-list-item-na">n/a</span>
     </div>
     {% endif %}
 
@@ -65,34 +65,31 @@
     {% else %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
-      <span class="defra-flood-levels-list__item-na">n/a</a>
+      <span class="defra-flood-levels-list-item-na">n/a</a>
       {% else %}
-      <span class="defra-flood-levels-list__item-height">
+      <span class="defra-flood-levels-list-item-height">
         {% if item.isDownstream %}{{ item.valueDownstream }}{% else %}{{ item.value }}{% endif %}m
       </span>
       {% endif %}
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-trend">
-        <svg width="20" height="20" viewBox="0 0 20 20">
-          <!--<path d="M10,10l0,8" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M10,2l5,8l-10,-0l5,-8Z"/>
-          <path d="M10,11l0,-10" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M10,19l-5,-8l10,0l-5,8Z"/>-->
-          <path d="M13,10l-10,0" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M17,10l-8,5l0,-10l8,5Z"/>
+      <span class="defra-flood-levels-list-item-trend">
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <path d="M9.6,8l-9.6,0" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M16,8l-6.4,4l0,-8l6.4,4Z"/>
+          <!-- <path d="M9.6,8l-9.6,0" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M1,16l0,-16" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M16,8l-6.4,4l0,-8l6.4,4Z"/> -->
         </svg>
-        Stable      
+        Steady
       </span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
-      <span class="defra-flood-levels-list__item-na">n/a</span>
+      <span class="defra-flood-levels-list-item-na">n/a</span>
       {% elif item.isDownstream %}
       &nbsp;
       {% else %}
-        {% if item.state == 'high' %}
-        <strong class="govuk-tag govuk-tag--blue">{{ item.state | capitalize }}</strong>
-        {% else %}
-        <strong class="govuk-tag govuk-tag--grey">{{ item.state | capitalize }}</strong>
-        {% endif %}
+      <strong class="defra-flood-levels-list-item-state defra-flood-levels-list-item-state--{% if item.state == 'high' %}blue{% else %}grey{% endif %}">
+        {{ item.state | capitalize }}
+      </strong>
       {% endif %}
       </div>
     {% endif %}
