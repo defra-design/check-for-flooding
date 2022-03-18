@@ -19,9 +19,11 @@
   &__title {
     @include govuk-font($size: 19, $weight: bold);
     padding-bottom: 10px;
+    box-sizing: border-box;
     @include mq ($from: tablet) {
       width: 50%;
       padding-bottom: 0px;
+      padding-right: 1.5em;
     }
   }
   &__item--rainfall &__title {
@@ -46,9 +48,6 @@
   }
   &__data {
     float: left;
-    @include mq ($from: tablet) {
-      text-align: center;
-    }
   }
   &__data--full {
     min-width: 100%;
@@ -114,10 +113,9 @@
     padding-top: 4px;
     padding-bottom: 4px;
     top: -2px;
-    margin-left: 1em;
+    margin-left: 1.5em;
     @include mq ($from: tablet) {
       top: 0px;
-      margin-left: 0px;
     }
     &--grey {
       @extend .govuk-tag--grey;
