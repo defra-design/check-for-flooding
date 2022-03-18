@@ -48,16 +48,16 @@
   }
   &__data {
     float: left;
-    min-width: 5em;
+    min-width: 4.5em;
   }
   &__data--rainfall {
     width: 33.33%;
   }
   &__data--height {
-    width: 32%;
+    width: 33%;
   }
   &__data--trend {
-    width: 38%;
+    width: 37%;
   }
   &__data--state {
     width: 30%;
@@ -82,7 +82,7 @@
     position: relative;
     text-transform: uppercase;
     @include govuk-font($size: 14, $weight: normal);
-    padding-left: 23.5px;
+    padding-left: 20px;
     top: -2px;
     @include mq ($from: tablet) {
       padding-top: 5px;
@@ -91,9 +91,9 @@
     svg {
       position: absolute;
       left: 0px;
-      top: 4px;
+      top: 3px;
       @include mq ($from: tablet) {
-        top: 6px;
+        top: 5px;
       }
       color: #383f43;
     }
