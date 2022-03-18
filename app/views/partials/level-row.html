@@ -54,10 +54,10 @@
     </div>
     {% if model.queryType == 'river' %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-na">---</a>
+      <span class="defra-flood-levels-list__item-na">---</span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-na">n/a</a>
+      <span class="defra-flood-levels-list__item-na">n/a</span>
     </div>
     {% endif %}
 
@@ -73,11 +73,18 @@
       {% endif %}
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
-      <span class="defra-flood-levels-list__item-na">---</a>
+      <span class="defra-flood-levels-list__item-trend">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <!--<path d="M10,10l0,8" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M10,2l5,8l-10,-0l5,-8Z"/>
+          <path d="M10,11l0,-10" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M10,19l-5,-8l10,0l-5,8Z"/>-->
+          <path d="M13,10l-10,0" style="fill:none;stroke:currentColor;stroke-width:3px;"/><path d="M17,10l-8,5l0,-10l8,5Z"/>
+        </svg>
+        Stable      
+      </span>
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--one-third">
       {% if item.state == 'error' %}
-      <span class="defra-flood-levels-list__item-na">n/a</a>
+      <span class="defra-flood-levels-list__item-na">n/a</span>
       {% elif item.isDownstream %}
       &nbsp;
       {% else %}

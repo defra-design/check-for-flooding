@@ -75,17 +75,30 @@
   &__item-na {
     @include govuk-font($size: 16);
   }
-  &__item-numeric {
-    @include govuk-font($size: 19, $tabular: true);
+  &__item-trend {
+    @include govuk-font($size: 16);
+    display: inline-block;
+    svg {
+      vertical-align: top;
+      position: relative;
+      margin-top: -2px;
+      @include mq ($from: tablet) {
+        margin-top: -1px;
+      }
+    }
   }
   &__item-height {
-    @include govuk-font($size: 19, $tabular: true);
-    @include mq ($until: tablet) {
-      @include govuk-font($size: 24, $tabular: true);
-      display: inline-block;
-      position: relative;
-      margin-top: 2px;
+    @include govuk-font($size: 24, $tabular: true);
+    display: inline-block;
+    position: relative;
+    margin-top: 2px;
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 19, $tabular: true);
+      margin-top: 1px;
     }
+  }
+  &__item-numeric {
+    @include govuk-font($size: 19, $tabular: true);
   }
   &__item-secondary {
     @include govuk-font($size: 14, $tabular: true);
