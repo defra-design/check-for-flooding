@@ -220,5 +220,25 @@ module.exports = {
     WHERE lower(station.ref) = lower($1)
     `, [id])
     return response.rows[0]
+  },
+
+  // Get station Id's
+  getStationIds: async () => {
+    const response = await db.query(`
+    (SELECT
+    ref AS id,
+    CASE
+    WHEN station.type = 'c' THEN 'tide'
+    WHEN station.type = 'r' THEN 'rainfall'
+    WHEN station.type = 'g' THEN 'groundwater'
+    ELSE 'river' END AS type
+    FROM station WHERE ref != '')
+    UNION ALL
+    (SELECT
+    ref AS id,
+    'river-downstage' AS type
+    FROM station WHERE type = 'm' AND ref != '');
+    `)
+    return response.rows
   }
 }
