@@ -37,7 +37,7 @@ module.exports = {
     river_station.order AS station_order,
     0 AS is_downstream,
     CASE
-    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL OR measure_rainfall_id IS NOT NULL) THEN true
+    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL) THEN true
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
@@ -76,7 +76,7 @@ module.exports = {
     river_station.order AS station_order,
     1 AS is_downstream,
     CASE
-    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL OR measure_rainfall_id IS NOT NULL) THEN true
+    WHEN (measure_id IS NOT NULL OR measure_downstream_id IS NOT NULL) THEN true
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
@@ -215,30 +215,10 @@ module.exports = {
     station.value_date AS date,
     CONCAT(station.lon,',',station.lat) AS centroid,
     station.is_wales,
-    station.measure_rainfall_id AS measure_id
+    station.measure_id
     FROM station
     WHERE lower(station.ref) = lower($1)
     `, [id])
     return response.rows[0]
-  },
-
-  // Get station Id's
-  getStationIds: async () => {
-    const response = await db.query(`
-    (SELECT
-    ref AS id,
-    CASE
-    WHEN station.type = 'c' THEN 'tide'
-    WHEN station.type = 'r' THEN 'rainfall'
-    WHEN station.type = 'g' THEN 'groundwater'
-    ELSE 'river' END AS type
-    FROM station WHERE ref != '')
-    UNION ALL
-    (SELECT
-    ref AS id,
-    'river-downstage' AS type
-    FROM station WHERE type = 'm' AND ref != '');
-    `)
-    return response.rows
   }
 }

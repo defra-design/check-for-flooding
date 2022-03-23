@@ -10,7 +10,9 @@
     "start": "node start.js",
     "build": "node ./node_modules/gulp/bin/gulp generate-assets",
     "lint": "standard",
-    "test": "npm run lint && gulp generate-assets && jest"
+    "test": "npm run lint && gulp generate-assets && jest",
+    "seed-readings": "node ./service/cron/seed-readings.js",
+    "update-readings": "node ./service/cron/update-readings.js"
   },
   "dependencies": {
     "@babel/cli": "^7.13.10",
