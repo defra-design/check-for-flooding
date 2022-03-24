@@ -1,7 +1,7 @@
 const dotenv = require('dotenv')
 const https = require('https')
-dotenv.config({ path: './../../.env' })
-const db = require('./../db')
+dotenv.config({ path: './.env' })
+const db = require('./service/db')
 const moment = require('moment-timezone')
 const axios = require('axios')
 // const cron = require('node-cron')
@@ -14,6 +14,7 @@ axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
 
 const seedReadings = async () => {
+  // Get list of measure Id's
   let measureResponse
   try {
     measureResponse = await db.query(`
@@ -32,7 +33,7 @@ const seedReadings = async () => {
   } catch (err) {
     console.log(err)
   }
-
+  // Get data from API (approx 3k plus endpoints)
   const measures = measureResponse.rows.slice(0, 10)
   const readings = []
   const errors = []
@@ -66,29 +67,39 @@ const seedReadings = async () => {
     process.stdout.cursorTo(0)
     end = moment()
     duration = end.diff(start)
-    process.stdout.write(`= Getting data ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} | Readings (${readings.length}) | Errors (${errors.length}) `)
+    process.stdout.write(`= Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} | Readings (${readings.length}) | Errors (${errors.length}) `)
   }
-  // Update table
+  // Truncate table and insert records
   process.stdout.write('\n')
   await db.query('TRUNCATE table reading')
-  let isError = false
-  for (const i in readings) {
+  const insertErrors = []
+  const insertPromises = []
+  const inserted = []
+  for (const [i, reading] of readings.entries()) {
     const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
-    await db.query('INSERT INTO reading (measure_id, value, datetime, process_datetime) values($1, $2, $3, $4)', [
-      readings[i].measureId, readings[i].value, readings[i].dateTime, readings[i].processDateTime
-    ], (err) => {
-      if (err) {
-        isError = true
-      }
-    })
-    process.stdout.clearLine(0)
-    process.stdout.cursorTo(0)
-    end = moment()
-    duration = end.diff(start)
-    process.stdout.write(`= Inserting records ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${readings.length} `)
+    // const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
+    insertPromises.push(new Promise((resolve, reject) => {
+      db.query('INSERT INTO reading (measure_id, value, datetime, process_datetime) values($1, $2, $3, $4)', [
+        reading.measureId, reading.value, reading.dateTime, reading.processDateTime
+      ], (err, result) => {
+        if (err) {
+          insertErrors.push(reading.measureId)
+        } else if (result) {
+          inserted.push(reading.measureId)
+        }
+        process.stdout.clearLine(0)
+        process.stdout.cursorTo(0)
+        end = moment()
+        duration = end.diff(start)
+        process.stdout.write(`= Inserting records ${percentage} | Inserted (${inserted.length}) | Error (${insertErrors.length})`)
+        resolve(i)
+      })
+    }))
   }
-  process.stdout.write('\n')
-  console.log(`= ${isError ? 'Error insert' : 'Finished'}`)
+  await Promise.all(insertPromises).then(() => {
+    process.stdout.write('\n')
+    console.log('= Finished')
+  })
 }
 
 seedReadings()
