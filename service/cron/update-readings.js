@@ -54,7 +54,7 @@ const updateReadings = async () => {
             inserted.push(reading.measureId)
           }
         }
-        const percentage = `${((100 / readings.length) * i).toFixed(2).padStart(4, '0')}%`
+        const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
         process.stdout.write(`= Inserting records ${percentage} | Inserted (${inserted.length}) | Error (${insertErrors.length})`)
@@ -87,7 +87,7 @@ const updateReadings = async () => {
             deleted.push(reading.measureId)
           }
         }
-        const percentage = `${((100 / readings.length) * i).toFixed(2).padStart(4, '0')}%`
+        const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
         process.stdout.write(`= Deleting records ${percentage} | Deleted (${deleted.length}) | Error (${deletedErrors.length})`)
