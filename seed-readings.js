@@ -1,3 +1,8 @@
+//
+// Seed readings table from public API
+// Warning: Takes approx 15-20 minutes
+//
+
 const dotenv = require('dotenv')
 const https = require('https')
 dotenv.config({ path: './.env' })
@@ -15,59 +20,62 @@ axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
 
 const seedReadings = async () => {
   // Get list of measure Id's
-  let measureResponse
-  try {
-    measureResponse = await db.query(`
-      (SELECT
-      measure_id AS id,
-      CASE
-      WHEN station.type_name = 'rainfall' THEN 96
-      ELSE 2 END AS limit
-      FROM station WHERE ref != '')
-      UNION ALL
-      (SELECT
-      measure_downstream_id AS id,
-      2 AS limit
-      FROM station WHERE type = 'm' AND ref != '');
-    `)
-  } catch (err) {
-    console.log(err)
-  }
+  const response = await db.query(`
+    (SELECT
+    ref AS id,
+    CASE
+    WHEN station.type_name = 'rainfall' THEN 96
+    WHEN station.type = 'm' THEN 4
+    ELSE 2 END AS limit
+    FROM station WHERE ref != '')
+  `)
   // Get data from API (approx 3k plus endpoints)
-  const measures = measureResponse.rows.slice(0, 10)
+  const stations = response.rows.slice(0, 10)
   const readings = []
   const errors = []
   const start = moment()
   let end, duration
   console.log(`= Started at ${start.format('HH:mm:ss')}`)
-  for (const [i, measure] of measures.entries()) {
-    const uri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${measure.id}/readings?_sorted&_limit=${measure.limit}`
-    const percentage = `${((100 / measures.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
+  for (const [i, station] of stations.entries()) {
+    const uri = `http://environment.data.gov.uk/flood-monitoring/id/stations/${station.id}/readings?_sorted&_limit=${station.limit}`
+    const percentage = `${((100 / stations.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
     let response
     try {
       response = await axios.get(uri) // .then(response => { return response })
     } catch (err) {
-      errors.push(measure.id)
+      errors.push(station.id)
       continue
     }
     if (response.status === 200 && response.data && response.data.items) {
       const items = response.data.items
       for (const item of items) {
+        let measureType = 'stage'
+        if (item.measure.includes('downstage')) {
+          measureType = 'downstage'
+        } else if (item.measure.includes('rainfall')) {
+          measureType = 'rainfall'
+        } else if (item.measure.includes('tidal')) {
+          measureType = 'tidal'
+        } else if (item.measure.includes('groundwater')) {
+          measureType = 'groundwater'
+        }
         readings.push({
+          stationId: station.id,
           measureId: item.measure.substring(item.measure.lastIndexOf('/') + 1),
+          measureType: measureType,
           value: item.value,
           dateTime: item.dateTime,
           processDateTime: start.toISOString()
         })
       }
     } else {
-      errors.push(measure.id)
+      errors.push(station.id)
     }
     process.stdout.clearLine(0)
     process.stdout.cursorTo(0)
     end = moment()
     duration = end.diff(start)
-    process.stdout.write(`= Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} | Readings (${readings.length}) | Errors (${errors.length}) `)
+    process.stdout.write(`= Getting stations ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${stations.length} | Readings (${readings.length}) | Errors (${errors.length}) `)
   }
   // Truncate table and insert records
   process.stdout.write('\n')
@@ -79,13 +87,13 @@ const seedReadings = async () => {
     const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
     // const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
     insertPromises.push(new Promise((resolve, reject) => {
-      db.query('INSERT INTO reading (measure_id, value, datetime, process_datetime) values($1, $2, $3, $4)', [
-        reading.measureId, reading.value, reading.dateTime, reading.processDateTime
+      db.query('INSERT INTO reading (station_id, measure_id, type, value, datetime, process_datetime) values($1, $2, $3, $4, $5, $6)', [
+        reading.stationId, reading.measureId, reading.measureType, reading.value, reading.dateTime, reading.processDateTime
       ], (err, result) => {
         if (err) {
-          insertErrors.push(reading.measureId)
+          insertErrors.push(reading.stationId)
         } else if (result) {
-          inserted.push(reading.measureId)
+          inserted.push(reading.stationId)
         }
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
