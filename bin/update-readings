@@ -72,7 +72,7 @@ const updateReadings = async () => {
   })
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
-    moment().format(), `Updated readings: Updates ${updated.length}, Errors ${errors.length}`
+    moment().format(), `Updated readings: Total ${readings.length}, Updates ${updated.length}, Errors ${errors.length}`
   ])
   process.exit()
 }
