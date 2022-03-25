@@ -56,7 +56,7 @@ function onMessage (data) {
   }
 
   switch (message.taskName) {
-    case 'resetInboxCount':
+    case 'updateReadings':
       console.log('Updating records...')
       break
 
