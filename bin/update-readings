@@ -10,7 +10,7 @@ const axios = require('axios')
 axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
 
-const updateReadings = async () => {
+module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Started at ${start.format('HH:mm:ss')}`)
@@ -75,5 +75,3 @@ const updateReadings = async () => {
   ])
   process.exit()
 }
-
-module.exports = updateReadings()
