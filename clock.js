@@ -5,16 +5,16 @@ const AMQP_URL = process.env.CLOUDAMQP_URL || 'amqp://localhost'
 if (!AMQP_URL) process.exit(1)
 
 const WORKER_QUEUE = 'worker-queue' // To consume from worker process
-const CLOCK_QUEUE = 'clock-queue' // To consume from clock process
+// const CLOCK_QUEUE = 'clock-queue' // To consume from clock process
 const JOBS = [{ // You could store these jobs in a database
   name: 'Cron process 1',
   message: { taskName: 'updateReadings', queue: 'worker-queue' }, // message in json format
-  cronTime: '*/1 * * * *', // Every minute
+  cronTime: '*/10 * * * *', // Every 10 minutes
   repeat: 1
 }]
 
 // Create a new connection manager from AMQP
-let connection = amqp.connect([AMQP_URL])
+const connection = amqp.connect([AMQP_URL])
 console.log('[AMQP] - Connecting...')
 
 connection.on('connect', function () {

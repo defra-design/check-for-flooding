@@ -1,4 +1,5 @@
 const amqp = require('amqp-connection-manager')
+const updateReadings = require('./bin/update-readings')
 
 const AMQP_URL = process.env.CLOUDAMQP_URL || 'amqp://localhost'
 if (!AMQP_URL) process.exit(1)
@@ -6,7 +7,7 @@ if (!AMQP_URL) process.exit(1)
 const WORKER_QUEUE = 'worker-queue'
 
 // Create a new connection manager from AMQP
-let connection = amqp.connect([AMQP_URL])
+const connection = amqp.connect([AMQP_URL])
 console.log('[AMQP] - Connecting....')
 
 connection.on('connect', function () {
@@ -57,7 +58,7 @@ function onMessage (data) {
 
   switch (message.taskName) {
     case 'updateReadings':
-      console.log('Updating records...')
+      updateReadings()
       break
 
     default:

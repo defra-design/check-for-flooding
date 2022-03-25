@@ -11,6 +11,7 @@ dotenv.config({ path: './.env' })
 const db = require('../service/db')
 const moment = require('moment-timezone')
 const axios = require('axios')
+const updateReadings = require('./update-readings')
 
 axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
@@ -100,6 +101,8 @@ const seedReadings = async () => {
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Seeded readings: Inserted ${inserted.length}, Errors ${insertErrors.length}`
   ])
+  // Run update as seed process takes longer than 15 minutes
+  updateReadings()
   process.exit()
 }
 

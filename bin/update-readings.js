@@ -76,4 +76,4 @@ const updateReadings = async () => {
   process.exit()
 }
 
-updateReadings()
+module.exports = updateReadings()
