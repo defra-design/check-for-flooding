@@ -23,6 +23,7 @@
     "@turf/turf": "^6.5.0",
     "acorn": "^8.5.0",
     "amqp-connection-manager": "^4.1.1",
+    "amqplib": "^0.8.0",
     "ansi-colors": "^4.1.1",
     "async-file": "^2.0.2",
     "axios": "^0.24.0",
