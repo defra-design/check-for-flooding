@@ -68,7 +68,7 @@ const updateReadings = async () => {
   await Promise.all(promises).then(() => {
     const end = moment()
     const duration = end.diff(start)
-    console.log(`--> Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')}): Updates ${updated.length}, Errors ${errors.length}`)
+    console.log(`--> Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')}): Total ${readings.length}, Updates ${updated.length}, Errors ${errors.length}`)
   })
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
