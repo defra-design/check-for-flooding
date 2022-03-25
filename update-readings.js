@@ -23,11 +23,14 @@ const updateReadings = async () => {
   if (response.status === 200 && response.data && response.data.items) {
     const items = response.data.items
     for (const item of items) {
+      // Some measures have an array of numbers???
+      if (typeof item.value !== 'number') {
+        continue
+      }
       readings.push({
         measureId: item.measure.substring(item.measure.lastIndexOf('/') + 1),
-        value: item.value, // Need to check for values that are an array?
-        dateTime: item.dateTime,
-        processDateTime: start.toISOString()
+        value: item.value,
+        dateTime: item.dateTime
       })
     }
   }
@@ -40,13 +43,13 @@ const updateReadings = async () => {
     promises.push(new Promise((resolve, reject) => {
       db.query(`
         UPDATE reading
-        SET value = $2, datetime = $3, process_datetime = $4
+        SET value = $2, datetime = $3
         WHERE measure_id = $1
         AND $3 > (SELECT MAX(datetime) 
         FROM reading WHERE reading.measure_id = $1)
         AND datetime = (SELECT MIN(datetime) 
         FROM reading WHERE reading.measure_id = $1)`, [
-        reading.measureId, reading.value, reading.dateTime, reading.processDateTime
+        reading.measureId, reading.value, reading.dateTime
       ], (err, result) => {
         if (err) {
           console.log(err)
@@ -59,18 +62,20 @@ const updateReadings = async () => {
         const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
-        process.stdout.write(`= Updating records ${percentage} | Updated (${updated.length}) | Error (${errors.length})`)
+        process.stdout.write(`= Updating readings ${percentage}: Success (${updated.length}), Errors (${errors.length})`)
         resolve(i)
       })
     }))
   }
   await Promise.all(promises).then(() => {
-    console.log('\n= Update complete')
+    const end = moment()
+    const duration = end.diff(start)
+    console.log(`\n= Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})}`)
   })
-  const end = moment()
-  const duration = end.diff(start)
-  console.log(`= Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})}`)
-  console.log(errors)
+  // Update log
+  db.query('INSERT INTO log (datetime, message) values($1, $2)', [
+    moment().format(), `Updated readings: Success ${updated.length}, Errors ${errors.length}`
+  ])
 }
 
 updateReadings()
