@@ -56,10 +56,10 @@ const updateReadings = async () => {
             updated.push(reading.measureId)
           }
         }
-        const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
-        process.stdout.clearLine(0)
-        process.stdout.cursorTo(0)
-        process.stdout.write(`= Updating readings ${percentage}: Updated (${updated.length}), Errors (${errors.length})`)
+        // const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
+        // process.stdout.clearLine(0)
+        // process.stdout.cursorTo(0)
+        // process.stdout.write(`= Updating readings ${percentage}: Updated (${updated.length}), Errors (${errors.length})`)
         resolve(i)
       })
     }))
