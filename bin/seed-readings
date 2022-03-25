@@ -8,7 +8,7 @@
 const dotenv = require('dotenv')
 const https = require('https')
 dotenv.config({ path: './.env' })
-const db = require('./service/db')
+const db = require('../service/db')
 const moment = require('moment-timezone')
 const axios = require('axios')
 
