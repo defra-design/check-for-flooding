@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#! /app/.heroku/node/bin/node
 
 const dotenv = require('dotenv')
 const https = require('https')
