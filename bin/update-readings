@@ -1,3 +1,5 @@
+#! /app/.heroku/node/bin/node
+
 const dotenv = require('dotenv')
 const https = require('https')
 dotenv.config({ path: './.env' })
@@ -74,3 +76,4 @@ const updateReadings = async () => {
 }
 
 updateReadings()
+process.exit()

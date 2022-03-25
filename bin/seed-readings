@@ -1,3 +1,5 @@
+#! /app/.heroku/node/bin/node
+
 //
 // Seed readings table from public API
 // Warning: Takes approx 15-20 minutes
