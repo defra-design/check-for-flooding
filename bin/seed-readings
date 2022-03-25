@@ -95,11 +95,12 @@ const seedReadings = async () => {
   await Promise.all(insertPromises).then(() => {
     process.stdout.write('\n')
     console.log('--> Finished')
-    // Update log
-    db.query('INSERT INTO log (datetime, message) values($1, $2)', [
-      moment().format(), `Seeded readings: Success ${inserted.length}, Errors ${insertErrors.length}`
-    ])
   })
+  // Update log
+  await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
+    moment().format(), `Seeded readings: Inserted ${inserted.length}, Errors ${insertErrors.length}`
+  ])
+  process.exit()
 }
 
 seedReadings()
