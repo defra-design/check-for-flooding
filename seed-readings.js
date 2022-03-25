@@ -9,11 +9,6 @@ dotenv.config({ path: './.env' })
 const db = require('./service/db')
 const moment = require('moment-timezone')
 const axios = require('axios')
-// const cron = require('node-cron')
-
-// cron.schedule('*/1 * * * * ', async () => {
-//   console.log('running a task every one minute')
-// })
 
 axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
@@ -27,7 +22,7 @@ const seedReadings = async () => {
     WHEN measure_id LIKE '%raingauge-t-15_min-mm%' THEN 96
     WHEN measure_id LIKE '%raingauge-t-1_h-mm%' THEN 24
     ELSE 2 END AS limit
-    FROM station WHERE ref != '')
+    FROM station WHERE ref != '' AND measure_id NOT LIKE '%flow-logged%')
     UNION ALL
     (SELECT
     measure_downstream_id AS id,
@@ -35,7 +30,7 @@ const seedReadings = async () => {
     FROM station WHERE measure_id LIKE '%downstage%' AND ref != '')
     `)
   // Get data from API (approx 3k plus endpoints)
-  const measures = response.rows.slice(0, 10)
+  const measures = response
   const readings = []
   const errors = []
   const start = moment()
@@ -67,7 +62,7 @@ const seedReadings = async () => {
     process.stdout.cursorTo(0)
     end = moment()
     duration = end.diff(start)
-    process.stdout.write(`= Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} | Readings: Success (${readings.length}), Errors (${errors.length}) `)
+    process.stdout.write(`= Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} (Readings ${readings.length}), Errors (${errors.length}) `)
   }
   // Truncate table and insert records
   process.stdout.write('\n')

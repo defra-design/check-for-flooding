@@ -4,11 +4,6 @@ dotenv.config({ path: './.env' })
 const db = require('./service/db')
 const moment = require('moment-timezone')
 const axios = require('axios')
-// const cron = require('node-cron')
-
-// cron.schedule('*/1 * * * * ', async () => {
-//   console.log('running a task every one minute')
-// })
 
 axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
@@ -62,7 +57,7 @@ const updateReadings = async () => {
         const percentage = `${((100 / readings.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
-        process.stdout.write(`= Updating readings ${percentage}: Success (${updated.length}), Errors (${errors.length})`)
+        process.stdout.write(`= Updating readings ${percentage}: Updated (${updated.length}), Errors (${errors.length})`)
         resolve(i)
       })
     }))
@@ -74,7 +69,7 @@ const updateReadings = async () => {
   })
   // Update log
   db.query('INSERT INTO log (datetime, message) values($1, $2)', [
-    moment().format(), `Updated readings: Success ${updated.length}, Errors ${errors.length}`
+    moment().format(), `Updated readings: Updates ${updated.length}, Errors ${errors.length}`
   ])
 }
 
