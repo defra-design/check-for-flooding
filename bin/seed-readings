@@ -37,7 +37,7 @@ const seedReadings = async () => {
   const errors = []
   const start = moment()
   let end, duration
-  console.log(`= Started at ${start.format('HH:mm:ss')}`)
+  console.log(`--> Started at ${start.format('HH:mm:ss')}`)
   for (const [i, measure] of measures.entries()) {
     const uri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${measure.id}/readings?_sorted&_limit=${measure.limit}`
     const percentage = `${((100 / measures.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
@@ -64,7 +64,7 @@ const seedReadings = async () => {
     process.stdout.cursorTo(0)
     end = moment()
     duration = end.diff(start)
-    process.stdout.write(`= Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} (Readings ${readings.length}), Errors (${errors.length}) `)
+    process.stdout.write(`--> Getting measures ${moment.utc(duration).format('HH:mm:ss')} ${percentage} ${String(i + 1)} of ${measures.length} (Readings ${readings.length}), Errors (${errors.length}) `)
   }
   // Truncate table and insert records
   process.stdout.write('\n')
@@ -87,14 +87,14 @@ const seedReadings = async () => {
         process.stdout.cursorTo(0)
         end = moment()
         duration = end.diff(start)
-        process.stdout.write(`= Inserting readings ${percentage}: Success (${inserted.length}), Errors (${insertErrors.length})`)
+        process.stdout.write(`--> Inserting readings ${percentage}: Success (${inserted.length}), Errors (${insertErrors.length})`)
         resolve(i)
       })
     }))
   }
   await Promise.all(insertPromises).then(() => {
     process.stdout.write('\n')
-    console.log('= Finished')
+    console.log('--> Finished')
     // Update log
     db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Seeded readings: Success ${inserted.length}, Errors ${insertErrors.length}`

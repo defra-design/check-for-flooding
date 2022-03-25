@@ -13,7 +13,7 @@ axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
 const updateReadings = async () => {
   // Get data from API
   const start = moment()
-  console.log(`= Started at ${start.format('HH:mm:ss')}`)
+  console.log(`--> Started at ${start.format('HH:mm:ss')}`)
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   const response = await axios.get(uri).then(response => { return response })
   const readings = []
@@ -31,7 +31,8 @@ const updateReadings = async () => {
       })
     }
   }
-  console.log('= Data received')
+  console.log('--> Data received')
+  console.log('--> Updating readings (can take upto 3 minutes)...')
   // Update oldest record with latest
   const errors = []
   const promises = []
@@ -67,7 +68,7 @@ const updateReadings = async () => {
   await Promise.all(promises).then(() => {
     const end = moment()
     const duration = end.diff(start)
-    console.log(`\n= Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})}`)
+    console.log(`--> Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})}`)
   })
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
