@@ -15,12 +15,7 @@ const updateReadings = async () => {
   const start = moment()
   console.log(`= Started at ${start.format('HH:mm:ss')}`)
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
-  let response
-  try {
-    response = await axios.get(uri).then(response => { return response })
-  } catch (err) {
-    console.log(err)
-  }
+  const response = await axios.get(uri).then(response => { return response })
   const readings = []
   if (response.status === 200 && response.data && response.data.items) {
     const items = response.data.items
@@ -75,10 +70,10 @@ const updateReadings = async () => {
     console.log(`\n= Finished at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})}`)
   })
   // Update log
-  db.query('INSERT INTO log (datetime, message) values($1, $2)', [
+  await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Updated readings: Updates ${updated.length}, Errors ${errors.length}`
   ])
+  process.exit()
 }
 
 updateReadings()
-process.exit()
