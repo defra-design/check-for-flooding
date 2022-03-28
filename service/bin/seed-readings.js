@@ -5,7 +5,7 @@ const db = require('./db')
 const pgp = require('pg-promise')()
 const moment = require('moment-timezone')
 const axios = require('axios')
-// const updateReadings = require('./update-readings')
+const updateReadings = require('./update-readings')
 
 axios.defaults.timeout = 30000
 axios.defaults.httpsAgent = new https.Agent({ keepAlive: true })
@@ -27,7 +27,7 @@ const seedReadings = async () => {
     FROM station WHERE measure_id LIKE '%downstage%' AND ref != '')
     `)
   // Get data from API (approx 3k plus endpoints)
-  const measures = response.slice(0, 10)
+  const measures = response
   const readings = []
   const errors = []
   const start = moment()
@@ -70,7 +70,7 @@ const seedReadings = async () => {
   await db.none(query)
   console.log(`--> Inserted ${readings.length} readings`)
   // Run update as seed process takes longer than 15 minutes
-  // updateReadings()
+  updateReadings()
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Seeded readings: Inserted ${readings.length}`

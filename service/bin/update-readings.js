@@ -42,5 +42,9 @@ const update = async () => {
     SELECT b.id FROM reading b WHERE b.measure_id = a.measure_id ORDER BY b.datetime DESC LIMIT 2));`
   )
   console.log('--> Deleted old readings')
+  // Update log
+  await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
+    moment().format(), `Updated ${readings.length} readings`
+  ])
   process.exit()
 }
