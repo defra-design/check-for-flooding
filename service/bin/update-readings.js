@@ -6,7 +6,7 @@ const axios = require('axios')
 module.exports = async () => {
   // Get data from API
   const start = moment()
-  console.log(`--> Started at ${start.format('HH:mm:ss')}`)
+  console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   const response = await axios.get(uri).then(response => { return response })
   const readings = []

@@ -27,13 +27,13 @@ const seedReadings = async () => {
     FROM station WHERE measure_id LIKE '%downstage%' AND ref != '')
     `)
   // Get data from API (approx 3k plus endpoints)
-  // const measures = response
-  const measures = response.slice(0, 10)
+  const measures = response
+  // const measures = response.slice(0, 10)
   const readings = []
   const errors = []
   const start = moment()
   let end, duration
-  console.log(`--> Started at ${start.format('HH:mm:ss')}`)
+  console.log(`--> Seed started at ${start.format('HH:mm:ss')}`)
   for (const [i, measure] of measures.entries()) {
     const uri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${measure.id}/readings?_sorted&_limit=${measure.limit}`
     const percentage = `${((100 / measures.length) * (i + 1)).toFixed(2).padStart(4, '0')}%`
@@ -71,7 +71,7 @@ const seedReadings = async () => {
   await db.none(query)
   console.log(`--> Inserted ${readings.length} readings`)
   // Run update as seed process takes longer than 15 minutes
-  updateReadings()
+  await updateReadings()
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Seeded readings: Inserted ${readings.length}`
