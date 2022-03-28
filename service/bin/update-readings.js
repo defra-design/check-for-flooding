@@ -45,5 +45,4 @@ module.exports = async () => {
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Updated ${readings.length} readings`
   ])
-  process.exit()
 }
