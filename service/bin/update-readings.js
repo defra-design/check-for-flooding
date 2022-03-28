@@ -3,8 +3,7 @@ const pgp = require('pg-promise')()
 const moment = require('moment-timezone')
 const axios = require('axios')
 
-// module.exports = async () => {
-const update = async () => {
+module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Started at ${start.format('HH:mm:ss')}`)
