@@ -27,7 +27,8 @@ const seedReadings = async () => {
     FROM station WHERE measure_id LIKE '%downstage%' AND ref != '')
     `)
   // Get data from API (approx 3k plus endpoints)
-  const measures = response
+  // const measures = response
+  const measures = response.slice(0, 10)
   const readings = []
   const errors = []
   const start = moment()
