@@ -72,6 +72,7 @@
     "nunjucks": "^3.2.1",
     "ol": "^6.9.0",
     "pg": "^8.6.0",
+    "pg-promise": "^10.11.1",
     "portscanner": "^2.1.1",
     "require-dir": "^1.0.0",
     "sync-request": "^6.0.0",

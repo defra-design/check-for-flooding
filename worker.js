@@ -1,5 +1,5 @@
 const amqp = require('amqp-connection-manager')
-const updateReadings = require('./bin/update-readings')
+const updateReadings = require('./service/bin/update-readings')
 
 const AMQP_URL = process.env.CLOUDAMQP_URL || 'amqp://localhost'
 if (!AMQP_URL) process.exit(1)
