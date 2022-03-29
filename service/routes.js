@@ -108,9 +108,9 @@ router.get('/service/river-detail/:slug', async (req, res, next) => {
 // Get a single station with all its details
 router.get('/service/station/:id', async (req, res, next) => {
   const isDownstage = req.params.id.includes('-downstream')
-  const id = req.params.id.replace('-downstream', '').replace('-upstream', '')
+  const rloiId = req.params.id.replace('-downstream', '').replace('-upstream', '')
   try {
-    res.status(200).json(await stationServices.getStation(id, isDownstage))
+    res.status(200).json(await stationServices.getStation(rloiId, isDownstage))
   } catch (err) {
     res.status(500)
     console.log(err)

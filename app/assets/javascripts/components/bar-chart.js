@@ -236,7 +236,7 @@ function BarChart (containerId, stationId, data) {
 
   const updateSegmentedControl = () => {
     const now = new Date()
-    const dataDurationDays = (new Date(now.getTime() - dataStart.getTime())) / (1000 * 60 * 60 * 24)
+    const dataDurationDays = Math.round((new Date(now.getTime() - dataStart.getTime())) / (1000 * 60 * 60 * 24))
     // Check there are at least 2 telemetry arrays
     let numBands = 0
     for (let i = 0; i < bands.length; i++) {

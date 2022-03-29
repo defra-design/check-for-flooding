@@ -21,7 +21,7 @@ if (document.getElementById('map')) {
     layers: 'mv,ri,ti,gr',
     centre: window.flood.model.centroid,
     zoom: 14,
-    selectedId: `stations.${window.flood.model.id}`
+    selectedId: `stations.${window.flood.model.rloiId}`
   })
 }
 
@@ -32,8 +32,8 @@ if (document.querySelectorAll('.defra-toggletip')) {
 
 // Line chart
 if (document.querySelector('.defra-line-chart')) {
-  const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.ref, window.flood.model.telemetry)
-  const thresholdId = `threshold-${window.flood.model.ref}-high`
+  const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
+  const thresholdId = `threshold-${window.flood.model.id}-high`
   const threshold = document.querySelector(`[data-id="${thresholdId}"]`)
   if (threshold) {
     lineChart.addThreshold({

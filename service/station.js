@@ -7,9 +7,8 @@ module.exports = {
     const response = await db.query(`
     (SELECT station.name,
     CASE
-    WHEN station.type_name = 'rainfall' THEN station.ref
-    ELSE station.id END AS id,
-    station.id AS map_id,
+    WHEN station.type_name = 'rainfall' THEN station.id
+    ELSE station.rloi_id END AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -46,9 +45,8 @@ module.exports = {
     UNION ALL
     (SELECT station.name,
     CASE
-    WHEN station.type_name = 'rainfall' THEN station.ref
-    ELSE station.id END AS id,
-    station.id AS map_id,
+    WHEN station.type_name = 'rainfall' THEN station.id
+    ELSE station.rloi_id END AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -92,8 +90,9 @@ module.exports = {
     // Convert type names to chars
     const response = await db.query(`
     (SELECT station.name,
-    station.id,
-    station.ref,
+    CASE
+    WHEN station.type_name = 'rainfall' THEN station.id
+    ELSE station.rloi_id END AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -118,8 +117,9 @@ module.exports = {
     WHERE river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3)
     UNION ALL
     (SELECT station.name,
-    station.id,
-    station.ref,
+    CASE
+    WHEN station.type_name = 'rainfall' THEN station.id
+    ELSE station.rloi_id END AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
@@ -156,8 +156,7 @@ module.exports = {
     const response = await db.query(`
     SELECT
     station.id,
-    station.id AS map_id,
-    station.ref AS ref,
+    station.rloi_id,
     station.name,
     station.type_name AS type,
     CASE
@@ -195,7 +194,7 @@ module.exports = {
     FROM station
     LEFT JOIN river_station ON river_station.station_id = station.id
     LEFT JOIN river ON river.slug = river_station.slug
-    WHERE lower(station.id) = lower($1)
+    WHERE lower(station.rloi_id) = lower($1)
     `, [id, isDownstage])
     return response.rows[0]
   },
@@ -204,9 +203,7 @@ module.exports = {
   getStationRain: async (id) => {
     const response = await db.query(`
     SELECT
-    station.ref AS id,
-    station.id AS map_id,
-    station.ref AS ref,
+    station.id AS id,
     station.type_name AS type,
     station.name,
     station.value_1hr AS rainfall_1hr,
@@ -217,7 +214,7 @@ module.exports = {
     station.is_wales,
     station.measure_id
     FROM station
-    WHERE lower(station.ref) = lower($1)
+    WHERE lower(station.id) = lower($1)
     `, [id])
     return response.rows[0]
   }

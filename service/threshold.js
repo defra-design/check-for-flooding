@@ -10,7 +10,7 @@ module.exports = {
     round(threshold.value::numeric,2) AS value,
     threshold.date AS date
     FROM station
-    LEFT JOIN threshold ON threshold.stationId = station.ref
+    LEFT JOIN threshold ON threshold.stationId = station.id
     WHERE lower(station.id) = lower($1) AND threshold.measure = $2 AND threshold.name != 'low'
     ORDER BY threshold.value DESC, threshold.name;
     `, [stationId, measure])

@@ -15,8 +15,8 @@ router.get('/station', (req, res) => {
 })
 
 router.get('/station/:id', async (req, res) => {
-  const id = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStation(id)
+  const rloiId = req.params.id.toLowerCase()
+  const stationResponse = await stationServices.getStation(rloiId)
   let telemetry, thresholds, station, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
@@ -27,7 +27,7 @@ router.get('/station/:id', async (req, res) => {
     // Station telemetry
     const start = moment().subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(station.ref, start, end, station.measure)
+    telemetry = await telemetryServices.getStationTelemetry(station.id, start, end, station.measure)
     telemetry = telemetry.data
     // Station thresholds only for river and groundwater stations
     if (['upstream', 'downstream', 'groundwater'].includes(station.measure) && telemetry.observed.length) {
