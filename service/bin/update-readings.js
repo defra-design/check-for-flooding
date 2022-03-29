@@ -31,17 +31,11 @@ module.exports = async () => {
   const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
   await db.none(query)
   console.log('--> Updated readings')
-  // Need a quick process for deleteing old records
-  // await db.any(
-  //   `SELECT * FROM reading a
-  //   WHERE (measure_id LIKE '%raingauge-t-15_min%' AND id NOT IN (
-  //   SELECT b.id FROM reading b WHERE b.measure_id = a.measure_id ORDER BY b.datetime DESC LIMIT 96))
-  //   OR (measure_id LIKE '%raingauge-t-1_h%' AND id NOT IN (
-  //   SELECT b.id FROM reading b WHERE b.measure_id = a.measure_id ORDER BY b.datetime DESC LIMIT 24))
-  //   OR (measure_id NOT LIKE '%rainfall%' AND id NOT IN (
-  //   SELECT b.id FROM reading b WHERE b.measure_id = a.measure_id ORDER BY b.datetime DESC LIMIT 2));`
-  // )
-  // console.log('--> Deleted old readings')
+  // Need a beter delete process
+  await db.any(`
+    DELETE FROM reading WHERE datetime < NOW() - interval '2 days';`
+  )
+  console.log('--> Deleted old readings')
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Updated ${readings.length} readings`
