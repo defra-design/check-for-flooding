@@ -19,12 +19,12 @@ const seedReadings = async () => {
     WHEN measure_id LIKE '%raingauge-t-15_min-mm%' THEN 96
     WHEN measure_id LIKE '%raingauge-t-1_h-mm%' THEN 24
     ELSE 2 END AS limit
-    FROM station WHERE ref != '')
+    FROM station WHERE id != '')
     UNION ALL
     (SELECT
     measure_downstream_id AS id,
     2 AS limit
-    FROM station WHERE measure_id LIKE '%downstage%' AND ref != '')
+    FROM station WHERE measure_id LIKE '%downstage%' AND id != '')
     `)
   // Get data from API (approx 3k plus endpoints)
   const measures = response
