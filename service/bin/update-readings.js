@@ -28,15 +28,12 @@ module.exports = async () => {
     }
   }
   console.log(`--> Received ${readings.length} readings`)
+  await db.any('TRUNCATE table reading')
+  console.log('--> Truncated table readings')
   const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
   const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
   await db.none(query)
-  console.log('--> Updated readings')
-  // Need a beter delete process
-  await db.any(`
-    DELETE FROM reading WHERE datetime < NOW() - interval '2 days';`
-  )
-  console.log('--> Deleted old readings')
+  console.log('--> Inserted new readings')
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Updated ${readings.length} readings`
