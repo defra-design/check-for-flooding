@@ -11,6 +11,7 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const query = req.query
+  console.log(query)
   let model
   if (query.river && query.river !== '') {
     // River query
@@ -63,7 +64,8 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     if (locationResponse.status === 200) {
       if (locationResponse.data.results && locationResponse.data.results.length) {
         // We have some matches
-        locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+        // locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+        locationResponse.data.results.forEach(result => { places.push(new Place(result.GAZETTEER_ENTRY)) })
       }
     } else {
       // Log 500 error

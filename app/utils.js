@@ -72,38 +72,25 @@ const bufferBbox = (bbox, m) => {
   return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
 }
 
-const getNameFromGazetteerEntry = (gazetteerEntry) => {
-  const coreCities = [
-    'Birmingham, West Midlands',
-    'Brighton, Brighton and Hove',
-    'Coventry, West Midlands',
-    'Derby, Derby City',
-    'Manchester, Greater Manchester',
-    'Leeds, West Yorkshire',
-    'Leicester, Leicester City',
-    'Liverpool, Merseyside',
-    'Newcastle upon Tyne, Tyne & Wear',
-    'Nottingham, Nottingham City',
-    'Reading, Berkshire',
-    'Sheffield, South Yorkshire'
-  ]
-  // Default name
-  let name = gazetteerEntry.name
-
-  // Remove ', GB' from reverse geocode name
-  name = name.endsWith(', GB') ? name.substring(0, name.lastIndexOf(',')) : name
-
-  if (coreCities.includes(name)) {
-    // If core city remove local authority
-    name = gazetteerEntry.address.locality
-  } else if (gazetteerEntry.entityType === 'Postcode1') {
-    // If full postcode re-construct name
-    name = `${gazetteerEntry.address.locality}, ${gazetteerEntry.address.postalCode}`
-  } else if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
-    // Remove duplication within the name
-    name = gazetteerEntry.address.locality
+const getSlugFromGazetteerEntry = (gazetteerEntry) => {
+  const localType = gazetteerEntry.LOCAL_TYPE
+  const name = gazetteerEntry.NAME1
+  const countyUnity = gazetteerEntry.COUNTY_UNITARY
+  const districtBorough = gazetteerEntry.DISTRICT_BOROUGH
+  const postCodeDistrict = gazetteerEntry.POSTCODE_DISTRICT
+  const isSimilar = gazetteerEntry.IS_SIMILAR
+  let slug = getSlug(name)
+  if (localType !== 'City' && localType !== 'Postcode' && (countyUnity || districtBorough)) {
+    let qaulifier = getSlug(countyUnity || districtBorough) // eg Bury, bury
+    if (name !== qaulifier) {
+      // eg Charlton, Wiltshire
+      qaulifier += isSimilar && postCodeDistrict ? `-${postCodeDistrict.toLowerCase()}` : ''
+      // Make a 'unique' slug
+      slug = `${slug}-${qaulifier}`
+    }
+    // Address Charlton
   }
-  return name
+  return slug
 }
 
 module.exports = {
@@ -117,5 +104,5 @@ module.exports = {
   getSlug,
   groupBy,
   bufferBbox,
-  getNameFromGazetteerEntry
+  getSlugFromGazetteerEntry
 }

@@ -67,6 +67,7 @@
     "lodash.isequal": "^4.5.0",
     "marked": "^4.0.10",
     "moment-timezone": "^0.5.33",
+    "mt-osgridref": "^0.1.0",
     "node-sass": "^6.0.1",
     "notifications-node-client": "^5.1.0",
     "nunjucks": "^3.2.1",

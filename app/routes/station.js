@@ -37,15 +37,15 @@ router.get('/station/:id', async (req, res) => {
   } else {
     // Return 500 error
   }
-  const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
-  if (locationResponse.status === 200) {
-    if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
-      return res.status(404).render('404')
-    }
-    place = new Place(locationResponse.data.resourceSets[0].resources[0])
-  } else {
-    // Return 500 error
-  }
+  // const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
+  // if (locationResponse.status === 200) {
+  //   if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
+  //     return res.status(404).render('404')
+  //   }
+  //   place = new Place(locationResponse.data.resourceSets[0].resources[0])
+  // } else {
+  //   // Return 500 error
+  // }
   const model = new ViewModel(station, telemetry, thresholds, place)
   return res.render('station', { model })
 })
@@ -68,15 +68,15 @@ router.get('/rainfall-station/:id', async (req, res) => {
   } else {
     // Return 500 error
   }
-  const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
-  if (locationResponse.status === 200) {
-    if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
-      return res.status(404).render('404')
-    }
-    place = new Place(locationResponse.data.resourceSets[0].resources[0])
-  } else {
-    // Return 500 error
-  }
+  // const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
+  // if (locationResponse.status === 200) {
+  //   if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
+  //     return res.status(404).render('404')
+  //   }
+  //   place = new Place(locationResponse.data.resourceSets[0].resources[0])
+  // } else {
+  //   // Return 500 error
+  // }
   const model = new ViewModel(station, telemetry, null, place)
   return res.render('rainfall', { model })
 })
