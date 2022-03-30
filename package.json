@@ -27,6 +27,7 @@
     "ansi-colors": "^4.1.1",
     "async-file": "^2.0.2",
     "axios": "^0.24.0",
+    "axios-retry": "^3.2.4",
     "babel-loader": "^8.2.2",
     "basic-auth": "^2.0.0",
     "basic-auth-connect": "^1.0.0",

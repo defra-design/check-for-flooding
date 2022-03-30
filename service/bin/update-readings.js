@@ -2,6 +2,19 @@ const db = require('./db')
 const pgp = require('pg-promise')()
 const moment = require('moment-timezone')
 const axios = require('axios')
+const axiosRetry = require('axios-retry')
+
+axiosRetry(axios, {
+  retries: 3, // number of retries
+  retryDelay: (retryCount) => {
+    console.log(`retry attempt: ${retryCount}`)
+    return retryCount * 2000 // time interval between retries
+  },
+  retryCondition: (error) => {
+    // if retry condition is not specified, by default idempotent requests are retried
+    return error.response.status === 503
+  }
+})
 
 module.exports = async () => {
   // Get data from API
@@ -9,11 +22,17 @@ module.exports = async () => {
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
-  const response = await axios.get(uri).then(response => { return response })
   const readings = []
+  const response = await axios.get(uri).then(response => { return response }).catch((err) => {
+    if (err.response.status !== 200) {
+      throw new Error(`--> API call failed with status code: ${err.response.status} after 3 retry attempts`)
+    }
+  })
   if (response.status === 200 && response.data && response.data.items) {
-    const measureTypes = ['downstage', 'stage', 'tidal', 'groundwater', 'rainfaill']
-    const items = response.data.items.filter(x => measureTypes.some(string => x.measure.includes(string)))
+    const items = response.data.items
+    const end = moment()
+    const duration = end.diff(start)
+    console.log(`--> Received ${items.length} readings at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})`)
     for (const item of items) {
       // Some measures have an array of numbers???
       if (typeof item.value !== 'number') {
@@ -26,16 +45,17 @@ module.exports = async () => {
         datetime: item.dateTime
       })
     }
+    await db.any('TRUNCATE table reading')
+    console.log('--> Truncated table readings')
+    const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
+    const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
+    await db.none(query)
+    console.log('--> Inserted new readings')
+    // Update log
+    await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
+      moment().format(), `Updated ${readings.length} readings`
+    ])
+  } else {
+    console.log(`--> Error ${response.status} receiving readings`)
   }
-  console.log(`--> Received ${readings.length} readings`)
-  await db.any('TRUNCATE table reading')
-  console.log('--> Truncated table readings')
-  const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
-  const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
-  await db.none(query)
-  console.log('--> Inserted new readings')
-  // Update log
-  await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
-    moment().format(), `Updated ${readings.length} readings`
-  ])
 }
