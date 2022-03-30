@@ -3,7 +3,7 @@
 Initialises the window.flood.maps layers
 */
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
-import { BingMaps, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
+import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import { GeoJSON, MVT } from 'ol/format'
 
 //
@@ -33,10 +33,14 @@ window.flood.maps.layers = {
   road: () => {
     return new TileLayer({
       ref: 'road',
-      source: new BingMaps({
-        key: window.flood.model.bingApiKey,
-        imagerySet: 'RoadOnDemand',
-        hidpi: true
+      // source: new BingMaps({
+      //   key: window.flood.model.bingApiKey,
+      //   imagerySet: 'RoadOnDemand',
+      //   hidpi: true
+      // }),
+      source: new XYZ({
+        url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
+        attributions: 'Ordnance Survey'
       }),
       visible: false,
       zIndex: 0
