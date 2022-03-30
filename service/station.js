@@ -40,7 +40,7 @@ module.exports = {
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
-    RIGHT JOIN station ON river_station.station_id = station.id
+    RIGHT JOIN station ON river_station.station_id = station.rloi_id
     WHERE ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom))
     UNION ALL
     (SELECT station.name,
@@ -78,7 +78,7 @@ module.exports = {
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
-    RIGHT JOIN station ON river_station.station_id = station.id
+    RIGHT JOIN station ON river_station.station_id = station.rloi_id
     WHERE (ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),station.geom)) AND station.type = 'm')
     ORDER BY distance, is_downstream;   
     `, bbox) // ORDER BY group_order, river_name, station_order, is_downstream;
@@ -182,7 +182,7 @@ module.exports = {
     station.is_wales,
     CASE WHEN $2 = true THEN station.measure_downstream_id ELSE station.measure_id END AS measure_id
     FROM station
-    LEFT JOIN river_station ON river_station.station_id = station.id
+    LEFT JOIN river_station ON river_station.station_id = station.rloi_id
     LEFT JOIN river ON river.slug = river_station.slug
     WHERE lower(station.rloi_id) = lower($1)
     `, [id, isDownstage])
