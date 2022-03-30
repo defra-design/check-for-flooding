@@ -32,7 +32,7 @@ module.exports = {
     replace(substring(left(ST_Extent(station.geom) :: text, -1), 5),' ',',') AS bbox
     FROM river
     LEFT JOIN river_station ON river_station.slug = river.slug
-    LEFT JOIN station ON river_station.station_id = station.id
+    LEFT JOIN station ON river_station.station_id = station.rloi_id
     WHERE river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3
     GROUP BY river.display, river.slug
     `, [`%-${slug}%`, `%${slug}-%`, slug])
