@@ -90,15 +90,10 @@ module.exports = {
     // Convert type names to chars
     const response = await db.query(`
     (SELECT station.name,
-    CASE
-    WHEN station.type_name = 'rainfall' THEN station.id
-    ELSE station.rloi_id END AS id,
+    station.rloi_id AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
-    station.value_1hr,
-    station.value_6hr,
-    station.value_24hr,
     station.value_date,
     station.type_name AS type,
     CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
@@ -113,19 +108,14 @@ module.exports = {
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
-    RIGHT JOIN station ON river_station.station_id = station.id
+    RIGHT JOIN station ON river_station.station_id = station.rloi_id
     WHERE river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3)
     UNION ALL
     (SELECT station.name,
-    CASE
-    WHEN station.type_name = 'rainfall' THEN station.id
-    ELSE station.rloi_id END AS id,
+    station.rloi_id AS id,
     station.state,
     round(station.value::numeric,2) AS value,
     round(station.value_downstream::numeric,2) AS value_downstream,
-    station.value_1hr,
-    station.value_6hr,
-    station.value_24hr,
     station.value_date,
     station.type_name AS type,
     CASE WHEN river.name is NOT NULL THEN river.name ELSE null END AS river_name,
@@ -140,7 +130,7 @@ module.exports = {
     ELSE false END AS has_detail
     FROM river
     RIGHT JOIN river_station ON river_station.slug = river.slug
-    RIGHT JOIN station ON river_station.station_id = station.id
+    RIGHT JOIN station ON river_station.station_id = station.rloi_id
     WHERE (river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3) AND station.type = 'm')
     ORDER BY river_name, station_order, is_downstream
     `, [`%-${slug}%`, `%${slug}-%`, slug])
