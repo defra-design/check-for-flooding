@@ -1,5 +1,6 @@
 .defra-flood-levels-list {
   @extend .govuk-list;
+  margin-bottom: 30px;
   &__item {
     border-top: 1px solid govuk-colour('mid-grey');
     padding: 10px 0px 12.5px 0px;
@@ -13,6 +14,9 @@
   }
   &__item:first-child {
     border: 0px;
+  }
+  &__item:last-child {
+    padding-bottom: 0px;
   }
   &__title {
     @include govuk-font($size: 19, $weight: bold);
