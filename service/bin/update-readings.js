@@ -20,8 +20,8 @@ module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
-  // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
-  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
+  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
+  // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
   const readings = []
   const response = await axios.get(uri).then(response => { return response }).catch((err) => {
     if (err.response.status !== 200) {
@@ -45,12 +45,10 @@ module.exports = async () => {
         datetime: item.dateTime
       })
     }
-    await db.any('TRUNCATE table reading')
-    console.log('--> Truncated table readings')
     const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
     const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
     await db.none(query)
-    console.log('--> Inserted new readings')
+    console.log('--> Insert/updated new readings')
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Updated ${readings.length} readings`
