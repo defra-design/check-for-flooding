@@ -16,8 +16,7 @@ axiosRetry(axios, {
   }
 })
 
-const updateReadings = async () => {
-// module.exports = async () => {
+module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
@@ -64,5 +63,3 @@ const updateReadings = async () => {
     console.log(`--> Error ${response.status} receiving readings`)
   }
 }
-
-module.exports = updateReadings()

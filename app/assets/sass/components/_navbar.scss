@@ -72,7 +72,7 @@
         box-shadow: 0 5px 0 govuk-colour('black') !important;
       }
       &:hover {
-        color: govuk-colour('black') !important;
+        color: $govuk-link-hover-colour !important;
         background-color: transparent;
       }
     }
