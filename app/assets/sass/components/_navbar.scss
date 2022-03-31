@@ -3,6 +3,12 @@
   @include govuk-font($size: 16);
   // border-bottom: 1px solid govuk-colour('light-grey');
   border-bottom: 1px solid $govuk-border-colour;
+  nav {
+    display: inline-block;
+    @include mq ($until: tablet) {
+      display: block;
+    }
+  }
   &__list {
     list-style: none;
     margin: 0px 0px -1px;
@@ -14,26 +20,61 @@
     color: $govuk-secondary-text-colour;
     span {
       display: block;
-      padding: 10px 0px;
+      padding-top: 10px 0px;
     }
     @include mq ($from: tablet) {
       margin-right: 15px;
     }
   }
+  &__item--map {
+    @include mq ($until: tablet) {
+      display: block;
+    }
+  }
   &__item:last-child {
     margin-right: 0px;
   }
-  a {
-    display: block;
-    padding: 10px 0px;
+  &__list a {
+    display: inline-block;
+    padding-top:10px;
+    padding-bottom: 10px;
     border-bottom: 5px solid transparent;
     text-decoration: none;
   }
   &__item--selected a {
     border-color: govuk-colour('blue');
   }
-  a:focus {
+  &__list a:focus {
     box-shadow: none;
     border-color: govuk-colour('black');
+  }
+  .defra-button-secondary {
+    margin-top: 0px !important;
+    span span {
+      display: none;
+    }
+    @include mq ($from: tablet) {
+      border: 0px;
+      padding-left: 21px;
+      padding-right: 0px;
+      margin-right: 15px;
+      color: $govuk-link-colour !important;
+      svg {
+        color: govuk-colour('black');
+        margin-top: -12px;
+        left: 1px;
+      }
+      &:visited {
+        color: $govuk-link-visited-colour !important;
+      }
+      &:focus {
+        color: govuk-colour('black') !important;
+        box-shadow: 0 5px 0 govuk-colour('black') !important;
+      }
+      &:hover {
+        color: govuk-colour('black') !important;
+        background-color: transparent;
+      }
+    }
   }
 }

@@ -1,17 +1,14 @@
 .defra-flood-levels-list {
   @extend .govuk-list;
-  > li {
-    margin-bottom: 0px;
-  }
   &__item {
     border-top: 1px solid govuk-colour('mid-grey');
-    padding-top: 10px;
-    padding-bottom: 12px;
+    padding: 10px 0px 12.5px 0px;
+    margin-bottom: 0px !important;
     @include mq ($from: tablet) {
+      padding-bottom: 10px;
       display: flex;
       align-items: center;
       flex-direction: row;
-      padding-bottom: 10px;
     }
   }
   &__item:first-child {
@@ -26,6 +23,9 @@
       padding-bottom: 0px;
       padding-right: 7%;
     }
+    @include mq ($from: desktop) {
+      width: 55%;
+    }
   }
   &__item--rainfall &__title {
     @include mq ($from: tablet) {
@@ -35,6 +35,9 @@
   &__detail {
     @include mq ($from: tablet) {
       width: 50%;
+    }
+    @include mq ($from: desktop) {
+      width: 45%;
     }
   }
   &__item--rainfall &__detail {
@@ -50,6 +53,7 @@
   &__data {
     float: left;
     min-width: 4.5em;
+    box-sizing: border-box;
   }
   &__data--rainfall {
     width: 33.33%;
@@ -59,9 +63,11 @@
   }
   &__data--height {
     width: 31%;
+    padding-left: 5%;
   }
   &__data--state {
     width: 30%;
+    text-align: right;
   }
   &-item-meta {
     display: block;

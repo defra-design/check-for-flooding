@@ -13,7 +13,7 @@ import '../components/tooltip'
 // Create LiveMap
 if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
-    btnText: 'View map of levels',
+    btnText: 'View map<span> of levels</span>',
     btnClasses: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-top-2',
     layers: 'mv,ri,ti,gr,rf',
     extent: window.flood.model.bbox
