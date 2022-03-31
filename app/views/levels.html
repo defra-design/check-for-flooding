@@ -80,7 +80,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="defra-navbar govuk-!-margin-top-4">
-        <span id="map"></span>
         <nav aria-label="Show results by type" role="navigation">
           <ul class="defra-navbar__list">
             {% for filter in model.levels.filters %}
@@ -94,6 +93,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
             {% endfor %}
           </ul>
         </nav>
+        <span id="map"></span>
       </div>
     </div>
   </div>

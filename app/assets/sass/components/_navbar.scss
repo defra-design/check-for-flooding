@@ -54,11 +54,12 @@
       display: none;
     }
     @include mq ($from: tablet) {
+      float: right;
       border: 0px;
       padding-left: 21px;
       padding-right: 0px;
-      margin-right: 15px;
       color: $govuk-link-colour !important;
+      margin-top: 1px !important;
       svg {
         color: govuk-colour('black');
         margin-top: -12px;
