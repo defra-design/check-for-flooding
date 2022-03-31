@@ -16,7 +16,8 @@ axiosRetry(axios, {
   }
 })
 
-module.exports = async () => {
+const updateReadings = async () => {
+// module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
@@ -54,7 +55,7 @@ module.exports = async () => {
       with deleted as (DELETE FROM reading WHERE datetime <= now() - interval '1' day returning id )
       select count(*) from deleted;
     `)
-    console.log(`--> Deleted ${deleted} readings older than 1 day`)
+    console.log(`--> Deleted ${deleted[0].count} readings older than 1 day`)
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Updated ${readings.length} readings`
@@ -63,3 +64,5 @@ module.exports = async () => {
     console.log(`--> Error ${response.status} receiving readings`)
   }
 }
+
+module.exports = updateReadings()
