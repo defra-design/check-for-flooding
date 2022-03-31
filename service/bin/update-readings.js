@@ -48,7 +48,13 @@ module.exports = async () => {
     const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
     const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
     await db.none(query)
-    console.log('--> Insert/updated new readings')
+    console.log(`--> Insert/updated ${items.length} new readings`)
+    // Delete old records
+    const deleted = await db.any(`
+      with deleted as (DELETE FROM reading WHERE datetime <= now() - interval '1' day returning id )
+      select count(*) from deleted;
+    `)
+    console.log(`--> Deleted ${deleted} readings older than 1 day`)
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Updated ${readings.length} readings`
