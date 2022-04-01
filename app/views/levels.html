@@ -86,7 +86,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
             <ul class="defra-navbar__list">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-                <a href="/river-sea-groundwater-rainfall-levels?{{ model.querySearchType }}={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} <span class="defra-navbar__item-count">({{ filter.count }})</span></a>
+                <a href="/river-sea-groundwater-rainfall-levels?{{ model.querySearchType }}={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
               </li>
               {% endfor %}
             </ul>
