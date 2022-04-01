@@ -2,7 +2,7 @@ const Level = require('./level')
 
 class Levels {
   constructor (place, river, type, levels) {
-    const filters = ['river', 'sea', 'groundwater', 'rainfall'].map(item => ({
+    const filters = ['river', 'sea', 'rainfall', 'groundwater'].map(item => ({
       type: item,
       count: levels.filter(level => level.group_type === item).length
     }))
