@@ -70,6 +70,8 @@
     border-color: govuk-shade(govuk-colour('blue'), 30);
     background: govuk-tint(govuk-colour('blue'), 80);
     @include mq ($until: tablet) {
+      border-width: 2px;
+      padding:8px 9px 9px;
       color: govuk-shade(govuk-colour('blue'), 30);
     }
     @include mq ($from: tablet) {
