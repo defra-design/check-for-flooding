@@ -55,14 +55,21 @@
     @include mq ($from: tablet) {
       padding:9px 0px 10px;
       border: 0px;
+      border-bottom: 5px solid transparent;
     }
   }
   &__item--selected a {
-    border-color: govuk-colour('blue');
+    border-color: govuk-colour('black');
+    @include mq ($from: tablet) {
+      border-color: govuk-colour('blue');
+    }
   }
   &__list a:focus {
     border-color: $govuk-focus-colour;
     box-shadow: 0 4px 0 govuk-colour('black') !important;
+    @include mq ($from: tablet) {
+      border-color: govuk-colour('black');
+    }
   }
   .defra-button-secondary {
     span span {
