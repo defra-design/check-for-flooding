@@ -14,7 +14,7 @@ import '../components/tooltip'
 if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
     btnText: 'Map',
-    btnClasses: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-top-2',
+    btnClasses: 'defra-button-secondary defra-button-secondary--icon',
     layers: 'mv,ri,ti,gr,rf',
     extent: window.flood.model.bbox
   })
