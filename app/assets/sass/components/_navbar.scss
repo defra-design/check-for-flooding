@@ -1,7 +1,7 @@
 .defra-navbar {
   position: relative;
   @include govuk-font($size: 19);
-  margin: 10px -15px 0px;
+  margin: 15px -15px;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -43,7 +43,7 @@
     display: inline-block;
     text-decoration: none;
     outline: 3px solid transparent;
-    padding:9px 0px 10px;
+    padding: 5px 0px 6px;
     border: 0px;
   }
   &__item-count {
@@ -64,10 +64,9 @@
   .defra-button-secondary {
     float: left;
     border: 0px;
-    padding-left: 21px;
-    padding-right: 0px;
     color: $govuk-link-colour !important;
     margin: 0px 15px 0px 0px !important;
+    padding: 5px 0px 6px 21px;
     @include mq ($until: tablet) {
       @include govuk-font($size: 19);
     }
