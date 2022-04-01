@@ -67,10 +67,15 @@
     padding-left: 21px;
     padding-right: 0px;
     color: $govuk-link-colour !important;
-    margin-right: 15px;
-    margin-bottom: 0px;
+    margin: 0px 15px 0px 0px !important;
     @include mq ($until: tablet) {
       @include govuk-font($size: 19);
+    }
+    &:after {
+      content: 'Map';
+    }
+    span {
+      @include defra-visually-hidden();
     }
     svg {
       color: govuk-colour('black');
