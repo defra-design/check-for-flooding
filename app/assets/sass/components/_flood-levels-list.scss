@@ -75,10 +75,10 @@
   }
   &-item-meta {
     display: block;
-    @include govuk-font($size: 14);
+    @include govuk-font($size: 16);
     color: $govuk-secondary-text-colour;
     a {
-      @include govuk-font($size: 16);
+      // @include govuk-font($size: 16);
       display: inline-block;
       margin-top: 5px;
     }
@@ -92,7 +92,7 @@
     // color: $govuk-secondary-text-colour;
     position: relative;
     text-transform: uppercase;
-    @include govuk-font($size: 16, $weight: normal);
+    @include govuk-font($size: 19, $weight: normal);
     padding-left: 30px;
     @include mq ($from: tablet) {
       padding-left: 36px;
@@ -104,10 +104,11 @@
       width: 24px;
       height: 24px;
       left: 0px;
-      top: -1px;
+      top: 1px;
       @include mq ($from: tablet) {
         width: 28px;
         height: 28px;
+        top: 2px;
       }
     }
     svg {
@@ -122,7 +123,7 @@
     }
   }
   &-item-height {
-    @include govuk-font($size: 16, $tabular: true, $weight: normal);
+    @include govuk-font($size: 19, $tabular: true, $weight: normal);
     // color: $govuk-secondary-text-colour;
     display: inline-block;
     padding-top: 4px;
@@ -131,7 +132,7 @@
   }
   &-item-state {
     position: relative;
-    @include govuk-font($size: 16, $weight: normal);
+    @include govuk-font($size: 19, $weight: normal);
     text-transform: uppercase;
     // color: $govuk-secondary-text-colour;
     background-color: govuk-colour('light-grey');
