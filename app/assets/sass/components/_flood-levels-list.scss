@@ -12,6 +12,9 @@
       flex-direction: row;
     }
   }
+  &__item:first-child {
+    border: 0px;
+  }
   &__item:last-child {
     padding-bottom: 0px;
   }

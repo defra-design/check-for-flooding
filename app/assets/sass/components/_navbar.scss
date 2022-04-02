@@ -8,9 +8,21 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $govuk-border-colour;
   @include mq ($from: tablet) {
+    margin: 30px 0px 0px;
     @include govuk-font($size: 16);
+  }
+  &:before {
+    @include mq ($until: tablet) {
+      position: absolute;
+      content: '';
+      height: 100%;
+      width: 15px;
+      left: 0px;
+      background-color: yellow;
+    }
   }
   &::-webkit-scrollbar {
     display: none;
@@ -19,6 +31,10 @@
     flex: 0 0 auto;
     padding-left: 15px;
     padding-right: 15px;
+    @include mq ($from: tablet) {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
   }
   nav {
     float: left;
@@ -39,29 +55,32 @@
     float: left;
     margin-right: 15px;
   }
+  &__item:last-child {
+    margin-right: 0px;
+  }
   &__list a {
     display: inline-block;
     text-decoration: none;
     outline: 3px solid transparent;
-    padding: 9px 0px 10px;
+    padding: 3px 0px 4px;
     border: 0px;
   }
   &__item--selected a {
     background-color: transparent;
-    box-shadow: 0 4px 0 govuk-colour('blue') !important;
+    box-shadow: 0 3px 0 govuk-colour('blue') !important;
   }
   &__list a:focus {
     border-color: $govuk-focus-colour;
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
-    box-shadow: 0 4px 0 govuk-colour('black') !important;
+    box-shadow: 0 3px 0 govuk-colour('black') !important;
   }
   .defra-button-secondary {
     float: left;
     border: 0px;
     color: $govuk-link-colour !important;
     margin: 0px 15px 0px 0px !important;
-    padding: 9px 0px 10px 21px;
+    padding: 3px 0px 4px 21px;
     @include mq ($until: tablet) {
       @include govuk-font($size: 19);
     }
@@ -81,7 +100,7 @@
     }
     &:focus {
       color: govuk-colour('black') !important;
-      box-shadow: 0 4px 0 govuk-colour('black') !important;
+      box-shadow: 0 3px 0 govuk-colour('black') !important;
     }
     &:hover {
       color: $govuk-link-hover-colour !important;
