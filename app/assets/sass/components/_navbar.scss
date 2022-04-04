@@ -60,7 +60,7 @@
     display: inline-block;
     text-decoration: none;
     outline: 3px solid transparent;
-    padding: 3px 0px 4px;
+    padding: 4px 0px 4px;
     border: 0px;
   }
   &__item--selected a {
@@ -78,7 +78,7 @@
     border: 0px;
     color: $govuk-link-colour !important;
     margin: 0px 15px 0px 0px !important;
-    padding: 3px 0px 4px 21px;
+    padding: 4px 0px 4px 21px;
     &:after {
       content: 'Map';
     }
@@ -87,7 +87,6 @@
     }
     svg {
       color: govuk-colour('black');
-      margin-top: -12px;
       left: 1px;
     }
     &:visited {

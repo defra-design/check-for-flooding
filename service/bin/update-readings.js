@@ -59,7 +59,6 @@ module.exports = async () => {
       LIMIT 2) RETURNING id )
       SELECT count(*) FROM deleted;
     `)
-    console.log(deleted)
     console.log(`--> Deleted ${deleted[0].count} readings processed earlier than latest 2`)
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
