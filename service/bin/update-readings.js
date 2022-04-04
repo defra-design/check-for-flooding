@@ -3,6 +3,7 @@ const pgp = require('pg-promise')()
 const moment = require('moment-timezone')
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
+const { ModuleFilenameHelpers } = require('webpack')
 
 axiosRetry(axios, {
   retries: 3, // number of retries
@@ -17,10 +18,11 @@ axiosRetry(axios, {
 })
 
 module.exports = async () => {
+// const updateReading = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
-  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest&parameter=level'
+  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
   const readings = []
   const response = await axios.get(uri).then(response => { return response }).catch((err) => {
@@ -42,19 +44,24 @@ module.exports = async () => {
         id: item['@id'].substring(item['@id'].lastIndexOf('readings/') + 9),
         measure_id: item.measure.substring(item.measure.lastIndexOf('/') + 1),
         value: item.value,
-        datetime: item.dateTime
+        datetime: item.dateTime,
+        process_datetime: moment().format()
       })
     }
-    const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime'], { table: 'reading' })
-    const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO NOTHING'
+    const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime', 'process_datetime'], { table: 'reading' })
+    const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO UPDATE SET process_datetime = EXCLUDED.process_datetime'
     await db.none(query)
     console.log(`--> Insert/updated ${items.length} new readings`)
     // Delete old records
     const deleted = await db.any(`
-      with deleted as (DELETE FROM reading WHERE datetime <= now() - interval '1' day returning id )
-      select count(*) from deleted;
+      WITH deleted AS (DELETE FROM reading WHERE process_datetime NOT IN
+      (SELECT DISTINCT ON (process_datetime) process_datetime FROM reading
+      ORDER BY process_datetime DESC
+      LIMIT 2) RETURNING id )
+      SELECT count(*) FROM deleted;
     `)
-    console.log(`--> Deleted ${deleted[0].count} readings older than 1 day`)
+    console.log(deleted)
+    console.log(`--> Deleted ${deleted[0].count} readings processed earlier than latest 2`)
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Updated ${readings.length} readings`
@@ -63,3 +70,5 @@ module.exports = async () => {
     console.log(`--> Error ${response.status} receiving readings`)
   }
 }
+
+// module.exports = updateReadings()
