@@ -404,7 +404,7 @@ function BarChart (containerId, stationId, data) {
   container.appendChild(controls)
 
   // Data resolutions in days, ascending order
-  const bands = [{ period: 'minutes', label: 'Minutes', days: 1 }, { period: 'hours', label: 'Hours', days: 5 }]
+  const bands = [{ period: 'minutes', label: '15 Minutes', days: 1 }, { period: 'hours', label: 'Hours', days: 5 }]
 
   // Add time scale buttons
   const segmentedControl = document.createElement('div')
