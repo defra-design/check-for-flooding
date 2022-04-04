@@ -28,7 +28,7 @@
     display: block;
     @include govuk-font($size: 16);
     padding: 4px 0;
-    border-bottom: 3px solid transparent;
+    border: 0px;
     position: relative;
     outline: 3px solid transparent;
     color: govuk-colour('blue');
@@ -37,12 +37,15 @@
     color: $govuk-link-hover-colour;
   }
   input:checked + label {
-    border-bottom: 3px solid govuk-colour('blue');
+    background-color: transparent;
+    border-bottom: 3px solid currentColor;
   }
   input:focus + label {
-    border-bottom: 3px solid govuk-colour('black');
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
+    border: 0px;
+    box-shadow: 0 3px 0 govuk-colour('black') !important;
+    margin-bottom: 3px;
   }
 }
 .defra-chart-pagination {

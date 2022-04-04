@@ -17,7 +17,7 @@ axiosRetry(axios, {
 })
 
 module.exports = async () => {
-// const updateReading = async () => {
+// const updateReadings = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)

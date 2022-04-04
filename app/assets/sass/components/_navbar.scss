@@ -1,13 +1,14 @@
 .defra-navbar {
   position: relative;
   @include govuk-font($size: 16);
-  margin: 15px -15px 0px;
+  margin: 12px -15px 0px;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  padding-top: 3px;
   padding-bottom: 14px;
   border-bottom: 1px solid $govuk-border-colour;
   @include mq ($from: tablet) {
@@ -60,18 +61,19 @@
     display: inline-block;
     text-decoration: none;
     outline: 3px solid transparent;
-    padding: 4px 0px 4px;
+    padding: 4px 0px;
     border: 0px;
   }
   &__item--selected a {
     background-color: transparent;
-    box-shadow: 0 3px 0 govuk-colour('blue') !important;
+    border-bottom: 3px solid currentColor;
   }
   &__list a:focus {
-    border-color: $govuk-focus-colour;
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
+    border: 0px;
     box-shadow: 0 3px 0 govuk-colour('black') !important;
+    margin-bottom: 3px;
   }
   .defra-button-secondary {
     float: left;
@@ -88,9 +90,6 @@
     svg {
       color: govuk-colour('black');
       left: 1px;
-    }
-    &:visited {
-      color: $govuk-link-visited-colour !important;
     }
     &:focus {
       color: govuk-colour('black') !important;
