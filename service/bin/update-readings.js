@@ -44,7 +44,7 @@ module.exports = async () => {
         measure_id: item.measure.substring(item.measure.lastIndexOf('/') + 1),
         value: item.value,
         datetime: item.dateTime,
-        process_datetime: end().format()
+        process_datetime: end.format()
       })
     }
     const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime', 'process_datetime'], { table: 'reading' })

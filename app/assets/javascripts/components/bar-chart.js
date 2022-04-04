@@ -234,7 +234,7 @@ function BarChart (containerId, stationId, data) {
     locatorBackground.classed('locator__background--visible', false)
   }
 
-  const updateSegmentedControl = () => {
+  const updateNavbar = () => {
     const now = new Date()
     const dataDurationDays = Math.round((new Date(now.getTime() - dataStart.getTime())) / (1000 * 60 * 60 * 24))
     // Check there are at least 2 telemetry arrays
@@ -243,12 +243,12 @@ function BarChart (containerId, stationId, data) {
       numBands += Object.getOwnPropertyDescriptor(dataCache, bands[i].period) ? 1 : 0
     }
     // Determin which controls to display
-    forEach(segmentedControl.querySelectorAll('.defra-chart-segmented-control input'), input => {
+    forEach(navbar.querySelectorAll('.defra-chart-navbar input'), input => {
       const isBand = period === input.getAttribute('data-period')
       const band = bands.find(x => x.period === input.getAttribute('data-period'))
       input.checked = isBand
       input.parentNode.style.display = (band.days <= dataDurationDays) && numBands > 1 ? 'inline-block' : 'none'
-      input.parentNode.classList.toggle('defra-chart-segmented-control__segment--selected', isBand)
+      input.parentNode.classList.toggle('defra-chart-navbar__item--selected', isBand)
     })
   }
 
@@ -338,7 +338,7 @@ function BarChart (containerId, stationId, data) {
       dataItem = direction === 'forward' ? dataPage[positiveDataItems[positiveDataItems.length - 1]] : dataPage[positiveDataItems[0]]
     }
     // Update html control properties
-    updateSegmentedControl()
+    updateNavbar()
     updatePagination(pageStart, pageEnd, pageDuration, pageDurationHours)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
@@ -407,11 +407,11 @@ function BarChart (containerId, stationId, data) {
   const bands = [{ period: 'minutes', label: '15 Minutes', days: 1 }, { period: 'hours', label: 'Hours', days: 5 }]
 
   // Add time scale buttons
-  const segmentedControl = document.createElement('div')
-  segmentedControl.className = 'defra-chart-segmented-control'
+  const navbar = document.createElement('div')
+  navbar.className = 'defra-chart-navbar'
   for (let i = bands.length - 1; i >= 0; i--) {
     const control = document.createElement('div')
-    control.className = 'defra-chart-segmented-control__segment'
+    control.className = 'defra-chart-navbar__item'
     control.style.display = 'none'
     let start = new Date()
     let end = new Date()
@@ -419,12 +419,12 @@ function BarChart (containerId, stationId, data) {
     start = start.toISOString().replace(/.\d+Z$/g, 'Z')
     end = end.toISOString().replace(/.\d+Z$/g, 'Z')
     control.innerHTML = `
-      <input class="defra-chart-segmented-control__input" name="time" type="radio" id="time${bands[i].label}" data-period="${bands[i].period}" data-start="${start}" data-end="${end}" aria-controls="bar-chart"/>
+      <input class="defra-chart-navbar__input" name="time" type="radio" id="time${bands[i].label}" data-period="${bands[i].period}" data-start="${start}" data-end="${end}" aria-controls="bar-chart"/>
       <label for="time${bands[i].label}">${bands[i].label}</label>
     `
-    segmentedControl.appendChild(control)
+    navbar.appendChild(control)
   }
-  controls.appendChild(segmentedControl)
+  controls.appendChild(navbar)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
@@ -536,7 +536,7 @@ function BarChart (containerId, stationId, data) {
   })
 
   container.addEventListener('click', (e) => {
-    const classNames = ['defra-chart-segmented-control__input', 'defra-chart-pagination__button']
+    const classNames = ['defra-chart-navbar__input', 'defra-chart-pagination__button']
     if (!classNames.some(className => e.target.classList.contains(className))) return
     if (e.target.getAttribute('aria-disabled') === 'true') {
       const container = e.target.classList.contains('defra-chart-pagination__button--back') ? pageBackDescription : pageForwardDescription
