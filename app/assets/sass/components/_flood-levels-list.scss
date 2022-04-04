@@ -144,10 +144,10 @@
     }
   }
   &-item-numeric {
-    @include govuk-font($size: 16, $tabular: true);
+    @include govuk-font($size: 19, $tabular: true);
   }
   &-item-secondary {
-    @include govuk-font($size: 14, $tabular: true);
+    @include govuk-font($size: 16, $tabular: true);
     color: $govuk-secondary-text-colour;
   }
   &__item--rainfall &__detail &-item-secondary {

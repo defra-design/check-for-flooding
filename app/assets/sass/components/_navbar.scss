@@ -1,6 +1,6 @@
 .defra-navbar {
   position: relative;
-  @include govuk-font($size: 19);
+  @include govuk-font($size: 16);
   margin: 15px -15px 0px;
   display: flex;
   flex-wrap: nowrap;
@@ -12,7 +12,6 @@
   border-bottom: 1px solid $govuk-border-colour;
   @include mq ($from: tablet) {
     margin: 30px 0px 0px;
-    @include govuk-font($size: 16);
   }
   &:before {
     @include mq ($until: tablet) {
@@ -80,9 +79,6 @@
     color: $govuk-link-colour !important;
     margin: 0px 15px 0px 0px !important;
     padding: 3px 0px 4px 21px;
-    @include mq ($until: tablet) {
-      @include govuk-font($size: 19);
-    }
     &:after {
       content: 'Map';
     }
