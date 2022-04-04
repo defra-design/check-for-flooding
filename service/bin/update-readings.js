@@ -20,7 +20,7 @@ module.exports = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
-  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
+  const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest&parameter=level'
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
   const readings = []
   const response = await axios.get(uri).then(response => { return response }).catch((err) => {
