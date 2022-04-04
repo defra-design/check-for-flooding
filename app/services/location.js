@@ -40,7 +40,7 @@ module.exports = {
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
         // Remove medium and low confidence results
-        results = results.filter(result => result.confidence === 'High')
+        results = results.filter(result => result.confidence !== 'Low')
         response.data.results = results
         if (results.length) {
           // We have a valid result, select first
@@ -82,8 +82,8 @@ module.exports = {
         let results = response.data.resourceSets[0].resources
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
-        // Remove medium and low confidence results
-        results = results.filter(result => result.confidence === 'High')
+        // Remove low confidence results
+        results = results.filter(result => result.confidence !== 'Low')
         // Remove duplication within the name
         results = results.map(result => {
           if (result.address.adminDistrict2 === result.address.locality) {
