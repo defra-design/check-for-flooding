@@ -8,7 +8,6 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  padding-top: 3px;
   padding-bottom: 14px;
   border-bottom: 1px solid $govuk-border-colour;
   @include mq ($from: tablet) {
@@ -61,6 +60,7 @@
     display: inline-block;
     text-decoration: none;
     outline: 3px solid transparent;
+    margin-top: 3px;
     padding: 4px 0px;
     border: 0px;
   }
@@ -79,7 +79,7 @@
     float: left;
     border: 0px;
     color: $govuk-link-colour !important;
-    margin: 0px 15px 0px 0px !important;
+    margin: 3px 15px 0px 0px !important;
     padding: 4px 0px 4px 21px;
     &:after {
       content: 'Map';
