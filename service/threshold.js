@@ -5,12 +5,12 @@ module.exports = {
   getThresholds: async (stationId, measure) => {
     const response = await db.query(`
     SELECT
-    concat(threshold.stationId, '-', threshold.name  ) AS id,
+    concat(threshold.station_id, '-', threshold.name  ) AS id,
     threshold.name AS name,
     round(threshold.value::numeric,2) AS value,
-    threshold.date AS date
+    threshold.datetime AS date
     FROM station
-    LEFT JOIN threshold ON threshold.stationId = station.id
+    LEFT JOIN threshold ON threshold.station_id = station.id
     WHERE lower(station.id) = lower($1) AND threshold.measure = $2 AND threshold.name != 'low'
     ORDER BY threshold.value DESC, threshold.name;
     `, [stationId, measure])
