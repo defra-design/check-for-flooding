@@ -75,6 +75,9 @@
     box-shadow: 0 3px 0 govuk-colour('black') !important;
     margin-bottom: 3px;
   }
+  &__list a:visited {
+    color: $govuk-link-colour;
+  }
   .defra-button-secondary {
     float: left;
     border: 0px;
