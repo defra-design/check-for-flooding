@@ -62,15 +62,14 @@
   &__data--rainfall {
     width: 33.33%;
   }
-  &__data--trend {
-    width: 39%;
-  }
   &__data--height {
-    width: 31%;
-    padding-left: 5%;
+    width: 50%;
+    @include mq ($from: tablet) {
+      padding-left: 15%;
+    }
   }
   &__data--state {
-    width: 30%;
+    width: 50%;
     text-align: right;
   }
   &-item-meta {
@@ -85,42 +84,6 @@
   }
   &-item-na {
     @include govuk-font($size: 16);
-  }
-  &-item-trend {
-    padding: 4px;
-    display: inline-block;
-    // color: $govuk-secondary-text-colour;
-    position: relative;
-    text-transform: uppercase;
-    @include govuk-font($size: 19, $weight: normal);
-    padding-left: 30px;
-    @include mq ($from: tablet) {
-      padding-left: 36px;
-    }
-    &__icon {
-      position: absolute;
-      border-radius: 100%;
-      border: 1px solid govuk-colour('mid-grey');
-      width: 24px;
-      height: 24px;
-      left: 0px;
-      top: 1px;
-      @include mq ($from: tablet) {
-        width: 28px;
-        height: 28px;
-        top: 2px;
-      }
-    }
-    svg {
-      position: absolute;
-      left: 4px;
-      top: 4px;
-      color: #383f43;
-      @include mq ($from: tablet) {
-        left:6px;
-        top: 6px;
-      }
-    }
   }
   &-item-height {
     @include govuk-font($size: 19, $tabular: true, $weight: normal);

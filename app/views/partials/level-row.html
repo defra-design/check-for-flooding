@@ -43,11 +43,6 @@
 
     {% elif item.type == 'tide' %}
     <!-- Sea or tide -->
-    {% if model.queryType == 'river' %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-na">n/a</span>
-    </div>
-    {% endif %}
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list-item-na">n/a</a>
@@ -65,16 +60,6 @@
 
     {% else %}
     <!-- River or groundwater -->
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-trend">
-        <span class="defra-flood-levels-list-item-trend__icon">
-          <svg width="16" height="16" viewBox="0 0 16 16">
-            <path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,0l4,6.4l-8,0l4,-6.4Z"/>
-          </svg>
-        </span>
-        Rising
-      </span>
-    </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
       {% if item.state == 'error' %}
       <span class="defra-flood-levels-list-item-na">n/a</a>

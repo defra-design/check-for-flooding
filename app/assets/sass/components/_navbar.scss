@@ -64,6 +64,9 @@
     padding: 4px 0px;
     border: 0px;
   }
+  &__list a:visited:not(:hover):not(:active):not(:focus) {
+    color: $govuk-link-colour;
+  }
   &__item--selected a {
     background-color: transparent;
     border-bottom: 3px solid currentColor;
@@ -74,9 +77,6 @@
     border: 0px;
     box-shadow: 0 3px 0 govuk-colour('black') !important;
     margin-bottom: 3px;
-  }
-  &__list a:visited {
-    color: $govuk-link-colour;
   }
   .defra-button-secondary {
     float: left;
@@ -101,6 +101,9 @@
     &:hover {
       color: $govuk-link-hover-colour !important;
       background-color: transparent;
+    }
+    &:active {
+      color: govuk-colour('black') !important;
     }
   }
 }
