@@ -17,8 +17,11 @@ module.exports = {
         results = results.filter(result => utils.getSlug(utils.getNameFromGazetteerEntry(result)) === utils.getSlug(slug))
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
-        // Remove medium and low confidence results
-        results = results.filter(result => result.confidence === 'High')
+        // Keep high and medium confidence towns but only high confidence for other resutls
+        results = results.filter(result =>
+          (result.confidence !== 'Low' && result.entityType === 'PopulatedPlace') ||
+          (result.confidence === 'High' && result.entityType !== 'PopulatedPlace'))
+        // Replace response results
         response.data.results = results
         if (results.length) {
           // We have a valid result, select first
@@ -39,8 +42,11 @@ module.exports = {
         let results = response.data.resourceSets[0].resources
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
-        // Remove medium and low confidence results
-        results = results.filter(result => result.confidence === 'High')
+        // Keep high and medium confidence towns but only high confidence for other resutls
+        results = results.filter(result =>
+          (result.confidence !== 'Low' && result.entityType === 'PopulatedPlace') ||
+          (result.confidence === 'High' && result.entityType !== 'PopulatedPlace'))
+        // Replace response results
         response.data.results = results
         if (results.length) {
           // We have a valid result, select first
@@ -62,6 +68,7 @@ module.exports = {
         results = results.filter(result => result.address.adminDistrict === 'England')
         // Remove medium and low confidence results
         results = results.filter(result => result.confidence === 'High')
+        // Replace response results
         response.data.results = results
         if (results.length) {
           // We have a valid result, select first
@@ -82,8 +89,10 @@ module.exports = {
         let results = response.data.resourceSets[0].resources
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
-        // Remove low confidence results
-        results = results.filter(result => result.confidence === 'High')
+        // Keep high and medium confidence towns but only high confidence for other resutls
+        results = results.filter(result =>
+          (result.confidence !== 'Low' && result.entityType === 'PopulatedPlace') ||
+          (result.confidence === 'High' && result.entityType !== 'PopulatedPlace'))
         // Remove duplication within the name
         results = results.map(result => {
           if (result.address.adminDistrict2 === result.address.locality) {
