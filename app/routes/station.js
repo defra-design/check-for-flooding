@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const stationServices = require('../services/station')
 const telemetryServices = require('../services/telemetry')
-const thresholdServices = require('../services/threshold')
 const locationServices = require('../services/location')
 const Station = require('../models/station')
 const Place = require('../models/place')
@@ -17,7 +16,7 @@ router.get('/station', (req, res) => {
 router.get('/station/:id', async (req, res) => {
   const rloiId = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStation(rloiId)
-  let telemetry, thresholds, station, place
+  let telemetry, station, thresholds, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
       return res.status(404).render('404')
@@ -29,11 +28,11 @@ router.get('/station/:id', async (req, res) => {
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
     telemetry = await telemetryServices.getStationTelemetry(station.id, start, end, station.measure)
     telemetry = telemetry.data
-    // Station thresholds only for river and groundwater stations
-    if (['upstream', 'downstream', 'groundwater'].includes(station.measure) && telemetry.observed.length) {
-      thresholds = await thresholdServices.getThresholds(station.id, station.measure === 'downstream')
-      thresholds = new Thresholds(thresholds.data, Number(telemetry.observed[0].value))
-    }
+    // Thresholds
+    thresholds = new Thresholds([
+      { id: `${station.id}-max`, name: 'max', value: station.levelMax, date: station.levelMaxDateTime },
+      { id: `${station.id}-high`, name: 'high', value: station.levelHigh, date: null }
+    ], station.latestHeight)
   } else {
     // Return 500 error
   }

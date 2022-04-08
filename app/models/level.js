@@ -1,26 +1,22 @@
 const utils = require('../utils')
 
 class Level {
-  constructor (data, count, start) {
+  constructor (data) {
     this.id = data.id
-    this.mapId = data.map_id
+    this.mapId = data.type === 'rainfall' ? data.id : data.station_id
     this.name = data.name
-    this.state = data.state
-    this.value = data.value
-    this.valueDownstream = data.value_downstream
-    this.value1hr = data.value_1hr
-    this.value6hr = data.value_6hr
-    this.value24hr = data.value_24hr
-    this.valueDate = data.value_date
-    this.date = data.value_date ? utils.formatTimeDate(data.value_date) : ''
+    this.status = data.status
     this.type = data.type
-    this.riverName = data.river_name
-    this.riverDisplay = data.river_display
-    this.riverSlug = data.river_slug || ''
-    this.riverWiskiName = data.river_wiski_name
-    this.groupCount = count
-    this.groupStart = start
-    this.isDownstream = Boolean(data.is_downstream)
+    this.river_name = data.river_name
+    this.river_display = data.river_display
+    this.river_slug = data.river_slug
+    this.river_order = data.river_order
+    this.rainfall_1hr = data.rainfall__1hr
+    this.rainfall_6hr = data.rainfall__6hr
+    this.rainfall_24hr = data.rainfall__24hr
+    this.latest_height = data.latest_height
+    this.latest_datetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
+    this.isDownstage = Boolean(data.is_downstage)
     this.hasDetail = Boolean(data.has_detail)
   }
 }

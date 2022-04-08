@@ -37,7 +37,7 @@
             1 hour
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.latest1hr }}mm
+            {{ model.station.rainfall1hr }}mm
             <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>
@@ -46,7 +46,7 @@
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.latest6hr }}mm
+            {{ model.station.rainfall6hr }}mm
             <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>
@@ -55,7 +55,7 @@
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            {{ model.latest24hr }}mm
+            {{ model.station.rainfall24hr }}mm
             <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
           </dd>
         </div>

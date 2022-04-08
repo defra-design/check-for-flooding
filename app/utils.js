@@ -60,11 +60,11 @@ const formatTime = (date) => {
 }
 
 const formatDate = (date) => {
-  return `${moment(date).format('D\xa0MMM')}`
+  return `${moment(date).tz('Europe/London').format('D\xa0MMM')}`
 }
 
 const formatDatePast = (date) => {
-  return `${moment(date).format('D\xa0MMMM\xa0YYYY')}`
+  return `${moment(date).tz('Europe/London').format('D\xa0MMMM\xa0YYYY')}`
 }
 
 const bufferBbox = (bbox, m) => {

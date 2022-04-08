@@ -6,7 +6,6 @@ const stationServices = require('./station')
 const outlookServices = require('./outlook')
 const targetAreaServices = require('./target-area')
 const telemetryServices = require('./telemetry')
-const thresholdServices = require('./threshold')
 const mapServices = require('./map')
 const fs = require('fs')
 const path = require('path')
@@ -164,19 +163,6 @@ router.get('/service/telemetry/:id/:start/:end/:stage', async (req, res, next) =
 router.get('/service/telemetry-rainfall/:id/:start/:end', async (req, res, next) => {
   try {
     res.status(200).json(await telemetryServices.getRainfall(req.params.id, req.params.start, req.params.end))
-  } catch (err) {
-    res.status(500)
-    console.log(err)
-  }
-})
-
-//
-// Thresholds
-//
-
-router.get('/service/thresholds/:id/:stage', async (req, res, next) => {
-  try {
-    res.status(200).json(await thresholdServices.getThresholds(req.params.id, req.params.stage))
   } catch (err) {
     res.status(500)
     console.log(err)

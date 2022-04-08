@@ -2,6 +2,7 @@ const utils = require('../utils')
 
 class Threshold {
   constructor (thresholds, latest) {
+    thresholds = thresholds.filter(x => !!(x.value))
     latest = Math.round(latest * 100) / 100
     return this.createBands(thresholds, latest)
   }

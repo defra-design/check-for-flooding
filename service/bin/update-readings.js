@@ -1,4 +1,6 @@
-const db = require('./db')
+const dotenv = require('dotenv')
+dotenv.config({ path: './.env' })
+const db = require('../db')
 const pgp = require('pg-promise')()
 const moment = require('moment-timezone')
 const axios = require('axios')
@@ -16,8 +18,8 @@ axiosRetry(axios, {
   }
 })
 
-module.exports = async () => {
-// const updateReadings = async () => {
+// module.exports = async () => {
+const updateReadings = async () => {
   // Get data from API
   const start = moment()
   console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
@@ -60,6 +62,9 @@ module.exports = async () => {
       SELECT count(*) FROM deleted;
     `)
     console.log(`--> Deleted ${deleted[0].count} readings processed earlier than latest 2`)
+    // Refresh materialized view
+    await db.query('REFRESH MATERIALIZED VIEW CONCURRENTLY measure_with_latest;')
+    console.log('--> Refreshed materialized view')
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
       moment().format(), `Updated ${readings.length} readings`
@@ -69,4 +74,4 @@ module.exports = async () => {
   }
 }
 
-// module.exports = updateReadings()
+module.exports = updateReadings()
