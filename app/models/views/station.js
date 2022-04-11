@@ -3,7 +3,6 @@ const utils = require('../../utils')
 
 class ViewModel {
   constructor (station, telemetry, thresholds, place) {
-    console.log(station)
     this.title = (() => {
       if (station.type === 'rainfall') {
         return `Rainfall at ${station.name} gauge`

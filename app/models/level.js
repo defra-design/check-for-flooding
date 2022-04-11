@@ -14,6 +14,7 @@ class Level {
     this.rainfall1hr = data.rainfall_1hr
     this.rainfall6hr = data.rainfall_6hr
     this.rainfall24hr = data.rainfall_24hr
+    this.latestState = data.latest_state
     this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
     this.latestDatetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
     this.isDownstage = Boolean(data.is_downstage)

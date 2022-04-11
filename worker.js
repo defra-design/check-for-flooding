@@ -1,5 +1,5 @@
 const amqp = require('amqp-connection-manager')
-const updateReadings = require('./service/bin/update-readings')
+const updateData = require('./service/bin/update-data')
 
 const AMQP_URL = process.env.CLOUDAMQP_URL || 'amqp://localhost'
 if (!AMQP_URL) process.exit(1)
@@ -57,8 +57,8 @@ function onMessage (data) {
   }
 
   switch (message.taskName) {
-    case 'updateReadings':
-      updateReadings()
+    case 'updateData':
+      updateData()
       break
 
     default:

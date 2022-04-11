@@ -3,7 +3,7 @@
 
 import { axisBottom, axisLeft } from 'd3-axis'
 import { scaleLinear, scaleBand } from 'd3-scale'
-import { timeFormat } from 'd3-time-format'
+import { utcFormat } from 'd3-time-format'
 import { select, pointer } from 'd3-selection'
 import { max } from 'd3-array'
 import { timeMinute } from 'd3-time'
@@ -30,7 +30,7 @@ function BarChart (containerId, stationId, data) {
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
     const xAxis = axisBottom(xScale).tickSizeOuter(0).tickValues(xScale.domain().filter((d, i) => {
-      const hourMinute = timeFormat('%H:%M')(new Date(d))
+      const hourMinute = utcFormat('%H:%M')(new Date(d))
       const labelsHours = ['00:00']
       const labelsMinutes = ['00:00', '06:00', '12:00', '18:00']
       const labels = period === 'hours' ? labelsHours : labelsMinutes
@@ -175,12 +175,12 @@ function BarChart (containerId, stationId, data) {
   const getItemText = (item) => {
     const timeStart = timeMinute.offset(new Date(item.dateTime), period === 'minutes' ? -15 : -60)
     const timeEnd = new Date(item.dateTime)
-    const formatTime12 = timeFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
+    const formatTime12 = utcFormat(period === 'minutes' ? '%-I:%M%p' : '%-I%p')
     return {
       value: item.isValid ? item.value + 'mm' + (item.isLatest ? ' latest' : '') : 'No data',
       period: `${formatTime12(timeStart).toLowerCase()} - ${formatTime12(timeEnd).toLowerCase()}`,
-      monthShort: timeFormat('%e %b')(timeEnd),
-      monthLong: timeFormat('%e %B')(timeEnd)
+      monthShort: utcFormat('%e %b')(timeEnd),
+      monthLong: utcFormat('%e %B')(timeEnd)
     }
   }
 
@@ -283,11 +283,11 @@ function BarChart (containerId, stationId, data) {
     grid.attr('aria-colcount', colcount)
     description.innerHTML = `
     Showing ${hours > 24 ? days : hours} ${hours > 24 ? 'days' : 'hours'}
-    from ${timeFormat('%e %B %Y at %-I:%M%p')(start)} to ${timeFormat('%e %B %Y at %-I:%M%p')(end)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
+    from ${utcFormat('%e %B %Y at %-I:%M%p')(start)} to ${utcFormat('%e %B %Y at %-I:%M%p')(end)} in ${period === 'hours' ? 'hourly' : '15 minute'} totals.
     There was ${total > 0 ? total.toFixed(1) + 'mm' : 'no rainfall'} in this period.
   `
     const hasLatest = !!dataPage.find(x => x.isLatest)
-    description.innerHTML += hasLatest ? `Last reading received at ${timeFormat('%-I:%M%p, %e %B %Y')(new Date(dataCache.latestDateTime))}` : ''
+    description.innerHTML += hasLatest ? `Last reading received at ${utcFormat('%-I:%M%p, %e %B %Y')(new Date(dataCache.latestDateTime))}` : ''
   }
 
   const getDataPage = (start, end) => {
@@ -368,9 +368,9 @@ function BarChart (containerId, stationId, data) {
   const formatLabelsX = (d, i, nodes) => {
     // Format X Axis labels
     const element = select(nodes[i])
-    // const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
-    const formattedTime = timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
-    const formattedDate = timeFormat('%-e %b')(new Date(d))
+    // const formattedTime = utcFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
+    const formattedTime = utcFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
+    const formattedDate = utcFormat('%-e %b')(new Date(d))
     element.append('tspan').text(formattedTime)
     element.append('tspan').attr('x', 0).attr('dy', '15').text(formattedDate)
   }

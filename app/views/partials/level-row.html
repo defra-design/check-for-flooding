@@ -71,7 +71,7 @@
       {% if item.status == 'error' %}
       <span class="defra-flood-levels-list-item-na">n/a</span>
       {% else %}
-      <span class="defra-flood-levels-list-item-state defra-flood-levels-list-item-state--{% if item.status == 'high' %}blue{% else %}grey{% endif %}">{{ item.status | capitalize }}</span>
+      <span class="defra-flood-levels-list-item-state defra-flood-levels-list-item-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
       {% endif %}
     </div>
     {% endif %}
