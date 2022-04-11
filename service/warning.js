@@ -6,7 +6,7 @@ module.exports = {
     SELECT id, name, severity, message_changed_date AS updated FROM warning
     ORDER BY severity ASC
     `)
-    return response.rows
+    return response
   },
   getWarningsWithinBbox: async (bbox = []) => {
     const queryAll = `
@@ -24,6 +24,6 @@ module.exports = {
       ORDER BY severity;  
     `
     const response = bbox.length ? await db.query(queryBbox, bbox) : await db.query(queryAll)
-    return response.rows
+    return response
   }
 }

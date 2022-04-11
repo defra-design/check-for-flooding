@@ -43,6 +43,6 @@ module.exports = {
     LEFT JOIN warning ON ta2.fws_tacode = warning.id
     WHERE LOWER(ta2.fws_tacode) = LOWER($1));
     `, [id])
-    return response.rows[0]
+    return response[0]
   }
 }

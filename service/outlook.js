@@ -6,6 +6,6 @@ module.exports = {
     const response = await db.query(`
     SELECT * FROM outlook
     `)
-    return response.rows[0].data.statement
+    return response[0].data.statement
   }
 }

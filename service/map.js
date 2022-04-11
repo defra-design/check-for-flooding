@@ -19,15 +19,15 @@ module.exports = {
     FROM warning JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning.id;
     `)
     const features = []
-    response.rows.forEach(row => {
+    response.forEach(row => {
       features.push({
         type: 'Feature',
-        id: row.id,
-        geometry: row.geometry,
+        id: item.id,
+        geometry: item.geometry,
         properties: {
-          name: row.name,
-          severity: Number(row.severity),
-          issuedDate: row.raised_date,
+          name: item.name,
+          severity: Number(item.severity),
+          issuedDate: item.raised_date,
           type: 'TA'
         }
       })
@@ -40,35 +40,43 @@ module.exports = {
   },
   getStationsGeoJSON: async (type) => {
     const response = await db.query(`
-    SELECT id, rloi_id, lon, lat, upper(type) AS type, is_wales, initcap(status) AS status, state, name, river, value, value_1hr, value_6hr, value_24hr, value_date, percentile_5, percentile_95, up, down
-    FROM station
-    WHERE $1 LIKE '%' || type || '%';
-    `, [`${type}`])
+      SELECT station_id, rloi_id, lon, lat,
+      CASE
+      WHEN type = 'river' AND is_multi_stage THEN 'M'
+      WHEN type = 'river' AND NOT is_multi_stage THEN 'S'
+      WHEN type = 'groundwater' THEN 'G'
+      WHEN type = 'tide' THEN 'C'
+      WHEN type = 'rainfall' THEN 'R'
+      ELSE NULL END AS type,
+      is_wales, initcap(latest_state) AS state, status, name, river_name, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime, level_high, level_low, station_up, station_down
+      FROM measure_with_latest
+      WHERE type LIKE $1;
+    `, [`%${type}%`])
     const features = []
-    response.rows.forEach(row => {
+    response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: `stations.${row.type === 'R' ? row.id : row.rloi_id}`,
+        id: `stations.${item.type === 'R' ? item.station_id : item.rloi_id}`,
         geometry: {
           type: 'Point',
-          coordinates: [row.lon, row.lat]
+          coordinates: [item.lon, item.lat]
         },
         properties: {
-          type: row.type,
-          iswales: row.is_wales,
-          status: row.status,
-          atrisk: !!(row.state === 'high'),
-          name: row.name,
-          river: row.river,
-          value: row.value,
-          valueDate: row.value_date,
-          value1hr: row.value_1hr,
-          value6hr: row.value_6hr,
-          value24hr: row.value_24hr,
-          percentile5: row.percentile_5,
-          percentile95: row.percentile_95,
-          up: row.up,
-          down: row.down
+          type: item.type,
+          iswales: item.is_wales,
+          status: item.status,
+          atrisk: !!(item.latest_state === 'high'),
+          name: item.name,
+          river: item.river_name,
+          value: item.latest_height,
+          valueDate: item.latest_datetime,
+          value1hr: item.rainfall_1hr,
+          value6hr: item.rainfall_6hr,
+          value24hr: item.rainfall_24hr,
+          percentile5: item.level_high,
+          percentile95: item.level_low,
+          up: item.station_up,
+          down: item.station_down
         }
       })
     })
@@ -87,13 +95,13 @@ module.exports = {
     FROM flood_warning_areas
     `)
     const features = []
-    response.rows.forEach(row => {
+    response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: row.id,
-        geometry: row.geometry,
+        id: item.id,
+        geometry: item.geometry,
         properties: {
-          fws_tacode: row.fws_tacode
+          fws_tacode: item.fws_tacode
         }
       })
     })

@@ -7,15 +7,15 @@ class Level {
     this.name = data.name
     this.status = data.status
     this.type = data.type
-    this.river_name = data.river_name
-    this.river_display = data.river_display
-    this.river_slug = data.river_slug
-    this.river_order = data.river_order
-    this.rainfall_1hr = data.rainfall__1hr
-    this.rainfall_6hr = data.rainfall__6hr
-    this.rainfall_24hr = data.rainfall__24hr
-    this.latest_height = data.latest_height
-    this.latest_datetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
+    this.riverName = data.river_name
+    this.riverDisplay = data.river_display
+    this.riverSlug = data.river_slug
+    this.riverOrder = data.river_order
+    this.rainfall1hr = data.rainfall_1hr
+    this.rainfall6hr = data.rainfall_6hr
+    this.rainfall24hr = data.rainfall_24hr
+    this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
+    this.latestDatetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
     this.isDownstage = Boolean(data.is_downstage)
     this.hasDetail = Boolean(data.has_detail)
   }

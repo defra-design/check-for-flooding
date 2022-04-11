@@ -4,7 +4,7 @@ module.exports = {
   // Used in search
   getRivers: async () => {
     const response = await db.query('SELECT * FROM river')
-    return response.rows
+    return response
   },
 
   getRiverBySlug: async (slug) => {
@@ -13,7 +13,7 @@ module.exports = {
     WHERE slug = $1
     ORDER BY display
     `, [slug])
-    return response.rows[0] || {}
+    return response[0] || {}
   },
 
   getRiversLikeSlug: async (slug) => {
@@ -22,7 +22,7 @@ module.exports = {
     WHERE slug LIKE $1 OR slug LIKE $2 OR slug = $3
     ORDER BY display
     `, [`%-${slug}%`, `%${slug}-%`, slug])
-    return response.rows
+    return response
   },
 
   // Used on list pages
@@ -36,10 +36,6 @@ module.exports = {
     WHERE river.slug LIKE $1 OR river.slug LIKE $2 OR river.slug LIKE $3
     GROUP BY river.display, river.slug
     `, [`%-${slug}%`, `%${slug}-%`, slug])
-    // Address this in SQL/Materialised view
-    if (response.rows && [...new Set(response.rows.map(item => item.river_slug))].length > 1) {
-      response.rows = []
-    }
-    return response.rows.length ? response.rows[0] : {}
+    return response.length ? response[0] : []
   }
 }

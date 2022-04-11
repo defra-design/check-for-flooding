@@ -10,9 +10,9 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
-  const query = req.query
+  const query = Object.assign({}, { place: null, type: null, river: null }, req.query)
   let model
-  if (query.river && query.river !== '') {
+  if (query.river) {
     // River query
     const term = decodeURI(query.river)
     const riverResponse = await riverServices.getRiverDetail(term)
@@ -27,7 +27,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     const levelResponse = await levelServices.getLevelsByRiver(term)
     const levels = new Levels({}, river, query.type, levelResponse.data || [])
     model = new ViewModel(query, null, null, river, null, levels)
-  } else if (query.place && query.place !== '') {
+  } else if (query.place) {
     // Place query
     const term = decodeURI(query.place)
     const locationResponse = await locationServices.getLocationByQuery(term)

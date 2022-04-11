@@ -41,6 +41,7 @@ module.exports = {
       name,
       status,
       type,
+      CASE WHEN type = 'tide' AND river_name is NULL THEN 'sea' ELSE type END AS group_type,
       river_name,
       river_display,
       river_slug,
