@@ -51,7 +51,6 @@ module.exports = {
     const baseUri = `https://environment.data.gov.uk/flood-monitoring/id/stations/${id}/readings`
     // Get latest 96 readings (24 hours)
     let uri = `${baseUri}?_sorted&_limit=96`
-    console.log(uri)
     let response = await axios.get(uri).then((response) => { return response })
     let latest
     if (response.status === 200 && response.data) {
