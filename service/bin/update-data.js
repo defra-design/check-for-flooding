@@ -18,11 +18,10 @@ axiosRetry(axios, {
   }
 })
 
-// module.exports = async () => {
-const updateData = async () => {
+module.exports = async () => {
   // Get data from API
   const start = moment()
-  console.log(`--> Update started at ${start.format('HH:mm:ss')}`)
+  console.log(`--> Data update: Started at ${start.format('HH:mm:ss')}`)
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
   const readings = []
@@ -32,10 +31,9 @@ const updateData = async () => {
     }
   })
   if (response.status === 200 && response.data && response.data.items) {
-    const items = response.data.items
+    const items = response.data.items.filter(x => !x['@id'].includes('rainfall'))
     const end = moment()
-    const duration = end.diff(start)
-    console.log(`--> Received ${items.length} readings at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})`)
+    console.log(`--> Data update: Received ${items.length} readings, excluding rainfall at ${end.format('HH:mm:ss')}`)
     for (const item of items) {
       // Some measures have an array of numbers???
       if (typeof item.value !== 'number') {
@@ -52,7 +50,7 @@ const updateData = async () => {
     const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime', 'process_datetime'], { table: 'reading' })
     const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO UPDATE SET process_datetime = EXCLUDED.process_datetime'
     await db.none(query)
-    console.log(`--> Insert/updated ${items.length} new readings`)
+    console.log(`--> Data update: Insert/updated ${items.length} readings, excluding rainfall`)
     // Delete old records
     const deleted = await db.any(`
       WITH deleted AS (DELETE FROM reading WHERE process_datetime NOT IN
@@ -61,17 +59,15 @@ const updateData = async () => {
       LIMIT 2) RETURNING id )
       SELECT count(*) FROM deleted;
     `)
-    console.log(`--> Deleted ${deleted[0].count} readings processed earlier than latest 2`)
+    console.log(`--> Data update: Deleted ${deleted[0].count} readings processed earlier than second to last process date`)
     // Refresh materialized view
     await db.query('REFRESH MATERIALIZED VIEW CONCURRENTLY measure_with_latest;')
-    console.log('--> Refreshed materialized view')
+    console.log('--> Data update: Refreshed materialized view')
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
-      moment().format(), `Updated ${readings.length} readings`
+      moment().format(), `Data update: Updated ${readings.length} readings, excluding rainfall`
     ])
   } else {
-    console.log(`--> Error ${response.status} receiving readings`)
+    console.log(`--> Data update: Error ${response.status} receiving readings`)
   }
 }
-
-module.exports = updateData()
