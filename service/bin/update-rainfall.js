@@ -34,7 +34,7 @@ module.exports = async () => {
   const readings = []
   const errors = []
   const start = moment()
-  console.log(`--> Data update: Rainfall update started at ${start.format('HH:mm:ss')} - approx 5-10 mins`)
+  console.log(`--> Data update: Rainfall started at ${start.format('HH:mm:ss')} - approx 5-10 mins`)
   for (const measure of measures) {
     const uri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${measure.id}/readings?_sorted&_limit=${measure.limit}`
     // const percentage = ((100 / measures.length) * (i + 1))
@@ -73,7 +73,6 @@ module.exports = async () => {
   const query = pgp.helpers.insert(readings, cs)
   await db.none(query)
   console.log(`--> Data update: Inserted ${readings.length} rainfall readings`)
-  console.log(`--> Data update: Finished at ${moment().format('HH:mm:ss')}`)
   // Update log
   await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
     moment().format(), `Data update: Inserted ${readings.length} rainfall readings`

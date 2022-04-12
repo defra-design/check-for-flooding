@@ -20,8 +20,6 @@ axiosRetry(axios, {
 
 module.exports = async () => {
   // Get data from API
-  const start = moment()
-  console.log(`--> Data update: Started at ${start.format('HH:mm:ss')}`)
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
   const readings = []
@@ -59,7 +57,7 @@ module.exports = async () => {
       LIMIT 2) RETURNING id )
       SELECT count(*) FROM deleted;
     `)
-    console.log(`--> Data update: Deleted ${deleted[0].count} readings processed earlier than second to last process date`)
+    console.log(`--> Data update: Deleted ${deleted[0].count} readings processed earlier than the last two updates`)
     // Refresh materialized view
     await db.query('REFRESH MATERIALIZED VIEW CONCURRENTLY measure_with_latest;')
     console.log('--> Data update: Refreshed materialized view')
