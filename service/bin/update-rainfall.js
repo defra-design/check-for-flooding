@@ -72,7 +72,7 @@ module.exports = async (processStartDatetime) => {
   `)
   console.log(`--> Data update: Deleted ${deleted[0].count} previous rainfall readings`)
   const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime', 'process_datetime'], { table: 'reading' })
-  const query = pgp.helpers.insert(readings, cs)
+  const query = pgp.helpers.insert(readings, cs) + ' ON CONFLICT (id) DO UPDATE SET process_datetime = EXCLUDED.process_datetime'
   await db.none(query)
   console.log(`--> Data update: Inserted ${readings.length} rainfall readings`)
   // Update log
