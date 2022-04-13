@@ -1,13 +1,13 @@
 const moment = require('moment-timezone')
-const updateData = require('./update-data')
+const updateLevels = require('./update-levels')
 const updateRainfall = require('./update-rainfall')
 
-const update = async () => {
-  const start = moment()
-  console.log(`--> Data update: Started at ${start.format('HH:mm:ss')}`)
-  await updateRainfall(start)
-  await updateData(start)
-  console.log(`--> Data update: Finished at ${moment().format('HH:mm:ss')}`)
+module.exports = {
+  getLevels: async () => {
+    const start = moment()
+    console.log(`--> Data update: Started at ${start.format('HH:mm:ss')}`)
+    await updateRainfall(start)
+    await updateLevels(start)
+    console.log(`--> Data update: Finished at ${moment().format('HH:mm:ss')}`)
+  }
 }
-
-module.exports = update()

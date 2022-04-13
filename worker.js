@@ -56,11 +56,12 @@ function onMessage (data) {
     return
   }
 
-  if (message.taskName === 'update') {
-    console.log('In here...')
-    console.log(update())
-    update()
-  } else {
-    console.error('No task was found with name => ' + message.taskName)
+  switch (message.taskName) {
+    case 'update':
+      update.getLevels()
+      break
+
+    default:
+      console.error('No task was found with name => ' + message.taskName)
   }
 }
