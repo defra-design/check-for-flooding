@@ -13,13 +13,13 @@ module.exports = {
   },
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
     FROM warning JOIN flood_warning_areas ON flood_warning_areas.fws_tacode = warning.id UNION
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
     FROM warning JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning.id;
     `)
     const features = []
-    response.forEach(row => {
+    response.forEach(item => {
       features.push({
         type: 'Feature',
         id: item.id,
@@ -48,7 +48,7 @@ module.exports = {
       WHEN type = 'tide' THEN 'C'
       WHEN type = 'rainfall' THEN 'R'
       ELSE NULL END AS type,
-      is_wales, initcap(latest_state) AS state, status, name, river_name, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime, level_high, level_low, station_up, station_down
+      is_wales, initcap(latest_state) AS state, status, name, river_name, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
       WHERE type LIKE $1;
     `, [`%${type}%`])

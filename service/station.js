@@ -93,7 +93,6 @@ module.exports = {
       FROM measure_with_latest
       WHERE lower(rloi_id) = lower($1)
     `, [id])
-    console.log(response[0])
     return response[0]
   },
 
