@@ -8,7 +8,6 @@
 <li class="defra-flood-levels-list__item defra-flood-levels-list__item--{{ model.queryType }}">
   <!-- Location -->
   <div class="defra-flood-levels-list__title">
-    {% if item.hasDetail %}
     {% if item.type === 'rainfall' %}
     <a href="/rainfall-station/{{ item.id | urlencode }}">{{ name | safe }} raingauge</a>
     {% else %}
@@ -19,10 +18,13 @@
       {{ name }}
     </a>
     {% endif %}
-    {% if item.status != 'error' %}
-    <span class="defra-flood-levels-list-item-meta">Updated {{ item.latestDatetime }}</span>
-    {% endif %}
-    {% endif %}
+    <span class="defra-flood-levels-list-item-meta">
+      {% if item.latestDatetime %}
+      Updated {{ item.latestDatetime }}
+      {% else %}
+      Data not available
+      {% endif %}
+    </span>
   </div>
 
   <div class="defra-flood-levels-list__detail">
@@ -44,7 +46,7 @@
     {% elif item.type == 'tide' %}
     <!-- Sea or tide -->
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
-      {% if item.status == 'error' %}
+      {% if item.latestHeight %}
       <span class="defra-flood-levels-list-item-na">n/a</a>
       {% else %}
       <span class="defra-flood-levels-list-item-height">
@@ -61,17 +63,17 @@
     {% else %}
     <!-- River or groundwater -->
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
-      {% if item.status == 'error' %}
-      <span class="defra-flood-levels-list-item-na">n/a</a>
-      {% else %}
+      {% if item.latestHeight %}
       <span class="defra-flood-levels-list-item-height">{{ item.latestHeight }}m</span>
+      {% else %}
+      <span class="defra-flood-levels-list-item-na">n/a</a>
       {% endif %}
     </div>
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--state">
-      {% if item.status == 'error' %}
-      <span class="defra-flood-levels-list-item-na">n/a</span>
-      {% else %}
+      {% if item.latestHeight %}
       <span class="defra-flood-levels-list-item-state defra-flood-levels-list-item-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
+      {% else %}
+      <span class="defra-flood-levels-list-item-na">n/a</span>
       {% endif %}
     </div>
     {% endif %}
