@@ -18,7 +18,7 @@ axiosRetry(axios, {
   }
 })
 
-module.exports = async () => {
+module.exports = async (processStartDatetime) => {
   // Get list of measure Id's
   const response = await db.any(`
     SELECT id, 
@@ -34,12 +34,12 @@ module.exports = async () => {
   const readings = []
   const errors = []
   const start = moment()
-  console.log(`--> Data update: Rainfall started at ${start.format('HH:mm:ss')} - approx 5-10 mins`)
-  for (const measure of measures) {
+  console.log('--> Data update: Rainfall started - approx 5-10 mins')
+  for (const [i, measure] of measures.entries()) {
     const uri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${measure.id}/readings?_sorted&_limit=${measure.limit}`
-    // const percentage = ((100 / measures.length) * (i + 1))
-    // const percentageDisplay = `${percentage.toFixed(2).padStart(4, '0')}%`
-    let response
+    const percentage = Math.floor(((100 / measures.length) * (i + 1)))
+    // const percentageDisplay = `${percentage.padStart(4, '0')}%`
+    let response, end, duration
     try {
       response = await axios.get(uri) // .then(response => { return response })
     } catch (err) {
@@ -54,16 +54,18 @@ module.exports = async () => {
           measure_id: item.measure.substring(item.measure.lastIndexOf('/') + 1),
           value: item.value,
           datetime: item.dateTime,
-          process_datetime: start.format()
+          process_datetime: processStartDatetime.format()
         })
       }
     } else {
       errors.push(measure.id)
     }
+    if (i > 0 && (Math.floor(i % (measures.length / 10)) === 0 || i === (measures.length - 1))) {
+      end = moment()
+      duration = end.diff(start)
+      console.log(`--> Data update: Progress ${percentage}% (${moment.utc(duration).format('HH:mm:ss')}), ${readings.length} readings from ${measures.length} measures`)
+    }
   }
-  const end = moment()
-  const duration = end.diff(start)
-  console.log(`--> Data update: Received ${readings.length} readings from ${measures.length} measures at ${end.format('HH:mm:ss')} (${moment.utc(duration).format('HH:mm:ss')})`)
   const deleted = await db.any(`
     WITH deleted AS (DELETE FROM reading WHERE id LIKE '%rainfall%' RETURNING id)
     SELECT count(*) FROM deleted;

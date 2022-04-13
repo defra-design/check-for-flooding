@@ -18,7 +18,7 @@ axiosRetry(axios, {
   }
 })
 
-module.exports = async () => {
+module.exports = async (processStartDatetime) => {
   // Get data from API
   const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?latest'
   // const uri = 'http://environment.data.gov.uk/flood-monitoring/data/readings?today&parameter=level&_sorted&_limit=10000'
@@ -42,7 +42,7 @@ module.exports = async () => {
         measure_id: item.measure.substring(item.measure.lastIndexOf('/') + 1),
         value: item.value,
         datetime: item.dateTime,
-        process_datetime: end.format()
+        process_datetime: processStartDatetime.format()
       })
     }
     const cs = new pgp.helpers.ColumnSet(['id', 'measure_id', 'value', 'datetime', 'process_datetime'], { table: 'reading' })
