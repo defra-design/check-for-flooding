@@ -56,12 +56,11 @@ function onMessage (data) {
     return
   }
 
-  switch (message.taskName) {
-    case 'update':
-      update()
-      break
-
-    default:
-      console.error('No task was found with name => ' + message.taskName)
+  if (message.taskName === 'update') {
+    console.log('In here...')
+    console.log(update())
+    update()
+  } else {
+    console.error('No task was found with name => ' + message.taskName)
   }
 }
