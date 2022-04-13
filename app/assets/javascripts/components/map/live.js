@@ -359,9 +359,7 @@ function LiveMap (mapId, options) {
   const formatTime = (date) => {
     const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
     const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-    const amPm = (date.getHours() > 12) ? 'pm' : 'am'
-    console.log(date)
-    console.log(hours + ':' + minutes + amPm)
+    const amPm = (date.getHours() < 12) ? 'am' : 'pm'
     return hours + ':' + minutes + amPm
   }
 
