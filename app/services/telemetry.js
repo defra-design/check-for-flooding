@@ -3,7 +3,7 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   getStationTelemetry: async (id, start, end, stage) => {
-    const url = `/telemetry/${id}/${start}/${end}/${stage}`
+    const url = `/telemetry/${id}/${start}/${end}`
     try {
       const response = await axios.get(url, {
         auth: {

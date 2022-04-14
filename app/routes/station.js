@@ -25,7 +25,7 @@ router.get('/station/:id', async (req, res) => {
     station = new Station(stationResponse.data)
     // Station telemetry
     const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(station.id, start, station.latestDatetime, station.measure)
+    telemetry = await telemetryServices.getStationTelemetry(station.measureId, start, station.latestDatetime)
     telemetry = telemetry.data
     // Thresholds
     thresholds = new Thresholds([
@@ -60,7 +60,7 @@ router.get('/rainfall-station/:id', async (req, res) => {
     station = new Station(stationResponse.data)
     // Rainfall telemetry
     const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getRainfallTelemetry(station.id, start, station.latestDatetime)
+    telemetry = await telemetryServices.getRainfallTelemetry(station.measureId, start, station.latestDatetime)
     telemetry = telemetry.data
   } else {
     // Return 500 error
