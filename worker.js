@@ -58,7 +58,7 @@ function onMessage (data) {
 
   switch (message.taskName) {
     case 'update':
-      update.getLevels()
+      update.getData()
       break
 
     default:

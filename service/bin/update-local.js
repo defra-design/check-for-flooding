@@ -1,3 +1,3 @@
 const update = require('./update')
 
-module.exports = update.getLevels()
+module.exports = update.getData()
