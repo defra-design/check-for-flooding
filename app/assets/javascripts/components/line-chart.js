@@ -396,6 +396,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   // Create a mobile width media query
   const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
+  isMobile = mobileMediaQuery.matches
 
   // Default page size is 5 days
   let pageStart = new Date()
