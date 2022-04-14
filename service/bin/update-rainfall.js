@@ -49,14 +49,12 @@ module.exports = async (processStartDatetime) => {
     if (response.status === 200 && response.data && response.data.items) {
       const items = response.data.items
       for (const item of items) {
-        // Some measures have an array of numbers???
-        if (typeof item.value !== 'number') {
-          continue
-        }
+        // Some measures have an array of numbers or may be missing
+        // These are set to zero to maintain entry for each column
         readings.push({
           id: item['@id'].substring(item['@id'].lastIndexOf('readings/') + 9),
           measure_id: item.measure.substring(item.measure.lastIndexOf('/') + 1),
-          value: item.value,
+          value: typeof item.value === 'number' ? item.value : 0,
           datetime: item.dateTime,
           process_datetime: processStartDatetime.format()
         })
