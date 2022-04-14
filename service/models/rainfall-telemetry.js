@@ -1,13 +1,13 @@
 const moment = require('moment-timezone')
 
 class RainfallTelemetry {
-  constructor (latest, range, dataStart, dataEnd, rangeStart, rangeEnd) {
+  constructor (recent, range, dataStart, dataEnd, rangeStart, rangeEnd) {
     // Get duration of values
-    const valueDuration = moment(latest[0].dateTime).diff(moment(latest[1].dateTime), 'minutes')
+    const valueDuration = moment(recent[0].dateTime).diff(moment(recent[1].dateTime), 'minutes')
     const isMinutes = valueDuration === 15
 
     // Get latest reading and latest hour
-    const latestDateTime = latest[0].dateTime
+    const latestDateTime = recent[0].dateTime
     const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
 
     // Extend telemetry upto latest interval, could be 15 or 60 minute intervals
@@ -38,14 +38,14 @@ class RainfallTelemetry {
     }
 
     // Set properties
-    this.latestDateTime = latest[0].dateTime
+    this.latestDateTime = recent[0].dateTime
     this.rangeStartDateTime = rangeStart.toISOString().replace(/.\d+Z$/g, 'Z')
     this.rangeEndDateTime = rangeEnd.toISOString().replace(/.\d+Z$/g, 'Z')
     this.dataStartDateTime = dataStart.toISOString().replace(/.\d+Z$/g, 'Z')
     this.dataEndDateTime = dataEnd.toISOString().replace(/.\d+Z$/g, 'Z')
-    this.latest1hr = Math.round(latest.slice(0, isMinutes ? 4 : 1).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
-    this.latest6hr = Math.round(latest.slice(0, isMinutes ? 24 : 6).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
-    this.latest24hr = Math.round(latest.slice(0, isMinutes ? 96 : 24).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
+    this.latest1hr = Math.round(recent.slice(0, isMinutes ? 4 : 1).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
+    this.latest6hr = Math.round(recent.slice(0, isMinutes ? 24 : 6).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
+    this.latest24hr = Math.round(recent.slice(0, isMinutes ? 96 : 24).reduce((acc, obj) => { return acc + obj.value }, 0) * 10) / 10
     if (isMinutes) {
       this.minutes = {
         latestDateTime: latestDateTime,

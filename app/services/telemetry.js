@@ -2,8 +2,9 @@ const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
-  getStationTelemetry: async (id, start, end, stage) => {
-    const url = `/telemetry/${id}/${start}/${end}`
+  getStationTelemetry: async (id, start, end, latest = null) => {
+    let url = `/telemetry/${id}/${start}/${end}`
+    url = latest ? `${url}/${latest}` : url
     try {
       const response = await axios.get(url, {
         auth: {
@@ -18,8 +19,9 @@ module.exports = {
     }
   },
 
-  getRainfallTelemetry: async (id, start, end) => {
-    const url = `/telemetry-rainfall/${id}/${start}/${end}`
+  getRainfallTelemetry: async (id, start, end, latest = null) => {
+    let url = `/telemetry-rainfall/${id}/${start}/${end}`
+    url = latest ? `${url}/${latest}` : url
     try {
       const response = await axios.get(url, {
         auth: {

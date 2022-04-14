@@ -5,7 +5,8 @@ const RainfallTelemetry = require('./models/rainfall-telemetry')
 const moment = require('moment-timezone')
 
 module.exports = {
-  getTelemetry: async (id, start, end) => {
+  getTelemetry: async (id, start, end, latest) => {
+    latest = latest || moment()
     let type = id.includes('tidal') ? 'tide' : (id.includes('groundwater') ? 'groundwater' : 'river')
     // Some stations are tidal but have level-stage measures
     // Get station type from context
@@ -33,26 +34,29 @@ module.exports = {
         })
         // Public api date range doesn't include time so we need additional filtering
         // Some values are not numbers so we remove these
+        // To keep API in sync with cron task remove any newer than latest
         .filter(item =>
           typeof item.value === 'number' &&
           moment(item.dateTime).isSameOrAfter(rangeStart) &&
-          moment(item.dateTime).isSameOrBefore(rangeEnd)
+          moment(item.dateTime).isSameOrBefore(rangeEnd) &&
+          moment(item.dateTime).isSameOrBefore(latest)
         )
       return new Telemetry(observed, dataStart, dataEnd, rangeStart, rangeEnd, type)
     }
     return response
   },
 
-  getRainfall: async (id, start, end) => {
+  getRainfall: async (id, start, end, latest) => {
+    latest = latest || moment()
     const dataStart = moment().subtract(5, 'days') // Currently 5 days, could be 10 yeras ago
     const dataEnd = moment() // Typically this will be the latest time
     const baseUri = `http://environment.data.gov.uk/flood-monitoring/id/measures/${id}/readings`
     // Get latest 96 readings (24 hours)
     let uri = `${baseUri}?_sorted&_limit=96`
     let response = await axios.get(uri).then((response) => { return response })
-    let latest
+    let recent
     if (response.status === 200 && response.data) {
-      latest = response.data.items
+      recent = response.data.items
         .map(item => {
           return {
             dateTime: item.dateTime,
@@ -60,6 +64,8 @@ module.exports = {
             value: typeof item.value === 'number' ? item.value : 0
           }
         })
+        // To keep API in sync with cron task remove any newer than latest
+        .filter(item => moment(item.dateTime).isSameOrBefore(latest))
     } else {
       return response
     }
@@ -77,12 +83,16 @@ module.exports = {
             dateTime: item.dateTime,
             value: typeof item.value === 'number' ? item.value : 0
           }
-        // Public api date range doesnt include time so we need additional filtering
+        // remove any outside range or newer than 'latest'
         })
-        .filter(item => moment(item.dateTime).isSameOrAfter(rangeStart) && moment(item.dateTime).isSameOrBefore(rangeEnd))
+        .filter(item =>
+          moment(item.dateTime).isSameOrAfter(rangeStart) &&
+          moment(item.dateTime).isSameOrBefore(rangeEnd) &&
+          moment(item.dateTime).isSameOrBefore(latest)
+        )
     } else {
       return response
     }
-    return new RainfallTelemetry(latest, range, dataStart, dataEnd, rangeStart, rangeEnd)
+    return new RainfallTelemetry(recent, range, dataStart, dataEnd, rangeStart, rangeEnd)
   }
 }
