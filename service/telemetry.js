@@ -30,9 +30,14 @@ module.exports = {
             dateTime: item.dateTime,
             value: item.value
           }
-        // Public api date range doesnt include time so we need additional filtering
         })
-        .filter(item => moment(item.dateTime).isSameOrAfter(rangeStart) && moment(item.dateTime).isSameOrBefore(rangeEnd))
+        // Public api date range doesn't include time so we need additional filtering
+        // Some values are not numbers so we remove these
+        .filter(item =>
+          typeof item.value === 'number' &&
+          moment(item.dateTime).isSameOrAfter(rangeStart) &&
+          moment(item.dateTime).isSameOrBefore(rangeEnd)
+        )
       return new Telemetry(observed, dataStart, dataEnd, rangeStart, rangeEnd, type)
     }
     return response
@@ -51,7 +56,8 @@ module.exports = {
         .map(item => {
           return {
             dateTime: item.dateTime,
-            value: item.value
+            // Some values are not numbers so we set them to zero
+            value: typeof item.value === 'number' ? item.value : 0
           }
         })
     } else {
@@ -69,7 +75,7 @@ module.exports = {
         .map(item => {
           return {
             dateTime: item.dateTime,
-            value: item.value
+            value: typeof item.value === 'number' ? item.value : 0
           }
         // Public api date range doesnt include time so we need additional filtering
         })
