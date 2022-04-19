@@ -115,7 +115,7 @@
 
 {% endif %}
 
-<div class="govuk-grid-row">
+<!-- <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
@@ -128,55 +128,83 @@
       <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">Nearby levels</a>
     </nav>
   </div>
+</div> -->
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-navbar">
+      <div class="defra-navbar__inner">
+        <span id="map"></span>
+        <nav aria-label="Related levels" role="navigation">
+          <ul class="defra-navbar__list">
+            {% if model.station.upStationId %}
+            <li class="defra-navbar__item">
+              <a href="/station/{{ model.station.upStationId }}" class="defra-link-s" role="button" data-module="govuk-button">Upstream</a>
+            </li>
+            {% endif %}
+            {% if model.station.downStationId %}
+            <li class="defra-navbar__item">
+              <a href="/station/{{ model.station.downStationId }}" class="defra-link-s" role="button" data-module="govuk-button">Downstream</a>
+            </li>
+            {% endif %}
+            <li class="defra-navbar__item">
+              <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">Nearby levels</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% if model.station.status == 'active' and model.station.latestStatus == 'success' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics govuk-!-margin-top-2">
-      <!-- <p class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+      <p class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
         Latest reading at {{ model.time }}
         <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
-      </p> -->
+      </p>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
-        <div class="defra-flood-statistics__column-one-quarter">
+        <div class="defra-flood-statistics__item">
+          <dt class="defra-flood-statistics__key">
+            Trend
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            {{ model.station.latestTrend | capitalize }}
+          </dd>
+        </div>
+        <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">
             Height
           </dt>
           <dd class="defra-flood-statistics__value">
             {% if model.station.latestHeight < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
-            <span class="defra-flood-statistics__value-detail">
-            at {{ model.timeShort }}
-            </span>
           </dd>
         </div>
         {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.levelHigh and model.station.levelLow  %}
-        <div class="defra-flood-statistics__column-one-quarter"> 
+        <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key">
             State
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.latestState | capitalize }}
-            <span class="defra-flood-statistics__value-detail">
-            {% if model.station.latestState == 'low' %}
-            below {{ model.station.levelLow }}m
-            {% elif model.station.latestState == 'high' %}
-            above {{ model.station.levelHigh }}m
-            {% else %}
-            {{ model.station.levelLow }}m to {{ model.station.levelHigh }}m
-            {% endif %}
-            </span>
           </dd>
         </div>
         {% endif %}
       </dl>
+      {% if model.station.levelHigh and model.station.levelLow %}
+      <p class="govuk-caption-s">
+        Normal range at this location {{ model.station.levelLow | round(2) }}m - {{ model.station.levelHigh | round(2) }}m
+      </p>
+      {% endif %}
     </div>
   </div>
 </div>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %}</h2>
+    <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %} in metres</h2>
 
     {# Graph #}
     

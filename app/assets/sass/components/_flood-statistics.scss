@@ -3,33 +3,19 @@
     border-bottom: 1px solid $govuk-border-colour;
     &__list {
         margin:0;
-        @include mq ($from: tablet) {
-            margin-left:-15px;
-            margin-right:-15px;
-        }
     }
     &__list:after {
         content:'';
         display:block;
         clear:both;
     }
-    &__column-one-quarter {
-        width:50%;
-        box-sizing: border-box;
-        padding-right: 10px;
-        float:left;
-        @include mq ($from: tablet) {
-            padding: 0px 15px;
-            width:33.33%;
-        }
-    }
-    &__column-one-third {
+    &__item {
         width:33.33%;
         box-sizing: border-box;
         padding-right: 10px;
         float:left;
-        @include mq ($from: tablet) {
-            padding: 0px 15px;
+        @include mq ($from: desktop) {
+            width: 20%;
         }
     }
     &__key {
@@ -37,7 +23,7 @@
         padding-top: 20px;
     }
     &__value {
-        @include govuk-font($size: 36);
+        @include govuk-font($size: 27);
         margin:0;
         display: block;
         box-sizing: border-box;
@@ -50,7 +36,7 @@
         border-bottom: 0px;
         margin-bottom: 0px;
     }
-    &__value-detail {
+    &__meta {
         @include govuk-font($size: 16);
         color: $govuk-secondary-text-colour;
         margin-top: 5px;

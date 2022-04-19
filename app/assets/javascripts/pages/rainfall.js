@@ -14,7 +14,7 @@ import '../components/toggletip'
 // Create LiveMap
 if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
-    btnText: 'View map',
+    btnText: 'Map',
     btnClasses: 'defra-link-icon-s',
     btnType: 'link',
     layers: 'mv,rf',

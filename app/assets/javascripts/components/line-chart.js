@@ -17,7 +17,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     setScaleY()
 
     // Set right margin depending on length of labels
-    const numChars = yScale.domain()[1].toFixed(2).length - 1
+    // const numChars = yScale.domain()[1].toFixed(2).length - 1
+    const numChars = yScale.domain()[1].toFixed(1).length - 2
     const margin = { top: 5, bottom: 25, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
 
     // Get width and height
@@ -35,7 +36,8 @@ function LineChart (containerId, stationId, data, options = {}) {
       return isMobile ? timeFormat('%-e/%-m')(d) : timeFormat('%a, %e %b')(d)
     })
     yAxis = axisLeft().ticks(5).tickFormat((d) => {
-      return parseFloat(d).toFixed(2) + 'm'
+      // return parseFloat(d).toFixed(2) + 'm'
+      return parseFloat(d).toFixed(1)
     }).tickSizeOuter(0)
     yAxis.scale(yScale)
 
