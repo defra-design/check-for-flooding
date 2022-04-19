@@ -109,11 +109,19 @@
       position: absolute;
       left: 4px;
       top: 4px;
-      color: #383f43;
+      color: govuk-colour('mid-grey');
       @include mq ($from: tablet) {
         left:6px;
         top: 6px;
       }
+    }
+  }
+  &-item-trend--rising {
+    .defra-flood-levels-list-item-trend__icon {
+      border: 1px solid govuk-colour('black');
+    }
+    svg {
+      color: govuk-colour('black');
     }
   }
   &-item-height {

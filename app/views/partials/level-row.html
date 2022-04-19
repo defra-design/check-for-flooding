@@ -46,16 +46,16 @@
     {% elif item.type == 'tide' %}
     <!-- Sea or tide -->
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-trend">
+      <span class="defra-flood-levels-list-item-trend{% if item.latestTrend == 'rising' %} defra-flood-levels-list-item-trend--rising{% endif %}">
         {% if item.latestTrend %}
         <span class="defra-flood-levels-list-item-trend__icon">
-          <svg width="16" height="16" viewBox="0 0 16 16">
+          <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
             {% if item.latestTrend == 'rising' %}
-            <path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,0l4,6.4l-8,0l4,-6.4Z"/>
+            <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
             {% elif item.latestTrend == 'falling'%}
-            <path d="M8,9.6l-0,-9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,16l-4,-6.4l8,0l-4,6.4Z"/>
+            <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
             {% else %}
-            <path d="M9.6,8l-9.6,0" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M16,8l-6.4,4l0,-8l6.4,4Z"/>
+            <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
             {% endif %}
           </svg>
         </span>
@@ -81,16 +81,16 @@
     {% else %}
     <!-- River or groundwater -->
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-trend">
+      <span class="defra-flood-levels-list-item-trend{% if item.latestTrend == 'rising' %} defra-flood-levels-list-item-trend--rising{% endif %}">
         {% if item.latestTrend %}
         <span class="defra-flood-levels-list-item-trend__icon">
-          <svg width="16" height="16" viewBox="0 0 16 16">
+          <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
             {% if item.latestTrend == 'rising' %}
-            <path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,0l4,6.4l-8,0l4,-6.4Z"/>
+            <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
             {% elif item.latestTrend == 'falling'%}
-            <path d="M8,9.6l-0,-9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,16l-4,-6.4l8,0l-4,6.4Z"/>
+            <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
             {% else %}
-            <path d="M9.6,8l-9.6,0" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M16,8l-6.4,4l0,-8l6.4,4Z"/>
+            <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
             {% endif %}
           </svg>
         </span>
