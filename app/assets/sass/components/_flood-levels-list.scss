@@ -27,9 +27,6 @@
       padding-bottom: 0px;
       padding-right: 7%;
     }
-    @include mq ($from: desktop) {
-      width: 55%;
-    }
   }
   &__item--rainfall &__title {
     @include mq ($from: tablet) {
@@ -39,9 +36,6 @@
   &__detail {
     @include mq ($from: tablet) {
       width: 50%;
-    }
-    @include mq ($from: desktop) {
-      width: 45%;
     }
   }
   &__item--rainfall &__detail {
