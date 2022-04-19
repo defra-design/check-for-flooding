@@ -48,6 +48,13 @@
     {% else %}
     <dl class="defra-flood-list-data">
         <div class="defra-flood-list-data__column">
+            <dt class="govuk-visually-hidden">Trend</dt>
+            <dd>
+                <span class="defra-flood-list-data__description">Trend</span>
+                <span class="defra-flood-list-data__value">{{ model.trend | capitalize }}</span>
+            </dd>
+        </div>
+        <div class="defra-flood-list-data__column">
             <dt class="govuk-visually-hidden">Height</dt>
             <dd>
                 <span class="defra-flood-list-data__description">Height</span>
