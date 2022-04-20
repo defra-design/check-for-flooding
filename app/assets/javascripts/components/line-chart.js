@@ -19,7 +19,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Set right margin depending on length of labels
     // const numChars = yScale.domain()[1].toFixed(2).length - 1
     const numChars = yScale.domain()[1].toFixed(1).length - 2
-    const margin = { top: 5, bottom: 25, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
+    const margin = { top: 5, bottom: 45, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = chart.getBoundingClientRect()
@@ -32,9 +32,10 @@ function LineChart (containerId, stationId, data, options = {}) {
 
     // Draw axis
     const xAxis = axisBottom().tickSizeOuter(0)
-    xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => {
-      return isMobile ? timeFormat('%-e/%-m')(d) : timeFormat('%a, %e %b')(d)
-    })
+    xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => { return '' })
+    // xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => {
+    //   return isMobile ? timeFormat('%-e/%-m')(d) : timeFormat('%a, %e %b')(d)
+    // })
     yAxis = axisLeft().ticks(5).tickFormat((d) => {
       // return parseFloat(d).toFixed(2) + 'm'
       return parseFloat(d).toFixed(1)
