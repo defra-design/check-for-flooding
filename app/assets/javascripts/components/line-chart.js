@@ -33,9 +33,6 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Draw axis
     const xAxis = axisBottom().tickSizeOuter(0)
     xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => { return '' })
-    // xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => {
-    //   return isMobile ? timeFormat('%-e/%-m')(d) : timeFormat('%a, %e %b')(d)
-    // })
     yAxis = axisLeft().ticks(5).tickFormat((d) => {
       // return parseFloat(d).toFixed(2) + 'm'
       return parseFloat(d).toFixed(1)
@@ -77,7 +74,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     const timeX = Math.floor(xScale(new Date()))
     svg.select('.time-line').attr('y1', 0).attr('y2', height)
     timeLine.attr('y1', 0).attr('y2', height).attr('transform', 'translate(' + timeX + ',0)')
-    timeLabel.attr('y', height + 12).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
+    timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
 
     // X Axis time label
     timeLabel.text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
