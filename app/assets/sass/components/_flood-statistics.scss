@@ -20,6 +20,7 @@
     }
     &__key {
         @include govuk-font($size: 19);
+        color: $govuk-secondary-text-colour;
         padding-top: 15px;
     }
     &__value {
