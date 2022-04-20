@@ -19,13 +19,52 @@
     padding-bottom: 0px;
   }
   &__title {
+    position: relative;
     @include govuk-font($size: 19, $weight: bold);
+    padding-right: 20px;
     padding-bottom: 10px;
     box-sizing: border-box;
     @include mq ($from: tablet) {
       width: 50%;
       padding-bottom: 0px;
       padding-right: 7%;
+    }
+    a:before {
+      @include mq ($until: tablet) {
+        position: absolute;
+        content: '';
+        right: 5px;
+        top: 5px;
+        height: 7px;
+        width: 7px;
+        border-right: 3px solid govuk-colour('blue');
+        border-top: 3px solid govuk-colour('blue');
+        -webkit-transform: translateY(0) rotate(45deg) scale(1);
+        -ms-transform: translateY(0) rotate(45deg) scale(1);
+        transform: translateY(0) rotate(45deg) scale(1);
+      }
+    }
+    a:hover:before {
+      @include mq ($until: tablet) {
+        border-right: 3px solid govuk-colour('dark-blue');
+        border-top: 3px solid govuk-colour('dark-blue');
+      }
+    }
+    a:visited:before {
+      @include mq ($until: tablet) {
+        border-right: 3px solid $govuk-link-visited-colour;
+        border-top: 3px solid $govuk-link-visited-colour;
+      }
+    }
+    a:after {
+      @include mq ($until: tablet) {
+        position: absolute;
+        content: '';
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: 0;
+      }
     }
   }
   &__item--rainfall &__title {
@@ -109,7 +148,7 @@
       position: absolute;
       left: 4px;
       top: 4px;
-      color: govuk-colour('mid-grey');
+      color: govuk-colour('black');
       @include mq ($from: tablet) {
         left:6px;
         top: 6px;

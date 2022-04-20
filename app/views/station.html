@@ -196,7 +196,7 @@
       </dl>
       {% if model.station.levelHigh and model.station.levelLow %}
       <p class="govuk-caption-s">
-        Normal range at this location {{ model.station.levelLow | round(2) }}m - {{ model.station.levelHigh | round(2) }}m
+        Normal range {{ model.station.levelLow | round(2) }}m - {{ model.station.levelHigh | round(2) }}m
       </p>
       {% endif %}
     </div>

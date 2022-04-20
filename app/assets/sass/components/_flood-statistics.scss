@@ -15,15 +15,16 @@
         padding-right: 10px;
         float:left;
         @include mq ($from: desktop) {
-            width: 25%;
+            width: 20%;
         }
     }
     &__key {
-        @include govuk-font($size: 19);
+        @include govuk-font($size: 16);
         padding-top: 20px;
+        margin-bottom: 5px;
     }
     &__value {
-        @include govuk-font($size: 36);
+        @include govuk-font($size: 27);
         margin:0;
         display: block;
         box-sizing: border-box;
