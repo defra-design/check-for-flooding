@@ -47,11 +47,11 @@
     <!-- Sea or tide -->
     <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
       {% if item.latestHeight %}
-      <span class="defra-flood-levels-list-item-na">n/a</a>
-      {% else %}
       <span class="defra-flood-levels-list-item-height">
         {{ item.latestHeight }}m
       </span>
+      {% else %}
+      <span class="defra-flood-levels-list-item-na">n/a</a>
       {% endif %}
     </div>
     {% if model.queryType == 'river' %}
