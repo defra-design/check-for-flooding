@@ -178,6 +178,7 @@
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics">
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
+        {% if model.station.latestTrend %}
         <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">
             Trend
@@ -186,6 +187,7 @@
             {{ model.station.latestTrend | capitalize }}
           </dd>
         </div>
+        {% endif %}
         <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">
             Height
