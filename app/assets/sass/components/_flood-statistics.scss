@@ -24,7 +24,7 @@
         padding-top: 15px;
     }
     &__value {
-        @include govuk-font($size: 24, $weight: bold);
+        @include govuk-font($size: 27, $weight: bold);
         margin:0;
         display: block;
         box-sizing: border-box;
