@@ -19,16 +19,15 @@
         }
     }
     &__key {
-        @include govuk-font($size: 16);
-        padding-top: 20px;
-        margin-bottom: 5px;
+        @include govuk-font($size: 19);
+        padding-top: 15px;
     }
     &__value {
-        @include govuk-font($size: 27, $weight: bold);
+        @include govuk-font($size: 36);
         margin:0;
         display: block;
         box-sizing: border-box;
-        padding-bottom: 20px;
+        padding-bottom: 15px;
     }
     &__value::first-letter {
         margin-left: -0.075em;

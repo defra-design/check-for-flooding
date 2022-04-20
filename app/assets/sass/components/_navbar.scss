@@ -66,23 +66,22 @@
   &__item:last-child {
     margin-right: 0px;
   }
-  &__list a {
+  a {
     display: inline-block;
-    text-decoration: none;
     outline: 3px solid transparent;
     margin-top: 3px;
     margin-bottom: 0px;
     padding: 4px 0px;
     border: 0px;
   }
-  &__list a:visited:not(:hover):not(:active):not(:focus) {
+  a:visited:not(:hover):not(:active):not(:focus) {
     color: $govuk-link-colour;
   }
   &__item--selected a {
     background-color: transparent;
     border-bottom: 3px solid currentColor;
   }
-  &__list a:focus {
+  a:focus {
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
     border: 0px;
@@ -96,7 +95,6 @@
     color: $govuk-link-colour !important;
     margin: 3px 15px 3px 0px !important;
     padding: 4px 0px 4px 21px;
-    text-decoration: none;
     svg {
       color: govuk-colour('black');
       left: 1px;
@@ -122,5 +120,10 @@
     span {
       @include defra-visually-hidden();
     }
+  }
+}
+.defra-navbar:not(.defra-navbar--secondary) {
+  a, .defra-link-icon-s {
+    text-decoration: none;
   }
 }

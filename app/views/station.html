@@ -17,23 +17,23 @@
 </div>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-navbar govuk-!-margin-top-2">
+    <div class="defra-navbar defra-navbar--secondary govuk-!-margin-top-2">
       <div class="defra-navbar__inner">
         <span id="map"></span>
         <nav aria-label="Related levels" role="navigation">
           <ul class="defra-navbar__list">
             {% if model.station.upStationId %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.upStationId }}" class="defra-link-s" role="button" data-module="govuk-button">Upstream</a>
+              <a href="/station/{{ model.station.upStationId }}">Upstream</a>
             </li>
             {% endif %}
             {% if model.station.downStationId %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.downStationId }}" class="defra-link-s" role="button" data-module="govuk-button">Downstream</a>
+              <a href="/station/{{ model.station.downStationId }}">Downstream</a>
             </li>
             {% endif %}
             <li class="defra-navbar__item">
-              <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">Nearby levels</a>
+              <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}">Nearby levels</a>
             </li>
           </ul>
         </nav>
@@ -70,7 +70,7 @@
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">
       {{ model.title }}
     </h1>
-    <p class="govuk-body govuk-!-margin-bottom-6">
+    <p class="govuk-body govuk-!-margin-bottom-4">
       Updated {{ model.time }}
       <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
     </p>
