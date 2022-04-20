@@ -454,7 +454,7 @@ function BarChart (containerId, stationId, data) {
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
-  const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small')
+  const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text')
 
   // Add paging control
   const pagination = document.createElement('div')

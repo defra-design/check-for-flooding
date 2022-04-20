@@ -135,9 +135,6 @@
     .tooltip-text__strong {
         @include govuk-font($size: 19, $weight:bold);
     }
-    .tooltip-text__small {
-        @include govuk-font($size: 14);
-    }
     // Now
     .time-line {
         stroke-width: 1;
@@ -186,7 +183,7 @@
         stroke-linecap: square;
     }
     .threshold-label__text {
-        @include govuk-font($size: 14);
+        @include govuk-font($size: 16);
         fill: $govuk-text-colour;
     }
     .threshold.threshold--selected {

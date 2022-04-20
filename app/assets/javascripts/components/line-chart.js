@@ -44,7 +44,11 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Position axis bottom and right
     svg.select('.x.axis').attr('transform', 'translate(0,' + height + ')').call(xAxis)
     svg.select('.y.axis').attr('transform', 'translate(' + width + ', 0)').call(yAxis)
-    svg.selectAll('.x.axis text').attr('y', 12)
+
+    // Format X Axis ticks
+    svg.select('.x.axis').selectAll('text').each(formatLabelsX)
+
+    // svg.selectAll('.x.axis text').attr('y', 12)
     clipText.attr('width', width).attr('height', height)
 
     // Position y ticks
@@ -315,6 +319,16 @@ function LineChart (containerId, stationId, data, options = {}) {
     yExtentDataMax = yExtent[1]
   }
 
+  const formatLabelsX = (d, i, nodes) => {
+    // Format X Axis labels
+    const element = select(nodes[i])
+    // const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
+    const formattedTime = timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
+    const formattedDate = timeFormat('%-e %b')(new Date(d))
+    element.append('tspan').text(formattedTime)
+    element.append('tspan').attr('x', 0).attr('dy', '15').text(formattedDate)
+  }
+
   const initChart = () => {
     // Get page data
     getDataPage(pageStart, pageEnd)
@@ -375,7 +389,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong').attr('x', 12).attr('dy', '0.5em')
-  const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text__small').attr('x', 12).attr('dy', '1.4em')
+  const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text').attr('x', 12).attr('dy', '1.4em')
 
   // Add optional 'Add threshold' buttons
   document.querySelectorAll('[data-line-chart-threshold]').forEach(container => {

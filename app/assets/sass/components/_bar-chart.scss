@@ -127,7 +127,4 @@
   .tooltip-text__strong {
       @include govuk-font($size: 19, $weight:bold);
   }
-  .tooltip-text__small {
-    @include govuk-font($size: 14);
-  }
 }
