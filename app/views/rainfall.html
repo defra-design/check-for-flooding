@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<div class="govuk-grid-row">
+<!-- <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <nav aria-label="Related levels" class="govuk-!-margin-top-0">
       <span id="map"></span>
@@ -22,6 +22,23 @@
         Nearby levels
       </a>
     </nav>
+  </div>
+</div> -->
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-navbar">
+      <div class="defra-navbar__inner">
+        <span id="map"></span>
+        <nav aria-label="Related levels" role="navigation">
+          <ul class="defra-navbar__list">
+            <li class="defra-navbar__item">
+              <a href="/river-sea-groundwater-rainfall-levels?place={{ model.nearby }}" class="defra-link-s" role="button" data-module="govuk-button">Nearby levels</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </div>
 </div>
 
