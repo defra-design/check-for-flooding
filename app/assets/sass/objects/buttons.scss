@@ -64,7 +64,7 @@
     padding: 9px 10px 10px;
     outline: 3px solid transparent;
     cursor: pointer;
-    color: $govuk-text-colour !important;
+    color: $govuk-text-colour;
     text-decoration: none;
     &:visited {
         color: $govuk-text-colour;
@@ -75,11 +75,12 @@
     &:focus {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
-        box-shadow: 0 4px 0 govuk-colour('black') !important;
+        box-shadow: 0 4px 0 govuk-colour('black');
     }
     &--icon {
         padding-left: 31px;
         svg {
+            color: govuk-colour('black');
             position: absolute;
             left: 10px;
             top: 50%;
@@ -122,12 +123,10 @@
     padding-left:21px;
     svg {
         position: absolute;
-        top:-2px;
-        left:1px;
         color: govuk-colour('black');
-        @include mq ($from: tablet) {
-            top: -1px;
-        }
+        top:50%;
+        margin-top: -10px;
+        left:1px;
     }
     &:hover svg {
         color: $govuk-link-hover-colour;
