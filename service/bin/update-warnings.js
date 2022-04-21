@@ -41,9 +41,11 @@ module.exports = async (processStartDatetime) => {
       })
     }
     await db.none('TRUNCATE TABLE warning;')
-    const cs = new pgp.helpers.ColumnSet(['id', 'name', 'message', 'severity', 'raised_date', 'message_changed_date', 'severity_changed_date', 'process_datetime'], { table: 'warning' })
-    const query = pgp.helpers.insert(warnings, cs)
-    await db.none(query)
+    if (warnings.length) {
+      const cs = new pgp.helpers.ColumnSet(['id', 'name', 'message', 'severity', 'raised_date', 'message_changed_date', 'severity_changed_date', 'process_datetime'], { table: 'warning' })
+      const query = pgp.helpers.insert(warnings, cs)
+      await db.none(query)
+    }
     console.log('--> Data update: Updated flood Alerts and Warnings')
     // Update log
     await db.query('INSERT INTO log (datetime, message) values($1, $2)', [
