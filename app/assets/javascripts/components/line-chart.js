@@ -77,7 +77,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
 
     // X Axis time label
-    timeLabel.text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
+    timeLabel.select('.time-now-text__time').text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
+    timeLabel.select('.time-now-text__date').text(timeFormat('%-e %b')(new Date()))
 
     // Add height to locator line
     svg.select('.locator-line').attr('y1', 0).attr('y2', height)
@@ -373,6 +374,8 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Add timeline
   const timeLine = svg.append('line').attr('class', 'time-line')
   const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26)
+  timeLabel.append('tspan').attr('class', 'time-now-text__time')
+  timeLabel.append('tspan').attr('text-anchor', 'middle').attr('class', 'time-now-text__date').attr('x', 0).attr('dy', '15')
 
   // Add locator
   const locator = inner.append('g').attr('class', 'locator')
