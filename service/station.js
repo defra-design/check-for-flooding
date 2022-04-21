@@ -37,31 +37,74 @@ module.exports = {
   // Used on list page
   getStationsByRiverSlug: async (slug) => {
     const response = await db.query(`
-      SELECT 
-      CASE WHEN type = 'rainfall' THEN station_id ELSE rloi_id END AS id,
-      name,
-      status,
-      type,
-      CASE WHEN type = 'tide' AND river_slug is NULL THEN 'sea' ELSE type END AS group_type,
-      river_name,
-      river_display,
-      river_slug,
-      river_order,
-      rainfall_1hr,
-      rainfall_6hr,
-      rainfall_24hr,
-      latest_trend,
-      latest_height,
-      latest_state,
-      latest_datetime AT TIME ZONE '+00' AS latest_datetime,
-      latest_status,
-      is_multi_stage,
-      CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
-      is_wales,
-      CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail
-      FROM measure_with_latest
-      WHERE river_slug SIMILAR TO $1
-      ORDER BY river_order, is_downstage;
+      WITH river AS (
+        SELECT
+        CASE WHEN type = 'rainfall' THEN station_id ELSE rloi_id END AS id,
+        name,
+        status,
+        type,
+        CASE WHEN type = 'tide' AND river_slug is NULL THEN 'sea' ELSE type END AS group_type,
+        hydrological_catchment_id,
+        hydrological_catchment_name,
+        river_name,
+        river_display,
+        river_slug,
+        river_order,
+        rainfall_1hr,
+        rainfall_6hr,
+        rainfall_24hr,
+        latest_trend,
+        latest_height,
+        latest_state,
+        latest_datetime AT TIME ZONE '+00' AS latest_datetime,
+        latest_status,
+        is_multi_stage,
+        CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
+        is_wales,
+        CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
+        0 AS distance,
+        geom
+        FROM measure_with_latest
+        WHERE river_slug SIMILAR TO $1
+        ORDER BY river_order, is_downstage
+      ), last_station AS (
+        SELECT geom
+        FROM river
+        ORDER BY river_order DESC
+        LIMIT 1
+      )
+      SELECT river.* FROM river
+      UNION ALL (
+        SELECT
+        measure_with_latest.station_id AS id,
+        measure_with_latest.name,
+        measure_with_latest.status,
+        measure_with_latest.type,
+        measure_with_latest.type AS group_type,
+        measure_with_latest.hydrological_catchment_id,
+        measure_with_latest.hydrological_catchment_name,
+        measure_with_latest.river_name,
+        measure_with_latest.river_display,
+        measure_with_latest.river_slug,
+        measure_with_latest.river_order,
+        measure_with_latest.rainfall_1hr,
+        measure_with_latest.rainfall_6hr,
+        measure_with_latest.rainfall_24hr,
+        measure_with_latest.latest_trend,
+        measure_with_latest.latest_height,
+        measure_with_latest.latest_state,
+        measure_with_latest.latest_datetime AT TIME ZONE '+00' AS latest_datetime,
+        measure_with_latest.latest_status,
+        measure_with_latest.is_multi_stage,
+        false AS is_downstage,
+        is_wales,
+        CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
+        ROUND(ST_Distance(last_station.geom::geography, measure_with_latest.geom::geography)) AS distance,
+        measure_with_latest.geom
+        FROM measure_with_latest, last_station
+        WHERE measure_with_latest.type = 'rainfall' AND measure_with_latest.hydrological_catchment_id IN (SELECT hydrological_catchment_id FROM river)
+        ORDER BY ST_Distance(last_station.geom::geography, measure_with_latest.geom::geography)
+      );
     `, [`%(-${slug}|${slug}-|${slug})%`])
     return response
   },
