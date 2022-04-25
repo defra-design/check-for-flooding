@@ -118,11 +118,11 @@ function LineChart (containerId, stationId, data, options = {}) {
       const textWidth = text.node().getBBox().width
       path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l-7.5,7.5 l-7.5,-7.5 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l0,-36 l0,0`)
       label.attr('transform', `translate(${Math.round(width / 2) - (Math.round(textWidth + 40) / 2)}, -46)`)
-      const remove = label.append('g').attr('class', 'threshold__remove')
-        .attr('transform', `translate(${Math.round(textWidth + 20)}, 14)`)
-      remove.append('rect').attr('x', -11).attr('y', -11).attr('width', 30).attr('height', 30)
-      remove.append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
-      remove.append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
+      const remove = thresholdContainer.append('g').attr('class', 'threshold__remove')
+        .attr('transform', 'translate(20,0)')
+      remove.append('circle').attr('r', 11)
+      remove.append('line').attr('x1', -3).attr('y1', -3).attr('x2', 3).attr('y2', 3)
+      remove.append('line').attr('y1', -3).attr('x2', -3).attr('x1', 3).attr('y2', 3)
       // Set individual elements size and position
       thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
     })
@@ -190,7 +190,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const showTooltip = (tooltipY = 10) => {
     if (!dataPoint) return
     // Hide threshold label
-    thresholdsContainer.select('.threshold-label').style('visibility', 'hidden')
+    // thresholdsContainer.select('.threshold--selected .threshold-label').style('visibility', 'hidden')
     // Set tooltip text
     tooltipValue.text(`${Number(dataPoint.value).toFixed(2)}m`)
     tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
@@ -202,9 +202,17 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const hideTooltip = () => {
-    thresholdsContainer.select('.threshold-label').style('visibility', 'visible')
     tooltip.classed('tooltip--visible', false)
     locator.classed('locator--visible', false)
+  }
+
+  const showThreshold = (threshold) => {
+    thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
+    threshold.classed('threshold--selected', true)
+  }
+
+  const hideThreshold = () => {
+    thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
   }
 
   const addThreshold = (threshold) => {
@@ -497,6 +505,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
     interfaceType = 'mouse'
     getDataPointByX(pointer(e)[0])
+    hideThreshold()
     showTooltip(pointer(e)[1])
   })
 
@@ -527,14 +536,17 @@ function LineChart (containerId, stationId, data, options = {}) {
     if (e.target.closest('.threshold__remove')) {
       removeThreshold(thresholdContainer.getAttribute('data-id'))
     } else if (thresholdContainer) {
-      const threshold = thresholds.find((x) => { return x.id === thresholdContainer.getAttribute('data-id') })
-      addThreshold(threshold)
+      hideTooltip()
+      showThreshold(select(thresholdContainer))
     }
   })
 
   thresholdsContainer.on('mouseover', (e) => {
-    console.log(e.target)
-    if (e.target.closest('.threshold')) hideTooltip()
+    const thresholdContainer = e.target.closest('.threshold')
+    if (thresholdContainer) {
+      hideTooltip()
+      showThreshold(select(thresholdContainer))
+    }
   })
 }
 

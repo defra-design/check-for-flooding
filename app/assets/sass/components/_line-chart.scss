@@ -146,7 +146,7 @@
     }
     // Thresholds
     .threshold__line {
-        stroke: $govuk-border-colour;
+        stroke: govuk-colour('mid-grey');
         stroke-width: 3;
         shape-rendering: crispEdges;
     }
@@ -154,18 +154,15 @@
         stroke: transparent;
         fill: transparent;
     }
-    .threshold__remove {
-        display: none;
-    }
     .threshold__remove line {
         stroke-width: 2;
-        stroke: $govuk-text-colour;
+        stroke: govuk-colour('mid-grey');
         shape-rendering: crispEdges;
         stroke-linecap: square;
     }
-    .threshold__remove rect {
-        stroke-width: 0;
-        stroke: transparent;
+    .threshold__remove circle {
+        stroke-width: 1;
+        stroke: govuk-colour('mid-grey');
         fill: white;
     }
     .threshold__remove:hover {
@@ -178,7 +175,7 @@
     .threshold-label__bg {
         fill: white;
         stroke-width: 1;
-        stroke: govuk-colour("dark-grey");
+        stroke: govuk-colour('dark-grey');
         shape-rendering: auto;
         stroke-linecap: square;
     }
@@ -191,11 +188,14 @@
             visibility: visible;
             pointer-events: auto;
         }
-        .threshold__remove {
-            display: block;
-        }
         .threshold__line {
             stroke: $govuk-text-colour;
+        }
+        .threshold__remove circle {
+            stroke: govuk-colour('black');
+        }
+        .threshold__remove line {
+            stroke: govuk-colour('black');
         }
     }
     .threshold.threshold--mouseover {
