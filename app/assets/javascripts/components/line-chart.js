@@ -102,14 +102,13 @@ function LineChart (containerId, stationId, data, options = {}) {
         .classed('threshold--selected', !!threshold.isSelected)
       thresholdContainer.append('rect')
         .attr('class', 'threshold__bg')
-        .attr('x', 0).attr('y', -4).attr('height', 8)
+        .attr('x', 0).attr('y', -10).attr('height', 20)
         .attr('width', xScale(xExtent[1]))
       thresholdContainer.append('line')
         .attr('class', 'threshold__line')
         .attr('x2', xScale(xExtent[1])).attr('y2', 0)
       const label = thresholdContainer.append('g')
         .attr('class', 'threshold-label')
-        .attr('transform', 'translate(' + Math.round(width / 8) + ',' + -46 + ')')
       const path = label.append('path')
         .attr('class', 'threshold-label__bg')
       const text = label.append('text')
@@ -117,9 +116,10 @@ function LineChart (containerId, stationId, data, options = {}) {
         .attr('x', 10).attr('y', 22)
         .text(threshold.name)
       const textWidth = text.node().getBBox().width
-      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${(Math.round(textWidth + 40) - 50)},0 l-7.5,7.5 l-7.5,-7.5 l-35,0 l0,-36 l0,0`)
+      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l-7.5,7.5 l-7.5,-7.5 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l0,-36 l0,0`)
+      label.attr('transform', `translate(${Math.round(width / 2) - (Math.round(textWidth + 40) / 2)}, -46)`)
       const remove = label.append('g').attr('class', 'threshold__remove')
-        .attr('transform', 'translate(' + Math.round(textWidth + 20) + ',' + 14 + ')')
+        .attr('transform', `translate(${Math.round(textWidth + 20)}, 14)`)
       remove.append('rect').attr('x', -11).attr('y', -11).attr('width', 30).attr('height', 30)
       remove.append('line').attr('x1', -0.5).attr('y1', -0.5).attr('x2', 7.5).attr('y2', 7.5)
       remove.append('line').attr('x1', 7.5).attr('y1', -0.5).attr('x2', -0.5).attr('y2', 7.5)
@@ -189,6 +189,8 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   const showTooltip = (tooltipY = 10) => {
     if (!dataPoint) return
+    // Hide threshold label
+    thresholdsContainer.select('.threshold-label').style('visibility', 'hidden')
     // Set tooltip text
     tooltipValue.text(`${Number(dataPoint.value).toFixed(2)}m`)
     tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
@@ -200,6 +202,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const hideTooltip = () => {
+    thresholdsContainer.select('.threshold-label').style('visibility', 'visible')
     tooltip.classed('tooltip--visible', false)
     locator.classed('locator--visible', false)
   }
@@ -530,6 +533,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   thresholdsContainer.on('mouseover', (e) => {
+    console.log(e.target)
     if (e.target.closest('.threshold')) hideTooltip()
   })
 }
