@@ -350,6 +350,15 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Setup
   //
 
+  // Debug
+  const debug = document.createElement('span')
+  debug.setAttribute('style', 'position:fixed;top:10px;right:10px;background-color:white;border:1px solid red;padding:5px')
+  debug.innerText = 'debug'
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('debug')) {
+    document.querySelector('body').appendChild(debug)
+  }
+
   const defaults = {
     btnAddThresholdClass: 'defra-button-text-s',
     btnAddThresholdText: 'Show on chart'
@@ -500,6 +509,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('mousemove', (e) => {
     if (!xScale || e.target.closest('.threshold')) return
+    debug.innerText = 'mousemove'
     if (interfaceType === 'touch') {
       interfaceType = 'mouse'
       return
@@ -522,6 +532,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchstart', (e) => {
     interfaceType = 'touch'
+    debug.innerText = 'touchstart'
     // const touchEvent = e.targetTouches[0]
     // if (!xScale) return
     // getDataPointByX(pointer(touchEvent)[0])
@@ -531,6 +542,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchmove', (e) => {
     // interfaceType = 'touch'
+    debug.innerText = 'touchmove'
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
@@ -540,6 +552,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   thresholdsContainer.on('click', (e) => {
     e.stopPropagation()
+    debug.innerText = 'click'
     const thresholdContainer = e.target.closest('.threshold')
     if (e.target.closest('.threshold__remove')) {
       removeThreshold(thresholdContainer.getAttribute('data-id'))
@@ -550,7 +563,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   thresholdsContainer.on('mouseover', (e) => {
-    if (interfaceType === 'touch') return
+    debug.innerText = 'mouseover'
     const thresholdContainer = e.target.closest('.threshold')
     if (thresholdContainer) {
       hideTooltip()
