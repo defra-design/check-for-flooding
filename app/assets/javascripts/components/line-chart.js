@@ -217,6 +217,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const addThreshold = (threshold) => {
+    debug.innerText = 'Add threshold'
     // Update thresholds array
     thresholds = thresholds.filter((x) => { return x.id !== threshold.id })
     thresholds.forEach(x => { x.isSelected = false })
