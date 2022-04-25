@@ -14,8 +14,6 @@ class Threshold {
       description: 'Latest level',
       value: latest
     })
-    // Sort in descending order on value
-    thresholds.sort((a, b) => { return a.value - b.value }).reverse()
     // Group on value
     const groups = utils.groupBy(thresholds, 'value')
     // Create bands
@@ -36,6 +34,8 @@ class Threshold {
       }
       bands.push(band)
     })
+    // Sort in descending order on level
+    bands.sort((a, b) => { return Number(a.level) - Number(b.level) }).reverse()
     return bands
   }
 

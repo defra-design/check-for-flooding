@@ -494,6 +494,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   svg.on('click', (e) => {
     if (e.target.closest('.threshold')) return
     getDataPointByX(pointer(e)[0])
+    hideThreshold()
     showTooltip(pointer(e)[1])
   })
 
