@@ -217,7 +217,6 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const addThreshold = (threshold) => {
-    debug.innerText = 'Add threshold'
     // Update thresholds array
     thresholds = thresholds.filter((x) => { return x.id !== threshold.id })
     thresholds.forEach(x => { x.isSelected = false })
@@ -542,6 +541,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchmove', (e) => {
     // interfaceType = 'touch'
+    debug.innerText = e.target
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
