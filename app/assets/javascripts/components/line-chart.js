@@ -520,17 +520,17 @@ function LineChart (containerId, stationId, data, options = {}) {
     // }
   })
 
-  // svg.on('touchstart', (e) => {
-  //   interfaceType = 'touch'
-  //   const touchEvent = e.targetTouches[0]
-  //   if (!xScale) return
-  //   getDataPointByX(pointer(touchEvent)[0])
-  //   hideThreshold()
-  //   showTooltip()
-  // })
+  svg.on('touchstart', (e) => {
+    interfaceType = 'touch'
+    // const touchEvent = e.targetTouches[0]
+    // if (!xScale) return
+    // getDataPointByX(pointer(touchEvent)[0])
+    // hideThreshold()
+    // showTooltip()
+  })
 
   svg.on('touchmove', (e) => {
-    interfaceType = 'touch'
+    // interfaceType = 'touch'
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
@@ -550,6 +550,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   thresholdsContainer.on('mouseover', (e) => {
+    if (interfaceType === 'touch') return
     const thresholdContainer = e.target.closest('.threshold')
     if (thresholdContainer) {
       hideTooltip()
