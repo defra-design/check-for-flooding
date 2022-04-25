@@ -207,6 +207,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const showThreshold = (threshold) => {
+    debug.innerText = 'Show threshold'
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
   }
@@ -509,7 +510,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('mousemove', (e) => {
     if (!xScale || e.target.closest('.threshold')) return
-    debug.innerText = 'mousemove'
     if (interfaceType === 'touch') {
       interfaceType = 'mouse'
       return
@@ -532,7 +532,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchstart', (e) => {
     interfaceType = 'touch'
-    debug.innerText = 'touchstart'
     // const touchEvent = e.targetTouches[0]
     // if (!xScale) return
     // getDataPointByX(pointer(touchEvent)[0])
@@ -542,7 +541,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchmove', (e) => {
     // interfaceType = 'touch'
-    debug.innerText = 'touchmove'
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
@@ -552,7 +550,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   thresholdsContainer.on('click', (e) => {
     e.stopPropagation()
-    debug.innerText = 'click'
     const thresholdContainer = e.target.closest('.threshold')
     if (e.target.closest('.threshold__remove')) {
       removeThreshold(thresholdContainer.getAttribute('data-id'))
@@ -563,7 +560,6 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   thresholdsContainer.on('mouseover', (e) => {
-    debug.innerText = 'mouseover'
     const thresholdContainer = e.target.closest('.threshold')
     if (thresholdContainer) {
       hideTooltip()
