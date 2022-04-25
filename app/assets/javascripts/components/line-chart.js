@@ -524,7 +524,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
-    showTooltip(10)
+    hideThreshold()
+    showTooltip()
   })
 
   svg.on('touchmove', (e) => {
