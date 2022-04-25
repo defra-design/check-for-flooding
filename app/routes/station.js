@@ -42,6 +42,7 @@ router.get('/station/:id', async (req, res) => {
       return res.status(404).render('404')
     }
     place = new Place(locationResponse.data.resourceSets[0].resources[0])
+    console.log(place)
   } else {
     // Return 500 error
   }
