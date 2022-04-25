@@ -36,13 +36,9 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
       {{ model.title }}
     </h1>
-    <p class="govuk-caption-m govuk-!-margin-bottom-4">
-      Recent rainfall up to {{ model.time }}
-      <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
-    </p>
     <!-- <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span> -->
   </div>
 </div>
@@ -50,6 +46,10 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+        Totals up to {{ model.time }}
+        <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
+      </h2>
       <dl class="defra-flood-statistics__list" aria-label="Recent totals">
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key">

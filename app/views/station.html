@@ -67,16 +67,9 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
       {{ model.title }}
     </h1>
-    <p class="govuk-caption-m govuk-!-margin-bottom-4">
-      Updated {{ model.time }}
-      <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
-    </p>
-    <!-- {% if model.station.status == 'active' and model.station.state != 'error' %}
-    <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span>
-    {% endif %} -->
   </div>
 </div>
 
@@ -177,6 +170,10 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+        Latest at {{ model.time }}
+        <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
+      </h2>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
         {% if model.station.latestTrend %}
         <div class="defra-flood-statistics__item">
@@ -209,7 +206,7 @@
         {% endif %}
       </dl>
       {% if model.station.levelHigh and model.station.levelLow %}
-      <p class="govuk-caption-s">
+      <p class="govuk-caption-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">
         Normal range {{ model.station.levelLow | round(2) }}m - {{ model.station.levelHigh | round(2) }}m
       </p>
       {% endif %}
