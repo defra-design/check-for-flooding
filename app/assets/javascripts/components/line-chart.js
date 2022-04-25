@@ -519,16 +519,17 @@ function LineChart (containerId, stationId, data, options = {}) {
     // }
   })
 
-  svg.on('touchstart', (e) => {
-    interfaceType = 'touch'
-    const touchEvent = e.targetTouches[0]
-    if (!xScale) return
-    getDataPointByX(pointer(touchEvent)[0])
-    hideThreshold()
-    showTooltip()
-  })
+  // svg.on('touchstart', (e) => {
+  //   interfaceType = 'touch'
+  //   const touchEvent = e.targetTouches[0]
+  //   if (!xScale) return
+  //   getDataPointByX(pointer(touchEvent)[0])
+  //   hideThreshold()
+  //   showTooltip()
+  // })
 
   svg.on('touchmove', (e) => {
+    interfaceType = 'touch'
     const touchEvent = e.targetTouches[0]
     if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
