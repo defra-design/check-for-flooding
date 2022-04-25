@@ -116,8 +116,8 @@ function LineChart (containerId, stationId, data, options = {}) {
         .attr('x', 10).attr('y', 22)
         .text(threshold.name)
       const textWidth = text.node().getBBox().width
-      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 40)},0 l0,36 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l-7.5,7.5 l-7.5,-7.5 l-${((Math.round(textWidth + 40) / 2) - 7.5)},0 l0,-36 l0,0`)
-      label.attr('transform', `translate(${Math.round(width / 2) - (Math.round(textWidth + 40) / 2)}, -46)`)
+      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 20)},0 l0,36 l-${((Math.round(textWidth + 20) / 2) - 7.5)},0 l-7.5,7.5 l-7.5,-7.5 l-${((Math.round(textWidth + 20) / 2) - 7.5)},0 l0,-36 l0,0`)
+      label.attr('transform', `translate(${Math.round(width / 2) - (Math.round(textWidth + 20) / 2)}, -46)`)
       const remove = thresholdContainer.append('g').attr('class', 'threshold__remove')
         .attr('transform', 'translate(20,0)')
       remove.append('circle').attr('r', 11)
@@ -155,7 +155,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Set Background size
     const text = tooltip.select('text')
     const txtHeight = Math.round(text.node().getBBox().height) + 23
-    const pathLength = 130
+    const pathLength = 140
     const pathCentre = `M${pathLength},${txtHeight}l0,-${txtHeight}l-${pathLength},0l0,${txtHeight}l${pathLength},0Z`
     // Set tooltip layout
     tooltipText.attr('x', 0).attr('y', 20)
@@ -512,6 +512,10 @@ function LineChart (containerId, stationId, data, options = {}) {
   svg.on('mouseleave', (e) => {
     // if (dataPage) {
     hideTooltip()
+    const threshold = thresholds.find(x => x.isSelected)
+    if (threshold) {
+      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
+    }
     // }
   })
 

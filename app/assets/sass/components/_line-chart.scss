@@ -127,7 +127,7 @@
         fill:white;
         stroke-width: 1;
         stroke: $govuk-secondary-text-colour;
-        shape-rendering: geometricPrecision;
+        shape-rendering: crispEdges;
     }
     .tooltip-text {
         @include govuk-font($size: 16);
@@ -148,7 +148,7 @@
     .threshold__line {
         stroke: govuk-colour('mid-grey');
         stroke-width: 3;
-        shape-rendering: crispEdges;
+        shape-rendering: geometricPrecision;
     }
     .threshold__bg {
         stroke: transparent;
