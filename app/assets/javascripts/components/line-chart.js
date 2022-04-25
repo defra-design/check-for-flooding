@@ -115,9 +115,9 @@ function LineChart (containerId, stationId, data, options = {}) {
         .attr('class', 'threshold-label__text')
         .attr('x', 10).attr('y', 22)
         .text(threshold.name)
-      const textWidth = text.node().getBBox().width
-      path.attr('d', `m-0.5,-0.5 l${Math.round(textWidth + 20)},0 l0,36 l-${((Math.round(textWidth + 20) / 2) - 7.5)},0 l-7.5,7.5 l-7.5,-7.5 l-${((Math.round(textWidth + 20) / 2) - 7.5)},0 l0,-36 l0,0`)
-      label.attr('transform', `translate(${Math.round(width / 2) - (Math.round(textWidth + 20) / 2)}, -46)`)
+      const textWidth = Math.round(text.node().getBBox().width)
+      path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
+      label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
       const remove = thresholdContainer.append('g').attr('class', 'threshold__remove')
         .attr('transform', 'translate(20,0)')
       remove.append('circle').attr('r', 11)
