@@ -20,7 +20,7 @@ class ViewModel {
     this.time = utils.formatTimeDate(station.latestDatetime)
     this.timeShort = `${utils.formatTime(station.latestDatetime)} ${utils.formatDate(station.latestDatetime)}`
     this.bingApiKey = bingApiKey
-    this.nearby = place.qualifiedName
+    this.nearby = place.postcode
   }
 }
 module.exports = ViewModel

@@ -9,7 +9,6 @@ class Place {
     this.name = name
     this.slug = utils.getSlug(name)
     this.postcode = postcode
-    this.qualifiedName = gazetteerEntry.address.formattedAddress.replace(', GB', '')
     this.bbox = bbox
     this.bboxBuffered = utils.bufferBbox(bbox, 8000)
   }

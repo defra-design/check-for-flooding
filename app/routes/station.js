@@ -8,6 +8,7 @@ const Place = require('../models/place')
 const Thresholds = require('../models/thresholds')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
+const { ConcatenationScope } = require('webpack')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
@@ -42,7 +43,6 @@ router.get('/station/:id', async (req, res) => {
       return res.status(404).render('404')
     }
     place = new Place(locationResponse.data.resourceSets[0].resources[0])
-    console.log(place)
   } else {
     // Return 500 error
   }

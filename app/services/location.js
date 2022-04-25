@@ -59,7 +59,7 @@ module.exports = {
   },
 
   getLocationByLatLon: async (lat, lon) => {
-    const uri = `http://dev.virtualearth.net/REST/v1/Locations/${lat},${lon}?includeEntityTypes=PopulatedPlace,AdminDivision2&key=${apiKey}`
+    const uri = `http://dev.virtualearth.net/REST/v1/Locations/${lat},${lon}?key=${apiKey}`
     const response = await axios.get(uri).then((response) => { return response })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
