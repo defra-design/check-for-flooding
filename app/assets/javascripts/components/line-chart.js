@@ -541,9 +541,8 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchmove', (e) => {
     // interfaceType = 'touch'
-    debug.innerText = e.target
+    if (!xScale || e.target.closest('.threshold')) return
     const touchEvent = e.targetTouches[0]
-    if (!xScale) return
     getDataPointByX(pointer(touchEvent)[0])
     hideThreshold()
     showTooltip(10)
