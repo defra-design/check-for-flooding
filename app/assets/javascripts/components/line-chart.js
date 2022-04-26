@@ -207,7 +207,6 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const showThreshold = (threshold) => {
-    debug.innerText = 'Show threshold'
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
   }
@@ -525,7 +524,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     hideTooltip()
     const threshold = thresholds.find(x => x.isSelected)
     if (threshold) {
-      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
+      // showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
     }
     // }
   })
@@ -555,7 +554,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       removeThreshold(thresholdContainer.getAttribute('data-id'))
     } else if (thresholdContainer) {
       hideTooltip()
-      showThreshold(select(thresholdContainer))
+      // showThreshold(select(thresholdContainer))
     }
   })
 
@@ -563,7 +562,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     const thresholdContainer = e.target.closest('.threshold')
     if (thresholdContainer) {
       hideTooltip()
-      showThreshold(select(thresholdContainer))
+      // showThreshold(select(thresholdContainer))
     }
   })
 }
