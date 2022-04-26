@@ -50,6 +50,7 @@ module.exports = {
       measure_with_latest.rainfall_1hr,
       measure_with_latest.rainfall_6hr,
       measure_with_latest.rainfall_24hr,
+      measure_with_latest.latest_trend,
       measure_with_latest.latest_height,
       measure_with_latest.latest_state,
       measure_with_latest.latest_datetime AT TIME ZONE '+00' AS latest_datetime,
