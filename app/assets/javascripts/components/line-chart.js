@@ -323,7 +323,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // start or end as -ve since we still need to determine the datetime span of the graph even if the
     // values are excluded from plotting by virtue of being -ve
 
-    // Set referecne to yExtent before any thresholds are added
+    // Set reference to yExtent before any thresholds are added
     yExtent = extent(lines, (d, i) => { return d.value })
     yExtentDataMin = yExtent[0]
     yExtentDataMax = yExtent[1]
