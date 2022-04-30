@@ -99,13 +99,30 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       {% if model.levels.items %}
-      <ul class="defra-flood-levels-list">
+      <table class="defra-flood-levels-table" role="table" aria-labelledby="flood-table-caption">
+        <caption id="flood-table-caption" class="govuk-visually-hidden">
+          Results for {{ model.queryType }}
+        </caption>
+        <thead class="govuk-visually-hidden" role="rowgroup">
+          <tr role="row">
+          {% if model.queryType == 'rainfall' %}
+            <th scope="col" role="columnheader">Gauge</th>
+            <th scope="col" role="columnheader">1 hour</th>
+            <th scope="col" role="columnheader">6 hours</th>
+            <th scope="col" role="columnheader">24 hours</th>
+          {% else %}
+            <th scope="col" role="columnheader">Gauge</th>
+            <th scope="col" role="columnheader">Height</th>
+            <th scope="col" role="columnheader">State</th>
+          {% endif %}
+          </tr>
+        </thead>
+        <tbody class="defra-flood-levels-table__body" role="rowgroup">
         {% for item in model.levels.items %}
         {% include "partials/level-row.html" %}
         {% endfor %}
-      </ul>
-      {% else %}
-      <p class="govuk-body">Copy</p>
+        </tbody>
+      </table>
       {% endif %}
     </div>
   </div>

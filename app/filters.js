@@ -43,8 +43,12 @@ module.exports = (env) => {
   ------------------------------------------------------------------ */
 
   filters.marked = (string, find) => {
-    var reg = new RegExp('(' + find + ')', 'gi')
+    const reg = new RegExp('(' + find + ')', 'gi')
     return string.replace(reg, '<mark>$1</mark>')
+  }
+
+  filters.toFixed = (number, digits) => {
+    return number.toFixed(digits)
   }
 
   return filters
