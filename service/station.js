@@ -26,7 +26,9 @@ module.exports = {
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
-      CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail
+      CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
+      lon,
+      lat
       FROM measure_with_latest
       WHERE ST_Contains(ST_MakeEnvelope($1, $2, $3, $4,4326),geom)
       ORDER BY distance, is_downstage;   
@@ -59,6 +61,8 @@ module.exports = {
       CASE WHEN measure_with_latest.measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       measure_with_latest.is_wales,
       CASE WHEN measure_with_latest.measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
+      measure_with_latest.lon,
+      measure_with_latest.lat,
       river_catchment_station.distance
       FROM river_catchment_station
       LEFT JOIN measure_with_latest ON measure_with_latest.station_id = river_catchment_station.station_id

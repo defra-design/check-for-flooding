@@ -5,9 +5,9 @@
 {% if item.type == 'groundwater' %} borehole{% endif %}
 {%- endset -%}
 
-<li class="defra-flood-levels-list__item defra-flood-levels-list__item--{{ model.queryType }}">
+<tr class="defra-flood-levels-table__row" role="row">
   <!-- Location -->
-  <div class="defra-flood-levels-list__title">
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--location{% if item.type === 'rainfall' %}-rainfall{% endif %}" role="rowheader">
     {% if item.type === 'rainfall' %}
     <a href="/rainfall-station/{{ item.id | urlencode }}">{{ name | safe }} raingauge</a>
     {% else %}
@@ -18,100 +18,98 @@
       {{ name }}
     </a>
     {% endif %}
-    <span class="defra-flood-levels-list-item-meta">
+    <span class="defra-flood-levels-table-meta">
       {% if item.latestDatetime %}
       Updated {{ item.latestDatetime }}
       {% else %}
       Data not available
       {% endif %}
     </span>
-  </div>
+  </td>
 
-  <div class="defra-flood-levels-list__detail">
-    {% if item.type == 'rainfall' %}
-    <!-- Rainfall -->
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--rainfall">
-      <span class="defra-flood-levels-list-item-numeric">{{ item.rainfall1hr }}mm</span>
-      <span class="defra-flood-levels-list-item-secondary">last hour</span>
-    </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--rainfall">
-      <span class="defra-flood-levels-list-item-numeric">{{ item.rainfall6hr }}mm</span>
-      <span class="defra-flood-levels-list-item-secondary">last 6 hours</span>
-    </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--rainfall">
-      <span class="defra-flood-levels-list-item-numeric">{{ item.rainfall24hr }}mm</span>
-      <span class="defra-flood-levels-list-item-secondary">last 24 hours</span>
-    </div>
+  <!-- Rainfall -->
+  {% if item.type == 'rainfall' %}
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
+    {{ item.rainfall1hr }}mm
+    <span class="defra-flood-levels-table-meta">last hour</span>
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
+    {{ item.rainfall6hr }}mm
+    <span class="defra-flood-levels-table-meta">last 6hrs</span>
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
+    {{ item.rainfall24hr }}mm
+    <span class="defra-flood-levels-table-meta">last 24hrs</span>
+  </td>
 
-    {% elif item.type == 'tide' %}
-    <!-- Sea or tide -->
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-trend{% if item.latestTrend == 'rising' %} defra-flood-levels-list-item-trend--rising{% endif %}">
-        {% if item.latestTrend %}
-        <span class="defra-flood-levels-list-item-trend__icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
-            {% if item.latestTrend == 'rising' %}
-            <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
-            {% elif item.latestTrend == 'falling'%}
-            <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
-            {% else %}
-            <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
-            {% endif %}
-          </svg>
-        </span>
-        {{ item.latestTrend }}
-        {% endif %}
+  <!-- Sea or tide -->
+  {% elif item.type == 'tide' %}
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
+    {% if item.latestTrend %}
+    <span class="defra-flood-levels-table-trend">
+      <span class="defra-flood-levels-table-trend__icon defra-flood-levels-tables-trend__icon--{{ item.latestTrend }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
+          {% if item.latestTrend == 'rising' %}
+          <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
+          {% elif item.latestTrend == 'falling'%}
+          <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
+          {% else %}
+          <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
+          {% endif %}
+        </svg>
       </span>
-    </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
-      {% if item.latestHeight %}
-      <span class="defra-flood-levels-list-item-height">
-        {{ item.latestHeight }}m
-      </span>
-      {% else %}
-      <span class="defra-flood-levels-list-item-na">n/a</a>
-      {% endif %}
-    </div>
-    {% if model.queryType == 'river' %}
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--state">
-      <span class="defra-flood-levels-list-item-na">n/a</span>
-    </div>
-    {% endif %}
-
+      {{ item.latestTrend }}
+    </span>
     {% else %}
-    <!-- River or groundwater -->
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--trend">
-      <span class="defra-flood-levels-list-item-trend{% if item.latestTrend == 'rising' %} defra-flood-levels-list-item-trend--rising{% endif %}">
-        {% if item.latestTrend %}
-        <span class="defra-flood-levels-list-item-trend__icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
-            {% if item.latestTrend == 'rising' %}
-            <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
-            {% elif item.latestTrend == 'falling'%}
-            <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
-            {% else %}
-            <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
-            {% endif %}
-          </svg>
-        </span>
-        {{ item.latestTrend }}
-        {% endif %}
-      </span>
-    </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--height">
-      {% if item.latestHeight %}
-      <span class="defra-flood-levels-list-item-height">{{ item.latestHeight }}m</span>
-      {% else %}
-      <span class="defra-flood-levels-list-item-na">n/a</a>
-      {% endif %}
-    </div>
-    <div class="defra-flood-levels-list__data defra-flood-levels-list__data--state">
-      {% if item.latestHeight %}
-      <span class="defra-flood-levels-list-item-state defra-flood-levels-list-item-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
-      {% else %}
-      <span class="defra-flood-levels-list-item-na">n/a</span>
-      {% endif %}
-    </div>
+    <span class="defra-flood-levels-table-na">n/a</a>
     {% endif %}
-  </div>
-</li>
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
+    {% if item.latestHeight %}
+    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</a>
+    {% endif %}
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--state" role="cell">
+    <span class="defra-flood-levels-table-na">n/a</a>
+  </td>
+
+  <!-- River or groundwater -->
+  {% else %}
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
+    {% if item.latestTrend %}
+    <span class="defra-flood-levels-table-trend">
+      <span class="defra-flood-levels-table-trend__icon defra-flood-levels-tables-trend__icon--{{ item.latestTrend }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
+          {% if item.latestTrend == 'rising' %}
+          <path d="M6.992,6.4l-2.992,0l4,-6.4l4,6.4l-3.009,0l0,9.6l-1.999,0l0,-9.6Z"/>
+          {% elif item.latestTrend == 'falling'%}
+          <path d="M9.008,9.6l2.992,0l-4,6.4l-4,-6.4l3.009,0l-0,-9.6l1.999,0l-0,9.6Z"/>
+          {% else %}
+          <path d="M9.6,6.992l0,-2.992l6.4,4l-6.4,4l0,-3.009l-9.6,0l0,-1.999l9.6,0Z"/>
+          {% endif %}
+        </svg>
+      </span>
+      {{ item.latestTrend }}
+    </span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</a>
+    {% endif %}
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
+    {% if item.latestHeight %}
+    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</a>
+    {% endif %}
+  </td>
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--state" role="cell">
+    {% if item.latestHeight %}
+    <span class="defra-flood-levels-table-state defra-flood-levels-table-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</span>
+    {% endif %}
+  </td>
+  {% endif %}
+</tr>

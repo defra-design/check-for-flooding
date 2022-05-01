@@ -10,32 +10,22 @@ module.exports = (env) => {
   /* ------------------------------------------------------------------
     add your methods to the filters obj below this comment block:
     @example:
-
     filters.sayHi = function(name) {
         return 'Hi ' + name + '!'
     }
-
     Which in your templates would be used as:
-
     {{ 'Paul' | sayHi }} => 'Hi Paul'
-
     Notice the first argument of your filters method is whatever
     gets 'piped' via '|' to the filter.
-
     Filters can take additional arguments, for example:
-
     filters.sayHi = function(name,tone) {
       return (tone == 'formal' ? 'Greetings' : 'Hi') + ' ' + name + '!'
     }
-
     Which would be used like this:
-
     {{ 'Joel' | sayHi('formal') }} => 'Greetings Joel!'
     {{ 'Gemma' | sayHi }} => 'Hi Gemma!'
-
     For more on filters and how to write them see the Nunjucks
     documentation.
-
   ------------------------------------------------------------------ */
 
   /* ------------------------------------------------------------------
@@ -43,8 +33,12 @@ module.exports = (env) => {
   ------------------------------------------------------------------ */
 
   filters.marked = (string, find) => {
-    var reg = new RegExp('(' + find + ')', 'gi')
+    const reg = new RegExp('(' + find + ')', 'gi')
     return string.replace(reg, '<mark>$1</mark>')
+  }
+
+  filters.toFixed = (number, digits) => {
+    return number.toFixed(digits)
   }
 
   return filters

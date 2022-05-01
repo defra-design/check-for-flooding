@@ -5,8 +5,7 @@ const serviceUrl = process.env.SERVICE_URL
 module.exports = {
   // Used in search
   getRivers: async (query) => {
-    const slug = utils.getSlug(query)
-    const url = `/rivers/${slug}`
+    const url = `/rivers/${encodeURI(query)}`
     try {
       const response = await axios.get(url, {
         auth: {
@@ -22,9 +21,8 @@ module.exports = {
   },
 
   // Used on list page
-  getRiverDetail: async (query) => {
-    const slug = utils.getSlug(query)
-    const url = `/river-detail/${slug}`
+  getRiver: async (slug) => {
+    const url = `/river/${utils.getSlug(slug)}`
     try {
       const response = await axios.get(url, {
         auth: {
