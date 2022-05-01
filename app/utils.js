@@ -84,8 +84,8 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
     'Liverpool, Merseyside',
     'Newcastle upon Tyne, Tyne & Wear',
     'Nottingham, Nottingham City',
-    'Reading, Berkshire',
-    'Sheffield, South Yorkshire'
+    'Reading, Berkshire'
+    // 'Sheffield, South Yorkshire'
   ]
   // Default name
   let name = gazetteerEntry.name

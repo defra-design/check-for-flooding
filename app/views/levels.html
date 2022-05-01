@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block pageTitle %}
-{% if model.queryTerm %}{{ model.queryTerm }} -
+{% if model.querySearch %}{{ model.querySearch }} -
 {% elif model.isMultipleMatch %}
 Choose location -
 {% endif %}
@@ -26,7 +26,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% if model.isMultipleMatch %}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.queryTerm }}'</h2>
+		<h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.querySearch }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
 		{% if model.places.length and model.rivers.length %}
 		<h3 class="govuk-heading-s">Rivers</h3>
@@ -34,7 +34,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
-			<li><a href="/river-sea-groundwater-rainfall-levels?river={{ river.display }}">{{ river.display | marked(model.queryTerm) | safe }}</a></li>
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ river.display }}">{{ river.display | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -44,7 +44,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% if model.places.length %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/river-sea-groundwater-rainfall-levels?place={{ place.name }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ place.name }}">{{ place.name | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -56,7 +56,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-m govuk-!-margin-top-7">
-      No results for '{{ model.queryTerm }}'
+      No results for '{{ model.querySearch }}'
     </h2>
     <p class="govuk-body">If you searched a river or place in England, you should:</p>
     <ul class="govuk-list govuk-list--bullet">
@@ -74,7 +74,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 {% elif model.levels  %}
   <h2 class="govuk-visually-hidden">
-    Results for '{{ model.queryTerm }}'
+    Results for '{{ model.querySearch }}'
   </h2>
 
   <div class="govuk-grid-row">
@@ -86,7 +86,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
             <ul class="defra-navbar__list">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-                <a href="/river-sea-groundwater-rainfall-levels?{{ model.querySearchType }}={{ model.queryTerm }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+                <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
               </li>
               {% endfor %}
             </ul>

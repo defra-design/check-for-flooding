@@ -59,12 +59,14 @@
   &__cell--height {
     width: 20%;
     @include mq ($until: tablet) {
+      padding-top:0px;
       width: 70%;
     }
   }
   &__cell--state {
     width: 10%;
     @include mq ($until: tablet) {
+      padding-top:0px;
       width: 30%;
     }
   }

@@ -10,56 +10,14 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
-  const query = Object.assign({}, { place: null, type: null, river: null }, req.query)
-  let model
-  if (query.river) {
-    // River query
-    const term = decodeURI(query.river)
-    const riverResponse = await riverServices.getRiverDetail(term)
-    if (riverResponse.status === 200) {
-      if (!(riverResponse.data && Object.keys(riverResponse.data).length)) {
-        return res.render('404')
-      }
-    } else {
-      // Return 500 error
-    }
-    const river = new River(riverResponse.data)
-    const levelResponse = await levelServices.getLevelsByRiver(term)
-    const levels = new Levels({}, river, query.type, levelResponse.data || [])
-    model = new ViewModel(query, null, null, river, null, levels)
-  } else if (query.place) {
-    // Place query
-    const term = decodeURI(query.place)
-    const locationResponse = await locationServices.getLocationByQuery(term)
-    // Get place
-    if (locationResponse.status === 200) {
-      if (!(locationResponse.data && locationResponse.data.result)) {
-        return res.status(404).render('404')
-      }
-    } else {
-      // Return 500 error
-      return res.status(503).render('500')
-    }
-    const place = new Place(locationResponse.data.result)
-    const levelResponse = await levelServices.getLevelsWithin(place.bboxBuffered)
-    const levels = new Levels(place, {}, query.type, levelResponse.data || [])
-    model = new ViewModel(query, place, null, null, null, levels)
-  } else {
-    model = new ViewModel(query, null, null, null, null, null)
-  }
-  res.render('levels', { model })
-})
-
-// Search levels
-router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
-  // const queryTerm = req.body.location
-  const query = { term: req.body.location }
+  const query = Object.assign({}, { search: '', type: '' }, req.query)
   const places = []
-  let rivers = []
+  const rivers = []
+  let levels
 
-  if (query.term !== '') {
+  if (query.search !== '') {
     // Check places
-    const locationResponse = await locationServices.getLocationsByQuery(query.term)
+    const locationResponse = await locationServices.getLocationsByQuery(query.search)
     if (locationResponse.status === 200) {
       if (locationResponse.data.results && locationResponse.data.results.length) {
         // We have some matches
@@ -69,25 +27,31 @@ router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
       // Log 500 error
       console.log('500 error: Location')
     }
-
     // Check rivers
-    const riverResponse = await riverServices.getRivers(query.term)
+    const riverResponse = await riverServices.getRivers(query.search)
     if (riverResponse.status === 200) {
-      rivers = riverResponse.data
+      riverResponse.data.forEach(item => { rivers.push(new River(item)) })
     } else {
       // Log 500 error
       console.log('500 error: Rivers')
     }
   }
-  const model = new ViewModel(query, null, places, null, rivers, null, true)
-
-  if (model.isSinglePlace) {
-    res.redirect(`/river-sea-groundwater-rainfall-levels?place=${encodeURI(query.term)}#`)
-  } else if (model.isSingleRiver) {
-    res.redirect(`/river-sea-groundwater-rainfall-levels?river=${encodeURI(query.term)}#`)
-  } else {
-    res.render('levels', { model })
+  if (places.length === 1 && !rivers.length) {
+    // We have a single place
+    const levelResponse = await levelServices.getLevelsWithin(places[0].bboxBuffered)
+    levels = new Levels(query.type, levelResponse.data)
+  } else if (rivers.length === 1 && !places.length) {
+    // We have a single river
+    const levelResponse = await levelServices.getLevelsByRiver(rivers[0].slug)
+    levels = new Levels(query.type, levelResponse.data)
   }
+  const model = new ViewModel(query, places, rivers, levels)
+  res.render('levels', { model })
+})
+
+// Search levels
+router.post('/river-sea-groundwater-rainfall-levels', async (req, res) => {
+  res.redirect(`/river-sea-groundwater-rainfall-levels?search=${encodeURI(req.body.search)}`)
 })
 
 module.exports = router
