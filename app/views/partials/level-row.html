@@ -11,11 +11,11 @@
     {% if item.type === 'rainfall' %}
     <a href="/rainfall-station/{{ item.id | urlencode }}">{{ name | safe }} raingauge</a>
     {% else %}
-    <a href="/station/{{ item.id | urlencode }}{% if item.isDownstream %}-downstream{% endif %}">
+    <a href="/station/{{ item.id | urlencode }}">
       {% if model.queryType == 'river' %}
       {{ item.riverName }} at
       {% endif %}
-      {{ name }}
+      {{ name }}{% if item.isMultiStage %}- {% if item.isDownstage %}Downstream{% else %}Upstream{% endif %}{% endif %}
     </a>
     {% endif %}
     <span class="defra-flood-levels-table-meta">
