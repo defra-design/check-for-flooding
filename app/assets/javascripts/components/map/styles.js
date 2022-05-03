@@ -18,7 +18,7 @@ window.flood.maps.styles = {
     const featureId = feature.getId()
     const warning = warningsSource.getFeatureById(featureId)
     if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
-    const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.3 : 0.6 : 1
+    const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
     // if (featureId === '011FWFNC3A') {
     //   console.log(Math.floor(resolution))
     // }
