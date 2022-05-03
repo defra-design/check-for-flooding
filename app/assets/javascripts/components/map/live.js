@@ -74,7 +74,7 @@ function LiveMap (mapId, options) {
   // Layers
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
-  const targetAreaPolygons = maps.layers.targetAreaPolygons()
+  const vectorTilePolygons = maps.layers.vectorTilePolygons()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const tide = maps.layers.tide()
@@ -203,7 +203,7 @@ function LiveMap (mapId, options) {
       }
       // Refresh target area polygons
       if (layer.get('ref') === 'warnings') {
-        targetAreaPolygons.setStyle(maps.styles.targetAreaPolygons)
+        vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       }
       // Toggle overlay selected state
       if (state.hasOverlays) {
@@ -335,15 +335,6 @@ function LiveMap (mapId, options) {
   const hideOverlays = () => {
     state.hasOverlays = false
     map.getOverlays().clear()
-  }
-
-  // Set target area polygon opacity
-  const setOpacityTargetAreaPolygons = () => {
-    // Hide or show layer depending on resolution
-    const resolution = Math.floor(map.getView().getResolution())
-    targetAreaPolygons.setVisible(resolution < maps.liveMaxBigZoom)
-    // Opacity graduates with zoom
-    targetAreaPolygons.setOpacity((-Math.abs(map.getView().getZoom()) + 20) / 10)
   }
 
   // Pan map
@@ -524,9 +515,9 @@ function LiveMap (mapId, options) {
               // Add point feature
               warnings.getSource().addFeature(targetArea.pointFeature)
               // VectorSource: Add polygon not required if VectorTileSource
-              if (targetArea.polygonFeature && targetAreaPolygons.getSource() instanceof VectorSource) {
-                targetAreaPolygons.getSource().addFeature(targetArea.polygonFeature)
-              }
+              // if (targetArea.polygonFeature && targetAreaPolygons.getSource() instanceof VectorSource) {
+              //   targetAreaPolygons.getSource().addFeature(targetArea.polygonFeature)
+              // }
             }
           }
         }
@@ -542,7 +533,7 @@ function LiveMap (mapId, options) {
           const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
           setFeatureVisibility(lyrs)
           maps.warningsSource = warnings.getSource()
-          map.addLayer(targetAreaPolygons)
+          map.addLayer(vectorTilePolygons)
         }
         // Attempt to set selected feature when layer is ready
         setSelectedFeature(state.selectedFeatureId)
@@ -557,8 +548,6 @@ function LiveMap (mapId, options) {
   map.addEventListener('moveend', (e) => {
     // Toggle key symbols depending on resolution
     toggleKeySymbol()
-    // Set polygon layer opacity
-    setOpacityTargetAreaPolygons()
     // Timer used to stop 100 url replaces in 30 seconds limit
     clearTimeout(timer)
     // Clear viewport description to force screen reader to re-read
@@ -629,7 +618,7 @@ function LiveMap (mapId, options) {
         lyrs.push(e.target.id)
       }
       setLayerVisibility(lyrs)
-      targetAreaPolygons.setStyle(maps.styles.targetAreaPolygons)
+      vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)
       showOverlays()

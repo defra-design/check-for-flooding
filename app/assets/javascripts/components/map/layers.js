@@ -65,9 +65,9 @@ window.flood.maps.layers = {
   // Vector tile layers
   //
 
-  targetAreaPolygons: () => {
+  vectorTilePolygons: () => {
     return new VectorTileLayer({
-      ref: 'targetAreaPolygons',
+      ref: 'polygons',
       source: new VectorTileSource({
         format: new MVT({
           idProperty: 'fws_tacode'
@@ -78,7 +78,7 @@ window.flood.maps.layers = {
       // renderMode: 'hybrid',
       renderMode: 'vector',
       extent: window.flood.maps.extent,
-      style: window.flood.maps.styles.targetAreaPolygons,
+      style: window.flood.maps.styles.vectorTilePolygons,
       zIndex: 1
     })
   },

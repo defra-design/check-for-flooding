@@ -4,18 +4,24 @@ Sets up the window.flood.maps styles objects
 */
 import { Style, Icon, Fill, Stroke, Text, Circle } from 'ol/style'
 
+const maps = window.flood.maps
+
 window.flood.maps.styles = {
 
   //
   // Vector styles live
   //
 
-  targetAreaPolygons: (feature) => {
+  vectorTilePolygons: (feature, resolution) => {
     // Use corresposnding warning feature propeties for styling
-    const warningsSource = window.flood.maps.warningsSource
-    const warningId = feature.getId()
-    const warning = warningsSource.getFeatureById(warningId)
-    if (!warning || !warning.get('isVisible')) { return new Style() }
+    const warningsSource = maps.warningsSource
+    const featureId = feature.getId()
+    const warning = warningsSource.getFeatureById(featureId)
+    if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
+    const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.3 : 0.6 : 1
+    // if (featureId === '011FWFNC3A') {
+    //   console.log(Math.floor(resolution))
+    // }
     const severity = warning.get('severity')
     const isSelected = warning.get('isSelected')
     const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
@@ -28,22 +34,22 @@ window.flood.maps.styles = {
     switch (severity) {
       case 1: // Severe warning
         strokeColour = '#D4351C'
-        fillColour = targetAreaPolygonPattern('severe')
+        fillColour = targetAreaPolygonPattern('severe', alpha)
         zIndex = 11
         break
       case 2: // Warning
         strokeColour = '#D4351C'
-        fillColour = targetAreaPolygonPattern('warning')
+        fillColour = targetAreaPolygonPattern('warning', alpha)
         zIndex = 10
         break
       case 3: // Alert
         strokeColour = '#F47738'
-        fillColour = targetAreaPolygonPattern('alert')
+        fillColour = targetAreaPolygonPattern('alert', alpha)
         zIndex = isGroundwater ? 4 : 7
         break
       default: // Removed or inactive
         strokeColour = '#626A6E'
-        fillColour = targetAreaPolygonPattern('removed')
+        fillColour = targetAreaPolygonPattern('removed', alpha)
         zIndex = 1
     }
     zIndex = isSelected ? zIndex + 2 : zIndex
@@ -57,7 +63,7 @@ window.flood.maps.styles = {
 
   warnings: (feature, resolution) => {
     // Hide warning symbols or hide when polygon is shown
-    if (!feature.get('isVisible') || resolution < window.flood.maps.liveMaxBigZoom) {
+    if (!feature.get('isVisible') || resolution < maps.liveMaxBigZoom) {
       return
     }
     const severity = feature.get('severity')
@@ -77,7 +83,7 @@ window.flood.maps.styles = {
   stations: (feature, resolution) => {
     const state = feature.get('state')
     const isSelected = feature.get('isSelected')
-    const isSymbol = resolution <= window.flood.maps.liveMaxBigZoom
+    const isSymbol = resolution <= maps.liveMaxBigZoom
     switch (state) {
       // Rivers
       case 'river':
@@ -167,19 +173,19 @@ window.flood.maps.styles = {
 // SVG fill paterns
 //
 
-const targetAreaPolygonPattern = (style) => {
+const targetAreaPolygonPattern = (type, alpha) => {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   const dpr = window.devicePixelRatio || 1
   canvas.width = 8 * dpr
   canvas.height = 8 * dpr
   ctx.scale(dpr, dpr)
-  switch (style) {
+  switch (type) {
     case 'severe':
-      ctx.fillStyle = '#D4351C'
+      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
       ctx.fillRect(0, 0, 8, 8)
       ctx.beginPath()
-      ctx.fillStyle = '#ffffff'
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
       ctx.moveTo(0, 3.3)
       ctx.lineTo(4.7, 8)
       ctx.lineTo(3.3, 8)
@@ -193,10 +199,10 @@ const targetAreaPolygonPattern = (style) => {
       ctx.fill()
       break
     case 'warning':
-      ctx.fillStyle = '#D4351C'
+      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
       ctx.fillRect(0, 0, 8, 8)
       ctx.beginPath()
-      ctx.fillStyle = '#ffffff'
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
       ctx.moveTo(3.3, 0)
       ctx.lineTo(4.7, 0)
       ctx.lineTo(0, 4.7)
@@ -220,10 +226,10 @@ const targetAreaPolygonPattern = (style) => {
       ctx.fill()
       break
     case 'alert':
-      ctx.fillStyle = '#ffffff'
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
       ctx.fillRect(0, 0, 8, 8)
       ctx.beginPath()
-      ctx.fillStyle = '#F47738'
+      ctx.fillStyle = `rgb(244, 119, 56, ${alpha})` // '#F47738'
       ctx.moveTo(0, 3.3)
       ctx.lineTo(0, 4.7)
       ctx.lineTo(4.7, 0)
@@ -237,10 +243,10 @@ const targetAreaPolygonPattern = (style) => {
       ctx.fill()
       break
     case 'removed':
-      ctx.fillStyle = '#ffffff'
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
       ctx.fillRect(0, 0, 8, 8)
       ctx.beginPath()
-      ctx.fillStyle = '#626A6E'
+      ctx.fillStyle = `rgb(98, 106, 110, ${alpha})` // '#626A6E'
       ctx.arc(4, 4, 1, 0, 2 * Math.PI)
       ctx.closePath()
       ctx.fill()
