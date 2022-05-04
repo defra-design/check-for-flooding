@@ -4,6 +4,7 @@ Initialises the window.flood.maps layers
 */
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
+import Feature from 'ol/feature'
 import { GeoJSON, MVT } from 'ol/format'
 
 //
@@ -70,7 +71,8 @@ window.flood.maps.layers = {
       ref: 'polygons',
       source: new VectorTileSource({
         format: new MVT({
-          idProperty: 'fws_tacode'
+          idProperty: 'fws_tacode',
+          featureClass: Feature
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
         maxZoom: 13

@@ -8,9 +8,12 @@
 import { View, Overlay, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
-import { Point } from 'ol/geom' // MultiPolygon
-import { buffer, containsExtent } from 'ol/extent' // getCenter
-import { Vector as VectorSource } from 'ol/source'
+import { Point, Polygon } from 'ol/geom' // MultiPolygon
+import { buffer, containsExtent } from 'ol/extent'
+import { fromExtent } from 'ol/geom/Polygon'
+import GeoJSON from 'ol/format/GeoJSON'
+
+import * as turf from '@turf/turf'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
 const maps = window.flood.maps
@@ -257,12 +260,12 @@ function LiveMap (mapId, options) {
       name = `Rainfall: ${feature.get('name')}`
     } else if (feature.getId().startsWith('rainfall_stations')) {
       name = `Rainfall: ${feature.get('station_name')}`
-    } else if (feature.get('severity_value') === 3) {
-      name = `Severe flood warning: ${feature.get('ta_name')}`
-    } else if (feature.get('severity_value') === 2) {
-      name = `Flood warning: ${feature.get('ta_name')}`
-    } else if (feature.get('severity_value') === 1) {
-      name = `Flood alert: ${feature.get('ta_name')}`
+    } else if (feature.get('severity') === 1) {
+      name = `Severe flood warning: ${feature.get('name')}`
+    } else if (feature.get('severity') === 2) {
+      name = `Flood warning: ${feature.get('name')}`
+    } else if (feature.get('severity') === 3) {
+      name = `Flood alert: ${feature.get('name')}`
     }
     return name
   }
@@ -273,24 +276,78 @@ function LiveMap (mapId, options) {
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
     const resolution = map.getView().getResolution()
     const extent = map.getView().calculateExtent(map.getSize())
+    // Public reference to the extent to use in the style function
     const isBigZoom = resolution <= maps.liveMaxBigZoom
     const layers = dataLayers.filter(layer => lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
     if (!layers.includes(warnings) && targetArea.pointFeature) {
       layers.push(warnings)
     }
+    if (layers.includes(warnings) && isBigZoom) {
+      // Get features in extent that match active warnings and clip geometry to extent
+      const vectorTileFeatures = vectorTilePolygons.getSource().getFeaturesInExtent(extent).filter(feature => {
+        const warning = warnings.getSource().getFeatureById(feature.getId())
+        const geometry = feature.getGeometry()
+        return warning && warning.get('isVisible') && geometry.intersectsExtent(extent)
+      })
+      // Merge duplicate features
+      const masterFeatures = []
+      vectorTileFeatures.forEach(feature => {
+        const masterFeature = masterFeatures.find(x => { return x.getId() === feature.getId() })
+        if (masterFeature) {
+          const masterPolygon = turf.multiPolygon(masterFeature.getGeometry().getCoordinates())
+          const additionalPolygon = turf.multiPolygon(feature.getGeometry().getCoordinates())
+          const turfFeature = turf.union(masterPolygon, additionalPolygon)
+          const mergedFeature = new GeoJSON().readFeature(turfFeature)
+          masterFeature.setGeometry(mergedFeature.getGeometry())
+        } else {
+          masterFeatures.push(feature)
+        }
+      })
+      // Add to visible features
+      masterFeatures.forEach(feature => {
+        // Clip geometry to current extent
+        const coordinates = feature.getGeometry().getCoordinates()
+        const polygon = turf.multiPolygon(coordinates)
+        const extentPolygon = turf.multiPolygon(fromExtent(extent).getCoordinates())
+        const clippedGeometry = turf.intersect(polygon, extentPolygon)
+        feature.setGeometry(clippedGeometry ? new GeoJSON().readGeometry(clippedGeometry.geometry) : feature.getGeometry())
+        // Add visible feature
+        features.push({
+          id: feature.getId(),
+          name: featureName(warnings.getSource().getFeatureById(feature.getId())),
+          state: 'warnings',
+          isBigZoom: isBigZoom,
+          labelCoordinates: getLabelCoordinates(feature)
+        })
+      })
+    }
     layers.forEach((layer) => {
       layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
-        if (layer.get('ref') === 'warnings') { return false }
+        if (layer.get('ref') === 'warnings' && isBigZoom) return
         features.push({
           id: feature.getId(),
           name: featureName(feature),
-          state: layer.get('ref'), // Used to style the overlay
+          state: layer.get('ref'),
           isBigZoom: isBigZoom,
-          centre: feature.getGeometry().getCoordinates()
+          labelCoordinates: [feature.getGeometry().getCoordinates()]
         })
       })
     })
+    console.log(features)
     return features
+  }
+
+  // Get coordinates of label or overlay position
+  const getLabelCoordinates = (feature) => {
+    const geometry = feature.getGeometry()
+    const geometryType = geometry.getType()
+    let coordinates
+    if (geometryType === 'MultiPolygon') {
+      coordinates = geometry.getInteriorPoints().getCoordinates()
+    } else {
+      coordinates = [geometry.getInteriorPoint().getCoordinates()]
+    }
+    return coordinates
   }
 
   // Show overlays
@@ -305,19 +362,22 @@ function LiveMap (mapId, options) {
     if (maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9) {
       state.hasOverlays = true
       features.forEach((feature, i) => {
-        const overlayElement = document.createElement('span')
-        overlayElement.setAttribute('aria-hidden', true)
-        overlayElement.innerText = i + 1
-        const selected = feature.id === state.selectedFeatureId ? 'defra-key-symbol--selected' : ''
-        map.addOverlay(
-          new Overlay({
-            id: feature.id,
-            element: overlayElement,
-            position: feature.centre,
-            className: `defra-key-symbol defra-key-symbol--${feature.state}${feature.isBigZoom ? '-bigZoom' : ''} ${selected}`,
-            offset: [0, 0]
-          })
-        )
+        const text = i + 1
+        feature.labelCoordinates.forEach((coordinate, i) => {
+          const overlayElement = document.createElement('span')
+          overlayElement.setAttribute('aria-hidden', true)
+          overlayElement.innerText = text
+          const selected = feature.id === state.selectedFeatureId ? 'defra-key-symbol--selected' : ''
+          map.addOverlay(
+            new Overlay({
+              id: `feature.id-${i}`,
+              element: overlayElement,
+              position: coordinate,
+              className: `defra-key-symbol defra-key-symbol--${feature.state}${feature.isBigZoom ? '-bigZoom' : ''} ${selected}`,
+              offset: [0, 0]
+            })
+          )
+        })
       })
     }
     // Show non-visual feature details
