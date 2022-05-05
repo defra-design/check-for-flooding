@@ -71,8 +71,8 @@ window.flood.maps.layers = {
       ref: 'polygons',
       source: new VectorTileSource({
         format: new MVT({
-          idProperty: 'id',
-          featureClass: Feature
+          idProperty: 'id'
+          // featureClass: Feature
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
         maxZoom: 13

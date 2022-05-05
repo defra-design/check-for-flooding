@@ -8,8 +8,9 @@
 import { View, Overlay, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
-import { Point, Polygon } from 'ol/geom' // MultiPolygon
+import { MultiPolygon, Point, Polygon } from 'ol/geom' // MultiPolygon
 import { buffer, containsExtent } from 'ol/extent'
+import { inflateCoordinatesArray } from 'ol/geom/flat/inflate'
 import { fromExtent } from 'ol/geom/Polygon'
 import GeoJSON from 'ol/format/GeoJSON'
 
@@ -286,40 +287,46 @@ function LiveMap (mapId, options) {
       // Get features in extent that match active warnings and clip geometry to extent
       const vectorTileFeatures = vectorTilePolygons.getSource().getFeaturesInExtent(extent).filter(feature => {
         const warning = warnings.getSource().getFeatureById(feature.getId())
-        const geometry = feature.getGeometry()
-        return warning && warning.get('isVisible') && geometry.intersectsExtent(extent)
+        // const geometry = feature.getGeometry()
+        return warning && warning.get('isVisible') // && geometry.intersectsExtent(extent)
       })
       // Merge duplicate features
       const masterFeatures = []
-      vectorTileFeatures.forEach(feature => {
-        const masterFeature = masterFeatures.find(x => { return x.getId() === feature.getId() })
+      vectorTileFeatures.forEach(renderFeature => {
+        const masterFeature = masterFeatures.find(x => { return x.getId() === renderFeature.getId() })
+        const inflatedCoordinates = inflateCoordinatesArray(renderFeature.getFlatCoordinates(), 0, renderFeature.getEnds(), 2)
         if (masterFeature) {
-          const masterPolygon = turf.multiPolygon(masterFeature.getGeometry().getCoordinates())
-          const additionalPolygon = turf.multiPolygon(feature.getGeometry().getCoordinates())
-          const turfFeature = turf.union(masterPolygon, additionalPolygon)
-          const mergedFeature = new GeoJSON().readFeature(turfFeature)
-          masterFeature.setGeometry(mergedFeature.getGeometry())
+          // const inflatedCoordinates = inflateCoordinatesArray(renderFeature.getFlatCoordinates(), 0, renderFeature.getEnds(), 2)
+          // console.log(inflatedCoordinates)
+          // const masterPolygon = turf.multiPolygon(masterFeature.getGeometry().getCoordinates())
+          // const additionalPolygon = turf.multiPolygon(feature.getGeometry().getCoordinates())
+          // const turfFeature = turf.union(masterPolygon, additionalPolygon)
+          // const mergedFeature = new GeoJSON().readFeature(turfFeature)
+          // masterFeature.setGeometry(mergedFeature.getGeometry())
         } else {
+          const feature = new Feature({ geometry: new MultiPolygon(inflatedCoordinates) })
+          feature.setId(renderFeature.getId())
           masterFeatures.push(feature)
         }
       })
+      console.log(masterFeatures)
       // Add to visible features
-      masterFeatures.forEach(feature => {
-        // Clip geometry to current extent
-        const coordinates = feature.getGeometry().getCoordinates()
-        const polygon = turf.multiPolygon(coordinates)
-        const extentPolygon = turf.multiPolygon(fromExtent(extent).getCoordinates())
-        const clippedGeometry = turf.intersect(polygon, extentPolygon)
-        feature.setGeometry(clippedGeometry ? new GeoJSON().readGeometry(clippedGeometry.geometry) : feature.getGeometry())
-        // Add visible feature
-        features.push({
-          id: feature.getId(),
-          name: featureName(warnings.getSource().getFeatureById(feature.getId())),
-          state: 'warnings',
-          isBigZoom: isBigZoom,
-          labelCoordinates: getLabelCoordinates(feature)
-        })
-      })
+      // masterFeatures.forEach(feature => {
+      //   // Clip geometry to current extent
+      //   const coordinates = feature.getGeometry().getCoordinates()
+      //   const polygon = turf.multiPolygon(coordinates)
+      //   const extentPolygon = turf.multiPolygon(fromExtent(extent).getCoordinates())
+      //   const clippedGeometry = turf.intersect(polygon, extentPolygon)
+      //   feature.setGeometry(clippedGeometry ? new GeoJSON().readGeometry(clippedGeometry.geometry) : feature.getGeometry())
+      //   // Add visible feature
+      //   features.push({
+      //     id: feature.getId(),
+      //     name: featureName(warnings.getSource().getFeatureById(feature.getId())),
+      //     state: 'warnings',
+      //     isBigZoom: isBigZoom,
+      //     labelCoordinates: getLabelCoordinates(feature)
+      //   })
+      // })
     }
     layers.forEach((layer) => {
       layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
