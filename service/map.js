@@ -65,7 +65,7 @@ module.exports = {
           type: item.type,
           iswales: item.is_wales,
           status: item.status,
-          atrisk: item.latest_state === 'High',
+          atrisk: item.state === 'High',
           name: item.name,
           river: item.river_name,
           value: item.latest_height,
