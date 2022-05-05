@@ -71,14 +71,14 @@ window.flood.maps.layers = {
       ref: 'polygons',
       source: new VectorTileSource({
         format: new MVT({
-          idProperty: 'fws_tacode',
+          idProperty: 'id',
           featureClass: Feature
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
         maxZoom: 13
       }),
-      // renderMode: 'hybrid',
-      renderMode: 'vector',
+      renderMode: 'hybrid',
+      // renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.vectorTilePolygons,
       zIndex: 1

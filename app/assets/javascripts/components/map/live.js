@@ -333,7 +333,6 @@ function LiveMap (mapId, options) {
         })
       })
     })
-    console.log(features)
     return features
   }
 
@@ -612,6 +611,8 @@ function LiveMap (mapId, options) {
     clearTimeout(timer)
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
+    // Vector tiles with featureClass ol.feature have redraw bug
+    // vectorTilePolygons.getSource().refresh({ force: true })
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
       if (!container.map) return
