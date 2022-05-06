@@ -2,7 +2,7 @@
 /*
 Sets up the window.flood.maps styles objects
 */
-import { Style, Icon, Fill, Stroke, Text, Circle } from 'ol/style'
+import { Style, Icon, Fill, Stroke, Text, Circle, RegularShape } from 'ol/style'
 
 const maps = window.flood.maps
 
@@ -141,6 +141,22 @@ window.flood.maps.styles = {
       zIndex: zIndex
     })
     return isSelected ? [selectedStroke, style] : style
+  },
+
+  labels: (feature, resolution) => {
+    return new Style({
+      text: new Text({
+        font: 'Bold 14px GDS Transport, Arial, sans-serif',
+        text: feature.get('identifier').toString()
+      }),
+      image: new RegularShape({
+        stroke: new Stroke({ color: '#0b0c0c', width: 2 }),
+        fill: new Fill({ color: '#ffffff' }),
+        points: 4,
+        radius: 20,
+        angle: Math.PI / 4
+      })
+    })
   },
 
   places: (feature, resolution) => {

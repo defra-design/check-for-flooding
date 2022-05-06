@@ -71,14 +71,14 @@ window.flood.maps.layers = {
       ref: 'polygons',
       source: new VectorTileSource({
         format: new MVT({
-          idProperty: 'id'
-          // featureClass: Feature
+          idProperty: 'id',
+          featureClass: Feature
         }),
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
-        maxZoom: 13
+        maxZoom: 12
       }),
-      renderMode: 'hybrid',
-      // renderMode: 'vector',
+      // renderMode: 'hybrid',
+      renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.vectorTilePolygons,
       zIndex: 1
@@ -204,6 +204,20 @@ window.flood.maps.layers = {
         projection: 'EPSG:3857'
       }),
       zIndex: 10
+    })
+  },
+
+  labels: () => {
+    return new VectorLayer({
+      ref: 'labels',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857'
+      }),
+      style: window.flood.maps.styles.labels,
+      visible: false,
+      zIndex: 11,
+      declutter: true
     })
   }
 
