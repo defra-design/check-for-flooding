@@ -8,9 +8,8 @@
 import { View, Overlay, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
-import { MultiPolygon, Point, Polygon } from 'ol/geom' // MultiPolygon
+import { Point } from 'ol/geom'
 import { buffer, containsExtent } from 'ol/extent'
-import { inflateCoordinatesArray } from 'ol/geom/flat/inflate'
 import { fromExtent } from 'ol/geom/Polygon'
 import GeoJSON from 'ol/format/GeoJSON'
 
@@ -32,8 +31,8 @@ function LiveMap (mapId, options) {
   const state = {
     visibleFeatures: [],
     selectedFeatureId: '',
-    initialExt: [],
-    hasOverlays: false
+    initialExt: []
+    // hasOverlays: false
   }
 
   // View
@@ -85,12 +84,14 @@ function LiveMap (mapId, options) {
   const groundwater = maps.layers.groundwater()
   const rainfall = maps.layers.rainfall()
   const selected = maps.layers.selected()
+  const labels = maps.layers.labels()
 
   // These layers are static
   const defaultLayers = [
     road,
     satellite,
-    selected
+    selected,
+    labels
   ]
 
   // These layers can be manipulated
@@ -210,16 +211,16 @@ function LiveMap (mapId, options) {
         vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       }
       // Toggle overlay selected state
-      if (state.hasOverlays) {
-        if (originalFeature && map.getOverlayById(state.selectedFeatureId)) {
-          const overlayElement = map.getOverlayById(state.selectedFeatureId).getElement().parentNode
-          overlayElement.classList.remove('defra-key-symbol--selected')
-        }
-        if (newFeature && map.getOverlayById(newFeatureId)) {
-          const overlayElement = map.getOverlayById(newFeatureId).getElement().parentNode
-          overlayElement.classList.add('defra-key-symbol--selected')
-        }
-      }
+      // if (state.hasOverlays) {
+      //   if (originalFeature && map.getOverlayById(state.selectedFeatureId)) {
+      //     const overlayElement = map.getOverlayById(state.selectedFeatureId).getElement().parentNode
+      //     overlayElement.classList.remove('defra-key-symbol--selected')
+      //   }
+      //   if (newFeature && map.getOverlayById(newFeatureId)) {
+      //     const overlayElement = map.getOverlayById(newFeatureId).getElement().parentNode
+      //     overlayElement.classList.add('defra-key-symbol--selected')
+      //   }
+      // }
     })
     state.selectedFeatureId = newFeatureId
     // Update url
@@ -273,134 +274,127 @@ function LiveMap (mapId, options) {
 
   // Get features visible in the current viewport
   const getVisibleFeatures = () => {
-    const features = []
+    labels.getSource().clear()
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
     const resolution = map.getView().getResolution()
     const extent = map.getView().calculateExtent(map.getSize())
-    // Public reference to the extent to use in the style function
+    const turfExtentPolygon = turf.polygon(fromExtent(extent).getCoordinates())
     const isBigZoom = resolution <= maps.liveMaxBigZoom
     const layers = dataLayers.filter(layer => lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
-    if (!layers.includes(warnings) && targetArea.pointFeature) {
-      layers.push(warnings)
-    }
+    // if (!layers.includes(warnings) && targetArea.pointFeature) {
+    //   layers.push(warnings)
+    // }
+    // Check vectortile polygons
     if (layers.includes(warnings) && isBigZoom) {
-      // Get features in extent that match active warnings and clip geometry to extent
-      const vectorTileFeatures = vectorTilePolygons.getSource().getFeaturesInExtent(extent).filter(feature => {
+      // Get polygons where bbox intersects extent
+      const vectorTileFeatures = []
+      vectorTilePolygons.getSource().getFeaturesInExtent(extent).forEach(feature => {
         const warning = warnings.getSource().getFeatureById(feature.getId())
-        // const geometry = feature.getGeometry()
-        return warning && warning.get('isVisible') // && geometry.intersectsExtent(extent)
-      })
-      // Merge duplicate features
-      const masterFeatures = []
-      vectorTileFeatures.forEach(renderFeature => {
-        const masterFeature = masterFeatures.find(x => { return x.getId() === renderFeature.getId() })
-        const inflatedCoordinates = inflateCoordinatesArray(renderFeature.getFlatCoordinates(), 0, renderFeature.getEnds(), 2)
-        if (masterFeature) {
-          // const inflatedCoordinates = inflateCoordinatesArray(renderFeature.getFlatCoordinates(), 0, renderFeature.getEnds(), 2)
-          // console.log(inflatedCoordinates)
-          // const masterPolygon = turf.multiPolygon(masterFeature.getGeometry().getCoordinates())
-          // const additionalPolygon = turf.multiPolygon(feature.getGeometry().getCoordinates())
-          // const turfFeature = turf.union(masterPolygon, additionalPolygon)
-          // const mergedFeature = new GeoJSON().readFeature(turfFeature)
-          // masterFeature.setGeometry(mergedFeature.getGeometry())
-        } else {
-          const feature = new Feature({ geometry: new MultiPolygon(inflatedCoordinates) })
-          feature.setId(renderFeature.getId())
-          masterFeatures.push(feature)
+        if (!!warning && warning.get('isVisible')) {
+          const vectorTileFeature = new Feature({
+            geometry: feature.getGeometry(),
+            name: warning.get('name')
+          })
+          vectorTileFeature.setId(feature.getId())
+          vectorTileFeatures.push(vectorTileFeature)
         }
       })
-      console.log(masterFeatures)
-      // Add to visible features
-      // masterFeatures.forEach(feature => {
-      //   // Clip geometry to current extent
-      //   const coordinates = feature.getGeometry().getCoordinates()
-      //   const polygon = turf.multiPolygon(coordinates)
-      //   const extentPolygon = turf.multiPolygon(fromExtent(extent).getCoordinates())
-      //   const clippedGeometry = turf.intersect(polygon, extentPolygon)
-      //   feature.setGeometry(clippedGeometry ? new GeoJSON().readGeometry(clippedGeometry.geometry) : feature.getGeometry())
-      //   // Add visible feature
-      //   features.push({
-      //     id: feature.getId(),
-      //     name: featureName(warnings.getSource().getFeatureById(feature.getId())),
-      //     state: 'warnings',
-      //     isBigZoom: isBigZoom,
-      //     labelCoordinates: getLabelCoordinates(feature)
-      //   })
-      // })
+      // Simplify, clip and merge polygons
+      const multiPointFeatures = []
+      vectorTileFeatures.forEach((feature, i) => {
+        const coordinates = feature.getGeometry().getCoordinates()
+        // Simplify polygons
+        const options = { tolerance: 100, highQuality: false }
+        const turfPolygon = feature.getGeometry().getType() === 'MultiPolygon'
+          ? turf.simplify(turf.multiPolygon(coordinates), options)
+          : turf.simplify(turf.polygon(coordinates), options)
+        // Clip polygons to extent
+        const clippedPolygon = turf.intersect(turfPolygon, turfExtentPolygon)
+        if (!clippedPolygon) return
+        feature.setGeometry(new GeoJSON().readFeature(clippedPolygon).getGeometry())
+        // Merge polygons of the same feature
+        const masterFeature = multiPointFeatures.find(x => x.id_ === feature.getId())
+        if (masterFeature) {
+          const masterCoordinates = masterFeature.getGeometry().getCoordinates()
+          const masterPolygon = masterFeature.getGeometry().getType() === 'MultiPolygon'
+            ? turf.multiPolygon(masterCoordinates)
+            : turf.polygon(masterCoordinates)
+          const turfFeature = turf.union(masterPolygon, clippedPolygon)
+          const mergedFeature = new GeoJSON().readFeature(turfFeature)
+          masterFeature.setGeometry(mergedFeature.getGeometry())
+        } else {
+          multiPointFeatures.push(feature)
+        }
+      })
+      // Change geometry to multiPoint
+      multiPointFeatures.forEach((feature, i) => {
+        const geometry = feature.getGeometry()
+        feature.setGeometry(geometry.getType() === 'MultiPolygon'
+          ? geometry.getInteriorPoints()
+          : geometry.getInteriorPoint()
+        )
+        labels.getSource().addFeature(feature)
+      })
     }
+    // Check point features
     layers.forEach((layer) => {
       layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
-        if (layer.get('ref') === 'warnings' && isBigZoom) return
-        features.push({
-          id: feature.getId(),
-          name: featureName(feature),
-          state: layer.get('ref'),
-          isBigZoom: isBigZoom,
-          labelCoordinates: [feature.getGeometry().getCoordinates()]
+        if (layer.get('ref') === 'warnings' && (isBigZoom || !feature.get('isVisible'))) return
+        const pointFeature = new Feature({
+          geometry: feature.getGeometry(),
+          name: feature.get('name')
         })
+        pointFeature.setId(feature.getId())
+        labels.getSource().addFeature(pointFeature)
       })
     })
-    return features
-  }
-
-  // Get coordinates of label or overlay position
-  const getLabelCoordinates = (feature) => {
-    const geometry = feature.getGeometry()
-    const geometryType = geometry.getType()
-    let coordinates
-    if (geometryType === 'MultiPolygon') {
-      coordinates = geometry.getInteriorPoints().getCoordinates()
-    } else {
-      coordinates = [geometry.getInteriorPoint().getCoordinates()]
-    }
-    return coordinates
+    // Add identifier to each feature
+    labels.getSource().forEachFeature((feature, i) => {
+      feature.set('identifier', (i + 1))
+      console.log(i)
+    })
   }
 
   // Show overlays
-  const showOverlays = () => {
-    state.visibleFeatures = getVisibleFeatures()
-    const numFeatures = state.visibleFeatures.length
+  const showLabels = () => {
+    getVisibleFeatures()
+    const numFeatures = labels.getSource().getFeatures().length
     const numWarnings = state.visibleFeatures.filter((feature) => feature.state === 'warnings').length
     const mumMeasurements = numFeatures - numWarnings
-    const features = state.visibleFeatures.slice(0, 9)
+    // const features = state.visibleFeatures.slice(0, 9)
     // Show visual overlays
-    hideOverlays()
-    if (maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9) {
-      state.hasOverlays = true
-      features.forEach((feature, i) => {
-        const text = i + 1
-        feature.labelCoordinates.forEach((coordinate, i) => {
-          const overlayElement = document.createElement('span')
-          overlayElement.setAttribute('aria-hidden', true)
-          overlayElement.innerText = text
-          const selected = feature.id === state.selectedFeatureId ? 'defra-key-symbol--selected' : ''
-          map.addOverlay(
-            new Overlay({
-              id: `feature.id-${i}`,
-              element: overlayElement,
-              position: coordinate,
-              className: `defra-key-symbol defra-key-symbol--${feature.state}${feature.isBigZoom ? '-bigZoom' : ''} ${selected}`,
-              offset: [0, 0]
-            })
-          )
-        })
-      })
-    }
+    labels.setVisible(maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9)
+    // hideLabels()
+    // if (maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9) {
+    //   state.hasOverlays = true
+    //   features.forEach((feature, i) => {
+    //     const text = i + 1
+    //     feature.labelCoordinates.forEach((coordinate, i) => {
+    //       const overlayElement = document.createElement('span')
+    //       overlayElement.setAttribute('aria-hidden', true)
+    //       overlayElement.innerText = text
+    //       const selected = feature.id === state.selectedFeatureId ? 'defra-key-symbol--selected' : ''
+    //       map.addOverlay(
+    //         new Overlay({
+    //           id: `feature.id-${i}`,
+    //           element: overlayElement,
+    //           position: coordinate,
+    //           className: `defra-key-symbol defra-key-symbol--${feature.state}${feature.isBigZoom ? '-bigZoom' : ''} ${selected}`,
+    //           offset: [0, 0]
+    //         })
+    //       )
+    //     })
+    //   })
+    // }
     // Show non-visual feature details
     const model = {
       numFeatures: numFeatures,
       numWarnings: numWarnings,
       mumMeasurements: mumMeasurements,
-      features: features
+      features: []
     }
     const html = window.nunjucks.render('description-live.html', { model: model })
     viewportDescription.innerHTML = html
-  }
-
-  // Hide overlays
-  const hideOverlays = () => {
-    state.hasOverlays = false
-    map.getOverlays().clear()
   }
 
   // Pan map
@@ -421,53 +415,11 @@ function LiveMap (mapId, options) {
   }
 
   // Day format function
-  // const formatDay = (date) => {
-  //   const day = date.getDate()
-  //   const nth = (day) => {
-  //     if (day > 3 && day < 21) return 'th'
-  //     switch (day % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th' }
-  //   }
-  //   const shortDay = date.toLocaleString('en-GB', { weekday: 'short' })
-  //   const today = new Date()
-  //   const yesterday = new Date()
-  //   const tomorrow = new Date()
-  //   today.setHours(0, 0, 0, 0)
-  //   yesterday.setDate(yesterday.getDate() - 1)
-  //   yesterday.setHours(0, 0, 0, 0)
-  //   tomorrow.setDate(tomorrow.getDate() + 1)
-  //   tomorrow.setHours(0, 0, 0, 0)
-  //   date.setHours(0, 0, 0, 0)
-  //   if (date.getTime() === today.getTime()) {
-  //     return 'today'
-  //   } else if (date.getTime() === yesterday.getTime()) {
-  //     return 'yesterday'
-  //   } else if (date.getTime() === tomorrow.getTime()) {
-  //     return 'tomorrow'
-  //   } else {
-  //     return ' on ' + shortDay + ' ' + date.getDate() + nth(day)
-  //   }
-  // }
-
-  // Day format function
   const formatDayMonth = (date) => {
     const day = date.getDate()
     const month = date.toLocaleString('en-GB', { month: 'long' })
     return `${day} ${month}`
   }
-
-  // Format expired time
-  // const formatExpiredTime = (date) => {
-  //   const duration = (new Date() - new Date(date)) // milliseconds between now & Christmas
-  //   const mins = Math.floor(duration / (1000 * 60)) // minutes
-  //   const hours = Math.floor(duration / (1000 * 60 * 60)) // hours
-  //   const days = parseInt(Math.floor(hours / 24)) // days
-  //   return (mins < 91 ? mins + ' minutes' : (hours < 48 ? hours + ' hours' : days + ' days')) + ' ago'
-  // }
-
-  // Capitalise string
-  // const capitalise = (str) => {
-  //   return str.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-  // }
 
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
@@ -502,30 +454,6 @@ function LiveMap (mapId, options) {
       type: 'TA'
     })
     targetArea.pointFeature.setId(options.targetArea.id)
-    // if (options.targetArea.polygon) { // Vector source
-    //   // Create polygon feature
-    //   targetArea.polygonFeature = new Feature({
-    //     geometry: new MultiPolygon(options.targetArea.polygon).transform('EPSG:4326', 'EPSG:3857')
-    //   })
-    //   // Create point feature
-    //   targetArea.pointFeature = new Feature({
-    //     geometry: new Point(getCenter(targetArea.polygonFeature.getGeometry().getExtent())),
-    //     ta_code: options.targetArea.id,
-    //     ta_name: options.targetArea.name
-    //   })
-    //   targetArea.pointFeature.setId('flood.' + options.targetArea.id)
-    //   // Transform id
-    //   // const featureId = 'flood_warning_alert.' + options.targetArea.id
-    //   // targetArea.polygonFeature.setId(featureId)
-    // } else if (options.targetArea.centre) { // Vector tile source
-    //   // Create point feature
-    //   console.log(options.targetArea.centre)
-    //   targetArea.pointFeature = new Feature({
-    //     geometry: new Point(transform(options.targetArea.centre, 'EPSG:4326', 'EPSG:3857')),
-    //     name: options.targetArea.name
-    //   })
-    //   targetArea.pointFeature.setId(options.targetArea.id)
-    // }
   }
 
   // Define map extent
@@ -604,7 +532,7 @@ function LiveMap (mapId, options) {
         // Attempt to set selected feature when layer is ready
         setSelectedFeature(state.selectedFeatureId)
         // Show overlays
-        showOverlays()
+        showLabels()
       }
     })
   })
@@ -624,7 +552,7 @@ function LiveMap (mapId, options) {
     timer = setTimeout(() => {
       if (!container.map) return
       // Show overlays for visible features
-      showOverlays()
+      showLabels()
       // Update url (history state) to reflect new extent
       const ext = getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
       replaceHistory('ext', ext.join(','))
@@ -651,7 +579,7 @@ function LiveMap (mapId, options) {
   map.addEventListener('click', (e) => {
     // Hide overlays if non-keyboard interaction
     if (!maps.isKeyboard) {
-      hideOverlays()
+      labels.setVisible(false)
     }
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
@@ -665,7 +593,7 @@ function LiveMap (mapId, options) {
   // Show overlays on first tab in from browser controls
   viewport.addEventListener('focus', (e) => {
     if (maps.isKeyboard) {
-      showOverlays()
+      showLabels()
     }
   })
 
@@ -689,7 +617,7 @@ function LiveMap (mapId, options) {
       vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)
-      showOverlays()
+      showLabels()
     }
   })
 
@@ -714,7 +642,7 @@ function LiveMap (mapId, options) {
   containerElement.addEventListener('keyup', (e) => {
     // Show overlays when any key is pressed other than Escape
     if (e.key !== 'Escape') {
-      showOverlays()
+      showLabels()
     }
     // Clear selected feature when pressing escape
     if (e.key === 'Escape' && state.selectedFeatureId !== '') {
@@ -735,6 +663,11 @@ function LiveMap (mapId, options) {
       panToFeature(feature)
     }
   })
+
+  // Vectortiles loadend
+  // vectorTilePolygons.getSource().addEventListener('tileloadend', (e) => {
+  //   showLabels()
+  // })
 }
 
 // Export a helper factory to create this map
