@@ -17,6 +17,7 @@ import { polygon, multiPolygon } from '@turf/helpers'
 import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
+import { featureEach } from '@turf/turf'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
 const maps = window.flood.maps
@@ -99,6 +100,7 @@ function LiveMap (mapId, options) {
 
   // These layers can be manipulated
   const dataLayers = [
+    vectorTilePolygons,
     river,
     tide,
     groundwater,
@@ -132,7 +134,8 @@ function LiveMap (mapId, options) {
 
   // Show or hide layers
   const setLayerVisibility = (lyrCodes) => {
-    dataLayers.forEach((layer) => {
+    dataLayers.forEach(layer => {
+      if (layer === vectorTilePolygons) return
       const isVisible = lyrCodes.some(lyrCode => layer.get('featureCodes').includes(lyrCode))
       layer.setVisible(isVisible)
     })
@@ -196,7 +199,8 @@ function LiveMap (mapId, options) {
   // Set selected feature
   const setSelectedFeature = (newFeatureId = '') => {
     selected.getSource().clear()
-    dataLayers.forEach((layer) => {
+    dataLayers.forEach(layer => {
+      if (layer === vectorTilePolygons) return
       const originalFeature = layer.getSource().getFeatureById(state.selectedFeatureId)
       const newFeature = layer.getSource().getFeatureById(newFeatureId)
       if (originalFeature) {
@@ -271,7 +275,7 @@ function LiveMap (mapId, options) {
     const resolution = map.getView().getResolution()
     const isBigZoom = resolution <= maps.liveMaxBigZoom
     const extent = map.getView().calculateExtent(map.getSize())
-    const layers = dataLayers.filter(layer => lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
+    const layers = dataLayers.filter(layer => layer !== vectorTilePolygons && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
     // Add target area isn't an active alert or warning
     if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
     // Add vectortile polygons to labels
@@ -495,7 +499,7 @@ function LiveMap (mapId, options) {
   //
 
   // Set selected feature and polygon states when features have loaded
-  dataLayers.forEach((layer) => {
+  dataLayers.forEach(layer => {
     const change = layer.getSource().on('change', (e) => {
       if (e.target.getState() === 'ready') {
         unByKey(change) // Remove ready event when layer is ready
@@ -524,7 +528,6 @@ function LiveMap (mapId, options) {
           const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
           setFeatureVisibility(lyrs)
           maps.warningsSource = warnings.getSource()
-          map.addLayer(vectorTilePolygons)
         }
         // Attempt to set selected feature when layer is ready
         setSelectedFeature(state.selectedFeatureId)
@@ -566,7 +569,7 @@ function LiveMap (mapId, options) {
   map.addEventListener('pointermove', (e) => {
     // Detect vector feature at mouse coords
     const hit = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (!defaultLayers.includes(layer)) { return true }
+      if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) { return true }
     })
     map.getTarget().style.cursor = hit ? 'pointer' : ''
   })
@@ -580,7 +583,7 @@ function LiveMap (mapId, options) {
     }
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (!defaultLayers.includes(layer)) {
+      if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }
     })

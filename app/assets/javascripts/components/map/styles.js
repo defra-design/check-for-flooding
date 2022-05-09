@@ -16,49 +16,53 @@ window.flood.maps.styles = {
     // Use corresposnding warning feature propeties for styling
     const warningsSource = maps.warningsSource
     const featureId = feature.getId()
-    const warning = warningsSource.getFeatureById(featureId)
-    if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
-    const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
-    // if (featureId === '011FWFNC3A') {
-    //   console.log(Math.floor(resolution))
-    // }
-    const severity = warning.get('severity')
-    const isSelected = warning.get('isSelected')
-    const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
+    const featureLayer = feature.get('layer')
+    if (warningsSource && featureLayer === 'targetareas') {
+      const warning = warningsSource.getFeatureById(featureId)
+      if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
+      const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
+      const severity = warning.get('severity')
+      const isSelected = warning.get('isSelected')
+      const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
 
-    // Defaults
-    let strokeColour = 'transparent'
-    let fillColour = 'transparent'
-    let zIndex = 1
+      // Defaults
+      let strokeColour = 'transparent'
+      let fillColour = 'transparent'
+      let zIndex = 1
 
-    switch (severity) {
-      case 1: // Severe warning
-        strokeColour = '#D4351C'
-        fillColour = targetAreaPolygonPattern('severe', alpha)
-        zIndex = 11
-        break
-      case 2: // Warning
-        strokeColour = '#D4351C'
-        fillColour = targetAreaPolygonPattern('warning', alpha)
-        zIndex = 10
-        break
-      case 3: // Alert
-        strokeColour = '#F47738'
-        fillColour = targetAreaPolygonPattern('alert', alpha)
-        zIndex = isGroundwater ? 4 : 7
-        break
-      default: // Removed or inactive
-        strokeColour = '#626A6E'
-        fillColour = targetAreaPolygonPattern('removed', alpha)
-        zIndex = 1
+      switch (severity) {
+        case 1: // Severe warning
+          strokeColour = '#D4351C'
+          fillColour = targetAreaPolygonPattern('severe', alpha)
+          zIndex = 11
+          break
+        case 2: // Warning
+          strokeColour = '#D4351C'
+          fillColour = targetAreaPolygonPattern('warning', alpha)
+          zIndex = 10
+          break
+        case 3: // Alert
+          strokeColour = '#F47738'
+          fillColour = targetAreaPolygonPattern('alert', alpha)
+          zIndex = isGroundwater ? 4 : 7
+          break
+        default: // Removed or inactive
+          strokeColour = '#626A6E'
+          fillColour = targetAreaPolygonPattern('removed', alpha)
+          zIndex = 1
+      }
+      zIndex = isSelected ? zIndex + 2 : zIndex
+
+      const selectedStroke = new Style({ stroke: new Stroke({ color: '#FFDD00', width: 16 }), zIndex: zIndex })
+      const stroke = new Style({ stroke: new Stroke({ color: strokeColour, width: 2 }), zIndex: zIndex })
+      const fill = new Style({ fill: new Fill({ color: fillColour }), zIndex: zIndex })
+
+      return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
+    } else if (featureLayer === 'hydrologicalboundaries') {
+      if (feature.getId() === 'TPD_NW_H03') {
+        return new Style({ stroke: new Stroke({ color: '#1d70b8', width: 2 }), zIndex: 1 })
+      }
     }
-    zIndex = isSelected ? zIndex + 2 : zIndex
-
-    const selectedStroke = new Style({ stroke: new Stroke({ color: '#FFDD00', width: 16 }), zIndex: zIndex })
-    const stroke = new Style({ stroke: new Stroke({ color: strokeColour, width: 2 }), zIndex: zIndex })
-    const fill = new Style({ fill: new Fill({ color: fillColour }), zIndex: zIndex })
-
-    return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
   },
 
   warnings: (feature, resolution) => {
