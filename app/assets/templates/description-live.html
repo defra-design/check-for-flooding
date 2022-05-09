@@ -4,7 +4,9 @@
 <p>{{ model.numWarnings }} flood alerts or warnings and {{ model.mumMeasurements }} water level measurements in the current map area. Use number keys to select.</p>
 <ol>
     {% for feature in model.features %}
-    <li>{{ feature.name }}</li>
+    <li>
+        {{ feature.name }}
+    </li>
     {% endfor %}
 </ol>
 {% else %}

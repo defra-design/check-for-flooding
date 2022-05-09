@@ -5,7 +5,7 @@
 
 // It uses the MapContainer
 
-import { View, Overlay, Feature } from 'ol'
+import { View, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
 import { Point } from 'ol/geom'
@@ -13,7 +13,10 @@ import { buffer, containsExtent } from 'ol/extent'
 import { fromExtent } from 'ol/geom/Polygon'
 import GeoJSON from 'ol/format/GeoJSON'
 
-import * as turf from '@turf/turf'
+import { polygon, multiPolygon } from '@turf/helpers'
+import simplify from '@turf/simplify'
+import intersect from '@turf/intersect'
+import union from '@turf/union'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
 const maps = window.flood.maps
@@ -210,17 +213,6 @@ function LiveMap (mapId, options) {
       if (layer.get('ref') === 'warnings') {
         vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       }
-      // Toggle overlay selected state
-      // if (state.hasOverlays) {
-      //   if (originalFeature && map.getOverlayById(state.selectedFeatureId)) {
-      //     const overlayElement = map.getOverlayById(state.selectedFeatureId).getElement().parentNode
-      //     overlayElement.classList.remove('defra-key-symbol--selected')
-      //   }
-      //   if (newFeature && map.getOverlayById(newFeatureId)) {
-      //     const overlayElement = map.getOverlayById(newFeatureId).getElement().parentNode
-      //     overlayElement.classList.add('defra-key-symbol--selected')
-      //   }
-      // }
     })
     state.selectedFeatureId = newFeatureId
     // Update url
@@ -277,124 +269,129 @@ function LiveMap (mapId, options) {
     labels.getSource().clear()
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
     const resolution = map.getView().getResolution()
-    const extent = map.getView().calculateExtent(map.getSize())
-    const turfExtentPolygon = turf.polygon(fromExtent(extent).getCoordinates())
     const isBigZoom = resolution <= maps.liveMaxBigZoom
+    const extent = map.getView().calculateExtent(map.getSize())
     const layers = dataLayers.filter(layer => lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
-    // if (!layers.includes(warnings) && targetArea.pointFeature) {
-    //   layers.push(warnings)
-    // }
-    // Check vectortile polygons
+    // Add target area isn't an active alert or warning
+    if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
+    // Add vectortile polygons to labels
     if (layers.includes(warnings) && isBigZoom) {
-      // Get polygons where bbox intersects extent
-      const vectorTileFeatures = []
-      vectorTilePolygons.getSource().getFeaturesInExtent(extent).forEach(feature => {
-        const warning = warnings.getSource().getFeatureById(feature.getId())
-        if (!!warning && warning.get('isVisible')) {
-          const vectorTileFeature = new Feature({
-            geometry: feature.getGeometry(),
-            name: warning.get('name')
-          })
-          vectorTileFeature.setId(feature.getId())
-          vectorTileFeatures.push(vectorTileFeature)
-        }
-      })
-      // Simplify, clip and merge polygons
-      const multiPointFeatures = []
-      vectorTileFeatures.forEach((feature, i) => {
-        const coordinates = feature.getGeometry().getCoordinates()
-        // Simplify polygons
-        const options = { tolerance: 100, highQuality: false }
-        const turfPolygon = feature.getGeometry().getType() === 'MultiPolygon'
-          ? turf.simplify(turf.multiPolygon(coordinates), options)
-          : turf.simplify(turf.polygon(coordinates), options)
-        // Clip polygons to extent
-        const clippedPolygon = turf.intersect(turfPolygon, turfExtentPolygon)
-        if (!clippedPolygon) return
-        feature.setGeometry(new GeoJSON().readFeature(clippedPolygon).getGeometry())
-        // Merge polygons of the same feature
-        const masterFeature = multiPointFeatures.find(x => x.id_ === feature.getId())
-        if (masterFeature) {
-          const masterCoordinates = masterFeature.getGeometry().getCoordinates()
-          const masterPolygon = masterFeature.getGeometry().getType() === 'MultiPolygon'
-            ? turf.multiPolygon(masterCoordinates)
-            : turf.polygon(masterCoordinates)
-          const turfFeature = turf.union(masterPolygon, clippedPolygon)
-          const mergedFeature = new GeoJSON().readFeature(turfFeature)
-          masterFeature.setGeometry(mergedFeature.getGeometry())
-        } else {
-          multiPointFeatures.push(feature)
-        }
-      })
-      // Change geometry to multiPoint
-      multiPointFeatures.forEach((feature, i) => {
-        const geometry = feature.getGeometry()
-        feature.setGeometry(geometry.getType() === 'MultiPolygon'
-          ? geometry.getInteriorPoints()
-          : geometry.getInteriorPoint()
-        )
-        labels.getSource().addFeature(feature)
-      })
+      let warningPolygonFeatures = getWarningPolygonsIntersectingExtent(extent)
+      warningPolygonFeatures = mergePolygons(warningPolygonFeatures, extent)
+      addWarningPolygonsToLabels(warningPolygonFeatures)
     }
-    // Check point features
-    layers.forEach((layer) => {
-      layer.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
-        if (layer.get('ref') === 'warnings' && (isBigZoom || !feature.get('isVisible'))) return
-        const pointFeature = new Feature({
-          geometry: feature.getGeometry(),
-          name: feature.get('name')
-        })
-        pointFeature.setId(feature.getId())
-        labels.getSource().addFeature(pointFeature)
-      })
-    })
-    // Add identifier to each feature
-    labels.getSource().forEachFeature((feature, i) => {
-      feature.set('identifier', (i + 1))
-      console.log(i)
+    // Add point features to labels
+    addPointFeaturesToLabels(layers, extent)
+    const features = labels.getSource().getFeatures()
+    // Show labels if count is between 1 and 9
+    const hasAccessibleFeatures = maps.isKeyboard && features.length <= 9
+    labels.setVisible(hasAccessibleFeatures)
+    // Build model
+    const numWarnings = features.filter(feature => feature.get('type') === 'warning').length
+    const mumMeasurements = features.length - numWarnings
+    const model = {
+      numFeatures: features.length,
+      numWarnings: numWarnings,
+      mumMeasurements: mumMeasurements,
+      features: features.map(feature => ({
+        type: feature.get('type'),
+        severity: feature.get('severity'),
+        name: feature.get('name')
+      }))
+    }
+    // Update viewport description
+    const html = window.nunjucks.render('description-live.html', { model: model })
+    viewportDescription.innerHTML = html
+    // Set numeric id and move featureId to properties
+    if (!hasAccessibleFeatures) return
+    features.forEach((feature, i) => {
+      feature.set('featureId', feature.getId())
+      feature.setId((i + 1))
     })
   }
 
-  // Show overlays
-  const showLabels = () => {
-    getVisibleFeatures()
-    const numFeatures = labels.getSource().getFeatures().length
-    const numWarnings = state.visibleFeatures.filter((feature) => feature.state === 'warnings').length
-    const mumMeasurements = numFeatures - numWarnings
-    // const features = state.visibleFeatures.slice(0, 9)
-    // Show visual overlays
-    labels.setVisible(maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9)
-    // hideLabels()
-    // if (maps.isKeyboard && numFeatures >= 1 && numFeatures <= 9) {
-    //   state.hasOverlays = true
-    //   features.forEach((feature, i) => {
-    //     const text = i + 1
-    //     feature.labelCoordinates.forEach((coordinate, i) => {
-    //       const overlayElement = document.createElement('span')
-    //       overlayElement.setAttribute('aria-hidden', true)
-    //       overlayElement.innerText = text
-    //       const selected = feature.id === state.selectedFeatureId ? 'defra-key-symbol--selected' : ''
-    //       map.addOverlay(
-    //         new Overlay({
-    //           id: `feature.id-${i}`,
-    //           element: overlayElement,
-    //           position: coordinate,
-    //           className: `defra-key-symbol defra-key-symbol--${feature.state}${feature.isBigZoom ? '-bigZoom' : ''} ${selected}`,
-    //           offset: [0, 0]
-    //         })
-    //       )
-    //     })
-    //   })
-    // }
-    // Show non-visual feature details
-    const model = {
-      numFeatures: numFeatures,
-      numWarnings: numWarnings,
-      mumMeasurements: mumMeasurements,
-      features: []
+  // Get VectorTile Features Intersecting Extent
+  const getWarningPolygonsIntersectingExtent = (extent) => {
+    const warningsPolygons = []
+    vectorTilePolygons.getSource().getFeaturesInExtent(extent).forEach(feature => {
+      const warning = warnings.getSource().getFeatureById(feature.getId())
+      if (!!warning && warning.get('isVisible')) {
+        const warningsPolygon = new Feature({
+          geometry: feature.getGeometry(),
+          name: warning.get('name'),
+          type: warning.get('type')
+        })
+        warningsPolygon.setId(feature.getId())
+        warningsPolygons.push(warningsPolygon)
+      }
+    })
+    return warningsPolygons
+  }
+
+  // Add point features intersecting extent to labels source
+  const addPointFeaturesToLabels = (layers, extent) => {
+    const resolution = map.getView().getResolution()
+    const isBigZoom = resolution <= maps.liveMaxBigZoom
+    for (const layer of layers) {
+      if (labels.getSource().getFeatures().length > 9) break
+      const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
+      for (const feature of pointFeatures) {
+        if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
+          const pointFeature = new Feature({
+            geometry: feature.getGeometry(),
+            name: feature.get('name'),
+            type: feature.get('type')
+          })
+          pointFeature.setId(feature.getId())
+          if (labels.getSource().getFeatures().length > 9) break
+          labels.getSource().addFeature(pointFeature)
+        }
+      }
     }
-    const html = window.nunjucks.render('description-live.html', { model: model })
-    viewportDescription.innerHTML = html
+  }
+
+  // Add warning polygons to labels source
+  const addWarningPolygonsToLabels = (features) => {
+    features.forEach(feature => {
+      const geometry = feature.getGeometry()
+      feature.setGeometry(geometry.getType() === 'MultiPolygon'
+        ? geometry.getInteriorPoints()
+        : geometry.getInteriorPoint()
+      )
+      labels.getSource().addFeature(feature)
+    })
+  }
+
+  // Simplify, clip and merge vector tile polygons
+  const mergePolygons = (features, extent) => {
+    const mergedPolygons = []
+    const turfExtentPolygon = polygon(fromExtent(extent).getCoordinates())
+    features.forEach(feature => {
+      const coordinates = feature.getGeometry().getCoordinates()
+      // Simplify polygons
+      const options = { tolerance: 100, highQuality: false }
+      const turfPolygon = feature.getGeometry().getType() === 'MultiPolygon'
+        ? simplify(multiPolygon(coordinates), options)
+        : simplify(polygon(coordinates), options)
+      // Clip polygons to extent
+      const clippedPolygon = intersect(turfPolygon, turfExtentPolygon)
+      if (!clippedPolygon) return
+      feature.setGeometry(new GeoJSON().readFeature(clippedPolygon).getGeometry())
+      // Merge polygons of the same feature
+      const masterFeature = mergedPolygons.find(x => x.id_ === feature.getId())
+      if (masterFeature) {
+        const masterCoordinates = masterFeature.getGeometry().getCoordinates()
+        const masterPolygon = masterFeature.getGeometry().getType() === 'MultiPolygon'
+          ? multiPolygon(masterCoordinates)
+          : polygon(masterCoordinates)
+        const turfFeature = union(masterPolygon, clippedPolygon)
+        const mergedFeature = new GeoJSON().readFeature(turfFeature)
+        masterFeature.setGeometry(mergedFeature.getGeometry())
+      } else {
+        mergedPolygons.push(feature)
+      }
+    })
+    return mergedPolygons
   }
 
   // Pan map
@@ -532,7 +529,7 @@ function LiveMap (mapId, options) {
         // Attempt to set selected feature when layer is ready
         setSelectedFeature(state.selectedFeatureId)
         // Show overlays
-        showLabels()
+        getVisibleFeatures()
       }
     })
   })
@@ -552,7 +549,7 @@ function LiveMap (mapId, options) {
     timer = setTimeout(() => {
       if (!container.map) return
       // Show overlays for visible features
-      showLabels()
+      getVisibleFeatures()
       // Update url (history state) to reflect new extent
       const ext = getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
       replaceHistory('ext', ext.join(','))
@@ -593,7 +590,7 @@ function LiveMap (mapId, options) {
   // Show overlays on first tab in from browser controls
   viewport.addEventListener('focus', (e) => {
     if (maps.isKeyboard) {
-      showLabels()
+      getVisibleFeatures()
     }
   })
 
@@ -617,7 +614,7 @@ function LiveMap (mapId, options) {
       vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)
-      showLabels()
+      getVisibleFeatures()
     }
   })
 
@@ -642,15 +639,16 @@ function LiveMap (mapId, options) {
   containerElement.addEventListener('keyup', (e) => {
     // Show overlays when any key is pressed other than Escape
     if (e.key !== 'Escape') {
-      showLabels()
+      getVisibleFeatures()
     }
     // Clear selected feature when pressing escape
     if (e.key === 'Escape' && state.selectedFeatureId !== '') {
       setSelectedFeature()
     }
     // Set selected feature on [1-9] key presss
-    if (!isNaN(e.key) && e.key >= 1 && e.key <= state.visibleFeatures.length && state.visibleFeatures.length <= 9) {
-      setSelectedFeature(state.visibleFeatures[e.key - 1].id)
+    const visibleFeatures = labels.getSource().getFeatures()
+    if (!isNaN(e.key) && e.key >= 1 && e.key <= visibleFeatures.length && visibleFeatures.length <= 9) {
+      setSelectedFeature(labels.getSource().getFeatureById(e.key).get('featureId'))
     }
   })
 
@@ -663,11 +661,6 @@ function LiveMap (mapId, options) {
       panToFeature(feature)
     }
   })
-
-  // Vectortiles loadend
-  // vectorTilePolygons.getSource().addEventListener('tileloadend', (e) => {
-  //   showLabels()
-  // })
 }
 
 // Export a helper factory to create this map
