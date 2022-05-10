@@ -48,7 +48,7 @@ module.exports = {
       WHEN type = 'tide' THEN 'C'
       WHEN type = 'rainfall' THEN 'R'
       ELSE NULL END AS type,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+      is_wales, initcap(latest_state) AS latest_state, status, name, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
       WHERE type LIKE $1;
     `, [`%${type}%`])
@@ -65,6 +65,8 @@ module.exports = {
           type: item.type,
           name: item.name,
           river: item.river_name,
+          catchmentId: item.hydrological_catchment_id,
+          catchmentName: item.hydrological_catchment_name,
           status: item.status,
           value: item.latest_height,
           value1hr: item.rainfall_1hr,

@@ -3,6 +3,7 @@
 Sets up the window.flood.maps styles objects
 */
 import { Style, Icon, Fill, Stroke, Text, Circle } from 'ol/style'
+const { getParameterByName } = window.flood.utils
 
 const maps = window.flood.maps
 
@@ -59,9 +60,13 @@ window.flood.maps.styles = {
 
       return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
     } else if (featureLayer === 'hydrologicalboundaries') {
-      if (feature.getId() === 'TPD_NW_H03') {
-        return new Style({ stroke: new Stroke({ color: '#1d70b8', width: 2 }), zIndex: 1 })
-      }
+      const showCatchments = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('ct')
+      if (!showCatchments) return
+      return new Style({
+        stroke: new Stroke({ color: '#1d70b8', width: 1 }),
+        fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
+        zIndex: 1
+      })
     }
   },
 
@@ -85,6 +90,7 @@ window.flood.maps.styles = {
   },
 
   stations: (feature, resolution) => {
+    if (feature.get('isVisible') === false) return
     const state = feature.get('state')
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= maps.liveMaxBigZoom

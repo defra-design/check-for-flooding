@@ -42,6 +42,7 @@ module.exports = {
       SELECT 
       CASE WHEN type = 'rainfall' THEN measure_with_latest.station_id ELSE measure_with_latest.rloi_id END AS id,
       measure_with_latest.name,
+      measure_with_latest.hydrological_catchment_id,
       measure_with_latest.status,
       measure_with_latest.type,
       CASE WHEN type = 'tide' AND measure_with_latest.river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND measure_with_latest.river_slug IS NULL THEN 'sea' ELSE measure_with_latest.type END AS group_type,
