@@ -577,7 +577,7 @@ function LiveMap (mapId, options) {
   map.addEventListener('pointermove', (e) => {
     // Detect vector feature at mouse coords
     const hit = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) { return true }
+      if (feature.get('layer') !== 'hydrologicalboundaries' && (!defaultLayers.includes(layer) || layer === vectorTilePolygons)) { return true }
     })
     map.getTarget().style.cursor = hit ? 'pointer' : ''
   })
