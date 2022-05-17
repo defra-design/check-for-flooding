@@ -102,6 +102,8 @@ module.exports = {
         })
         // Remove duplicates
         results = Array.from(new Map(results.map(result => [result.name, result])).values())
+        // Remove results if query contains 'catchment' could be moved outside api call
+        results = query.toLowerCase().includes('catchment') ? [] : results
         response.data.results = results
       }
     }

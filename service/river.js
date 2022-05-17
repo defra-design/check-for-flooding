@@ -17,5 +17,14 @@ module.exports = {
     ORDER BY display
     `, [`%${query}%`, query])
     return response
+  },
+
+  getCatchments: async (query) => {
+    const response = await db.query(`
+    SELECT wiski_refe, eahydarea FROM hydrological_boundaries
+    WHERE lower(eahydarea) LIKE lower($1) OR concat(lower(eahydarea), ' catchment') = lower($2)
+    ORDER BY eahydarea;
+    `, [`%${query}%`, query])
+    return response
   }
 }

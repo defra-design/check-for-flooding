@@ -27,20 +27,30 @@ River, sea, groundwater and rainfall levels - GOV.UK
 	<div class="govuk-grid-column-two-thirds">
 		<h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.querySearch }}'</h2>
 		<p>More than one match was found for your location. Choose the correct location from the following options:</p>
-		{% if model.places.length and model.rivers.length %}
+		{% if model.rivers.length %}
+    {% if model.isMultipleGroupMatch %}
 		<h3 class="govuk-heading-s">Rivers</h3>
 		{% endif %}
-		{% if model.rivers.length %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
 			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ river.display }}">{{ river.display | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
-		{% if model.places.length and model.rivers.length %}
-		<h3 class="govuk-heading-s">Levels near</h3>
+		{% if model.catchments.length %}
+    {% if model.isMultipleGroupMatch %}
+		<h3 class="govuk-heading-s">River catchments</h3>
+		{% endif %}
+		<ul class="govuk-list">
+			{% for catchment in model.catchments %}
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ catchment.display }}">{{ catchment.name | marked(model.querySearch) | safe }}</a></li>
+			{% endfor %}
+		</ul>
 		{% endif %}
 		{% if model.places.length %}
+    {% if model.isMultipleGroupMatch %}
+		<h3 class="govuk-heading-s">Levels near</h3>
+		{% endif %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
 			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ place.name }}">{{ place.name | marked(model.querySearch) | safe }}</a></li>
