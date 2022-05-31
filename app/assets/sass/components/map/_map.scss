@@ -391,9 +391,9 @@
 
 // Map controls - Show attributions
 .defra-map-attribution {
-  position: absolute;
-  left: 0px;
-  bottom: 0px;
+  float:right;
+  clear: both;
+  position: relative;
   @include govuk-font($size: 19);
   border:0;
   height:40px;
@@ -419,6 +419,13 @@
   &:focus[keyboard-focus]:after {
     @include focus;
   }
+}
+
+// OS copyright logo
+.defra-map-os-logo {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
 }
 
 // Map controls - Base map

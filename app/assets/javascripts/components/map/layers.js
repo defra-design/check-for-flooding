@@ -41,7 +41,7 @@ window.flood.maps.layers = {
       // }),
       source: new XYZ({
         url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
-        attributions: 'Ordnance Survey'
+        attributions: `Contains OS data &copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
       }),
       visible: false,
       zIndex: 0

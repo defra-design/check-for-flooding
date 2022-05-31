@@ -60,12 +60,23 @@ function LiveMap (mapId, options) {
   //   element: backgroundElement
   // })
 
+  // Add OS copyright logo
+  const osLogoImage = document.createElement('img')
+  osLogoImage.className = 'defra-map-os-logo'
+  osLogoImage.setAttribute('alt', 'Ordnance Survey logo')
+  osLogoImage.src = '/public/images/os-logo-maps-2x.png'
+  osLogoImage.width = 90
+  osLogoImage.height = 24
+  const osLogo = new Control({
+    element: osLogoImage
+  })
+
   // Options to pass to the MapContainer constructor
   const containerOptions = {
     maxBigZoom: maps.liveMaxBigZoom,
     view: view,
     // layers: layers,
-    // controls: [backgroundControl],
+    controls: [osLogo],
     queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
     // interactions: interactions,
     originalTitle: options.originalTitle,
@@ -149,7 +160,9 @@ function LiveMap (mapId, options) {
     })
     road.setVisible(lyrCodes.includes('mv'))
     satellite.setVisible(lyrCodes.includes('sv'))
-    // Overide wanrings visibility if target area provided
+    osLogoImage.style.display = lyrCodes.includes('mv') ? 'block' : 'none'
+
+    // Overide warnings visibility if target area provided
     if (targetArea.pointFeature) {
       warnings.setVisible(true)
     }
