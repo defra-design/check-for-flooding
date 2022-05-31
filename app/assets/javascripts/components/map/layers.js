@@ -4,7 +4,7 @@ Initialises the window.flood.maps layers
 */
 import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
-import { Feature } from 'ol/Feature'
+import Feature from 'ol/Feature'
 import { GeoJSON, MVT } from 'ol/format'
 
 //
