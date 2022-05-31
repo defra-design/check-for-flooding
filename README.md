@@ -1,6 +1,8 @@
 **Check for flooding prototype**
-# FSR-301 - Rainfall - v2
+# FSR-301 - Rainfall - v3
 
 ## Rainfall detail page
-- Headline figures replaced with visually hidden content
-- Bar chart showing rolling 5 days
+- Recent trend on map and list
+- Search catchments
+- Disambiguate locations, catchments and rivers
+- Initial accessbility work on station detail page

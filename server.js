@@ -3,6 +3,7 @@ const path = require('path')
 
 // NPM dependencies
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const dotenv = require('dotenv')
 const express = require('express')
 const nunjucks = require('nunjucks')
@@ -15,7 +16,7 @@ dotenv.config()
 
 // Local dependencies
 const middleware = [
-  require('./lib/middleware/authentication/authentication.js'),
+  require('./lib/middleware/authentication/authentication.js')(),
   require('./lib/middleware/extensions/extensions.js')
 ]
 const config = require('./app/config.js')
@@ -30,8 +31,7 @@ app.use(compression())
 
 // Set up configuration variables
 var releaseVersion = packageJson.version
-var glitchEnv = (process.env.PROJECT_REMIX_CHAIN) ? 'production' : false // glitch.com
-var env = (process.env.NODE_ENV || glitchEnv || 'development').toLowerCase()
+var env = utils.getNodeEnv()
 var useCookieSessionStore = process.env.USE_COOKIE_SESSION_STORE || config.useCookieSessionStore
 var useHttps = process.env.USE_HTTPS || config.useHttps
 
@@ -49,6 +49,45 @@ if (isSecure) {
   app.set('trust proxy', 1) // needed for secure cookies on heroku
 }
 
+// Add variables that are available in all views
+app.locals.asset_path = '/public/'
+app.locals.useCookieSessionStore = (useCookieSessionStore === 'true')
+app.locals.promoMode = promoMode
+app.locals.releaseVersion = 'v' + releaseVersion
+app.locals.serviceName = config.serviceName
+// extensionConfig sets up variables used to add the scripts and stylesheets to each page.
+app.locals.extensionConfig = extensions.getAppConfig()
+
+// use cookie middleware for reading authentication cookie
+app.use(cookieParser())
+
+// Session uses service name to avoid clashes with other prototypes
+const sessionName = 'govuk-prototype-kit-' + (Buffer.from(config.serviceName, 'utf8')).toString('hex')
+const sessionOptions = {
+  secret: sessionName,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 4, // 4 hours
+    secure: isSecure
+  }
+}
+
+// Support session data in cookie or memory
+if (useCookieSessionStore === 'true') {
+  app.use(sessionInCookie(Object.assign(sessionOptions, {
+    cookieName: sessionName,
+    proxy: true,
+    requestKey: 'session'
+  })))
+} else {
+  app.use(sessionInMemory(Object.assign(sessionOptions, {
+    name: sessionName,
+    resave: false,
+    saveUninitialized: false
+  })))
+}
+
+// Authentication middleware must be loaded before other middleware such as
+// static assets to prevent unauthorised access
 middleware.forEach(func => app.use(func))
 
 // Set up App
@@ -89,40 +128,6 @@ app.use(bodyParser.urlencoded({
   extended: true
 }))
 
-// Add variables that are available in all views
-app.locals.asset_path = '/public/'
-app.locals.useCookieSessionStore = (useCookieSessionStore === 'true')
-app.locals.promoMode = promoMode
-app.locals.releaseVersion = 'v' + releaseVersion
-app.locals.serviceName = config.serviceName
-// extensionConfig sets up variables used to add the scripts and stylesheets to each page.
-app.locals.extensionConfig = extensions.getAppConfig()
-
-// Session uses service name to avoid clashes with other prototypes
-const sessionName = 'govuk-prototype-kit-' + (Buffer.from(config.serviceName, 'utf8')).toString('hex')
-const sessionOptions = {
-  secret: sessionName,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 4, // 4 hours
-    secure: isSecure
-  }
-}
-
-// Support session data in cookie or memory
-if (useCookieSessionStore === 'true') {
-  app.use(sessionInCookie(Object.assign(sessionOptions, {
-    cookieName: sessionName,
-    proxy: true,
-    requestKey: 'session'
-  })))
-} else {
-  app.use(sessionInMemory(Object.assign(sessionOptions, {
-    name: sessionName,
-    resave: false,
-    saveUninitialized: false
-  })))
-}
-
 // Prevent search indexing
 app.use(function (req, res, next) {
   // Setting headers stops pages being indexed even if indexed pages link to them.
@@ -157,8 +162,6 @@ app.get(/\.html?$/i, function (req, res) {
   path = parts.join('.')
   res.redirect(path)
 })
-
-// Auto render any view that exists
 
 // App folder routes get priority
 app.get(/^([^.]+)$/, function (req, res, next) {
