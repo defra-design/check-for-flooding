@@ -2,7 +2,6 @@ const severity = require('../models/severity')
 
 class TargetArea {
   constructor (data) {
-    console.log(data)
     this.id = data.id
     this.name = data.name
     this.type = data.type
