@@ -1,11 +1,19 @@
 
 // NPM dependencies
 const browserSync = require('browser-sync')
+// const fs = require('fs')
+// const https = require('https')
 
 // Local dependencies
 const server = require('./server.js')
+// const app = require('./server.js')
 const config = require('./app/config.js')
 const utils = require('./lib/utils.js')
+
+// Use https on localhost
+// const key = fs.readFileSync('./localhost-key.pem')
+// const cert = fs.readFileSync('./localhost.pem')
+// const server = https.createServer({ key: key, cert: cert }, app)
 
 // Set up configuration variables
 var useBrowserSync = config.useBrowserSync.toLowerCase()
