@@ -4,7 +4,7 @@ const severity = require('../models/severity')
 
 class Warnings {
   constructor (data) {
-    const groups = utils.groupBy(data, 'severity')
+    // const groups = utils.groupBy(data, 'severity')
     this.groups = []
     for (const [key] of Object.entries(groups)) {
       const groupSeverityId = parseInt(key, 10)
