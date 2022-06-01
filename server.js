@@ -20,6 +20,7 @@ const middleware = [
   require('./lib/middleware/extensions/extensions.js')
 ]
 const config = require('./app/config.js')
+const prototypeAdminRoutes = require('./lib/prototype-admin-routes.js')
 const packageJson = require('./package.json')
 const utils = require('./lib/utils.js')
 const extensions = require('./lib/extensions/extensions.js')
@@ -37,10 +38,6 @@ var useHttps = process.env.USE_HTTPS || config.useHttps
 
 useHttps = useHttps.toLowerCase()
 
-// Promo mode redirects the root to /docs - so our landing page is docs when published on heroku
-var promoMode = process.env.PROMO_MODE || 'false'
-promoMode = promoMode.toLowerCase()
-
 // Force HTTPS on production. Do this before using basicAuth to avoid
 // asking for username/password twice (for `http`, then `https`).
 var isSecure = (env === 'production' && useHttps === 'true')
@@ -53,7 +50,6 @@ if (isSecure) {
 // Add variables that are available in all views
 app.locals.asset_path = '/public/'
 app.locals.useCookieSessionStore = (useCookieSessionStore === 'true')
-app.locals.promoMode = promoMode
 app.locals.releaseVersion = 'v' + releaseVersion
 app.locals.serviceName = config.serviceName
 // extensionConfig sets up variables used to add the scripts and stylesheets to each page.
@@ -140,6 +136,9 @@ app.get('/robots.txt', function (req, res) {
   res.type('text/plain')
   res.send('User-agent: *\nDisallow: /')
 })
+
+// Load prototype admin routes
+app.use('/prototype-admin', prototypeAdminRoutes)
 
 // Load routes (found in app/routes)
 app.use('/', require('./app/routes/national'))
