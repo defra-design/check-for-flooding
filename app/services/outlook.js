@@ -7,11 +7,10 @@ module.exports = {
     const url = '/outlook'
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
-        withCredentials: true,
+        // auth: {
+        //   username: process.env.USERNAME,
+        //   password: process.env.PASSWORD
+        // },
         baseURL: serviceUrl
       })
       return response
