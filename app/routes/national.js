@@ -8,6 +8,8 @@ const ViewModel = require('../models/views/national')
 
 // Add your routes here - above the module.exports line
 router.get('/', async (req, res) => {
+  console.log('DBL: **** Main route *****')
+  console.log(req.session)
   const outlookResponse = await outlookServices.getOutlook()
   const warningResponse = await warningServices.getWarnings()
   if (outlookResponse.status === 200 && warningResponse.status === 200) {
