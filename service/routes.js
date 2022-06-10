@@ -16,6 +16,8 @@ const path = require('path')
 
 // Get all warnings
 router.get('/service/warnings', async (req, res, next) => {
+  console.log('**** Service ****')
+  console.log(req.session)
   try {
     res.status(200).json(await warningServices.getWarnings())
   } catch (err) {
