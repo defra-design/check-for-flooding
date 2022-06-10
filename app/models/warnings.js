@@ -4,6 +4,7 @@ const severity = require('../models/severity')
 
 class Warnings {
   constructor (data) {
+    console.log('***********************')
     console.log(data)
     const groups = utils.groupBy(data, 'severity')
     this.groups = []
