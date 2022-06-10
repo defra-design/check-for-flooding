@@ -11,6 +11,8 @@ router.get('/', async (req, res) => {
   const outlookResponse = await outlookServices.getOutlook()
   const warningResponse = await warningServices.getWarnings()
   if (outlookResponse.status === 200 && warningResponse.status === 200) {
+    console.log('***********************')
+    console.log(warningResponse.data)
     const warnings = new Warnings(warningResponse.data)
     const outlook = new Outlook(outlookResponse.data)
     const model = new ViewModel(warnings, outlook)
