@@ -3,14 +3,11 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Get all warnings
-  getWarnings: async () => {
+  getWarnings: async (orgReq) => {
     const url = '/warnings'
     try {
       const response = await axios.get(url, {
-        // auth: {
-        //   username: process.env.USERNAME,
-        //   password: process.env.PASSWORD
-        // },
+        headers: { Cookie: orgReq.headers.cookie },
         baseURL: serviceUrl
       })
       return response

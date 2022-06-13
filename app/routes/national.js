@@ -8,8 +8,8 @@ const ViewModel = require('../models/views/national')
 
 // Add your routes here - above the module.exports line
 router.get('/', async (req, res) => {
-  const outlookResponse = await outlookServices.getOutlook(req, res)
-  const warningResponse = await warningServices.getWarnings()
+  const outlookResponse = await outlookServices.getOutlook(req)
+  const warningResponse = await warningServices.getWarnings(req)
   if (outlookResponse.status === 200 && warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
     const outlook = new Outlook(outlookResponse.data)
