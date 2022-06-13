@@ -3,7 +3,7 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Used in search
-  getOutlook: async (orgReq, orgRes) => {
+  getOutlook: async (req, res) => {
     const url = '/outlook'
     try {
       const response = await axios.get(url, {
@@ -13,7 +13,7 @@ module.exports = {
         // },
         baseURL: serviceUrl
       })
-      console.log(orgRes.headers)
+      console.log(JSON.stringify(req.headers))
       return response
     } catch (error) {
       console.log(error)
