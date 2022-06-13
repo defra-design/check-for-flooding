@@ -137,9 +137,9 @@ app.use(bodyParser.urlencoded({
 
 // DBL: Added to enable authenticated calls to service from app
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', process.env.APP_URL)
-  res.header('Access-Control-Allow-Credentials', true)
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL)
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   next()
 })
 

@@ -1,8 +1,6 @@
 const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
-axios.defaults.withCredentials = true
-
 module.exports = {
   // Get all warnings
   getWarnings: async () => {
@@ -13,7 +11,8 @@ module.exports = {
         //   username: process.env.USERNAME,
         //   password: process.env.PASSWORD
         // },
-        baseURL: serviceUrl
+        baseURL: serviceUrl,
+        withCredentials: true
       })
       return response
     } catch (error) {
