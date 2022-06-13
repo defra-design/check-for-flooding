@@ -72,7 +72,7 @@ module.exports = {
           value1hr: item.rainfall_1hr,
           value6hr: item.rainfall_6hr,
           value24hr: item.rainfall_24hr,
-          trend: item.trend,
+          trend: item.latest_trend,
           valueDate: item.latest_datetime,
           percentile5: item.level_high,
           percentile95: item.level_low,
