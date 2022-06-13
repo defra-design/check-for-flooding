@@ -16,7 +16,7 @@ router.get('/station', (req, res) => {
 router.get('/station/:id', async (req, res) => {
   const cookie = req.headers.cookie || null
   const rloiId = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStation(rloiId)
+  const stationResponse = await stationServices.getStation(cookie, rloiId)
   let telemetry, station, thresholds, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
