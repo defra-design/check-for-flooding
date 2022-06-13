@@ -11,9 +11,12 @@ module.exports = {
         //   username: process.env.USERNAME,
         //   password: process.env.PASSWORD
         // },
+        // headers: { Cookie: "cookie1=value; cookie2=value; cookie3=value;" },
         baseURL: serviceUrl
       })
-      console.log(JSON.stringify(req.headers))
+      console.log(req.cookies)
+      console.log(req.headers.cookie)
+      // console.log(JSON.stringify(req.headers).cookie)
       return response
     } catch (error) {
       console.log(error)
