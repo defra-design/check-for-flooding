@@ -10,7 +10,7 @@ const nunjucks = require('nunjucks')
 const sessionInCookie = require('client-sessions')
 const sessionInMemory = require('express-session')
 const compression = require('compression')
-const cors = require('cors')
+// const cors = require('cors')
 
 // Run before other code to make sure variables from .env are available
 dotenv.config()
@@ -85,13 +85,13 @@ if (useCookieSessionStore === 'true') {
 }
 
 // DBL: Added to enable authenticated calls to service from app
-if (isSecure) {
-  app.use(cors({
-    origin: [process.env.APP_URL],
-    credentials: true,
-    exposedHeaders: ['set-cookie']
-  }))
-}
+// if (isSecure) {
+//   app.use(cors({
+//     origin: [process.env.APP_URL],
+//     credentials: true,
+//     exposedHeaders: ['set-cookie']
+//   }))
+// }
 
 // Authentication middleware must be loaded before other middleware such as
 // static assets to prevent unauthorised access
@@ -136,12 +136,12 @@ app.use(bodyParser.urlencoded({
 }))
 
 // DBL: Added to enable authenticated calls to service from app
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL)
-  res.setHeader('Access-Control-Allow-Credentials', true)
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
-})
+// app.use(function (req, res, next) {
+//   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL)
+//   res.setHeader('Access-Control-Allow-Credentials', true)
+//   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+//   next()
+// })
 
 // Prevent search indexing
 app.use(function (req, res, next) {

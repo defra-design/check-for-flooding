@@ -11,9 +11,9 @@ module.exports = {
         //   username: process.env.USERNAME,
         //   password: process.env.PASSWORD
         // },
-        baseURL: serviceUrl,
-        withCredentials: true
+        baseURL: serviceUrl
       })
+      console.log(response.headers)
       return response
     } catch (error) {
       console.log(error)
