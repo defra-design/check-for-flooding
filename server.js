@@ -87,9 +87,9 @@ if (useCookieSessionStore === 'true') {
 // DBL: Added to enable authenticated calls to backend from app
 if (isSecure) {
   app.use(cors({
-    origin: [
-      process.env.APP_URL
-    ],
+    // origin: [
+    //   process.env.APP_URL
+    // ],
     credentials: true,
     exposedHeaders: ['set-cookie']
   }))
