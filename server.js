@@ -85,13 +85,13 @@ if (useCookieSessionStore === 'true') {
 }
 
 // DBL: Added to enable authenticated calls to backend from app
-// if (isSecure) {
-//   app.use(cors({
-//     origin: [process.env.APP_URL],
-//     credentials: true,
-//     exposedHeaders: ['set-cookie']
-//   }))
-// }
+if (isSecure) {
+  app.use(cors({
+    origin: [process.env.APP_URL],
+    credentials: true,
+    exposedHeaders: ['set-cookie']
+  }))
+}
 
 // Authentication middleware must be loaded before other middleware such as
 // static assets to prevent unauthorised access
