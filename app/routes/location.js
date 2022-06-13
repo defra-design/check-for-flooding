@@ -16,6 +16,7 @@ router.get('/location', (req, res) => {
 })
 
 router.get('/location/:location', async (req, res) => {
+  const cookie = req.headers.cookie || null
   const referrer = req.get('Referrer')
   const slug = req.params.location.toLowerCase()
   const locationResponse = await locationServices.getLocationBySlug(slug)
@@ -23,9 +24,9 @@ router.get('/location/:location', async (req, res) => {
     if (locationResponse.data && locationResponse.data.result) {
       // We have a valid route
       const place = new Place(locationResponse.data.result)
-      const warningResponse = await warningServices.getWarningsWithin(place.bbox)
-      const levelResponse = await levelServices.getLevelsWithin(place.bboxBuffered)
-      const outlookResponse = await outlookServices.getOutlook()
+      const warningResponse = await warningServices.getWarningsWithin(cookie, place.bbox)
+      const levelResponse = await levelServices.getLevelsWithin(cookie, place.bboxBuffered)
+      const outlookResponse = await outlookServices.getOutlook(cookie)
       const warnings = new Warnings(warningResponse.data)
       const levels = new Levels(null, levelResponse.data)
       const banner = new BannerLocation(place, warnings, levels)

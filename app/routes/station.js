@@ -8,13 +8,13 @@ const Place = require('../models/place')
 const Thresholds = require('../models/thresholds')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
-const { ConcatenationScope } = require('webpack')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
 })
 
 router.get('/station/:id', async (req, res) => {
+  const cookie = req.headers.cookie || null
   const rloiId = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStation(rloiId)
   let telemetry, station, thresholds, place
@@ -27,7 +27,7 @@ router.get('/station/:id', async (req, res) => {
     // Station telemetry
     const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(station.measureId, start, end, station.latestDatetime)
+    telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
     telemetry = telemetry.data
     // Thresholds
     thresholds = new Thresholds([
@@ -51,8 +51,9 @@ router.get('/station/:id', async (req, res) => {
 })
 
 router.get('/rainfall-station/:id', async (req, res) => {
+  const cookie = req.headers.cookie || null
   const id = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStationRain(id)
+  const stationResponse = await stationServices.getStationRain(cookie, id)
   let telemetry, station, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
@@ -63,7 +64,7 @@ router.get('/rainfall-station/:id', async (req, res) => {
     // Rainfall telemetry
     const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getRainfallTelemetry(station.measureId, start, end, station.latestDatetime)
+    telemetry = await telemetryServices.getRainfallTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
     telemetry = telemetry.data
   } else {
     // Return 500 error

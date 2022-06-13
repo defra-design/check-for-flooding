@@ -9,8 +9,9 @@ router.get('/target-area', (req, res) => {
 })
 
 router.get('/target-area/:id', async (req, res) => {
+  const cookie = req.headers.cookie || null
   const id = req.params.id.toLowerCase()
-  const targetAreaResponse = await targetAreaServices.getTargetArea(id)
+  const targetAreaResponse = await targetAreaServices.getTargetArea(cookie, id)
   if (targetAreaResponse.status === 200) {
     if (!targetAreaResponse.data) {
       return res.status(404).render('404')

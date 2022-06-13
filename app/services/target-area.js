@@ -3,14 +3,11 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Get all warnings
-  getTargetArea: async (id) => {
+  getTargetArea: async (cookie, id) => {
     const url = `/target-area/${id}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response

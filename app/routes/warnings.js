@@ -8,6 +8,7 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 
 // Get levels
 router.get('/flood-warnings-and-alerts', async (req, res) => {
+  const cookie = req.headers.cookie || null
   const queryTerm = req.query.place
   // Get place
   let place
@@ -23,7 +24,7 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
     }
   }
   // Get warnings
-  const warningResponse = await warningServices.getWarningsWithin(place ? place.bbox : [])
+  const warningResponse = await warningServices.getWarningsWithin(cookie, place ? place.bbox : [])
   if (warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
     const model = new ViewModel(queryTerm, place, null, warnings)

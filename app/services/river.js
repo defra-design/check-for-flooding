@@ -4,14 +4,11 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Used in search
-  getRivers: async (query) => {
+  getRivers: async (cookie, query) => {
     const url = `/rivers/${encodeURI(query)}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -21,14 +18,11 @@ module.exports = {
   },
 
   // Used on list page
-  getRiver: async (slug) => {
+  getRiver: async (cookie, slug) => {
     const url = `/river/${utils.getSlug(slug)}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -37,14 +31,11 @@ module.exports = {
     }
   },
 
-  getCatchments: async (query) => {
+  getCatchments: async (cookie, query) => {
     const url = `/catchments/${encodeURI(query)}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response

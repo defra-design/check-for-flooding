@@ -3,11 +3,11 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Used in search
-  getOutlook: async (orgReq) => {
+  getOutlook: async (cookie) => {
     const url = '/outlook'
     try {
       const response = await axios.get(url, {
-        headers: { Cookie: orgReq.headers.cookie },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response

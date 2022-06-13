@@ -3,15 +3,12 @@ const utils = require('../utils')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
-  getLevelsWithin: async (bbox) => {
+  getLevelsWithin: async (cookie, bbox) => {
     const coords = bbox.join('/')
     const url = `/stations-within/${coords}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -19,15 +16,12 @@ module.exports = {
       console.log(error)
     }
   },
-  getLevelsByRiver: async (query) => {
+  getLevelsByRiver: async (cookie, query) => {
     const slug = utils.getSlug(query)
     const url = `/stations-by-river/${slug}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -35,14 +29,11 @@ module.exports = {
       console.log(error)
     }
   },
-  getLevelsByCatchment: async (query) => {
+  getLevelsByCatchment: async (cookie, query) => {
     const url = `/stations-by-catchment/${encodeURI(query)}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response

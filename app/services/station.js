@@ -2,14 +2,11 @@ const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
-  getStation: async (id) => {
+  getStation: async (cookie, id) => {
     const url = `/station/${id}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -17,14 +14,11 @@ module.exports = {
       console.log(error)
     }
   },
-  getStationRain: async (id) => {
+  getStationRain: async (cookie, id) => {
     const url = `/raingauge/${id}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response

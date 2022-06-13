@@ -3,11 +3,11 @@ const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
   // Get all warnings
-  getWarnings: async (orgReq) => {
+  getWarnings: async (cookie) => {
     const url = '/warnings'
     try {
       const response = await axios.get(url, {
-        headers: { Cookie: orgReq.headers.cookie },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
@@ -16,15 +16,12 @@ module.exports = {
     }
   },
   // Get warnings that intersect a bbox
-  getWarningsWithin: async (bbox) => {
+  getWarningsWithin: async (cookie, bbox) => {
     const coords = bbox.join('/')
     const url = `/warnings/${coords}`
     try {
       const response = await axios.get(url, {
-        auth: {
-          username: process.env.USERNAME,
-          password: process.env.PASSWORD
-        },
+        headers: { Cookie: cookie },
         baseURL: serviceUrl
       })
       return response
