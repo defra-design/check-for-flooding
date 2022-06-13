@@ -13,7 +13,7 @@ module.exports = {
         // },
         baseURL: serviceUrl
       })
-      console.log(orgReq.session)
+      console.log(orgRes.headers)
       return response
     } catch (error) {
       console.log(error)
