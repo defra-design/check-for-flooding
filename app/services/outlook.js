@@ -1,6 +1,8 @@
 const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
+axios.defaults.withCredentials = true
+
 module.exports = {
   // Used in search
   getOutlook: async () => {
@@ -11,8 +13,7 @@ module.exports = {
         //   username: process.env.USERNAME,
         //   password: process.env.PASSWORD
         // },
-        baseURL: serviceUrl,
-        withCredentials: true
+        baseURL: serviceUrl
       })
       return response
     } catch (error) {
