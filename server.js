@@ -10,6 +10,7 @@ const nunjucks = require('nunjucks')
 const sessionInCookie = require('client-sessions')
 const sessionInMemory = require('express-session')
 const compression = require('compression')
+const cors = require('cors')
 
 // Run before other code to make sure variables from .env are available
 dotenv.config()
@@ -27,7 +28,7 @@ const extensions = require('./lib/extensions/extensions.js')
 
 const app = express()
 
-// Compress all HTTP responses
+// DBL: Compress all HTTP responses. Added to ensure client code size is small.
 app.use(compression())
 
 // Set up configuration variables
@@ -81,6 +82,17 @@ if (useCookieSessionStore === 'true') {
     resave: false,
     saveUninitialized: false
   })))
+}
+
+// DBL: Added to enable authenticated calls to backend from app
+if (isSecure) {
+  app.use(cors({
+    origin: [
+      process.env.APP_URL
+    ],
+    credentials: true,
+    exposedHeaders: ['set-cookie']
+  }))
 }
 
 // Authentication middleware must be loaded before other middleware such as
