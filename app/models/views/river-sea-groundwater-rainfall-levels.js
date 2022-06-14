@@ -3,7 +3,7 @@ const bingApiKey = process.env.BING_API_KEY
 class ViewModel {
   constructor (query, places, rivers, catchments, levels) {
     this.querySearch = decodeURI(query.search)
-    this.querySearchType = query.searchType || ''
+    this.querySearchType = query.searchType
     this.queryType = levels ? levels.type : 'river'
     this.bbox = levels ? levels.bbox : []
     this.place = places.length ? places[0] : null

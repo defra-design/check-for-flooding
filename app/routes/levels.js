@@ -12,7 +12,7 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const query = Object.assign({}, { searchType: 'place,river,catchment', search: '', type: '' }, req.query)
+  const query = Object.assign({}, { searchType: '', search: '', type: '' }, req.query)
   const places = []
   const rivers = []
   const catchments = []
@@ -20,7 +20,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
 
   if (query.search !== '') {
     // Check places
-    if (query.searchType.includes('place')) {
+    if (query.searchType === '' || query.searchType === 'place') {
       const locationResponse = await locationServices.getLocationsByQuery(query.search, query.searchType === 'place')
       if (locationResponse.status === 200) {
         const results = locationResponse.data.results
@@ -34,7 +34,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
       }
     }
     // Check rivers
-    if (query.searchType.includes('river')) {
+    if (query.searchType === '' || query.searchType === 'river') {
       const riverResponse = await riverServices.getRivers(cookie, query.search)
       if (riverResponse.status === 200) {
         riverResponse.data.forEach(item => { rivers.push(new River(item)) })
@@ -44,7 +44,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
       }
     }
     // Check catchments
-    if (query.searchType.includes('catchment')) {
+    if (query.searchType === '' || query.searchType === 'catchment') {
       const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
       if (catchmentResponse.status === 200) {
         catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
