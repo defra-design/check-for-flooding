@@ -9,7 +9,7 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 // Get levels
 router.get('/flood-warnings-and-alerts', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const queryTerm = req.query.place
+  const queryTerm = req.query.search
   // Get place
   let place
   if (queryTerm && queryTerm !== '') {
@@ -39,7 +39,7 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
   const queryTerm = req.body.search
   // Empty search
   if (queryTerm === '') {
-    return res.redirect('/warnings')
+    return res.redirect('/flood-warnings-and-alerts')
   }
   // Check places
   const locationResponse = await locationServices.getLocationsByQuery(queryTerm)
@@ -55,7 +55,7 @@ router.post('/flood-warnings-and-alerts', async (req, res) => {
   }
   const model = new ViewModel(queryTerm, null, places, null)
   if (model.isSingleMatch) {
-    res.redirect(`/warnings?place=${encodeURI(queryTerm)}#`)
+    res.redirect(`/flood-warnings-and-alerts?search=${encodeURI(queryTerm)}#`)
   } else {
     res.render('warnings', { model })
   }

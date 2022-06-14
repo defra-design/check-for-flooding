@@ -3,7 +3,7 @@ const bingApiKey = process.env.BING_API_KEY
 class ViewModel {
   constructor (queryTerm, place, places, warnings) {
     this.searchType = 'placeOnly'
-    this.queryTerm = queryTerm
+    this.querySearch = queryTerm
     this.place = place
     this.bbox = place ? place.bbox : []
     this.places = places || []
