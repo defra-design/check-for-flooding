@@ -9,15 +9,16 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 // Get warnings
 router.get('/flood-warnings-and-alerts', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const querySearch = req.query.search
+  const query = Object.assign({}, { searchType: 'place', search: '' }, req.query)
   const places = []
-  if (querySearch !== '') {
+  if (query.search !== '') {
     // Check places
-    const locationResponse = await locationServices.getLocationsByQuery(querySearch)
+    const locationResponse = await locationServices.getLocationsByQuery(query.search, query.searchType === 'place')
     if (locationResponse.status === 200) {
-      if (locationResponse.data.results && locationResponse.data.results.length) {
-        // We have some matches
-        locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+      const results = locationResponse.data.results
+      if (results && results.length) {
+        // We have one or more matches
+        results.forEach(result => { places.push(new Place(result)) })
       }
     } else {
       // Log 500 error
@@ -26,7 +27,7 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
   }
   const warningResponse = await warningServices.getWarningsWithin(cookie, places.length === 1 ? places[0].bboxBuffered : null)
   const warnings = new Warnings(warningResponse.data)
-  const model = new ViewModel(querySearch, places, warnings)
+  const model = new ViewModel(query.search, places, warnings)
   res.render('warnings', { model })
 })
 

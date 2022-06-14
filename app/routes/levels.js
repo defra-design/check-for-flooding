@@ -21,11 +21,12 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   if (query.search !== '') {
     // Check places
     if (query.searchType.includes('place')) {
-      const locationResponse = await locationServices.getLocationsByQuery(query.search)
+      const locationResponse = await locationServices.getLocationsByQuery(query.search, query.searchType === 'place')
       if (locationResponse.status === 200) {
-        if (locationResponse.data.results && locationResponse.data.results.length) {
-          // We have some matches
-          locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+        const results = locationResponse.data.results
+        if (results && results.length) {
+          // We have one or more matches
+          results.forEach(result => { places.push(new Place(result)) })
         }
       } else {
         // Log 500 error
