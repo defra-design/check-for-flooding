@@ -1,21 +1,21 @@
 const bingApiKey = process.env.BING_API_KEY
 
 class ViewModel {
-  constructor (queryTerm, place, places, warnings) {
+  constructor (querySearch, places, warnings) {
     this.searchType = 'placeOnly'
-    this.querySearch = queryTerm
-    this.place = place
-    this.bbox = place ? place.bbox : []
-    this.places = places || []
+    this.querySearch = querySearch
+    this.place = places.length ? places[0] : null
+    this.bbox = places.length ? places[0].bboxBuffered : []
+    this.places = places
     this.warnings = warnings
     this.bingApiKey = bingApiKey
     // Results
-    this.isSingleMatch = queryTerm && !place && places.length === 1
-    this.isMultipleMatch = queryTerm && !place && places.length > 1
-    this.isNoResults = queryTerm && warnings && !warnings.groups.length
+    this.isSingleMatch = !!querySearch && places.length === 1
+    this.isMultipleMatch = !!querySearch && places.length > 1
+    this.isNoResults = warnings && !warnings.groups.length
     // Errors
-    this.isErrorLocation = queryTerm && !place && !places.length
-    this.isErrorPostcode = queryTerm && !place && places.length > 1 && places.filter(p => p.type === 'postcode').length === places.length
+    this.isErrorLocation = !!querySearch && !places.length
+    this.isErrorPostcode = !!querySearch && places.length > 1 && places.filter(p => p.type === 'postcode').length === places.length
   }
 }
 module.exports = ViewModel

@@ -10,7 +10,7 @@ const ViewModel = require('../models/views/national')
 router.get('/', async (req, res) => {
   const cookie = req.headers.cookie || null
   const outlookResponse = await outlookServices.getOutlook(cookie)
-  const warningResponse = await warningServices.getWarnings(cookie)
+  const warningResponse = await warningServices.getWarningsWithin(cookie)
   if (outlookResponse.status === 200 && warningResponse.status === 200) {
     const warnings = new Warnings(warningResponse.data)
     const outlook = new Outlook(outlookResponse.data)

@@ -39,11 +39,11 @@ Flood warnings and alerts in England - GOV.UK
 <div class="govuk-grid-row">
   {% if model.isMultipleMatch and not model.isErrorPostcode %}
   <div class="govuk-grid-column-two-thirds">
-    <h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.queryTerm }}'</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8">Locations matching '{{ model.querySearch }}'</h2>
     <p>More than one match was found for your location. Choose the correct location from the following options:</p>
     <ul class="govuk-list">
       {% for place in model.places %}
-      <li><a href="/flood-warnings-and-alerts?place={{ place.name }}">{{ place.name | marked(model.queryTerm) | safe }}</a></li>
+      <li><a href="/flood-warnings-and-alerts?search={{ place.name }}">{{ place.name | marked(model.querySearch) | safe }}</a></li>
       {% endfor %}
     </ul>
     <p>Alternatively try searching again</p>
@@ -60,7 +60,7 @@ Flood warnings and alerts in England - GOV.UK
   {% elif model.isErrorLocation %}
   <div class="govuk-grid-column-two-thirds">
     <h2 class="govuk-heading-m govuk-!-margin-top-8">
-      No results for '{{ model.queryTerm }}'
+      No results for '{{ model.querySearch }}'
     </h2>
     <p class="govuk-body">If you searched a place in England, you should:</p>
     <ul class="govuk-list govuk-list--bullet">
