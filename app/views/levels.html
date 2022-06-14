@@ -85,7 +85,6 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <h2 class="govuk-visually-hidden">
     Results for '{{ model.querySearch }}'
   </h2>
-
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div class="defra-navbar defra-navbar--border defra-navbar--search-categories">
@@ -95,7 +94,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
             <ul class="defra-navbar__list">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-                <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+                <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}{% if model.querySearchType %}&searchType={{model.querySearchType}}{% endif %}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
               </li>
               {% endfor %}
             </ul>
