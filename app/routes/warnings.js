@@ -36,7 +36,7 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
 
 // Search warnings
 router.post('/flood-warnings-and-alerts', async (req, res) => {
-  const queryTerm = req.body.location
+  const queryTerm = req.body.search
   // Empty search
   if (queryTerm === '') {
     return res.redirect('/warnings')
