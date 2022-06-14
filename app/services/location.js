@@ -42,6 +42,8 @@ module.exports = {
         let results = response.data.resourceSets[0].resources
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
+        // Remove 'river' entityType. includeEntityTypes appears to ignore this one
+        results = results.filter(result => result.entityType !== 'River')
         // Keep high and medium confidence towns but only high confidence for other resutls
         results = results.filter(result =>
           (result.confidence !== 'Low' && result.entityType === 'PopulatedPlace') ||
@@ -89,6 +91,8 @@ module.exports = {
         let results = response.data.resourceSets[0].resources
         // Remove places outside of England
         results = results.filter(result => result.address.adminDistrict === 'England')
+        // Remove 'river' entityType. includeEntityTypes appears to ignore this one
+        results = results.filter(result => result.entityType !== 'River')
         // Keep high and medium confidence towns but only high confidence for other resutls
         results = results.filter(result =>
           (result.confidence !== 'Low' && result.entityType === 'PopulatedPlace') ||

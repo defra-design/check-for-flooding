@@ -33,7 +33,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% endif %}
 		<ul class="govuk-list">
 			{% for river in model.rivers %}
-			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ river.display }}">{{ river.display | marked(model.querySearch) | safe }}</a></li>
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ river.display }}&searchType=river">{{ river.display | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -43,7 +43,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% endif %}
 		<ul class="govuk-list">
 			{% for catchment in model.catchments %}
-			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ catchment.display }}">{{ catchment.name | marked(model.querySearch) | safe }}</a></li>
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ catchment.display }}&searchType=catchment">{{ catchment.name | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}
@@ -53,7 +53,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 		{% endif %}
 		<ul class="govuk-list">
 			{% for place in model.places %}
-			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ place.name }}">{{ place.name | marked(model.querySearch) | safe }}</a></li>
+			<li><a href="/river-sea-groundwater-rainfall-levels?search={{ place.name }}&searchType=place">{{ place.name | marked(model.querySearch) | safe }}</a></li>
 			{% endfor %}
 		</ul>
 		{% endif %}

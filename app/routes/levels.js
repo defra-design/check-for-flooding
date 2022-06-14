@@ -12,7 +12,7 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const query = Object.assign({}, { search: '', type: '' }, req.query)
+  const query = Object.assign({}, { searchType: 'place,river,catchment', search: '', type: '' }, req.query)
   const places = []
   const rivers = []
   const catchments = []
@@ -20,31 +20,37 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
 
   if (query.search !== '') {
     // Check places
-    const locationResponse = await locationServices.getLocationsByQuery(query.search)
-    if (locationResponse.status === 200) {
-      if (locationResponse.data.results && locationResponse.data.results.length) {
-        // We have some matches
-        locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+    if (query.searchType.includes('place')) {
+      const locationResponse = await locationServices.getLocationsByQuery(query.search)
+      if (locationResponse.status === 200) {
+        if (locationResponse.data.results && locationResponse.data.results.length) {
+          // We have some matches
+          locationResponse.data.results.forEach(result => { places.push(new Place(result)) })
+        }
+      } else {
+        // Log 500 error
+        console.log('500 error: Location')
       }
-    } else {
-      // Log 500 error
-      console.log('500 error: Location')
     }
     // Check rivers
-    const riverResponse = await riverServices.getRivers(cookie, query.search)
-    if (riverResponse.status === 200) {
-      riverResponse.data.forEach(item => { rivers.push(new River(item)) })
-    } else {
-      // Log 500 error
-      console.log('500 error: Rivers')
+    if (query.searchType.includes('river')) {
+      const riverResponse = await riverServices.getRivers(cookie, query.search)
+      if (riverResponse.status === 200) {
+        riverResponse.data.forEach(item => { rivers.push(new River(item)) })
+      } else {
+        // Log 500 error
+        console.log('500 error: Rivers')
+      }
     }
     // Check catchments
-    const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
-    if (catchmentResponse.status === 200) {
-      catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
-    } else {
-      // Log 500 error
-      console.log('500 error: Rivers')
+    if (query.searchType.includes('catchment')) {
+      const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
+      if (catchmentResponse.status === 200) {
+        catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
+      } else {
+        // Log 500 error
+        console.log('500 error: Rivers')
+      }
     }
   }
   if (places.length === 1 && !rivers.length && !catchments.length) {
