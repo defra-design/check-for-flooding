@@ -5,6 +5,7 @@ class Station {
     this.status = data.status
     this.name = data.name
     this.type = data.type
+    this.group_type = data.group_type
     if (data.type === 'rainfall') {
       this.rainfall1hr = data.rainfall_1hr
       this.rainfall6hr = data.rainfall_6hr

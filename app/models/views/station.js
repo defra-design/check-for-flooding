@@ -4,12 +4,12 @@ const utils = require('../../utils')
 class ViewModel {
   constructor (station, telemetry, thresholds, place) {
     this.title = (() => {
-      if (station.type === 'rainfall') {
+      if (station.group_type === 'rainfall') {
         return `Rainfall at ${station.name}`
-      } else if (station.type === 'river') {
-        return `${station.riverName} level at ${station.name}`
-      } else if (station.type === 'tide') {
-        return station.river_name ? `${station.riverName} level at ${station.name}` : `Sea level at ${station.name}`
+      } else if (station.group_type === 'river') {
+        return `${station.riverName} level at ${station.name}${station.type === 'tide' ? ' (tidal)' : ''}`
+      } else if (station.group_type === 'sea') {
+        return `Sea level at ${station.name}`
       } else {
         return `${station.type.charAt(0).toUpperCase() + station.type.slice(1)} level at ${station.name} borehole`
       }
