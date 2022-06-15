@@ -110,7 +110,7 @@
     padding: 4px 8px;
     &--blue {
       color: govuk-colour('dark-blue');
-      background-color: govuk-colour('light-blue');
+      background-color: govuk-tint(govuk-colour('blue'), 80);
     }
   }
   &-trend {
