@@ -1,5 +1,7 @@
 .defra-flood-levels-table {
   @extend .govuk-table;
+  position: relative;
+  margin-top: -1px;
   margin-bottom: 0px;
   @include mq ($until: tablet) {
     display: block;
@@ -10,20 +12,18 @@
     }
   }
   &__row {
+    border-top: 1px solid govuk-colour('mid-grey');
     @include mq ($until: tablet) {
       display: block;
-      border-top: 1px solid govuk-colour('mid-grey');
       overflow: auto;
     }
   }
-  &__row:first-child {
-    border: 0px;
-  }
-  &__row:last-child &__cell {
-    border-bottom: 0px;
+  &__row--hidden {
+    display:none;
   }
   &__cell {
     @extend .govuk-table__cell;
+    border-bottom: 0px;
     vertical-align: middle;
     text-align: left;
     padding-left: 0px;

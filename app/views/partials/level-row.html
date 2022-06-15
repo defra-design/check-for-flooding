@@ -1,5 +1,5 @@
 {%- set display -%}
-{% if item.group_type != model.queryType %}style="display:none"{% endif %}
+{% if model.queryType != item.group_type %}style="display:none"{% endif %}
 {%- endset -%}
 
 <tr class="defra-flood-levels-table__row" role="row" data-group-type="{{ item.group_type }}" data-lon="{{ item.lon }}" data-lat="{{ item.lat }}" {{ display | safe }}>
