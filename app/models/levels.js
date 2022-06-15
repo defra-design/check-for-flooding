@@ -10,8 +10,9 @@ class Levels {
     type = activeFilter.type
     this.filters = filters
     this.type = type
-    this.hasHigh = false // Used on location pages
     this.items = levels.map(level => { return new Level(level) })
+    this.numFilteredItems = !!levels.filter(x => x.group_type === type).length
+    this.hasHigh = false // Used on location pages
     const lons = levels.map(level => Number(level.lon))
     const lats = levels.map(level => Number(level.lat))
     this.bbox = lons.length && lats.length ? [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)] : []

@@ -112,19 +112,19 @@ River, sea, groundwater and rainfall levels - GOV.UK
           Results for {{ model.queryType }}
         </caption>
         <thead class="govuk-visually-hidden" role="rowgroup">
-          {%- set hideOther -%}
+          {%- set hideHeader -%}
           {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}
-          {%- set hideRainfall -%}
+          {%- set hideRainfallHeader -%}
           {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}
-          <tr role="row" {{ hideRainfall | safe }}>
+          <tr role="row" {{ hideRainfallHeader | safe }}>
             <th scope="col" role="columnheader">Gauge</th>
             <th scope="col" role="columnheader">1 hour</th>
             <th scope="col" role="columnheader">6 hours</th>
             <th scope="col" role="columnheader">24 hours</th>
           </tr>
-          <tr role="row" {{ hideOther | safe }}>
+          <tr role="row" {{ hideHeader | safe }}>
             <th scope="col" role="columnheader">Gauge</th>
             <th scope="col" role="columnheader">Trend</th>
             <th scope="col" role="columnheader">Height</th>
