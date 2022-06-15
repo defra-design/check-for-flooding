@@ -112,17 +112,23 @@ River, sea, groundwater and rainfall levels - GOV.UK
           Results for {{ model.queryType }}
         </caption>
         <thead class="govuk-visually-hidden" role="rowgroup">
-          <tr role="row">
-          {% if model.queryType == 'rainfall' %}
+          {%- set hideOther -%}
+          {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
+          {%- endset -%}
+          {%- set hideRainfall -%}
+          {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
+          {%- endset -%}
+          <tr role="row" {{ hideRainfall | safe }}>
             <th scope="col" role="columnheader">Gauge</th>
             <th scope="col" role="columnheader">1 hour</th>
             <th scope="col" role="columnheader">6 hours</th>
             <th scope="col" role="columnheader">24 hours</th>
-          {% else %}
+          </tr>
+          <tr role="row" {{ hideOther | safe }}>
             <th scope="col" role="columnheader">Gauge</th>
+            <th scope="col" role="columnheader">Trend</th>
             <th scope="col" role="columnheader">Height</th>
             <th scope="col" role="columnheader">State</th>
-          {% endif %}
           </tr>
         </thead>
         <tbody class="defra-flood-levels-table__body" role="rowgroup">

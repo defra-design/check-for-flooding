@@ -6,6 +6,7 @@ class Level {
     this.mapId = data.type === 'rainfall' ? data.id : data.station_id
     this.name = data.name
     this.status = data.status
+    this.group_type = data.group_type
     this.type = data.type
     this.riverName = data.river_name
     this.riverDisplay = data.river_display
@@ -18,6 +19,8 @@ class Level {
     this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
     this.latestState = data.latest_state
     this.latestDatetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
+    this.lon = data.lon
+    this.lat = data.lat
     this.isMultiStage = Boolean(data.is_multi_stage)
     this.isDownstage = Boolean(data.is_downstage)
     this.hasDetail = Boolean(data.has_detail)

@@ -1,21 +1,28 @@
-{%- set name -%}
-{% if model.queryType == 'sea' %}Sea level at {% endif %}
-{{ item.name }}{%- if item.iswales -%}(Natural Resources Wales){%- endif -%}
-{% if item.isDownstream == true %} (downstream){% endif %}
-{% if item.type == 'groundwater' %} borehole{% endif %}
+{%- set display -%}
+{% if item.group_type != model.queryType %}style="display:none"{% endif %}
 {%- endset -%}
 
-<tr class="defra-flood-levels-table__row" role="row">
+<tr class="defra-flood-levels-table__row" role="row" data-group-type="{{ item.group_type }}" data-lon="{{ item.lon }}" data-lat="{{ item.lat }}" {{ display | safe }}>
   <!-- Location -->
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--location{% if item.type === 'rainfall' %}-rainfall{% endif %}" role="rowheader">
     {% if item.type === 'rainfall' %}
-    <a href="/rainfall-station/{{ item.id | urlencode }}">{{ name | safe }} raingauge</a>
+    <a href="/rainfall-station/{{ item.id | urlencode }}">Rainfall at {{ item.name }}</a>
     {% else %}
     <a href="/station/{{ item.id | urlencode }}">
-      {% if model.queryType == 'river' %}
+      {% if item.group_type == 'river' %}
       {{ item.riverName }} at
+      {% elif item.group_type == 'sea' %}
+      Sea level at
       {% endif %}
-      {{ name }}{% if item.isMultiStage %}- {% if item.isDownstage %}Downstream{% else %}Upstream{% endif %}{% endif %}
+      {{ item.name }}
+      {% if item.group_type == 'river' and item.type == 'tide' %}
+      (tidal)
+      {% endif %}
+      {% if item.type == 'groundwater' %}
+      borehole
+      {% endif %}
+      {% if item.isMultiStage %}- {% if item.isDownstage %}Downstream{% else %}Upstream{% endif %}{% endif %}
+      {% if item.iswales %}(Natural Resources Wales){% endif %}
     </a>
     {% endif %}
     <span class="defra-flood-levels-table-meta">
