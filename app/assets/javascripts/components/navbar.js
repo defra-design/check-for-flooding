@@ -1,7 +1,7 @@
 'use strict'
 
 // Navbar component
-const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
+const { addOrUpdateParameter, forEach } = window.flood.utils
 
 function Navbar (id) {
   const navbar = document.getElementById(id)
@@ -13,7 +13,10 @@ function Navbar (id) {
   // Modify DOM
   navbar.setAttribute('aria-controls', navbar.getAttribute('data-controls'))
   forEach(navItems, navItem => {
-    navItem.children[0].setAttribute('role', 'button')
+    console.log(navItem.classList.contains('defra-navbar__item--selected'))
+    const tab = navItem.children[0]
+    tab.setAttribute('role', 'tab')
+    tab.setAttribute('aria-selected', navItem.classList.contains('defra-navbar__item--selected'))
   })
 
   const toggleSelected = (button) => {
@@ -22,6 +25,7 @@ function Navbar (id) {
     // Navbar
     forEach(navItems, navItem => {
       navItem.classList.toggle('defra-navbar__item--selected', navItem === button.parentNode)
+      navItem.children[0].setAttribute('aria-selected', navItem === button.parentNode)
     })
 
     // Table thead rows
@@ -43,6 +47,12 @@ function Navbar (id) {
         bodyRow.setAttribute('style', 'display:none')
       }
     })
+
+    // Update bbox
+    // const activeRows = Array.from(bodyRows).filter(row => row.getAttribute('data-group-type') === groupType)
+    // const lons = activeRows.map(row => Number(row.getAttribute('data-lon')))
+    // const lats = activeRows.map(row => Number(row.getAttribute('data-lat')))
+    // const bbox = lons.length && lats.length ? [Math.min(...lons), Math.min(...lats), Math.max(...lons), Math.max(...lats)] : []
 
     // Replace history, ie not adding a new entry
     replaceHistory('type', groupType)
