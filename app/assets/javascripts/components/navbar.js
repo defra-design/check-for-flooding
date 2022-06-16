@@ -11,6 +11,7 @@ function Navbar (id) {
   const bodyRows = table.querySelectorAll('tbody tr')
 
   // Modify DOM
+  navbar.setAttribute('role', 'tablist')
   navbar.setAttribute('aria-controls', navbar.getAttribute('data-controls'))
   forEach(navItems, navItem => {
     console.log(navItem.classList.contains('defra-navbar__item--selected'))
