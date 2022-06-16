@@ -8,7 +8,7 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
-import '../components/tooltip'
+import '../components/navbar'
 
 // Create LiveMap
 if (document.getElementById('map')) {
@@ -20,8 +20,7 @@ if (document.getElementById('map')) {
   })
 }
 
-// Add tool tips
-const tooltips = document.querySelectorAll('[data-tooltip]')
-if (tooltips) {
-  window.flood.createTooltips()
+// Add category tabs progressive enhancement
+if (document.getElementById('navbar')) {
+  window.flood.createNavbar('navbar')
 }
