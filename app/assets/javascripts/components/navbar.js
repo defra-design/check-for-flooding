@@ -6,7 +6,8 @@ const { addOrUpdateParameter, forEach } = window.flood.utils
 function Navbar (id) {
   const navbar = document.getElementById(id)
   const navItems = navbar.children
-  const table = document.getElementById(navbar.getAttribute('data-controls'))
+  const panel = document.getElementById(navbar.getAttribute('data-controls'))
+  const table = panel.children[0]
   const headerRows = table.querySelectorAll('thead tr')
   const bodyRows = table.querySelectorAll('tbody tr')
 
