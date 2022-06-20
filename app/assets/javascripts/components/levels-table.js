@@ -24,7 +24,7 @@ function LevelsTable (id) {
     // Filters
     forEach(filterItems, filterItem => {
       filterItem.classList.toggle('defra-navbar__item--selected', filterItem === button.parentNode)
-      filterItem.children[0].setAttribute('aria-selected', filterItem === button.parentNode)
+      filterItem.children[0].setAttribute('aria-current', filterItem === button.parentNode)
     })
 
     // Table thead rows
