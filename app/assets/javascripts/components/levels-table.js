@@ -15,7 +15,7 @@ function LevelsTable (id) {
   forEach(filterItems, filterItem => {
     const button = filterItem.children[0]
     button.setAttribute('role', 'button')
-    button.setAttribute('aria-selected', filterItem.classList.contains('defra-navbar__item--selected'))
+    button.setAttribute('aria-current', filterItem.classList.contains('defra-navbar__item--selected'))
   })
 
   const toggleSelected = (button) => {
