@@ -46,12 +46,12 @@
         Data not available
     </p>
     {% else %}
-    <dl class="defra-flood-list-data">
-        <div class="defra-flood-list-data__column">
+    <dl class="defra-flood-data-list">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">Trend</dt>
             <dd>
-                <span class="defra-flood-list-data__description">Trend</span>
-                <span class="defra-flood-list-data__value">
+                <span class="defra-flood-data-list__description">Trend</span>
+                <span class="defra-flood-data-list__value">
                     {% if model.trend %}
                     {{ model.trend | capitalize }}
                     {% else %}
@@ -60,19 +60,19 @@
                 </span>
             </dd>
         </div>
-        <div class="defra-flood-list-data__column">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">Height</dt>
             <dd>
-                <span class="defra-flood-list-data__description">Height</span>
-                <span class="defra-flood-list-data__value">{{ model.value | round(2) }}m</span>
+                <span class="defra-flood-data-list__description">Height</span>
+                <span class="defra-flood-data-list__value">{{ model.value | round(2) }}m</span>
             </dd>
         </div>
         {% if model.value and model.type !== 'C' and model.status !== 'Closed' and model.status !== 'Suspended' and not model.iswales %}
-        <div class="defra-flood-list-data__column">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">State</dt>
             <dd>
-                <span class="defra-flood-list-data__description">State</span>
-                <span class="defra-flood-list-data__value">
+                <span class="defra-flood-data-list__description">State</span>
+                <span class="defra-flood-data-list__value">
                     {% if model.atrisk %}
                     High
                     {% elif model.value < model.percentile_95 %}
@@ -122,26 +122,26 @@
         Data not available
     </p>
     {% else %}
-    <dl class="defra-flood-list-data">
-        <div class="defra-flood-list-data__column">
+    <dl class="defra-flood-data-list">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">Intensity</dt>
             <dd>
-                <span class="defra-flood-list-data__description">1 hour</span>
-                <span class="defra-flood-list-data__value">{{ model.value1hr }}mm</span>
+                <span class="defra-flood-data-list__description">1 hour</span>
+                <span class="defra-flood-data-list__value">{{ model.value1hr }}mm</span>
             </dd>
         </div>
-        <div class="defra-flood-list-data__column">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">last 6 hrs</dt>
             <dd>
-                <span class="defra-flood-list-data__description" aria-hidden="true"> 6 hours</span>
-                <span class="defra-flood-list-data__value">{{ model.value6hr }}mm</span>
+                <span class="defra-flood-data-list__description" aria-hidden="true"> 6 hours</span>
+                <span class="defra-flood-data-list__value">{{ model.value6hr }}mm</span>
             </dd>
         </div>
-        <div class="defra-flood-list-data__column">
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">last 24 hrs</dt>
             <dd>
-                <span class="defra-flood-list-data__description" aria-hidden="true">24 hours</span>
-                <span class="defra-flood-list-data__value">{{ model.value24hr }}mm</span>
+                <span class="defra-flood-data-list__description" aria-hidden="true">24 hours</span>
+                <span class="defra-flood-data-list__value">{{ model.value24hr }}mm</span>
             </dd>
         </div>
     </dl>
