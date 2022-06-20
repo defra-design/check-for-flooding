@@ -1,33 +1,30 @@
 'use strict'
 
-// Navbar component
+// LevelsTable component
 const { addOrUpdateParameter, forEach } = window.flood.utils
 
-function Navbar (id) {
-  const navbar = document.getElementById(id)
-  const navItems = navbar.children
-  const panel = document.getElementById(navbar.getAttribute('data-controls'))
-  const table = panel.children[0]
+function LevelsTable (id) {
+  const filter = document.getElementById(id)
+  const filterItems = filter.children
+  const table = document.getElementById(filter.getAttribute('data-controls'))
   const headerRows = table.querySelectorAll('thead tr')
   const bodyRows = table.querySelectorAll('tbody tr')
 
   // Modify DOM
-  navbar.setAttribute('role', 'tablist')
-  navbar.setAttribute('aria-controls', navbar.getAttribute('data-controls'))
-  forEach(navItems, navItem => {
-    console.log(navItem.classList.contains('defra-navbar__item--selected'))
-    const tab = navItem.children[0]
-    tab.setAttribute('role', 'tab')
-    tab.setAttribute('aria-selected', navItem.classList.contains('defra-navbar__item--selected'))
+  filter.setAttribute('aria-controls', filter.getAttribute('data-controls'))
+  forEach(filterItems, filterItem => {
+    const button = filterItem.children[0]
+    button.setAttribute('role', 'button')
+    button.setAttribute('aria-selected', filterItem.classList.contains('defra-navbar__item--selected'))
   })
 
   const toggleSelected = (button) => {
     const groupType = button.getAttribute('data-group-type')
 
-    // Navbar
-    forEach(navItems, navItem => {
-      navItem.classList.toggle('defra-navbar__item--selected', navItem === button.parentNode)
-      navItem.children[0].setAttribute('aria-selected', navItem === button.parentNode)
+    // Filters
+    forEach(filterItems, filterItem => {
+      filterItem.classList.toggle('defra-navbar__item--selected', filterItem === button.parentNode)
+      filterItem.children[0].setAttribute('aria-selected', filterItem === button.parentNode)
     })
 
     // Table thead rows
@@ -95,7 +92,7 @@ function Navbar (id) {
   })
 }
 
-window.flood.createNavbar = (id) => {
+window.flood.createLevelsTable = (id) => {
   // Set initial history state
   if (!window.history.state) {
     const data = {}
@@ -103,6 +100,5 @@ window.flood.createNavbar = (id) => {
     const uri = window.location.href
     window.history.replaceState(data, title, uri)
   }
-
-  return Navbar(id)
+  return LevelsTable(id)
 }

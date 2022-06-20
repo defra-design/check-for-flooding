@@ -8,7 +8,7 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
-import '../components/navbar'
+import '../components/levels-table'
 
 // Create LiveMap
 if (document.getElementById('map')) {
@@ -21,6 +21,6 @@ if (document.getElementById('map')) {
 }
 
 // Add category tabs progressive enhancement
-if (document.getElementById('navbar')) {
-  window.flood.createNavbar('navbar')
+if (document.getElementById('filter')) {
+  window.flood.createLevelsTable('filter')
 }

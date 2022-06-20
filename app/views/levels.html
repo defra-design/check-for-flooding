@@ -91,7 +91,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
         <div class="defra-navbar__inner">
           <span id="map"></span>
           <nav aria-label="Show results by type" role="navigation">
-            <ul class="defra-navbar__list" id="navbar" data-controls="results">
+            <ul class="defra-navbar__list" id="filter" data-controls="results">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
                 <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}{% if model.querySearchType %}&searchType={{model.querySearchType}}{% endif %}&type={{ filter.type }}" data-group-type="{{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
@@ -107,38 +107,36 @@ River, sea, groundwater and rainfall levels - GOV.UK
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       {% if model.levels.items %}
-      <div id="results">
-        <table class="defra-flood-levels-table" role="table" aria-labelledby="flood-table-caption">
-          <caption id="flood-table-caption" class="govuk-visually-hidden">
-            Results for {{ model.queryType }}
-          </caption>
-          <thead class="govuk-visually-hidden" role="rowgroup">
-            {%- set hideHeader -%}
-            {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
-            {%- endset -%}
-            {%- set hideRainfallHeader -%}
-            {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
-            {%- endset -%}
-            <tr role="row" {{ hideRainfallHeader | safe }} data-group-type="rainfall">
-              <th scope="col" role="columnheader">Gauge</th>
-              <th scope="col" role="columnheader">1 hour</th>
-              <th scope="col" role="columnheader">6 hours</th>
-              <th scope="col" role="columnheader">24 hours</th>
-            </tr>
-            <tr role="row" {{ hideHeader | safe }} data-group-type="river,sea,groundwater">
-              <th scope="col" role="columnheader">Gauge</th>
-              <th scope="col" role="columnheader">Trend</th>
-              <th scope="col" role="columnheader">Height</th>
-              <th scope="col" role="columnheader">State</th>
-            </tr>
-          </thead>
-          <tbody class="defra-flood-levels-table__body" role="rowgroup">
-          {% for item in model.levels.items %}
-          {% include "partials/level-row.html" %}
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+      <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="flood-table-caption">
+        <caption id="flood-table-caption" class="govuk-visually-hidden">
+          Results for {{ model.queryType }}
+        </caption>
+        <thead class="govuk-visually-hidden" role="rowgroup">
+          {%- set hideHeader -%}
+          {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
+          {%- endset -%}
+          {%- set hideRainfallHeader -%}
+          {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
+          {%- endset -%}
+          <tr role="row" {{ hideRainfallHeader | safe }} data-group-type="rainfall">
+            <th scope="col" role="columnheader">Gauge</th>
+            <th scope="col" role="columnheader">1 hour</th>
+            <th scope="col" role="columnheader">6 hours</th>
+            <th scope="col" role="columnheader">24 hours</th>
+          </tr>
+          <tr role="row" {{ hideHeader | safe }} data-group-type="river,sea,groundwater">
+            <th scope="col" role="columnheader">Gauge</th>
+            <th scope="col" role="columnheader">Trend</th>
+            <th scope="col" role="columnheader">Height</th>
+            <th scope="col" role="columnheader">State</th>
+          </tr>
+        </thead>
+        <tbody class="defra-flood-levels-table__body" role="rowgroup">
+        {% for item in model.levels.items %}
+        {% include "partials/level-row.html" %}
+        {% endfor %}
+        </tbody>
+      </table>
       {% endif %}
     </div>
   </div>
