@@ -12,11 +12,14 @@
     }
   }
   &__row {
-    border-top: 1px solid govuk-colour('mid-grey');
+    border-top: 1px solid govuk-tint($govuk-border-colour, 50);
     @include mq ($until: tablet) {
       display: block;
       overflow: auto;
     }
+  }
+  &__row:first-child {
+    border-top: 1px solid $govuk-border-colour;
   }
   &__row--hidden {
     display:none;
