@@ -90,15 +90,15 @@ River, sea, groundwater and rainfall levels - GOV.UK
       <div class="defra-navbar defra-navbar--border defra-navbar--search-categories">
         <div class="defra-navbar__inner">
           <span id="map"></span>
-          <nav aria-label="Show results by type" role="navigation">
-            <ul class="defra-navbar__list" id="filter" data-controls="results">
+          <div class="defra-navbar__group">
+            <ul class="defra-navbar__list" id="filter" data-controls="results" role="menu" aria-label="Show results by type">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
                 <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}{% if model.querySearchType %}&searchType={{model.querySearchType}}{% endif %}&type={{ filter.type }}" data-group-type="{{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
               </li>
               {% endfor %}
             </ul>
-          </nav>
+          </div>
         </div>
       </div>
       {% if model.levels.items %}
