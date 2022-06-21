@@ -102,8 +102,8 @@ River, sea, groundwater and rainfall levels - GOV.UK
         </div>
       </nav>
       {% if model.levels.items %}
-      <table id="results" class="defra-flood-levels-table" role="table">
-        <caption id="flood-table-caption" class="govuk-visually-hidden">Results for {{ model.querySearch }}</caption>
+      <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="caption">
+        <caption id="caption" class="defra-flood-levels-table__caption">Results for '{{ model.querySearch }}', showing <span>{{ model.queryType }}</span> levels</caption>
         <thead class="govuk-visually-hidden" role="rowgroup">
           {%- set hideHeader -%}
           {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}

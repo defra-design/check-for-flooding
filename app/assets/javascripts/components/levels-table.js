@@ -27,6 +27,9 @@ function LevelsTable (id) {
       filterItem.children[0].setAttribute('aria-current', filterItem === button.parentNode)
     })
 
+    // Table caption
+    table.querySelector('caption span').innerHTML = groupType
+
     // Table thead rows
     forEach(headerRows, headerRow => {
       const type = headerRow.getAttribute('data-group-type')

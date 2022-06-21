@@ -6,6 +6,14 @@
   @include mq ($until: tablet) {
     display: block;
   }
+  &__caption {
+    // @extend .govuk-table__caption;
+    // @extend .govuk-table__caption--m;
+    @extend .govuk-visually-hidden;
+    @include mq ($until: tablet) {
+      display: block;
+    }
+  }
   &__body {
     @include mq ($until: tablet) {
       display: block;
