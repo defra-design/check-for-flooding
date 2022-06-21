@@ -11,10 +11,10 @@ function LevelsTable (id) {
   const bodyRows = table.querySelectorAll('tbody tr')
 
   // Modify DOM
-  filter.setAttribute('aria-controls', filter.getAttribute('data-controls'))
   forEach(filterItems, filterItem => {
     const button = filterItem.children[0]
     button.setAttribute('role', 'button')
+    button.setAttribute('aria-controls', filter.getAttribute('data-controls'))
     button.setAttribute('aria-current', filterItem.classList.contains('defra-navbar__item--selected'))
   })
 
