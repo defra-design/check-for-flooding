@@ -68,6 +68,15 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
+    } else if (featureLayer === 'osrivers') {
+      const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('mr')
+      if (!showRivers) return
+      return new Style({
+        stroke: new Stroke({ color: '#1d70b8', width: 1 }),
+        // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
+        fill: new Fill({ color: 'transparent' }),
+        zIndex: 1
+      })
     }
   },
 
