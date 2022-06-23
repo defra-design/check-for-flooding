@@ -71,6 +71,9 @@ window.flood.maps.styles = {
     } else if (featureLayer === 'osrivers') {
       const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('mr')
       if (!showRivers) return
+      // const ids = [89541,89542,89510,89546,89547,89549,90411,90414,90440,90415,90418,90419,90423,90424,90426,90427,90432,90435,90436,90437,90443,90472,90478,90482,90490,90508,90495,90502,90510,90511,90514,90518,90520,90522,90524,90526,90529,94136,94152,94142,94144,94147,94155,9415]
+      // const ids = [90526,90436,89541,89510,90520,90424,90522,90426,90437,90432,90411,90518,90524,90414,90418,90423,90435,89546,90427,90529,89542,89549,90415,90419,89547]
+      // if (!ids.includes(feature.getId())) return
       return new Style({
         stroke: new Stroke({ color: '#1d70b8', width: 1 }),
         // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
