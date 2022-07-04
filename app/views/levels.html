@@ -16,24 +16,20 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds{% if model.isErrorBing %} govuk-!-padding-bottom-8{% endif %}">
-    {% if not model.isErrorBing %}
+    {% if model.isErrorBing %}
+    <h1 class="govuk-heading-xl">
+      Sorry, there is a problem with the search
+    </h1>
+    <p>You can <a href="/river-sea-groundwater-rainfall-levels">search again</a> or contact Floodline.</p>
+    <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
+    {% else %}
     <h1 class="govuk-heading-xl">
       River, sea, groundwater and rainfall levels
     </h1>
     {% include "partials/list-search.html" %}
-    {% else %}
-    <h1 class="govuk-heading-xl">
-      Sorry, there is a problem with the search
-    </h1>
     {% endif %}
     {% if not model.levels %}
     <span id="map"></span>
-    {% endif %}
-    {% if model.isErrorBing %}
-    <p>You can <a href="/river-sea-groundwater-rainfall-levels">search again</a> or contact Floodline.</p>
-    <div class="defra-contact">
-      <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
-    </div>
     {% endif %}
   </div>
 </div>
@@ -103,30 +99,23 @@ River, sea, groundwater and rainfall levels - GOV.UK
   </h2>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <div class="defra-navbar defra-navbar--border defra-navbar--search-categories">
+      <nav class="defra-navbar defra-navbar--border defra-navbar--search-categories" aria-label="Map view or level type">
         <div class="defra-navbar__inner">
           <span id="map"></span>
-          <nav aria-label="Show results by type" role="navigation">
-            <ul class="defra-navbar__list">
+          <div class="defra-navbar__group">
+            <ul class="defra-navbar__list" id="filter" data-controls="results">
               {% for filter in model.levels.filters %}
               <li class="defra-navbar__item{% if filter.type == model.queryType %} defra-navbar__item--selected{% endif %}">
-                <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}{% if model.querySearchType %}&searchType={{model.querySearchType}}{% endif %}&type={{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
+                <a href="/river-sea-groundwater-rainfall-levels?search={{ model.querySearch }}{% if model.querySearchType %}&searchType={{model.querySearchType}}{% endif %}&type={{ filter.type }}" data-group-type="{{ filter.type }}">{{ filter.type | capitalize }} ({{ filter.count }})</a>
               </li>
               {% endfor %}
             </ul>
-          </nav>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+      </nav>
       {% if model.levels.items %}
-      <table class="defra-flood-levels-table" role="table" aria-labelledby="flood-table-caption">
-        <caption id="flood-table-caption" class="govuk-visually-hidden">
-          Results for {{ model.queryType }}
-        </caption>
+      <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="caption">
+        <caption id="caption" class="defra-flood-levels-table__caption">Results for '{{ model.querySearch }}', showing <span>{{ model.queryType }}</span> levels</caption>
         <thead class="govuk-visually-hidden" role="rowgroup">
           {%- set hideHeader -%}
           {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
@@ -134,13 +123,13 @@ River, sea, groundwater and rainfall levels - GOV.UK
           {%- set hideRainfallHeader -%}
           {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}
-          <tr role="row" {{ hideRainfallHeader | safe }}>
+          <tr role="row" {{ hideRainfallHeader | safe }} data-group-type="rainfall">
             <th scope="col" role="columnheader">Gauge</th>
             <th scope="col" role="columnheader">1 hour</th>
             <th scope="col" role="columnheader">6 hours</th>
             <th scope="col" role="columnheader">24 hours</th>
           </tr>
-          <tr role="row" {{ hideHeader | safe }}>
+          <tr role="row" {{ hideHeader | safe }} data-group-type="river,sea,groundwater">
             <th scope="col" role="columnheader">Gauge</th>
             <th scope="col" role="columnheader">Trend</th>
             <th scope="col" role="columnheader">Height</th>
@@ -156,13 +145,12 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% endif %}
     </div>
   </div>
+
 {% endif %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    {% if not model.isErrorBing %}
     {% include "partials/context-footer.html" %}
-    {% endif %}
     {% include "partials/related-content.html" %}
   </div>
 </div>
