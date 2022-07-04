@@ -9,7 +9,7 @@ import { View, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
 import { unByKey } from 'ol/Observable'
 import { Point } from 'ol/geom'
-import { buffer, containsExtent } from 'ol/extent'
+import { buffer as bufferExtent, containsExtent } from 'ol/extent'
 import { fromExtent } from 'ol/geom/Polygon'
 import { Control } from 'ol/control'
 import GeoJSON from 'ol/format/GeoJSON'
@@ -18,6 +18,7 @@ import { polygon, multiPolygon } from '@turf/helpers'
 import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
+import { feature } from 'caniuse-lite'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
 const maps = window.flood.maps
@@ -46,19 +47,6 @@ function LiveMap (mapId, options) {
     center: maps.centre, // Default centre required
     extent: maps.extent // Constrains extent
   })
-
-  // Configure default interactions
-  // const interactions = defaultInteractions({
-  //   pinchRotate: false
-  // })
-
-  // Create day control
-  // const backgroundElement = document.createElement('button')
-  // backgroundElement.className = 'defra-map-background'
-  // backgroundElement.innerHTML = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M10,-0c5.484,0.005 9.995,4.516 10,10c-0.005,5.484 -4.516,9.995 -10,10c-5.484,-0.005 -9.995,-4.516 -10,-10c0.005,-5.484 4.516,-9.995 10,-10Zm-5.813,16.23l0.018,-0.196c0.04,-0.395 -0.026,-0.337 0.17,-0.656c0.196,-0.32 0.246,-0.356 0.424,-0.585c0.179,-0.23 0.333,-0.159 0.322,-0.567c-0.012,-0.408 0.197,-0.355 -0.155,-0.665c-0.352,-0.31 -0.542,-0.456 -0.828,-0.689c-0.286,-0.234 -0.187,-0.273 -0.651,-0.417c-0.463,-0.144 -0.367,0.087 -0.733,-0.172c-0.366,-0.259 -0.445,-0.251 -0.756,-0.508l-0.396,-0.317c-0.083,-0.482 -0.125,-0.97 -0.125,-1.458c0,-2.48 1.062,-4.713 2.755,-6.272c-0.002,0.16 0.05,0.29 0.045,0.525c-0.006,0.41 -0.09,0.65 0.264,0.624c0.57,-0.043 0.522,-0.549 1.151,-0.841c0.628,-0.293 0.666,-0.323 0.999,-0.704c0.332,-0.382 0.531,-0.487 0.447,-1.02l-0.054,-0.322c0.821,-0.299 1.701,-0.476 2.618,-0.507l-0.015,0.042c-0.114,0.323 -0.307,0.273 0.026,0.543c0.334,0.269 0.538,0.211 0.374,0.626c-0.164,0.415 0.146,0.644 -0.461,0.578c-0.607,-0.067 -0.768,-0.115 -1.026,-0.131c-0.257,-0.016 -0.374,-0.158 -0.35,0.204c0.024,0.362 0.049,0.293 0.028,0.733c-0.02,0.441 0.005,0.598 -0.215,0.86c-0.219,0.261 -0.414,0.399 -0.108,0.625c0.306,0.225 0.139,0.275 0.556,0.128c0.416,-0.148 0.485,-0.208 0.708,-0.553c0.223,-0.344 0.254,-0.401 0.565,-0.527c0.311,-0.126 0.21,-0.282 0.44,0.025c0.23,0.307 0.045,0.469 0.341,0.618c0.296,0.149 0.152,0.121 0.186,-0.263c0.034,-0.384 -0.08,-0.364 0.314,-0.392c0.394,-0.028 0.131,-0.082 0.619,0.178c0.488,0.261 0.591,0.363 0.816,0.63c0.225,0.266 0.416,0.412 0.258,0.668c-0.157,0.256 -0.041,0.292 -0.501,0.272c-0.46,-0.021 -0.529,-0.003 -0.881,-0.103c-0.353,-0.1 -0.719,-0.232 -1.014,-0.282c-0.296,-0.05 -0.479,-0.111 -0.818,-0.05c-0.339,0.06 -0.541,0.026 -0.817,0.241c-0.275,0.215 -0.445,0.176 -0.728,0.66c-0.282,0.484 -0.234,0.464 -0.357,0.932c-0.122,0.467 -0.421,0.814 -0.295,1.329c0.125,0.515 -0.072,0.767 0.312,1.095c0.384,0.329 0.391,0.438 0.773,0.651c0.383,0.212 0.513,0.246 0.969,0.243c0.456,-0.002 0.382,-0.015 0.945,-0.071c0.562,-0.056 0.595,-0.125 0.9,0.233c0.305,0.358 0.384,0.277 0.398,0.881c0.014,0.603 -0.037,0.675 -0.141,1.028c-0.104,0.354 -0.103,0.422 -0.179,0.912c-0.076,0.49 -0.226,0.558 -0.141,1.006c0.085,0.447 -0.026,0.457 0.111,1.032c0.138,0.575 0.175,0.547 0.256,1.07c0.081,0.523 0.013,0.608 0.255,0.788c0.242,0.181 0.006,0.079 0.348,-0.134c0.343,-0.212 0.239,-0.167 0.492,-0.469c0.252,-0.301 0.157,0.035 0.527,-0.671c0.369,-0.707 0.402,-0.929 0.601,-1.316c0.199,-0.388 0.153,-0.454 0.415,-0.823c0.263,-0.368 0.327,-0.308 0.659,-0.728c0.331,-0.42 0.255,-0.21 0.551,-0.678c0.296,-0.469 0.365,-0.309 0.584,-0.859c0.22,-0.55 0.358,-0.577 0.427,-1.031c0.069,-0.453 0.144,-0.055 0,-0.858c-0.144,-0.803 -0.225,-0.674 -0.423,-1.097c-0.199,-0.422 -0.56,-0.55 -0.744,-0.825c-0.183,-0.275 -0.187,-0.448 -0.444,-0.67c-0.256,-0.223 -0.169,-0.196 -0.219,-0.423c-0.05,-0.227 0.038,-0.255 0.329,-0.085c0.292,0.17 0.171,-0.046 0.596,0.267c0.425,0.312 0.683,0.261 0.972,0.546c0.289,0.284 0.55,0.456 0.55,0.455c-0,-0 0.094,0.058 0.419,-0.02c0.325,-0.077 0.472,0.027 0.475,-0.35c0.003,-0.378 -0.133,-0.369 -0.288,-0.595c-0.156,-0.225 -0.399,-0.232 -0.56,-0.502c-0.162,-0.27 -0.218,-0.272 -0.3,-0.613c-0.083,-0.342 0.112,-0.214 0.379,-0.068c0.256,0.141 0.366,0.088 0.686,0.255c0.454,1.059 0.687,2.198 0.685,3.35c0,4.703 -3.819,8.522 -8.522,8.522c-2.246,0 -4.29,-0.87 -5.813,-2.292Z" style="fill:currentColor;"/></svg><span class="govuk-visually-hidden">Base map type</span>'
-  // const backgroundControl = new Control({
-  //   element: backgroundElement
-  // })
 
   // Add OS copyright logo
   const osLogoImage = document.createElement('img')
@@ -152,7 +140,7 @@ function LiveMap (mapId, options) {
   }
 
   // Show or hide layers
-  const setLayerVisibility = (lyrCodes) => {
+  const toggleLayerVisibility = (lyrCodes) => {
     dataLayers.forEach(layer => {
       if (layer === vectorTilePolygons) return
       const isVisible = lyrCodes.some(lyrCode => layer.get('featureCodes').includes(lyrCode))
@@ -161,7 +149,6 @@ function LiveMap (mapId, options) {
     road.setVisible(lyrCodes.includes('mv'))
     satellite.setVisible(lyrCodes.includes('sv'))
     osLogoImage.style.display = lyrCodes.includes('mv') ? 'block' : 'none'
-
     // Overide warnings visibility if target area provided
     if (targetArea.pointFeature) {
       warnings.setVisible(true)
@@ -198,6 +185,25 @@ function LiveMap (mapId, options) {
     })
   }
 
+  // Show or hide rivers
+  const toggleRiver = (featureId) => {
+    let selectedRiver = null
+    const feature = river.getSource().getFeatureById(featureId)
+    if (feature) {
+      const bufferedFeature = bufferExtent(feature.getGeometry().getExtent(), 50)
+      const segment = vectorTilePolygons.getSource().getFeaturesInExtent(bufferedFeature)
+        .find(f => f.get('layer') === 'rivers' && f.getGeometry().intersectsExtent(bufferedFeature))
+      if (segment) {
+        selectedRiver = {
+          osNames: [segment.get('name1'), segment.get('name1')].filter(s => !!s),
+          eaSlug: feature.get('riverSlug')
+        }
+      }
+    }
+    maps.selectedRiver = selectedRiver
+    vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+  }
+
   // Show or hide warnings within warning layer
   const setWarningVisibility = (lyrCodes) => {
     warnings.getSource().forEachFeature((feature) => {
@@ -218,7 +224,7 @@ function LiveMap (mapId, options) {
   }
 
   // Set selected feature
-  const setSelectedFeature = (newFeatureId = '') => {
+  const toggleSelectedFeature = (newFeatureId = '') => {
     selected.getSource().clear()
     dataLayers.forEach(layer => {
       if (layer === vectorTilePolygons) return
@@ -234,10 +240,16 @@ function LiveMap (mapId, options) {
         selected.setStyle(maps.styles[layer.get('ref') === 'warnings' ? 'warnings' : 'stations']) // WebGL: layers don't use a style function
         container.showInfo('Selected feature information', newFeature.get('html'))
       }
-      // Refresh target area polygons
+      // If a river station has been selected determin and stor the vector tile segments
+      if (layer.get('ref') === 'river') {
+        toggleRiver(newFeatureId)
+      }
+      // Refresh vector tiles
       if (layer.get('ref') === 'warnings') {
         vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       }
+      // Refresh point layers to hide non local rivers
+      layer.setStyle(layer.getStyle())
     })
     state.selectedFeatureId = newFeatureId
     // Update url
@@ -266,31 +278,8 @@ function LiveMap (mapId, options) {
     window.history.replaceState(data, title, uri)
   }
 
-  // Generate feature name
-  const featureName = (feature) => {
-    let name = ''
-    if (feature.get('type') === 'C') {
-      name = `Tide level: ${feature.get('name')}`
-    } else if (feature.get('type') === 'S' || feature.get('type') === 'M') {
-      name = `River level: ${feature.get('name')}, ${feature.get('river')}`
-    } else if (feature.get('type') === 'G') {
-      name = `Groundwater level: ${feature.get('name')}`
-    } else if (feature.get('type') === 'R') {
-      name = `Rainfall: ${feature.get('name')}`
-    } else if (feature.getId().startsWith('rainfall_stations')) {
-      name = `Rainfall: ${feature.get('station_name')}`
-    } else if (feature.get('severity') === 1) {
-      name = `Severe flood warning: ${feature.get('name')}`
-    } else if (feature.get('severity') === 2) {
-      name = `Flood warning: ${feature.get('name')}`
-    } else if (feature.get('severity') === 3) {
-      name = `Flood alert: ${feature.get('name')}`
-    }
-    return name
-  }
-
   // Get features visible in the current viewport
-  const getVisibleFeatures = () => {
+  const toggleVisibleFeatures = () => {
     labels.getSource().clear()
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
     const resolution = map.getView().getResolution()
@@ -359,7 +348,11 @@ function LiveMap (mapId, options) {
     const isBigZoom = resolution <= maps.liveMaxBigZoom
     for (const layer of layers) {
       if (labels.getSource().getFeatures().length > 9) break
-      const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
+      let pointFeatures = layer.getSource().getFeaturesInExtent(extent)
+      // If we have a local river remove all other points
+      if (maps.selectedRiver) {
+        pointFeatures = pointFeatures.filter(f => f.get('river') === maps.selectedRiver.eaSlug)
+      }
       for (const feature of pointFeatures) {
         if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
           const pointFeature = new Feature({
@@ -422,7 +415,7 @@ function LiveMap (mapId, options) {
   // Pan map
   const panToFeature = (feature) => {
     let extent = map.getView().calculateExtent(map.getSize())
-    extent = buffer(extent, -1000)
+    extent = bufferExtent(extent, -1000)
     if (!containsExtent(extent, feature.getGeometry().getExtent())) {
       map.getView().setCenter(feature.getGeometry().getCoordinates())
     }
@@ -485,7 +478,7 @@ function LiveMap (mapId, options) {
   } else if (options.extent && options.extent.length) {
     extent = options.extent.map(x => { return parseFloat(x.toFixed(6)) })
   } else if (targetArea.polygonFeature) {
-    extent = getLonLatFromExtent(buffer(targetArea.polygonFeature.getGeometry().getExtent(), 150))
+    extent = getLonLatFromExtent(bufferExtent(targetArea.polygonFeature.getGeometry().getExtent(), 150))
   } else {
     extent = getLonLatFromExtent(maps.extent)
   }
@@ -504,7 +497,7 @@ function LiveMap (mapId, options) {
   // Set layers from querystring
   if (getParameterByName('lyr')) {
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-    setLayerVisibility(lyrs)
+    toggleLayerVisibility(lyrs)
     const checkboxes = document.querySelectorAll('.defra-map-key input[type=checkbox]')
     forEach(checkboxes, (checkbox) => {
       checkbox.checked = lyrs.includes(checkbox.id)
@@ -530,10 +523,6 @@ function LiveMap (mapId, options) {
             if (!warnings.getSource().getFeatureById(targetArea.pointFeature.getId())) {
               // Add point feature
               warnings.getSource().addFeature(targetArea.pointFeature)
-              // VectorSource: Add polygon not required if VectorTileSource
-              // if (targetArea.polygonFeature && targetAreaPolygons.getSource() instanceof VectorSource) {
-              //   targetAreaPolygons.getSource().addFeature(targetArea.polygonFeature)
-              // }
             }
           }
         }
@@ -541,9 +530,6 @@ function LiveMap (mapId, options) {
         if (['river', 'tide', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
           setFeatueState(layer)
         }
-        // Set feature visibility after all features have loaded
-        // const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-        // setWarningVisibility(lyrs, layer)
         // Store reference to warnings source for use in vector tiles style function
         if (layer.get('ref') === 'warnings') {
           const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
@@ -551,11 +537,16 @@ function LiveMap (mapId, options) {
           maps.warningsSource = warnings.getSource()
         }
         // Attempt to set selected feature when layer is ready
-        setSelectedFeature(state.selectedFeatureId)
+        toggleSelectedFeature(state.selectedFeatureId)
         // Show overlays
-        getVisibleFeatures()
+        toggleVisibleFeatures()
       }
     })
+  })
+
+  // Update river display when new tiles load
+  vectorTilePolygons.getSource().on('tileloadend', (e) => {
+    toggleRiver(state.selectedFeatureId)
   })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
@@ -572,8 +563,10 @@ function LiveMap (mapId, options) {
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
       if (!container.map) return
+      // Update river visibility when new features come into view
+      toggleRiver(state.selectedFeatureId)
       // Show overlays for visible features
-      getVisibleFeatures()
+      toggleVisibleFeatures()
       // Update url (history state) to reflect new extent
       const ext = getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
       replaceHistory('ext', ext.join(','))
@@ -604,17 +597,21 @@ function LiveMap (mapId, options) {
     }
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+      // DBL
+      if (layer === vectorTilePolygons) {
+        console.log(feature.getProperties())
+      }
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }
     })
-    setSelectedFeature(featureId)
+    toggleSelectedFeature(featureId)
   })
 
   // Show overlays on first tab in from browser controls
   viewport.addEventListener('focus', (e) => {
     if (maps.isKeyboard) {
-      getVisibleFeatures()
+      toggleVisibleFeatures()
     }
   })
 
@@ -634,22 +631,22 @@ function LiveMap (mapId, options) {
         if (lyrs.includes('sv')) { lyrs.splice(lyrs.indexOf('sv'), 1) }
         lyrs.push(e.target.id)
       }
-      setLayerVisibility(lyrs)
+      toggleLayerVisibility(lyrs)
       vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)
-      getVisibleFeatures()
+      toggleVisibleFeatures()
     }
   })
 
   // Clear selectedfeature when info is closed
   closeInfoButton.addEventListener('click', (e) => {
-    setSelectedFeature()
+    toggleSelectedFeature()
   })
 
   // Clear selectedfeature when key is opened
   openKeyButton.addEventListener('click', (e) => {
-    setSelectedFeature()
+    toggleSelectedFeature()
   })
 
   // Reset map extent on reset button click
@@ -661,18 +658,18 @@ function LiveMap (mapId, options) {
 
   // Handle all liveMap specific key presses
   containerElement.addEventListener('keyup', (e) => {
-    // Show overlays when any key is pressed other than Escape
-    if (e.key !== 'Escape') {
-      getVisibleFeatures()
-    }
     // Clear selected feature when pressing escape
     if (e.key === 'Escape' && state.selectedFeatureId !== '') {
-      setSelectedFeature()
+      toggleSelectedFeature()
     }
     // Set selected feature on [1-9] key presss
     const visibleFeatures = labels.getSource().getFeatures()
     if (!isNaN(e.key) && e.key >= 1 && e.key <= visibleFeatures.length && visibleFeatures.length <= 9) {
-      setSelectedFeature(labels.getSource().getFeatureById(e.key).get('featureId'))
+      toggleSelectedFeature(labels.getSource().getFeatureById(e.key).get('featureId'))
+    }
+    // Show overlays when any key is pressed other than Escape
+    if (e.key !== 'Escape') {
+      toggleVisibleFeatures()
     }
   })
 
@@ -681,7 +678,7 @@ function LiveMap (mapId, options) {
     if (e.target.classList.contains('defra-button-secondary')) {
       const newFeatureId = e.target.getAttribute('data-id')
       const feature = river.getSource().getFeatureById(newFeatureId) || tide.getSource().getFeatureById(newFeatureId)
-      setSelectedFeature(newFeatureId)
+      toggleSelectedFeature(newFeatureId)
       panToFeature(feature)
     }
   })
