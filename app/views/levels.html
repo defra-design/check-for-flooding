@@ -2,12 +2,14 @@
 
 {% block pageTitle %}
 {% if model.isErrorBing %}
-Sorry, there is a problem with the search -
-{% elif model.querySearch %}{{ model.querySearch }} -
+Sorry, there is a problem with the search - Check for flooding - GOV.UK
+{% else %}
+{% if model.querySearch %}{{ model.querySearch }} -
 {% elif model.isMultipleMatch %}
 Choose location -
 {% endif %}
 River, sea, groundwater and rainfall levels - GOV.UK
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -19,7 +21,9 @@ River, sea, groundwater and rainfall levels - GOV.UK
       Sorry, there is a problem with the search
     </h1>
     <p>You can <a href="/river-sea-groundwater-rainfall-levels">search again</a> or contact Floodline.</p>
-    <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
+    <div class="defra-contact">
+      <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
+    </div>
     {% else %}
     <h1 class="govuk-heading-xl">
       River, sea, groundwater and rainfall levels
