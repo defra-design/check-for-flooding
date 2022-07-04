@@ -15,7 +15,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
 {% block content %}
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-8">
+  <div class="govuk-grid-column-two-thirds{% if model.isErrorBing %} govuk-!-padding-bottom-8{% endif %}">
     {% if not model.isErrorBing %}
     <h1 class="govuk-heading-xl">
       River, sea, groundwater and rainfall levels
