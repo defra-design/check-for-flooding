@@ -186,20 +186,8 @@ function LiveMap (mapId, options) {
 
   // Show or hide rivers
   const toggleRiver = (featureId) => {
-    let selectedRiver = null
     const feature = river.getSource().getFeatureById(featureId)
-    if (feature) {
-      const bufferedFeature = bufferExtent(feature.getGeometry().getExtent(), 50)
-      const segment = vectorTilePolygons.getSource().getFeaturesInExtent(bufferedFeature)
-        .find(f => f.get('layer') === 'rivers' && f.getGeometry().intersectsExtent(bufferedFeature))
-      if (segment) {
-        selectedRiver = {
-          osNames: [segment.get('name1'), segment.get('name1')].filter(s => !!s),
-          eaSlug: feature.get('riverSlug')
-        }
-      }
-    }
-    maps.selectedRiver = selectedRiver
+    maps.selectedRiver = feature ? feature.get('riverSlug') : null
     vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
   }
 
@@ -350,7 +338,7 @@ function LiveMap (mapId, options) {
       let pointFeatures = layer.getSource().getFeaturesInExtent(extent)
       // If we have a local river remove all other points
       if (maps.selectedRiver) {
-        pointFeatures = pointFeatures.filter(f => f.get('river') === maps.selectedRiver.eaSlug)
+        pointFeatures = pointFeatures.filter(f => f.get('river') === maps.selectedRiver)
       }
       for (const feature of pointFeatures) {
         if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
@@ -596,10 +584,6 @@ function LiveMap (mapId, options) {
     }
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      // DBL
-      if (layer === vectorTilePolygons) {
-        console.log(feature.getProperties())
-      }
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }

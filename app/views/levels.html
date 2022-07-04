@@ -16,22 +16,24 @@ River, sea, groundwater and rainfall levels - GOV.UK
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-8">
-    {% if model.isErrorBing %}
-    <h1 class="govuk-heading-xl">
-      Sorry, there is a problem with the search
-    </h1>
-    <p>You can <a href="/river-sea-groundwater-rainfall-levels">search again</a> or contact Floodline.</p>
-    <div class="defra-contact">
-      <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
-    </div>
-    {% else %}
+    {% if not model.isErrorBing %}
     <h1 class="govuk-heading-xl">
       River, sea, groundwater and rainfall levels
     </h1>
     {% include "partials/list-search.html" %}
+    {% else %}
+    <h1 class="govuk-heading-xl">
+      Sorry, there is a problem with the search
+    </h1>
     {% endif %}
     {% if not model.levels %}
     <span id="map"></span>
+    {% endif %}
+    {% if model.isErrorBing %}
+    <p>You can <a href="/river-sea-groundwater-rainfall-levels">search again</a> or contact Floodline.</p>
+    <div class="defra-contact">
+      <p class=" govuk-!-padding-bottom-2"><strong>Floodline</strong></br>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out about call charges</a></p>
+    </div>
     {% endif %}
   </div>
 </div>

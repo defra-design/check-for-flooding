@@ -69,10 +69,9 @@ window.flood.maps.styles = {
         zIndex: 1
       })
     } else if (featureLayer === 'rivers' && maps.selectedRiver) {
-      const isLocalRiver = maps.selectedRiver && maps.selectedRiver.osNames.some(r => [feature.get('name1'), feature.get('name2')].includes(r))
-      // DBL if (!isLocalRiver) return
+      if (feature.get('slug') !== maps.selectedRiver) return
       return new Style({
-        stroke: new Stroke({ color: isLocalRiver ? '#d4351c' : '#1d70b8', width: 3 }),
+        stroke: new Stroke({ color: '#1d70b8', width: 3 }),
         // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
@@ -105,7 +104,7 @@ window.flood.maps.styles = {
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= maps.liveMaxBigZoom
     // If a river station is selected hide all station not on the river
-    if (maps.selectedRiver && feature.get('riverSlug') !== maps.selectedRiver.eaSlug) return
+    if (maps.selectedRiver && feature.get('riverSlug') !== maps.selectedRiver) return
     switch (state) {
       // Rivers
       case 'river':
