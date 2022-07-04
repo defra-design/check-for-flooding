@@ -217,20 +217,13 @@ router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
   })
 })
 
-// GeoJSON warning areas used with TippeCanoe (creating vector tiles)
-router.get('/service/flood-warning-areas-geojson', async (req, res, next) => {
-  try {
-    res.status(200).json(await mapServices.getTargetAreasGeoJSON('warning'))
-  } catch (err) {
-    res.status(500)
-    console.log(err)
-  }
-})
+//
+// Test
+//
 
-// GeoJSON alert areas used with TippeCanoe (creating vector tiles)
-router.get('/service/target-areas-geojson', async (req, res, next) => {
+router.get('/service/geojson/river-line/:slug', async (req, res, next) => {
   try {
-    res.status(200).json(await mapServices.getTargetAreasGeoJSON())
+    res.status(200).json(await mapServices.getRiverGeoJSON(req.params.slug))
   } catch (err) {
     res.status(500)
     console.log(err)

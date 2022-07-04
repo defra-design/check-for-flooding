@@ -12,7 +12,7 @@ const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels
 // Get levels
 router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const query = Object.assign({}, { searchType: '', search: '', type: '' }, req.query)
+  const query = Object.assign({}, { searchType: '', search: '', type: '', error: '' }, req.query)
   const places = []
   const rivers = []
   const catchments = []
@@ -67,7 +67,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     const levelResponse = await levelServices.getLevelsByCatchment(cookie, catchments[0].display)
     levels = new Levels(query.type, levelResponse.data)
   }
-  const model = new ViewModel(query, places, rivers, catchments, levels)
+  const model = new ViewModel(query, places, rivers, catchments, levels, query.error)
   res.render('levels', { model })
 })
 

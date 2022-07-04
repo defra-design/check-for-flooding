@@ -113,5 +113,69 @@ module.exports = {
       features: features
     }
     return geoJSON
+  },
+
+  //
+  // Test
+  //
+
+  getRiverGeoJSON: async (slug) => {
+    const response = await db.query(`
+    WITH start AS (
+      SELECT
+      river_station.slug AS ea_slug,
+      river_station.station_id,
+      os_open_rivers.ogc_fid AS ogc_fid,
+      CASE WHEN os_open_rivers.name1 IS NOT NULL THEN os_open_rivers.name1 ELSE os_open_rivers.name2 END AS os_name
+      FROM station
+      LEFT JOIN river_station ON station.rloi_id = river_station.station_id
+      LEFT JOIN os_open_rivers ON ST_Intersects(ST_Buffer(station.geom, 0.001), os_open_rivers.wkb_geometry)
+      WHERE river_station.order = 1 AND os_open_rivers.ogc_fid IS NOT NULL
+      AND river_station.slug = $1
+    ),
+    segment AS (
+      SELECT
+      os_open_rivers.ogc_fid,
+      os_open_rivers.name1,
+      os_open_rivers.name2,
+      os_open_rivers.startnode,
+      os_open_rivers.endnode,
+      start.ea_slug,
+      start.os_name,
+      os_open_rivers.form,
+      os_open_rivers.wkb_geometry
+      FROM os_open_rivers
+      LEFT JOIN start ON os_open_rivers.name1 = start.os_name OR os_open_rivers.name2 = start.os_name
+      WHERE name1 = start.os_name OR name2 = start.os_name AND form != 'canal'
+    ),
+    segment_second_pass AS (
+      SELECT ogc_fid, wkb_geometry
+      FROM os_open_rivers
+      WHERE ogc_fid IN (SELECT ogc_fid FROM segment) OR (
+      startnode IN (SELECT endnode FROM segment) AND
+      endnode IN (SELECT startnode FROM segment))
+    ),
+    cluster AS (
+      SELECT ST_ClusterDBSCAN(segment_second_pass.wkb_geometry, eps := 0.01, minpoints := 1) OVER() AS c_id, *
+      FROM segment_second_pass
+    )
+    SELECT ogc_fid, c_id, ST_AsGeoJSON(wkb_geometry)::JSONB AS geometry FROM cluster;
+    `, [slug])
+    const features = []
+    response.forEach(item => {
+      features.push({
+        type: 'Feature',
+        id: item.ogc_fid,
+        geometry: item.geometry,
+        properties: {
+          cluster_id: item.c_id
+        }
+      })
+    })
+    const geoJSON = {
+      type: 'FeatureCollection',
+      features: features
+    }
+    return geoJSON
   }
 }

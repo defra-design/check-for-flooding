@@ -1,7 +1,7 @@
 const bingApiKey = process.env.BING_API_KEY
 
 class ViewModel {
-  constructor (query, places, rivers, catchments, levels) {
+  constructor (query, places, rivers, catchments, levels, error) {
     this.querySearch = decodeURI(query.search)
     this.querySearchType = query.searchType
     this.queryType = levels ? levels.type : 'river'
@@ -22,6 +22,7 @@ class ViewModel {
     this.isMultipleGroupMatch = !!([places.length, rivers.length, catchments.length].filter(x => x > 0).length)
     this.isNoResults = !places.length && !rivers.length && !catchments.length
     // Errors
+    this.isErrorBing = error === 'bing'
     this.isErrorEmpty = !query.search
     this.isErrorLocation = query.search && !places.length && !rivers.length && !catchments.length
     this.isErrorPostcode = places.length > 1 && (places.filter(place => place.type === 'postcode').length === places.length)
