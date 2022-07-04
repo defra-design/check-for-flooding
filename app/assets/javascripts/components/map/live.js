@@ -18,7 +18,6 @@ import { polygon, multiPolygon } from '@turf/helpers'
 import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
-import { feature } from 'caniuse-lite'
 
 const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
 const maps = window.flood.maps
