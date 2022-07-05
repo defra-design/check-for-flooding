@@ -35,7 +35,8 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     // Check rivers
     if (query.searchType === '' || query.searchType === 'river') {
-      const riverResponse = await riverServices.getRivers(cookie, query.search)
+      const service = query.searchType === 'river' ? 'getRiver' : 'getRivers'
+      const riverResponse = await riverServices[service](cookie, query.search)
       if (riverResponse.status === 200) {
         riverResponse.data.forEach(item => { rivers.push(new River(item)) })
       } else {

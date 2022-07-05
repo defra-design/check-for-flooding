@@ -7,7 +7,7 @@ module.exports = {
     WHERE slug = $1
     ORDER BY display
     `, [slug])
-    return response[0] || {}
+    return response
   },
 
   getRivers: async (query) => {
