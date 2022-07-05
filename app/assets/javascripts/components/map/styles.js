@@ -68,11 +68,11 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
-    } else if (featureLayer === 'rivers') { // && maps.selectedRiver
-      const isLocalRiver = feature.get('slug') !== maps.selectedRiver
-      // if (feature.get('slug') !== maps.selectedRiver) return
+    } else if (featureLayer === 'rivers' && maps.selectedRiver) {
+      // const isLocalRiver = feature.get('slug') !== maps.selectedRiver
+      if (feature.get('slug') !== maps.selectedRiver) return
       return new Style({
-        stroke: new Stroke({ color: isLocalRiver ? '#d4351c' : '#1d70b8', width: 3 }),
+        stroke: new Stroke({ color: '#1d70b8', width: 3 }),
         // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
