@@ -90,7 +90,7 @@ function LiveMap (mapId, options) {
   const vectorTilePolygons = maps.layers.vectorTilePolygons()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
-  const tide = maps.layers.tide()
+  const sea = maps.layers.sea()
   const groundwater = maps.layers.groundwater()
   const rainfall = maps.layers.rainfall()
   const selected = maps.layers.selected()
@@ -108,7 +108,7 @@ function LiveMap (mapId, options) {
   const dataLayers = [
     vectorTilePolygons,
     river,
-    tide,
+    sea,
     groundwater,
     rainfall,
     warnings
@@ -171,9 +171,9 @@ function LiveMap (mapId, options) {
       } else if (props.type === 'C') {
         // Tide
         if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
-          state = 'tideError'
+          state = 'seaError'
         } else {
-          state = 'tide'
+          state = 'sea'
         }
       } else if (props.type === 'R') {
         // Rainfall
@@ -514,7 +514,7 @@ function LiveMap (mapId, options) {
           }
         }
         // WebGL: Limited dynamic styling could be done server side for client performance
-        if (['river', 'tide', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
+        if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
           setFeatueState(layer)
         }
         // Store reference to warnings source for use in vector tiles style function
@@ -586,6 +586,7 @@ function LiveMap (mapId, options) {
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       // DBL Test
       if (layer === vectorTilePolygons) {
+        console.log(feature.getId())
         console.log(feature.getProperties())
       }
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
@@ -664,7 +665,7 @@ function LiveMap (mapId, options) {
   containerElement.addEventListener('click', (e) => {
     if (e.target.classList.contains('defra-button-secondary')) {
       const newFeatureId = e.target.getAttribute('data-id')
-      const feature = river.getSource().getFeatureById(newFeatureId) || tide.getSource().getFeatureById(newFeatureId)
+      const feature = river.getSource().getFeatureById(newFeatureId) || sea.getSource().getFeatureById(newFeatureId)
       toggleSelectedFeature(newFeatureId)
       panToFeature(feature)
     }

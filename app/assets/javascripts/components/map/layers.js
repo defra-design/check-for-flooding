@@ -136,14 +136,14 @@ window.flood.maps.layers = {
     })
   },
 
-  tide: () => {
+  sea: () => {
     return new VectorLayer({
-      ref: 'tide',
-      featureCodes: 'ti',
+      ref: 'sea',
+      featureCodes: 'se',
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/service/geojson/tide'
+        url: '/service/geojson/sea'
       }),
       style: window.flood.maps.styles.stations,
       visible: false,

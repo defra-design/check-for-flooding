@@ -50,8 +50,8 @@ module.exports = {
       ELSE NULL END AS type,
       is_wales, initcap(latest_state) AS latest_state, status, name, river_name, river_slug, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
-      WHERE type LIKE $1;
-    `, [`%${type}%`])
+      WHERE CASE WHEN type = 'tide' AND river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_slug IS NULL THEN 'sea' ELSE type END = $1;
+    `, type)
     const features = []
     response.forEach(item => {
       features.push({

@@ -68,14 +68,24 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
-    } else if (featureLayer === 'rivers' && maps.selectedRiver) {
-      // const isLocalRiver = feature.get('slug') !== maps.selectedRiver
-      if (feature.get('slug') !== maps.selectedRiver) return
+    // } else if (featureLayer === 'rivers' && maps.selectedRiver) {
+    //   if (feature.get('slug') !== maps.selectedRiver) return
+    //   return new Style({
+    //     stroke: new Stroke({ color: '#1d70b8', width: 3 }),
+    //     fill: new Fill({ color: 'transparent' })
+    //   })
+    // }
+    } else if (featureLayer === 'rivers') { // && maps.selectedRiver
+      const isLocalRiver = feature.get('slug') === maps.selectedRiver
+      // if (feature.get('slug') !== maps.selectedRiver) return
+      let colour = isLocalRiver ? '#1d70b8' : '#b1b4b6'
+      if (!feature.get('slug') && !feature.get('name1') && !feature.get('name2')) {
+        colour = '#ffdd00'
+      }
       return new Style({
-        stroke: new Stroke({ color: '#1d70b8', width: 3 }),
-        // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
+        stroke: new Stroke({ color: colour, width: 3 }),
         fill: new Fill({ color: 'transparent' }),
-        zIndex: 1
+        zIndex: isLocalRiver ? 2 : 1
       })
     }
   },
@@ -115,10 +125,10 @@ window.flood.maps.styles = {
       case 'riverError':
         return isSelected ? (isSymbol ? styleCache.riverErrorSelected : styleCache.measurementErrorSelected) : (isSymbol ? styleCache.riverError : styleCache.measurementError)
       // Tide
-      case 'tide':
-        return isSelected ? (isSymbol ? styleCache.tideSelected : styleCache.measurementSelected) : (isSymbol ? styleCache.tide : styleCache.measurement)
-      case 'tideError':
-        return isSelected ? (isSymbol ? styleCache.tideErrorSelected : styleCache.measurementErrorSelected) : (isSymbol ? styleCache.tideError : styleCache.measurementError)
+      case 'sea':
+        return isSelected ? (isSymbol ? styleCache.seaSelected : styleCache.measurementSelected) : (isSymbol ? styleCache.sea : styleCache.measurement)
+      case 'seaError':
+        return isSelected ? (isSymbol ? styleCache.seaErrorSelected : styleCache.measurementErrorSelected) : (isSymbol ? styleCache.seaError : styleCache.measurementError)
       // Ground
       case 'groundHigh':
         return isSelected ? (isSymbol ? styleCache.groundHighSelected : styleCache.measurementAlertSelected) : (isSymbol ? styleCache.groundHigh : styleCache.measurementAlert)
@@ -462,10 +472,10 @@ const styleCache = {
   riverError: createIconStyle({ offset: [0, 700], zIndex: 1 }),
   riverErrorSelected: createIconStyle({ offset: [100, 700], zIndex: 10 }),
   // Tide
-  tide: createIconStyle({ offset: [0, 800], zIndex: 2 }),
-  tideSelected: createIconStyle({ offset: [100, 800], zIndex: 10 }),
-  tideError: createIconStyle({ offset: [0, 900], zIndex: 1 }),
-  tideErrorSelected: createIconStyle({ offset: [100, 900], zIndex: 10 }),
+  sea: createIconStyle({ offset: [0, 800], zIndex: 2 }),
+  seaSelected: createIconStyle({ offset: [100, 800], zIndex: 10 }),
+  seaError: createIconStyle({ offset: [0, 900], zIndex: 1 }),
+  seaErrorSelected: createIconStyle({ offset: [100, 900], zIndex: 10 }),
   // Groundwater
   ground: createIconStyle({ offset: [0, 1100], zIndex: 2 }),
   groundSelected: createIconStyle({ offset: [100, 1100], zIndex: 10 }),
