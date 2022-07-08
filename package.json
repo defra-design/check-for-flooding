@@ -16,8 +16,7 @@
     "test:integration:chrome": "start-server-and-test 3000 'cypress run --browser chrome'",
     "test:integration:electron": "start-server-and-test 3000 'cypress run --browser electron'",
     "test": "npm run lint && gulp generate-assets && jest",
-    "build": "node ./node_modules/gulp/bin/gulp generate-assets",
-    "update-readings": "node ./service/bin/update-local.js"
+    "build": "node ./node_modules/gulp/bin/gulp generate-assets"
   },
   "dependencies": {
     "@babel/cli": "^7.13.10",
