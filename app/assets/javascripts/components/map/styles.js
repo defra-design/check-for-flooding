@@ -68,24 +68,21 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
-    // } else if (featureLayer === 'rivers' && maps.selectedRiver) {
-    //   if (feature.get('slug') !== maps.selectedRiver) return
+    // } else if (featureLayer === 'rivers' && maps.selectedRiverId) {
+    //   if (feature.get('riverId') !== maps.selectedRiverId) return
     //   return new Style({
     //     stroke: new Stroke({ color: '#1d70b8', width: 3 }),
     //     fill: new Fill({ color: 'transparent' })
     //   })
     // }
-    } else if (featureLayer === 'rivers') { // && maps.selectedRiver
-      const isLocalRiver = feature.get('slug') === maps.selectedRiver
-      // if (feature.get('slug') !== maps.selectedRiver) return
-      let colour = isLocalRiver ? '#1d70b8' : '#b1b4b6'
-      if (!feature.get('slug') && !feature.get('name1') && !feature.get('name2')) {
+    } else if (featureLayer === 'rivers') {
+      let colour = '#b1b4b6'
+      if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
         colour = '#ffdd00'
       }
       return new Style({
         stroke: new Stroke({ color: colour, width: 3 }),
-        fill: new Fill({ color: 'transparent' }),
-        zIndex: isLocalRiver ? 2 : 1
+        fill: new Fill({ color: 'transparent' })
       })
     }
   },
@@ -115,7 +112,7 @@ window.flood.maps.styles = {
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= maps.liveMaxBigZoom
     // If a river station is selected hide all station not on the river
-    if (maps.selectedRiver && feature.get('riverSlug') !== maps.selectedRiver) return
+    if (maps.selectedRiverId && feature.get('riverId') !== maps.selectedRiverId) return
     switch (state) {
       // Rivers
       case 'river':
@@ -142,6 +139,17 @@ window.flood.maps.styles = {
       case 'rainDry':
         return isSelected ? (isSymbol ? styleCache.rainDrySelected : styleCache.measurementNoneSelected) : (isSymbol ? styleCache.rainDry : styleCache.measurementNone)
     }
+  },
+
+  //
+  // Test
+  //
+
+  riverLine: (feature) => {
+    return new Style({
+      stroke: new Stroke({ color: '#1d70b8', width: 3 }),
+      fill: new Fill({ color: 'transparent' })
+    })
   },
 
   //

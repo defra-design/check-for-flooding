@@ -219,7 +219,7 @@ window.flood.maps.layers = {
       zIndex: 11,
       declutter: true
     })
-  }
+  },
 
   //
   // WebGL layers
@@ -273,4 +273,21 @@ window.flood.maps.layers = {
   //   })
   // }
 
+  //
+  // Test
+  //
+
+  riverLine: () => {
+    return new VectorLayer({
+      ref: 'river-line',
+      featureCodes: 'rl',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857'
+      }),
+      style: window.flood.maps.styles.riverLine,
+      visible: false,
+      zIndex: 2
+    })
+  }
 }

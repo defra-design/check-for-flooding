@@ -221,9 +221,9 @@ router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
 // Test
 //
 
-router.get('/service/geojson/river-line/:slug', async (req, res, next) => {
+router.get('/service/geojson/river-line/:id', async (req, res, next) => {
   try {
-    res.status(200).json(await mapServices.getRiverGeoJSON(req.params.slug))
+    res.status(200).json(await mapServices.getRiverGeoJSON(req.params.id))
   } catch (err) {
     res.status(500)
     console.log(err)

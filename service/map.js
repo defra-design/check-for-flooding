@@ -48,7 +48,7 @@ module.exports = {
       WHEN type = 'tide' THEN 'C'
       WHEN type = 'rainfall' THEN 'R'
       ELSE NULL END AS type,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_name, river_slug, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, river_slug, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
       WHERE CASE WHEN type = 'tide' AND river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_slug IS NULL THEN 'sea' ELSE type END = $1;
     `, type)
@@ -64,7 +64,8 @@ module.exports = {
         properties: {
           type: item.type,
           name: item.name,
-          river: item.river_name,
+          riverId: item.river_id,
+          riverName: item.river_name,
           riverSlug: item.river_slug,
           catchmentId: item.hydrological_catchment_id,
           catchmentName: item.hydrological_catchment_name,
@@ -120,48 +121,68 @@ module.exports = {
   // Test
   //
 
-  getRiverGeoJSON: async (slug) => {
+  getRiverGeoJSON: async (id) => {
     const response = await db.query(`
     WITH start AS (
-      SELECT
-      river_station.slug AS ea_slug,
-      river_station.station_id,
-      os_open_rivers.ogc_fid AS ogc_fid,
-      CASE WHEN os_open_rivers.name1 IS NOT NULL THEN os_open_rivers.name1 ELSE os_open_rivers.name2 END AS os_name
+      SELECT DISTINCT ON (river_station.river_id)
+      river_station.station_id AS intersect_station_id,
+      river.id AS river_id,
+      river.name AS ea_name,
+      river.local_names,
+      river.os_line_ids,
+      os_open_rivers.ogc_fid AS ogc_fid
       FROM station
       LEFT JOIN river_station ON station.rloi_id = river_station.station_id
+      LEFT JOIN river ON river.id = river_station.river_id
       LEFT JOIN os_open_rivers ON ST_Intersects(ST_Buffer(station.geom, 0.001), os_open_rivers.wkb_geometry)
-      WHERE river_station.order = 1 AND os_open_rivers.ogc_fid IS NOT NULL
-      AND river_station.slug = $1
+      WHERE
+      (river.name = os_open_rivers.name1 OR river.name = os_open_rivers.name2 OR 
+      river.local_names LIKE '%' || os_open_rivers.name1 || '%' OR
+      river.local_names LIKE '%' || os_open_rivers.name2 || '%')
+      AND river_station.river_id = $1::integer
     ),
-    segment AS (
+    lines AS (
       SELECT
       os_open_rivers.ogc_fid,
-      os_open_rivers.name1,
-      os_open_rivers.name2,
       os_open_rivers.startnode,
       os_open_rivers.endnode,
-      start.ea_slug,
-      start.os_name,
+      os_open_rivers.name1,
+      os_open_rivers.name2,
       os_open_rivers.form,
       os_open_rivers.wkb_geometry
       FROM os_open_rivers
-      LEFT JOIN start ON os_open_rivers.name1 = start.os_name OR os_open_rivers.name2 = start.os_name
-      WHERE name1 = start.os_name OR name2 = start.os_name AND form != 'canal'
+      LEFT JOIN start ON os_open_rivers.name1 = start.ea_name OR os_open_rivers.name2 = start.ea_name
+      WHERE
+      (name1 = start.ea_name OR name2 = start.ea_name)
+      OR (SELECT os_line_ids FROM start) LIKE '%' || os_open_rivers.identifier || '%'
+      OR (SELECT local_names FROM start) LIKE '%' || os_open_rivers.name1 || '%'
+      OR (SELECT local_names FROM start) LIKE '%' || os_open_rivers.name2 || '%'
+      AND form != 'canal'
     ),
-    segment_second_pass AS (
-      SELECT ogc_fid, wkb_geometry
+    lines_inc_patch AS (
+      SELECT
+      ogc_fid, identifier, startnode, endnode, name1, name2, form, wkb_geometry
       FROM os_open_rivers
-      WHERE ogc_fid IN (SELECT ogc_fid FROM segment) OR (
-      startnode IN (SELECT endnode FROM segment) AND
-      endnode IN (SELECT startnode FROM segment))
+      WHERE ogc_fid IN (SELECT ogc_fid FROM lines) OR (
+      startnode IN (SELECT endnode FROM lines) AND
+      endnode IN (SELECT startnode FROM lines))
     ),
     cluster AS (
-      SELECT ST_ClusterDBSCAN(segment_second_pass.wkb_geometry, eps := 0.01, minpoints := 1) OVER() AS c_id, *
-      FROM segment_second_pass
+      SELECT
+      start.ogc_fid AS start_ogc_fid, ST_ClusterDBSCAN(lines_inc_patch.wkb_geometry, eps := 0.001, minpoints := 1) OVER() AS c_id,
+      lines_inc_patch.ogc_fid,
+      lines_inc_patch.identifier,
+      lines_inc_patch.startnode,
+      lines_inc_patch.endnode,
+      lines_inc_patch.name1,
+      lines_inc_patch.name2,
+      lines_inc_patch.form,
+      lines_inc_patch.wkb_geometry
+      FROM lines_inc_patch
+      LEFT JOIN start ON lines_inc_patch.ogc_fid = start.ogc_fid
     )
-    SELECT ogc_fid, c_id, ST_AsGeoJSON(wkb_geometry)::JSONB AS geometry FROM cluster;
-    `, [slug])
+    SELECT ogc_fid, (SELECT river_id FROM start) AS river_id, identifier, startnode, endnode, name1, name2, form, ST_AsGeoJSON(wkb_geometry)::JSONB AS geometry FROM cluster WHERE c_id = (SELECT c_id FROM cluster WHERE start_ogc_fid IS NOT NULL);
+    `, [id])
     const features = []
     response.forEach(item => {
       features.push({
@@ -169,7 +190,13 @@ module.exports = {
         id: item.ogc_fid,
         geometry: item.geometry,
         properties: {
-          cluster_id: item.c_id
+          riverId: item.river_id,
+          identifier: item.identifier,
+          startnode: item.startnode,
+          endnode: item.endnode,
+          name1: item.name1,
+          name2: item.name2,
+          form: item.form
         }
       })
     })

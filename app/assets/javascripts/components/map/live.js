@@ -19,7 +19,7 @@ import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
 
-const { addOrUpdateParameter, getParameterByName, forEach } = window.flood.utils
+const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.utils
 const maps = window.flood.maps
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
 const MapContainer = maps.MapContainer
@@ -88,6 +88,7 @@ function LiveMap (mapId, options) {
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
   const vectorTilePolygons = maps.layers.vectorTilePolygons()
+  const riverLine = maps.layers.riverLine() // Test
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -107,6 +108,7 @@ function LiveMap (mapId, options) {
   // These layers can be manipulated
   const dataLayers = [
     vectorTilePolygons,
+    riverLine, // Test
     river,
     sea,
     groundwater,
@@ -187,8 +189,25 @@ function LiveMap (mapId, options) {
   // Show or hide rivers
   const toggleRiver = (featureId) => {
     const feature = river.getSource().getFeatureById(featureId)
-    maps.selectedRiver = feature ? feature.get('riverSlug') : null
+    const riverId = feature ? feature.get('riverId') : null
+    maps.selectedRiverId = riverId
     vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+
+    //
+    // Test
+    //
+    riverLine.getSource().clear()
+    riverLine.setVisible(false)
+    if (riverId) {
+      xhr(`http://localhost:3000/service/geojson/river-line/${riverId}`, (error, response) => {
+        if (!error) {
+          const features = new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(response)
+          riverLine.setVisible(true)
+          riverLine.getSource().addFeatures(features)
+          riverLine.setStyle(riverLine.getStyle())
+        }
+      }, 'json')
+    }
   }
 
   // Show or hide warnings within warning layer
@@ -337,8 +356,8 @@ function LiveMap (mapId, options) {
       if (labels.getSource().getFeatures().length > 9) break
       let pointFeatures = layer.getSource().getFeaturesInExtent(extent)
       // If we have a local river remove all other points
-      if (maps.selectedRiver) {
-        pointFeatures = pointFeatures.filter(f => f.get('river') === maps.selectedRiver)
+      if (maps.selectedRiverId) {
+        pointFeatures = pointFeatures.filter(f => f.get('riverId') === maps.selectedRiverId)
       }
       for (const feature of pointFeatures) {
         if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
@@ -532,9 +551,9 @@ function LiveMap (mapId, options) {
   })
 
   // Update river display when new tiles load
-  vectorTilePolygons.getSource().on('tileloadend', (e) => {
-    toggleRiver(state.selectedFeatureId)
-  })
+  // vectorTilePolygons.getSource().on('tileloadend', (e) => {
+  //   toggleRiver(state.selectedFeatureId)
+  // })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
