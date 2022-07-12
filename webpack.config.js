@@ -1,7 +1,7 @@
 const path = require('path')
 const env = process.env.NODE_ENV
-// const inDev = env === 'dev' || env === 'development'
-const inDev = true
+const inDev = env === 'dev' || env === 'development'
+// const inDev = true
 
 module.exports = (env, argv) => ({
   mode: !inDev ? 'production' : 'development',

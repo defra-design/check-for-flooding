@@ -13,6 +13,6 @@ node_modules/*
 app/assets/javascripts/build
 localhost-key.pem
 localhost.pem
-service/vt/*
+# service/vt/*
 service/build/*
 
