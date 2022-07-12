@@ -46,7 +46,7 @@ class Outlook {
       }
     })
 
-    this._full = outlook.public_forecast.english_forecast
+    this._full = outlook.public_forecast.england_forecast
 
     const issueDate = new Date(outlook.issued_at)
 
