@@ -4,12 +4,12 @@ const severity = require('../models/severity')
 
 class Warnings {
   constructor (data) {
+    data = data.filter(item => item.severity >= 1 && item.severity <= 4)
     const groups = utils.groupBy(data, 'severity')
     this.groups = []
     for (const [key] of Object.entries(groups)) {
       const groupSeverityId = parseInt(key, 10)
       const groupSeverity = severity.find(item => item.id === groupSeverityId)
-      // const items = groups[key].map(({ severity, ...item }) => item)
       const items = groups[key].map((item) => {
         delete item.severity
         const date = `${moment(item.updated).format('h:mma')} on ${moment(item.updated).format('D MMMM YYYY')}`
@@ -25,9 +25,9 @@ class Warnings {
         severity: groupSeverity,
         items: items
       })
-      if (groupSeverityId < 4) {
+      if (groupSeverityId >= 1 && groupSeverityId <= 3) {
         this.hasActive = true
-      } else {
+      } else if (groupSeverityId === 4) {
         this.hasRemoved = true
       }
     }

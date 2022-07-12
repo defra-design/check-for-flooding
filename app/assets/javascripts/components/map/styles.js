@@ -76,6 +76,8 @@ window.flood.maps.styles = {
     //   })
     // }
     } else if (featureLayer === 'rivers') {
+      const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
+      if (!showRivers) return
       let colour = '#b1b4b6'
       if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
         colour = '#ffdd00'
