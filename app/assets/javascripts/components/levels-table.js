@@ -83,7 +83,7 @@ function LevelsTable (id) {
   document.addEventListener('keydown', (e) => {
     const hasClassList = e.target.parentNode && e.target.parentNode.classList
     const keys = [' ', 'ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (hasClassList && e.target.parentNode.contains('defra-navbar__item') && keys.includes(e.key)) {
+    if (hasClassList && e.target.parentNode.classList.contains('defra-navbar__item') && keys.includes(e.key)) {
       e.preventDefault()
     }
   })
@@ -91,7 +91,7 @@ function LevelsTable (id) {
   // Ensure buttons are operable with keyboard
   document.addEventListener('keyup', (e) => {
     const hasClassList = e.target.parentNode && e.target.parentNode.classList
-    if (hasClassList && e.target.parentNode.contains('defra-navbar__item') && e.key === ' ') {
+    if (hasClassList && e.target.parentNode.classList.contains('defra-navbar__item') && e.key === ' ') {
       e.preventDefault()
       toggleSelected(e.target)
     }
