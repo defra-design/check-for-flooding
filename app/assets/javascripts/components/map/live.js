@@ -199,7 +199,7 @@ function LiveMap (mapId, options) {
     riverLine.getSource().clear()
     riverLine.setVisible(false)
     if (riverId) {
-      xhr(`http://localhost:3000/service/geojson/river-line/${riverId}`, (error, response) => {
+      xhr(`/service/geojson/river-line/${riverId}`, (error, response) => {
         if (!error) {
           const features = new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(response)
           riverLine.setVisible(true)
