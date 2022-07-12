@@ -72,8 +72,8 @@ function LevelsTable (id) {
   //
 
   document.addEventListener('click', (e) => {
-    const parentNode = e.target.parentNode
-    if (parentNode && parentNode.classList.contains('defra-navbar__item')) {
+    const hasClassList = e.target.parentNode && e.target.parentNode.classList
+    if (hasClassList && e.target.parentNode.classList.contains('defra-navbar__item')) {
       e.preventDefault()
       toggleSelected(e.target)
     }
@@ -81,17 +81,17 @@ function LevelsTable (id) {
 
   // Stop space bar scrolling page when on button
   document.addEventListener('keydown', (e) => {
-    const parentNode = e.target.parentNode
+    const hasClassList = e.target.parentNode && e.target.parentNode.classList
     const keys = [' ', 'ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (parentNode && parentNode.classList.contains('defra-navbar__item') && keys.includes(e.key)) {
+    if (hasClassList && e.target.parentNode.contains('defra-navbar__item') && keys.includes(e.key)) {
       e.preventDefault()
     }
   })
 
   // Ensure buttons are operable with keyboard
   document.addEventListener('keyup', (e) => {
-    const parentNode = e.target.parentNode
-    if (parentNode && parentNode.classList.contains('defra-navbar__item') && e.key === ' ') {
+    const hasClassList = e.target.parentNode && e.target.parentNode.classList
+    if (hasClassList && e.target.parentNode.contains('defra-navbar__item') && e.key === ' ') {
       e.preventDefault()
       toggleSelected(e.target)
     }
