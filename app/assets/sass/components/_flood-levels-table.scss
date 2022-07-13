@@ -41,6 +41,9 @@
       border: 0px;
       float: left;
     }
+    a {
+      display: inline-block;
+    }
     a:not(:hover) {
       text-decoration: none;
     }
@@ -94,6 +97,10 @@
       width: 33.33%;
       min-width: 4em;
     }
+  }
+  &-subtitle {
+    display: block;
+    @include govuk-font($size: 16);
   }
   &-meta {
     display: block;
