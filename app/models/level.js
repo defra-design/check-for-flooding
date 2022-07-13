@@ -23,6 +23,7 @@ class Level {
     this.lat = data.lat
     this.isMultiStage = Boolean(data.is_multi_stage)
     this.isDownstage = Boolean(data.is_downstage)
+    this.isWales = Boolean(data.is_wales)
     this.hasDetail = Boolean(data.has_detail)
   }
 }

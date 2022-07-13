@@ -9,10 +9,11 @@
   &__caption {
     // @extend .govuk-table__caption;
     // @extend .govuk-table__caption--m;
+    // margin-top: 15px;
     @extend .govuk-visually-hidden;
-    @include mq ($until: tablet) {
-      display: block;
-    }
+    // @include mq ($until: tablet) {
+    //   display: block;
+    // }
   }
   &__body {
     @include mq ($until: tablet) {
