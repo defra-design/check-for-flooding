@@ -15,6 +15,9 @@
     //   display: block;
     // }
   }
+  &__head &__cell {
+    text-align: left;
+  }
   &__body {
     @include mq ($until: tablet) {
       display: block;

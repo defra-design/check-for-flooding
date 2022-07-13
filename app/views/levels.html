@@ -118,7 +118,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% if model.levels.items %}
       <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="caption">
         <caption id="caption" class="defra-flood-levels-table__caption">Results for '{{ model.querySearch }}', showing <span>{{ model.queryType }}</span> levels</caption>
-        <thead class="govuk-visually-hidden" role="rowgroup">
+        <thead class="govuk-visually-hidden defra-flood-levels-table__head" role="rowgroup">
           {%- set hideHeader -%}
           {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}
@@ -126,16 +126,16 @@ River, sea, groundwater and rainfall levels - GOV.UK
           {% if model.queryType != 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}
           <tr role="row" {{ hideRainfallHeader | safe }} data-group-type="rainfall">
-            <th scope="col" role="columnheader">Gauge</th>
-            <th scope="col" role="columnheader">1 hour</th>
-            <th scope="col" role="columnheader">6 hours</th>
-            <th scope="col" role="columnheader">24 hours</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">Gauge</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">1 hour</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">6 hours</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">24 hours</th>
           </tr>
           <tr role="row" {{ hideHeader | safe }} data-group-type="river,sea,groundwater">
-            <th scope="col" role="columnheader">Gauge</th>
-            <th scope="col" role="columnheader">Trend</th>
-            <th scope="col" role="columnheader">Height</th>
-            <th scope="col" role="columnheader">State</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">Gauge</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">Trend</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">Height</th>
+            <th class="defra-flood-levels-table__cell" scope="col" role="columnheader">State</th>
           </tr>
         </thead>
         <tbody class="defra-flood-levels-table__body" role="rowgroup">
