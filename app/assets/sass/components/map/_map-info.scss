@@ -21,6 +21,12 @@
     margin-bottom: 0px;
     margin-top: 10px;
   }
+  &__error {
+    display: block;
+    @include govuk-font($size: 16);
+    margin-bottom: 0px;
+    margin-top: 10px;
+  }
   &__meta {
     display: block;
     @include govuk-font($size: 14);

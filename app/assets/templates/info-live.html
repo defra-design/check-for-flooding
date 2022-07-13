@@ -38,11 +38,11 @@
         </a>
     </strong>
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
-    <p class="defra-flood-list-item__error">
+    <p class="defra-map-info__error">
         Closed or temporarily out of service
     </p>
     {% elif not model.value %}
-    <p class="defra-flood-list-item__error">
+    <p class="defra-map-info__error">
         Data not available
     </p>
     {% else %}
@@ -114,11 +114,11 @@
         <a href="/rainfall-station/{{ model.id }}">Rainfall at {{ model.name }}</a>
     </strong>
     {% if model.status === 'Closed' or model.status === 'Suspended' %}
-    <p class="defra-flood-list-item__error">
+    <p class="defra-map-info__error">
         Closed or temporarily out of service
     </p>
     {% elif model.isError %}
-    <p class="defra-flood-list-item__error">
+    <p class="defra-map-info__error">
         Data not available
     </p>
     {% else %}
