@@ -13,7 +13,7 @@ import '../components/map/live'
 if (document.getElementById('map-live')) {
   window.flood.maps.createLiveMap('map-live', {
     btnText: 'View map of flood warnings and alerts',
-    btnClasses: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-top-2',
+    btnClasses: 'defra-button-secondary defra-button-secondary--icon',
     layers: 'mv,ts,tw,ta',
     extent: window.flood.model.bbox
   })
