@@ -2,6 +2,7 @@ const utils = require('../utils')
 
 class Level {
   constructor (data) {
+    console.log(data)
     this.id = data.id
     this.mapId = data.type === 'rainfall' ? data.id : data.station_id
     this.name = data.name
