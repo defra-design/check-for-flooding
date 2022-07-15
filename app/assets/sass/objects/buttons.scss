@@ -119,11 +119,15 @@ button.defra-button-secondary {
     }
     svg {
         position: relative;
-        top: -1px;
         display: inline-block;
         color: govuk-colour('black');
-        vertical-align: middle;
-        margin-right: 7.5px;
+        vertical-align: top;
+        margin-right: 7px;
+        top: 1px;
+        @include mq ($from: tablet) {
+            margin-right: 8px;
+            top: 4px;
+        }
     }
     &:hover svg {
         color: $govuk-link-hover-colour;
@@ -136,4 +140,14 @@ button.defra-button-secondary {
 .defra-link-icon-s {
     @extend .defra-link-icon;
     @include govuk-font($size: 16);
+    svg {
+        margin-right: 6px;
+        margin-bottom: -4px;
+        top: -1px;
+        @include mq ($from: tablet) {
+            margin-right: 7px;
+            top: 0px;
+            margin-bottom: -3px;
+        }
+    }
 }

@@ -90,7 +90,8 @@
     border: 0px;
     color: govuk-colour('black');
     margin: 0px 15px 4px 0px;
-    padding: 5px 0px 5px 21px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     &:focus {
       color: govuk-colour('black');
       box-shadow: 0 4px 0 govuk-colour('black');
