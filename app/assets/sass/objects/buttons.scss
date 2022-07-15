@@ -110,7 +110,6 @@ button.defra-button-secondary {
     position:relative;
     display:inline-block;
     margin-right: 5px;
-    margin-bottom: 10px;
     @include govuk-font($size: 19);
     &:last-of-type {
         margin-right: 0px;
