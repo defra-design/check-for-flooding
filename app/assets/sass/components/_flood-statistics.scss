@@ -1,10 +1,4 @@
 .defra-flood-statistics {
-    border-top: 1px solid $govuk-border-colour;
-    border-bottom: 1px solid $govuk-border-colour;
-    padding-bottom: 15px;
-    @include mq ($from: tablet) {
-        padding-bottom: 20px;
-    }
     &__list {
         margin:0;
     }
@@ -25,7 +19,6 @@
     &__key {
         @include govuk-font($size: 19);
         color: $govuk-secondary-text-colour;
-        padding-top: 15px;
     }
     &__value {
         @include govuk-font($size: 27);
@@ -39,5 +32,16 @@
     &__data-tip:focus {
         border-bottom: 0px;
         margin-bottom: 0px;
+    }
+    &--border {
+        border-top: 1px solid $govuk-border-colour;
+        border-bottom: 1px solid $govuk-border-colour;
+        padding-bottom: 15px; 
+        @include mq ($from: tablet) {
+            padding-bottom: 20px;
+        }
+    }
+    &--border &__key {
+        padding-top: 15px;
     }
 }

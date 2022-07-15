@@ -73,45 +73,75 @@
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
       {{ model.title }}
     </h1>
-  </div>
-</div>
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
     {% if model.targetAreaMessageDate %}
     <p class="defra-flood-meta govuk-!-margin-top-1 govuk-!-margin-bottom-0">
       <time datetime="">{{ model.targetAreaMessageDate }}</time>
     </p>
     {% endif %}
     <span id="map-live"></span>
-  </div>
-</div>
-<div class="govuk-grid-row govuk-!-padding-top-6">
-  <div class="govuk-grid-column-two-thirds">
-    {% if model.targetArea.message %}
-    <p>{{ model.targetArea.message }}</p>
-    {% elif model.type == 'warning' %}
-    <p>We'll update this page when there's a flood warning in the area.</p>
-    <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
-    {% else %}
-    <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
-    {% endif %}
-    <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
-    <p>
-      <a href="https://www.gov.uk/sign-up-for-flood-warnings">
-        {% if model.isActive %}
-        Get updates by phone, text or email
-        {% else %}
-        Get flood warnings by phone, text or email
-        {% endif %}
-      </a>
-    </p>
-    {% if model.isActive %}
-    <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
-    {% endif %}
-    <h2 class="govuk-heading-m">Latest river levels</h2>
-    <p><a href="/river-sea-groundwater-rainfall-levels?search=River%20Severn">View levels on the River Severn</a></p>
-    {% include "partials/context-footer.html" %}
+
+    <div class="govuk-!-padding-top-6">
+      {% if model.targetArea.message %}
+      <p>{{ model.targetArea.message }}</p>
+      {% elif model.type == 'warning' %}
+      <p>We'll update this page when there's a flood warning in the area.</p>
+      <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
+      {% else %}
+      <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
+      {% endif %}
+      <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
+      <p>
+        <a href="https://www.gov.uk/sign-up-for-flood-warnings">
+          {% if model.isActive %}
+          Get updates by phone, text or email
+          {% else %}
+          Get flood warnings by phone, text or email
+          {% endif %}
+        </a>
+      </p>
+      {% if model.isActive %}
+      <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
+      {% endif %}
+
+      <h2 class="govuk-heading-m">Latest river levels</h2>
+      {% for level in model.targetArea.triggerLevels %}
+      <p><a href="/station/{{ level.id }}">{{ level.riverName }} level at {{ level.name }}</a></p>
+      <div class="defra-flood-statistics">
+        <dl class="defra-flood-statistics__list" aria-label="Latest readings">
+          {% if level.latestTrend %}
+          <div class="defra-flood-statistics__item">
+            <dt class="defra-flood-statistics__key">
+              Trend
+            </dt>
+            <dd class="defra-flood-statistics__value">
+              {{ level.latestTrend | capitalize }}
+            </dd>
+          </div>
+          {% endif %}
+          <div class="defra-flood-statistics__item">
+            <dt class="defra-flood-statistics__key">
+              Height
+            </dt>
+            <dd class="defra-flood-statistics__value">
+              {% if level.latestHeight < 0 and level.type != 'tide' %}&le; 0m{% else %}{{ level.latestHeight | round(2) }}m{% endif %}
+            </dd>
+          </div>
+          {% if level.latestState  %}
+          <div class="defra-flood-statistics__item"> 
+            <dt class="defra-flood-statistics__key">
+              State
+            </dt>
+            <dd class="defra-flood-statistics__value">
+              {{ level.latestState | capitalize }}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+      {% endfor %}
+
+      {% include "partials/context-footer.html" %}
+    </div>
   </div>
   <div class="govuk-grid-column-one-third">
     {% include "partials/related-content.html" %}
