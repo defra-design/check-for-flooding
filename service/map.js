@@ -135,6 +135,7 @@ module.exports = {
       LEFT JOIN river_station ON station.rloi_id = river_station.station_id
       LEFT JOIN river ON river.id = river_station.river_id
       LEFT JOIN os_open_rivers ON ST_Intersects(ST_Buffer(station.geom, 0.001), os_open_rivers.wkb_geometry)
+      OR river.os_line_ids LIKE '%' || os_open_rivers.identifier || '%'
       WHERE
       (river.name = os_open_rivers.name1 OR river.name = os_open_rivers.name2 OR
       river.os_line_ids LIKE '%' || os_open_rivers.identifier || '%' OR
