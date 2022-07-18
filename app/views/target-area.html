@@ -102,7 +102,7 @@
       <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
       {% endif %}
 
-      <h2 class="govuk-heading-m">Latest river levels</h2>
+      <h2 class="govuk-heading-s">Check latest river levels</h2>
       {% for level in model.targetArea.triggerLevels %}
       <div class="defra-panel">
         <p class="govuk-!-margin-bottom-0"><a href="/station/{{ level.id }}">{{ level.riverName }} at {{ level.name }}</a></p>
