@@ -91,21 +91,18 @@
       {% endif %}
       <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
       <p>
-        <!-- <a href="http://localhost:3000/target-area/031FWFSE260?v=map-live&amp;lyr=mv,ts,tw,ta&amp;ext=-2.492579,52.627734,-2.486463,52.629795&amp;fid=031FWFSE260" role="button" data-module="govuk-button" id="map-live-btn" class="defra-button-secondary defra-button-secondary--icon">
-          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M6,15.026l-1,3.974l7,-3.974l4.674,0c1.284,0 2.326,-1.042 2.326,-2.326l0,-9.374c0,-1.284 -1.042,-2.326 -2.326,-2.326l-13.348,0c-1.284,0 -2.326,1.042 -2.326,2.326l0,9.374c0,1.284 1.042,2.326 2.326,2.326l2.674,0Z" style="fill:none;stroke:currentColor;stroke-width:2px;"/><circle cx="5.5" cy="8" r="1.5" style="fill:currentColor"/><circle cx="14.525" cy="8" r="1.5" style="fill:currentColor"/><circle cx="10" cy="8" r="1.5" style="fill:currentColor"/></svg>{% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
-        </a> -->
-        <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
-          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M6,15.026l-1,3.974l7,-3.974l4.674,0c1.284,0 2.326,-1.042 2.326,-2.326l0,-9.374c0,-1.284 -1.042,-2.326 -2.326,-2.326l-13.348,0c-1.284,0 -2.326,1.042 -2.326,2.326l0,9.374c0,1.284 1.042,2.326 2.326,2.326l2.674,0Z" style="fill:none;stroke:currentColor;stroke-width:2px;"/><circle cx="5.5" cy="8" r="1.5" style="fill:currentColor"/><circle cx="14.525" cy="8" r="1.5" style="fill:currentColor"/><circle cx="10" cy="8" r="1.5" style="fill:currentColor"/></svg>{% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
-        </a> -->
-        <a href="https://www.gov.uk/sign-up-for-flood-warnings">
-          {% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
+        <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
+          <svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg>{% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
         </a>
+        <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings">
+          {% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
+        </a> -->
       </p>
       {% if model.isActive %}
       <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
       {% endif %}
 
-      <h2 class="govuk-heading-s">Latest river levels</h2>
+      <h2 class="govuk-heading-m">Latest river levels</h2>
       {% for level in model.targetArea.triggerLevels %}
       <div class="defra-panel">
         <p><a href="/station/{{ level.id }}">{{ level.riverName }} at {{ level.name }}</a></p>
