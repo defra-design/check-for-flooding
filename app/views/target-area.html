@@ -102,7 +102,14 @@
       <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
       {% endif %}
 
-      <h2 class="govuk-heading-s">Check latest river levels</h2>
+      <h2 class="govuk-heading-s">
+        {% if model.targetArea.triggerLevels | length %}
+        Check the latest river levels
+        {% else %}
+        Latest river, sea, groundwater and rainfall levels
+        {% endif %}
+      </h2>
+      {% if model.targetArea.triggerLevels | length %}
       {% for level in model.targetArea.triggerLevels %}
       <div class="defra-panel">
         <p class="govuk-!-margin-bottom-0"><a href="/station/{{ level.id }}">{{ level.riverName }} at {{ level.name }}</a></p>
@@ -141,7 +148,10 @@
         <p class="govuk-caption-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">{{ level.latestDatetime }}</p> -->
       </div>
       {% endfor %}
-
+      {% else %}
+      <p>There are around 3,500 measuring stations, and most are along main rivers and the coast. These levels can help you understand your flood risk now and over the next few days.</p>
+      <p><a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a></p>
+      {% endif %}
       {% include "partials/context-footer.html" %}
     </div>
   </div>
