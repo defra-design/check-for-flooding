@@ -77,7 +77,7 @@ const toggletips = () => {
     const button = document.createElement('button')
     button.className = 'defra-toggletip__button'
     button.setAttribute('aria-label', toggletip.getAttribute('data-label'))
-    button.innerHTML = '<span>i</span>'
+    button.innerHTML = '<span>?</span>'
     const info = document.createElement('span')
     info.className = 'defra-toggletip__info'
     info.setAttribute('role', 'status')

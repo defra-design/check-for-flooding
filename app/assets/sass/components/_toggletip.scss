@@ -20,6 +20,7 @@
 		background-color: white;
 		outline: 3px solid transparent;
 		border: 0px;
+		padding: 0px;
 		text-align: center;
 		color: $govuk-text-colour;
 		cursor: pointer;
@@ -31,10 +32,10 @@
 			width: 18px;
 			height: 18px;
 			line-height: 18px;
-			font-weight: 900;
+			font-weight: 700;
 			border-radius: 100%;
-			border: 1px solid govuk-colour('black');
-			font-size: 12px;
+			border: 1.5px solid govuk-colour('black');
+			font-size: 14px;
 		}
 		&:hover, &:focus {
 			color: govuk-colour('black');
