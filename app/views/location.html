@@ -38,13 +38,21 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     {% include "partials/location-banner.html" %}
-    <p><a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a></p>
     {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
     <span id="map-live"></span>
     {% endif %}
+    <p>
+      <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
+        <svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg>Get flood warnings by phone, text or email
+      </a>
+      <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings">Get flood warnings by phone, text or email</a> -->
+    </p>
+    <p>This service tells you your risk of flooding from rivers, the sea and groundwater. <a href="https://www.gov.uk/find-local-council">Contact your local council about surface water flooding</a> (also known as flash flooding).</p>
+    {% if not model.hasActive %}
     <p class="defra-flood-meta defra-flood-meta--border govuk-!-margin-top-0 govuk-!-margin-bottom-4">
       Up to date as of <time datetime="">{{ model.warningsDate }}</time>
     </p>
+    {% endif %}
 
     <!-- River and sea levels -->
     <h2 class="govuk-heading-m">River, sea, groundwater and rainfall levels</h2>

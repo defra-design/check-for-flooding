@@ -105,8 +105,8 @@
       <h2 class="govuk-heading-m">Latest river levels</h2>
       {% for level in model.targetArea.triggerLevels %}
       <div class="defra-panel">
-        <p><a href="/station/{{ level.id }}">{{ level.riverName }} at {{ level.name }}</a></p>
-        <div class="defra-flood-statistics">
+        <p class="govuk-!-margin-bottom-0"><a href="/station/{{ level.id }}">{{ level.riverName }} at {{ level.name }}</a></p>
+        <!-- <div class="defra-flood-statistics">
           <dl class="defra-flood-statistics__list" aria-label="Latest readings">
             {% if level.latestTrend %}
             <div class="defra-flood-statistics__item">
@@ -138,7 +138,7 @@
             {% endif %}
           </dl>
         </div>
-        <p class="govuk-caption-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">{{ level.latestDatetime }}</p>
+        <p class="govuk-caption-s govuk-!-margin-top-3 govuk-!-margin-bottom-0">{{ level.latestDatetime }}</p> -->
       </div>
       {% endfor %}
 
