@@ -92,7 +92,6 @@
       width: 25%;
     }
   }
-  // Rainfall
   &__cell--rainfall {
     width: 20%;
     @include mq ($until: tablet) {

@@ -80,10 +80,7 @@
     box-shadow: 0 4px 0 govuk-colour('black');
     margin-bottom: 4px;
   }
-}
-
-// Overides
-.defra-navbar {
+  // Overides
   .defra-button-secondary,
   .defra-link-icon-s {
     float: left;
@@ -129,10 +126,7 @@
       @include defra-visually-hidden();
     }
   }
-}
-
-// Modifiers
-.defra-navbar {
+  // Modifiers
   &--border {
     border-bottom: 1px solid $govuk-border-colour;
   }

@@ -56,7 +56,7 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.type === 'R' ? `s${item.station_id}` : `r${item.rloi_id}`,
+        id: item.type === 'R' ? `r${item.station_id}` : `s${item.rloi_id}`,
         geometry: {
           type: 'Point',
           coordinates: [item.lon, item.lat]
