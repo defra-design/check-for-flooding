@@ -112,10 +112,18 @@
       content: 'Map';
     }
     svg {
+      position: relative;
+      display: inline-block;
       color: govuk-colour('black');
-      top:50%;
-      margin-top: -10px;
-      left:1px;
+      vertical-align: top;
+      left: 0px;
+      margin: 0px 6px -4px 1px;
+      top: -1px;
+      @include mq ($from: tablet) {
+        margin-right: 7px;
+        top: 0px;
+        margin-bottom: -3px;
+      }
     }
     span {
       @include defra-visually-hidden();
