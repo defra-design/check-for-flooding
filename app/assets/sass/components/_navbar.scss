@@ -132,10 +132,10 @@
   }
   &--search-categories {
     padding-bottom: 12px;
-    margin-top: 12px;
     @include mq ($from: tablet) {
       border-bottom: 0px;
-      margin-bottom: 20px;
+      margin-top: 5px;
+      padding-bottom: 20px;
     }
     a, .defra-link-icon-s, .defra-button-secondary {
       color: $govuk-link-colour;
