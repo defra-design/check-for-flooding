@@ -446,7 +446,7 @@ function LiveMap (mapId, options) {
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
     // Format dates and id's for stations
-    if (feature.getId().startsWith('s') || feature.getId().startsWith('r')) {
+    if (['s', 'r'].includes(feature.getId().toString().charAt(0))) {
       model.id = feature.getId().substring(1)
       model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
     } else if (model.issuedDate) {

@@ -130,6 +130,7 @@ module.exports = {
       river.name AS ea_name,
       river.local_names,
       river.os_line_ids,
+      CASE WHEN river.exclude_os_line_ids IS NULL THEN '--' ELSE river.exclude_os_line_ids END AS exclude_os_line_ids,
       os_open_rivers.ogc_fid AS ogc_fid
       FROM station
       LEFT JOIN river_station ON station.rloi_id = river_station.station_id
@@ -169,9 +170,10 @@ module.exports = {
       startnode IN (SELECT endnode FROM lines) AND
       endnode IN (SELECT startnode FROM lines))
     ),
-    cluster AS (
+    clusters AS (
       SELECT
-      start.ogc_fid AS start_ogc_fid, ST_ClusterDBSCAN(lines_inc_patch.wkb_geometry, eps := 0.001, minpoints := 1) OVER() AS c_id,
+      start.ogc_fid AS start_ogc_fid,
+      ST_ClusterDBSCAN(lines_inc_patch.wkb_geometry, eps := 0.001, minpoints := 1) OVER() AS c_id,
       lines_inc_patch.ogc_fid,
       lines_inc_patch.identifier,
       lines_inc_patch.startnode,
@@ -183,7 +185,19 @@ module.exports = {
       FROM lines_inc_patch
       LEFT JOIN start ON lines_inc_patch.ogc_fid = start.ogc_fid
     )
-    SELECT ogc_fid, (SELECT river_id FROM start) AS river_id, identifier, startnode, endnode, name1, name2, form, ST_AsGeoJSON(wkb_geometry)::JSONB AS geometry FROM cluster WHERE c_id = (SELECT c_id FROM cluster WHERE start_ogc_fid IS NOT NULL);
+    SELECT
+    ogc_fid,
+    (SELECT river_id FROM start) AS river_id,
+    identifier,
+    startnode,
+    endnode,
+    name1,
+    name2,
+    form,
+    ST_AsGeoJSON(wkb_geometry)::JSONB AS geometry
+    FROM clusters WHERE
+    c_id = (SELECT c_id FROM clusters WHERE start_ogc_fid IS NOT NULL)
+    AND identifier NOT LIKE '%' || (SELECT exclude_os_line_ids FROM start) || '%';
     `, [id])
     const features = []
     response.forEach(item => {
