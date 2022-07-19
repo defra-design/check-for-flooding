@@ -134,7 +134,8 @@
     padding-bottom: 12px;
     margin-top: 12px;
     @include mq ($from: tablet) {
-      margin-top: 30px;
+      border-bottom: 0px;
+      margin-bottom: 20px;
     }
     a, .defra-link-icon-s, .defra-button-secondary {
       color: $govuk-link-colour;

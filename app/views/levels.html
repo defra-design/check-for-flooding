@@ -8,7 +8,7 @@ Sorry, there is a problem with the search - Check for flooding - GOV.UK
 {% elif model.isMultipleMatch %}
 Choose location -
 {% endif %}
-River, sea, groundwater and rainfall levels - GOV.UK
+Find river, sea, groundwater and rainfall levels - GOV.UK
 {% endif %}
 {% endblock %}
 
@@ -26,7 +26,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
     </div>
     {% else %}
     <h1 class="govuk-heading-xl">
-      River, sea, groundwater and rainfall levels
+      Find river, sea, groundwater and rainfall levels
     </h1>
     {% include "partials/list-search.html" %}
     {% endif %}
@@ -118,7 +118,7 @@ River, sea, groundwater and rainfall levels - GOV.UK
       {% if model.levels.items %}
       <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="caption">
         <caption id="caption" class="defra-flood-levels-table__caption">Results for '{{ model.querySearch }}', showing <span>{{ model.queryType }}</span> levels</caption>
-        <thead class="govuk-visually-hidden defra-flood-levels-table__head" role="rowgroup">
+        <thead class="defra-flood-levels-table__head" role="rowgroup">
           {%- set hideHeader -%}
           {% if model.queryType == 'rainfall' %}style="display:none"{% endif %}
           {%- endset -%}

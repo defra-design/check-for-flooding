@@ -17,6 +17,11 @@
   }
   &__head &__cell {
     text-align: left;
+    @include govuk-font($size: 16, $weight: bold);
+    // color: $govuk-secondary-text-colour;
+    @include mq ($until: tablet) {
+      @include defra-visually-hidden();
+    }
   }
   &__body {
     @include mq ($until: tablet) {
