@@ -114,7 +114,7 @@ window.flood.maps.styles = {
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= maps.liveMaxBigZoom
     // If a river station is selected hide all station not on the river
-    if (maps.selectedRiverId && feature.get('riverId') !== maps.selectedRiverId) return
+    if (maps.selectedRiverId && feature.get('riverId') !== maps.selectedRiverId && !['rain', 'rainDry'].includes(state)) return
     switch (state) {
       // Rivers
       case 'river':
