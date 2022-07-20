@@ -16,7 +16,7 @@ module.exports = {
     ,to_char(ST_YMax(ta1.geom), '99.000000')), ' ', '') AS bbox,
     w1.severity,
     w1.message,
-    w1.message_changed_date AS date,
+    w1.message_changed_date AT TIME ZONE '+00' AS date,
     ta1.parent AS parent_id,
     w2.severity AS parent_severity,
     coalesce(json_agg(json_build_object(
@@ -45,7 +45,7 @@ module.exports = {
     ,to_char(ST_YMax(ta2.geom), '99.000000')), ' ', '') AS bbox,
     w.severity,
     w.message,
-    w.message_changed_date AS date,
+    w.message_changed_date AT TIME ZONE '+00' AS date,
     null AS parent_id,
     null AS parent_severity,
     coalesce(json_agg(json_build_object(
