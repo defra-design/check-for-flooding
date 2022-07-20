@@ -71,7 +71,7 @@ button.defra-button-secondary {
         color: $govuk-text-colour;
     }
     &:hover {
-        background-color: #dbdad9;
+        background-color: govuk-colour('light-grey');
     }
     &:focus {
         background-color: $govuk-focus-colour;

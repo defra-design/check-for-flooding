@@ -22,14 +22,7 @@ module.exports = {
     coalesce(json_agg(json_build_object(
     'id', mwl.rloi_id,
     'name', mwl.name,
-    'status', mwl.status,
-    'type', mwl.type,
-    'river_name', mwl.river_name,
-    'river_display', mwl.river_display,
-    'latest_trend', mwl.latest_trend,
-    'latest_height', mwl.latest_height,
-    'latest_state', mwl.latest_state,
-    'latest_datetime', mwl.latest_datetime
+    'river_name', mwl.river_name
     )) filter (WHERE mwl.rloi_id IS NOT NULL), '[]'::json) AS trigger_levels
     FROM flood_warning_areas ta1
     LEFT JOIN targetarea_trigger tt ON ta1.fws_tacode = tt.targetarea_id
@@ -58,14 +51,7 @@ module.exports = {
     coalesce(json_agg(json_build_object(
     'id', mwl.rloi_id,
     'name', mwl.name,
-    'status', mwl.status,
-    'type', mwl.type,
-    'river_name', mwl.river_name,
-    'river_display', mwl.river_display,
-    'latest_trend', mwl.latest_trend,
-    'latest_height', mwl.latest_height,
-    'latest_state', mwl.latest_state,
-    'latest_datetime', mwl.latest_datetime
+    'river_name', mwl.river_name
     )) filter (WHERE mwl.rloi_id IS NOT NULL), '[]'::json) AS trigger_levels
     FROM flood_alert_areas ta2
     LEFT JOIN targetarea_trigger tt ON ta2.fws_tacode = tt.targetarea_id

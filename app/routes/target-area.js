@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const targetAreaServices = require('../services/target-area')
 const TargetArea = require('../models/target-area')
-const Level = require('../models/level')
 const ViewModel = require('../models/views/target-area')
 
 router.get('/target-area', (req, res) => {
