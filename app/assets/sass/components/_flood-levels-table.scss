@@ -15,12 +15,29 @@
     //   display: block;
     // }
   }
+  &__head {
+    @include mq ($until: tablet) {
+      display: block;
+    }   
+  }
+  &__head tr {
+    @include mq ($until: tablet) {
+      display: block;
+      overflow: auto;
+    }
+  }
   &__head &__cell {
     text-align: left;
     @include govuk-font($size: 16, $weight: bold);
-    // color: $govuk-secondary-text-colour;
     @include mq ($until: tablet) {
-      @include defra-visually-hidden();
+      color: $govuk-secondary-text-colour;
+      padding-top: 10px;
+      // padding-bottom: 0px;
+    }
+    &--location {
+      @include mq ($until: tablet) {
+        @include defra-visually-hidden();
+      }
     }
   }
   &__body {
@@ -32,13 +49,24 @@
     // border-top: 1px solid govuk-tint($govuk-border-colour, 50);
     border-top: 1px solid $govuk-border-colour;
     @include mq ($until: tablet) {
+      border-top: 1px solid govuk-tint($govuk-border-colour, 50);
       display: block;
       overflow: auto;
     }
   }
-  &__row--hidden {
-    display:none;
-  }
+  // First visible child selector
+  // &__row:not([style*="display:none"]):first-child,
+  // &__row[style*="display:none"] + &__row:not([style*="display:none"]) {
+  //   @include mq ($until: tablet) {
+  //     border-top: 0px;
+  //   }
+  // }
+  // &__row:not([style*="display:none"]):first-child ~ &__row,  
+  // &__row[style*="display:none"] + &__row:not([style*="display:none"]) ~ &__row {
+  //   @include mq ($until: tablet) {
+  //     border-top: 1px solid $govuk-border-colour;
+  //   }
+  // }
   &__cell {
     @extend .govuk-table__cell;
     border-bottom: 0px;
