@@ -48,6 +48,13 @@
     {% else %}
     <dl class="defra-flood-data-list">
         <div class="defra-flood-data-list__column">
+            <dt class="govuk-visually-hidden">Height</dt>
+            <dd>
+                <span class="defra-flood-data-list__description">Height</span>
+                <span class="defra-flood-data-list__value">{{ model.value | round(2) }}m</span>
+            </dd>
+        </div>
+        <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">Trend</dt>
             <dd>
                 <span class="defra-flood-data-list__description">Trend</span>
@@ -58,13 +65,6 @@
                     n/a
                     {% endif %}
                 </span>
-            </dd>
-        </div>
-        <div class="defra-flood-data-list__column">
-            <dt class="govuk-visually-hidden">Height</dt>
-            <dd>
-                <span class="defra-flood-data-list__description">Height</span>
-                <span class="defra-flood-data-list__value">{{ model.value | round(2) }}m</span>
             </dd>
         </div>
         {% if model.value and model.type !== 'C' and model.status !== 'Closed' and model.status !== 'Suspended' and not model.iswales %}

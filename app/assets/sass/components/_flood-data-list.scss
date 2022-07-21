@@ -25,7 +25,7 @@
   }
   &__description {
       display: block;
-      @include govuk-font($size: 14);
+      @include govuk-font($size: 16);
       color: $govuk-secondary-text-colour;
   }
   &:after {

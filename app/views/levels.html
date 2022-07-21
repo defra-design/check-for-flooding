@@ -98,7 +98,7 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.levels  %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      <nav class="defra-navbar defra-navbar--border defra-navbar--search-categories" aria-label="Map view or level type">
+      <nav class="defra-navbar defra-navbar--search-categories" aria-label="Map view or level type">
         <div class="defra-navbar__inner">
           <span id="map"></span>
           <div class="defra-navbar__group">
@@ -130,8 +130,8 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
           </tr>
           <tr role="row" {{ hideHeader | safe }} data-group-type="river,sea,groundwater">
             <th class="defra-flood-levels-table__cell defra-flood-levels-table__cell--location" scope="col" role="columnheader">Gauge</th>
-            <th class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" scope="col" role="columnheader">Trend</th>
             <th class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" scope="col" role="columnheader">Height</th>
+            <th class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" scope="col" role="columnheader">Trend</th>
             <th class="defra-flood-levels-table__cell defra-flood-levels-table__cell--state" scope="col" role="columnheader">State</th>
           </tr>
         </thead>

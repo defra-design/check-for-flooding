@@ -46,10 +46,9 @@
     }
   }
   &__row {
-    // border-top: 1px solid govuk-tint($govuk-border-colour, 50);
     border-top: 1px solid $govuk-border-colour;
     @include mq ($until: tablet) {
-      border-top: 1px solid govuk-tint($govuk-border-colour, 50);
+      // border-top: 1px solid govuk-tint($govuk-border-colour, 50);
       display: block;
       overflow: auto;
     }
@@ -64,7 +63,7 @@
   // &__row:not([style*="display:none"]):first-child ~ &__row,  
   // &__row[style*="display:none"] + &__row:not([style*="display:none"]) ~ &__row {
   //   @include mq ($until: tablet) {
-  //     border-top: 1px solid $govuk-border-colour;
+  //     border-top: 1px solid govuk-tint($govuk-border-colour, 50);
   //   }
   // }
   &__cell {

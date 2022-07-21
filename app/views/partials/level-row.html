@@ -51,6 +51,13 @@
 
   <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
+    {% if item.latestHeight %}
+    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</a>
+    {% endif %}
+  </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
     {% if item.latestTrend %}
     <span class="defra-flood-levels-table-trend">
@@ -67,13 +74,6 @@
       </span>
       {{ item.latestTrend }}
     </span>
-    {% else %}
-    <span class="defra-flood-levels-table-na">n/a</a>
-    {% endif %}
-  </td>
-  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
-    {% if item.latestHeight %}
-    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</a>
     {% endif %}
@@ -84,6 +84,13 @@
 
   <!-- River or groundwater -->
   {% else %}
+  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
+    {% if item.latestHeight %}
+    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
+    {% else %}
+    <span class="defra-flood-levels-table-na">n/a</a>
+    {% endif %}
+  </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
     {% if item.latestTrend %}
     <span class="defra-flood-levels-table-trend">
@@ -100,13 +107,6 @@
       </span>
       {{ item.latestTrend }}
     </span>
-    {% else %}
-    <span class="defra-flood-levels-table-na">n/a</a>
-    {% endif %}
-  </td>
-  <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
-    {% if item.latestHeight %}
-    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</a>
     {% endif %}

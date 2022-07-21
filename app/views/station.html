@@ -160,6 +160,14 @@
         <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
       </h2>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
+        <div class="defra-flood-statistics__item">
+          <dt class="defra-flood-statistics__key">
+            Height
+          </dt>
+          <dd class="defra-flood-statistics__value">
+            {% if model.station.latestHeight < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
+          </dd>
+        </div>
         {% if model.station.latestTrend %}
         <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">
@@ -170,14 +178,6 @@
           </dd>
         </div>
         {% endif %}
-        <div class="defra-flood-statistics__item">
-          <dt class="defra-flood-statistics__key">
-            Height
-          </dt>
-          <dd class="defra-flood-statistics__value">
-            {% if model.station.latestHeight < 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
-          </dd>
-        </div>
         {# if station has hasPercentiles, this should exclude Coastal #}
         {% if model.station.levelHigh and model.station.levelLow  %}
         <div class="defra-flood-statistics__item"> 

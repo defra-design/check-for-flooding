@@ -21,7 +21,7 @@ if (document.getElementById('map')) {
     layers: 'mv,ri,ti,gr',
     centre: window.flood.model.centroid,
     zoom: 14,
-    selectedId: `stations.${window.flood.model.rloiId}`
+    selectedId: `s${window.flood.model.rloiId}`
   })
 }
 
