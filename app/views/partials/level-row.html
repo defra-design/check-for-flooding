@@ -27,7 +27,7 @@
     {% endif %}
     <span class="defra-flood-levels-table-meta">
       {% if item.latestDatetime %}
-      Updated {{ item.latestDatetime }}
+      {% if item.type === 'rainfall' %}Totals upto{% else %}Latest at{% endif %} {{ item.latestDatetime }}
       {% else %}
       Data not available
       {% endif %}
@@ -38,15 +38,12 @@
   {% if item.type == 'rainfall' %}
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
     {{ item.rainfall1hr }}mm
-    <!-- <span class="defra-flood-levels-table-meta">last hour</span> -->
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
     {{ item.rainfall6hr }}mm
-    <!-- <span class="defra-flood-levels-table-meta">last 6hrs</span> -->
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--rainfall" role="cell">
     {{ item.rainfall24hr }}mm
-    <!-- <span class="defra-flood-levels-table-meta">last 24hrs</span> -->
   </td>
 
   <!-- Sea or tide -->

@@ -87,7 +87,7 @@
     {% endif %}
     </dl>
     {% if model.status !== 'Closed' and model.status !== 'Suspended' and model.value %}
-    <p class="defra-map-info__meta">Latest reading: {{ model.date }}</p>
+    <p class="defra-map-info__meta">Latest at {{ model.date }}</p>
     {% endif %}
     {% if model.up or model.down %}
     <div class="defra-map-info__buttons">
@@ -133,7 +133,7 @@
         <div class="defra-flood-data-list__column">
             <dt class="govuk-visually-hidden">last 6 hrs</dt>
             <dd>
-                <span class="defra-flood-data-list__description" aria-hidden="true"> 6 hours</span>
+                <span class="defra-flood-data-list__description" aria-hidden="true">6 hours</span>
                 <span class="defra-flood-data-list__value">{{ model.value6hr }}mm</span>
             </dd>
         </div>
@@ -146,6 +146,6 @@
         </div>
     </dl>
     {% endif %}
-    <p class="defra-map-info__meta">Recent rainfall up to {{ model.date }}</p>
+    <p class="defra-map-info__meta">Totals up to {{ model.date }}</p>
 </div>
 {% endif %}
