@@ -45,7 +45,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-flood-statistics">
+    <div class="defra-flood-statistics defra-flood-statistics--border">
       <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
         Totals up to {{ model.time }}
         <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
@@ -53,7 +53,7 @@
       <dl class="defra-flood-statistics__list" aria-label="Recent totals">
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key">
-            1 hour
+            last hour
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.rainfall1hr }}mm
@@ -62,7 +62,7 @@
         </div>
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key" aria-describedby="total-description">
-            6 hours
+            last 6hrs
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.rainfall6hr }}mm
@@ -71,7 +71,7 @@
         </div>
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key" aria-describedby="total-description">
-            24 hours
+            last 24hrs
           </dt>
           <dd class="defra-flood-statistics__value">
             {{ model.station.rainfall24hr }}mm
