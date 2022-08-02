@@ -83,7 +83,13 @@
   {% else %}
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
     {% if item.latestHeight %}
-    <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
+    <span class="defra-flood-levels-table-numeric">
+      {% if item.latestHeight < 0 and item.type == 'river' %}
+      ≤ 0m
+      {% else %}
+      {{ item.latestHeight | toFixed(2) }}m
+      {% endif %}
+    </span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</a>
     {% endif %}

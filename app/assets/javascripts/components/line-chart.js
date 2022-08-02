@@ -180,7 +180,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     tooltip.classed('tooltip--visible', true)
     // Update locator
     const locatorX = Math.floor(xScale(new Date(dataPoint.dateTime)))
-    const locatorY = Math.floor(yScale(dataPoint.value))
+    const locatorY = Math.floor(yScale(data.type === 'river' && dataPoint.value < 0 ? 0 : dataPoint.value)) // *DBL
     const latestX = Math.floor(xScale(new Date(dataPoint.dateTime)))
     locator.classed('locator--forecast', locatorX > latestX)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
