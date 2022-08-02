@@ -265,7 +265,6 @@ function LineChart (containerId, stationId, data, options = {}) {
     yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
     // Set min y axis to 1 metre
     yExtent[1] = yExtent[1] < 1 ? 1 : yExtent[1]
-    console.log(yExtent)
     // Update y scale
     yScale = scaleLinear().domain(yExtent).nice(5)
     yScale.range([height, 0])
