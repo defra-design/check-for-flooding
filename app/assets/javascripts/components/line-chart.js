@@ -192,7 +192,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Hide threshold label
     // thresholdsContainer.select('.threshold--selected .threshold-label').style('visibility', 'hidden')
     // Set tooltip text
-    tooltipValue.text(`${Number(dataPoint.value).toFixed(2)}m`)
+    const value = data.type === 'river' && dataPoint.value < 0 ? '≤ 0' : dataPoint.value.toFixed(2) // *DBL below zero addition
+    tooltipValue.text(`${value}m`) // *DBL below zero addition
     tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
     // Set locator properties
     locator.classed('locator--visible', true)
@@ -255,13 +256,16 @@ function LineChart (containerId, stationId, data, options = {}) {
     const minThreshold = Math.min.apply(Math, thresholds.map((x) => { return x.level }))
     const maxData = Math.max(maxThreshold, yExtentDataMax)
     const minData = Math.min(minThreshold, yExtentDataMin)
+    // Add 1/3rd or range above and below, capped at zero for non-negative ranges
     let range = maxData - minData
     range = range < 1 ? 1 : range
-    // Add 1/3rd or range above and below, capped at zero for non-negative ranges
-    const yRangeUpperBuffered = (maxData + (range / 3)).toFixed(2)
-    const yRangeLowerBuffered = (minData - (range / 3)).toFixed(2)
+    const yRangeUpperBuffered = (maxData + (range / 3))
+    const yRangeLowerBuffered = (minData - (range / 3))
     yExtent[1] = yExtentDataMax <= yRangeUpperBuffered ? yRangeUpperBuffered : yExtentDataMax
     yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
+    // Set min y axis to 1 metre
+    yExtent[1] = yExtent[1] < 1 ? 1 : yExtent[1]
+    console.log(yExtent)
     // Update y scale
     yScale = scaleLinear().domain(yExtent).nice(5)
     yScale.range([height, 0])
@@ -289,13 +293,13 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
 
     // To follow
-    // Determin which resolution and range to displa
+    // Determin which resolution and range to display
     // Using raw data for now
 
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (data.observed.length) {
       const errorFilter = l => !l.err
-      const errorAndNegativeFilter = l => errorFilter(l) && l.value >= 0
+      const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
       const filterNegativeValues = ['groundwater', 'tide'].includes(data.type) ? errorFilter : errorAndNegativeFilter
       lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
       dataPoint = lines[lines.length - 1] || null
@@ -310,14 +314,14 @@ function LineChart (containerId, stationId, data, options = {}) {
 
     // Create area generator
     area = d3Area().curve(curveMonotoneX)
-      .x((d) => { return xScale(new Date(d.dateTime)) })
-      .y0((d) => { return height })
-      .y1((d) => { return yScale(d.value) })
+      .x(d => { return xScale(new Date(d.dateTime)) })
+      .y0(d => { return height })
+      .y1(d => { return yScale(data.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
 
     // Create line generator
     line = d3Line().curve(curveMonotoneX)
       .x((d) => { return xScale(new Date(d.dateTime)) })
-      .y((d) => { return yScale(d.value) })
+      .y((d) => { return yScale(data.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
 
     // Note: xExtent uses observed and forecast data rather than lines for the scenario where river levels
     // start or end as -ve since we still need to determine the datetime span of the graph even if the
