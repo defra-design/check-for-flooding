@@ -171,11 +171,20 @@ function LiveMap (mapId, options) {
           state = props.type === 'G' ? 'ground' : 'river'
         }
       } else if (props.type === 'C') {
-        // Tide
-        if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
-          state = 'seaError'
+        // River (Tidal)
+        if (props.riverSlug) {
+          if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
+            state = 'riverError'
+          } else {
+            state = 'river'
+          }
+        // Sea level
         } else {
-          state = 'sea'
+          if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
+            state = 'seaError'
+          } else {
+            state = 'sea'
+          }
         }
       } else if (props.type === 'R') {
         // Rainfall
