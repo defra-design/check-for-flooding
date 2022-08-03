@@ -57,7 +57,13 @@
             <dt class="govuk-visually-hidden">Height</dt>
             <dd>
                 <span class="defra-flood-data-list__description">Height</span>
-                <span class="defra-flood-data-list__value">{{ model.value | round(2) }}m</span>
+                <span class="defra-flood-data-list__value">
+                    {% if model.value < 0 and (model.type == 'S' or model.type == 'M') %}
+                    ≤ 0m
+                    {% else %}
+                    {{ model.value | round(2) }}m
+                    {% endif %}
+                </span>
             </dd>
         </div>
         <div class="defra-flood-data-list__column">
