@@ -70,7 +70,6 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     levels = new Levels(query.type, levelResponse.data)
   }
   const model = new ViewModel(query, places, rivers, catchments, levels, query.error)
-  console.log(model)
   res.render('levels', { model })
 })
 
