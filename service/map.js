@@ -126,8 +126,8 @@ module.exports = {
       SELECT DISTINCT ON (river_station.river_id)
       river_station.station_id AS intersect_station_id,
       river.id AS river_id,
-      river.name AS ea_name,
-      river.local_names,
+      river.local_name AS ea_name,
+      river.other_names,
       river.os_line_ids,
       CASE WHEN river.exclude_os_line_ids IS NULL THEN '--' ELSE river.exclude_os_line_ids END AS exclude_os_line_ids,
       os_open_rivers.ogc_fid AS ogc_fid
@@ -137,10 +137,10 @@ module.exports = {
       LEFT JOIN os_open_rivers ON ST_Intersects(ST_Buffer(station.geom, 0.001), os_open_rivers.wkb_geometry)
       OR river.os_line_ids LIKE '%' || os_open_rivers.identifier || '%'
       WHERE
-      (river.name = os_open_rivers.name1 OR river.name = os_open_rivers.name2 OR
+      (river.local_name = os_open_rivers.name1 OR river.local_name = os_open_rivers.name2 OR
       river.os_line_ids LIKE '%' || os_open_rivers.identifier || '%' OR
-      river.local_names LIKE '%' || os_open_rivers.name1 || '%' OR
-      river.local_names LIKE '%' || os_open_rivers.name2 || '%')
+      river.other_names LIKE '%' || os_open_rivers.name1 || '%' OR
+      river.other_names LIKE '%' || os_open_rivers.name2 || '%')
       AND river_station.river_id = $1::integer
     ),
     lines AS (
@@ -157,8 +157,8 @@ module.exports = {
       WHERE
       (name1 = start.ea_name OR name2 = start.ea_name)
       OR (SELECT os_line_ids FROM start) LIKE '%' || os_open_rivers.identifier || '%'
-      OR (SELECT local_names FROM start) LIKE '%' || os_open_rivers.name1 || '%'
-      OR (SELECT local_names FROM start) LIKE '%' || os_open_rivers.name2 || '%'
+      OR (SELECT other_names FROM start) LIKE '%' || os_open_rivers.name1 || '%'
+      OR (SELECT other_names FROM start) LIKE '%' || os_open_rivers.name2 || '%'
       AND form != 'canal'
     ),
     lines_inc_patch AS (
