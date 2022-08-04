@@ -16,8 +16,8 @@ module.exports = {
       console.log(error)
     }
   },
-  getLevelsByRiver: async (cookie, slug) => {
-    const url = `/stations-by-river/${utils.getSlug(slug)}`
+  getLevelsByRiver: async (cookie, name) => {
+    const url = `/stations-by-river/${encodeURI(name)}`
     try {
       const response = await axios.get(url, {
         headers: { Cookie: cookie },
@@ -28,8 +28,8 @@ module.exports = {
       console.log(error)
     }
   },
-  getLevelsByCatchment: async (cookie, query) => {
-    const url = `/stations-by-catchment/${encodeURI(query)}`
+  getLevelsByCatchment: async (cookie, name) => {
+    const url = `/stations-by-catchment/${encodeURI(name)}`
     try {
       const response = await axios.get(url, {
         headers: { Cookie: cookie },

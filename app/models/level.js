@@ -10,7 +10,6 @@ class Level {
     this.type = data.type
     this.riverName = data.river_name
     this.riverDisplay = data.river_display
-    this.riverSlug = data.river_slug
     this.riverOrder = data.river_order
     this.rainfall1hr = data.rainfall_1hr
     this.rainfall6hr = data.rainfall_6hr

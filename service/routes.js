@@ -54,7 +54,7 @@ router.get('/service/target-area/:id', async (req, res, next) => {
 // Rivers
 //
 
-// Get all rivers that contain slug
+// Get all rivers that contain query
 router.get('/service/rivers/:query', async (req, res, next) => {
   try {
     res.status(200).json(await riverServices.getRivers(req.params.query))
@@ -65,16 +65,16 @@ router.get('/service/rivers/:query', async (req, res, next) => {
 })
 
 // Get a single river and stations that is like the slug
-router.get('/service/river/:slug', async (req, res, next) => {
-  try {
-    res.status(200).json(await riverServices.getRiver(req.params.slug))
-  } catch (err) {
-    res.status(500)
-    console.log(err)
-  }
-})
+// router.get('/service/river/:slug', async (req, res, next) => {
+//   try {
+//     res.status(200).json(await riverServices.getRiver(req.params.slug))
+//   } catch (err) {
+//     res.status(500)
+//     console.log(err)
+//   }
+// })
 
-// Get all rivers that contain slug
+// Get all catchments that contain query
 router.get('/service/catchments/:query', async (req, res, next) => {
   try {
     res.status(200).json(await riverServices.getCatchments(req.params.query))
@@ -122,9 +122,9 @@ router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) =>
 })
 
 // Get stations by river slug
-router.get('/service/stations-by-river/:slug', async (req, res, next) => {
+router.get('/service/stations-by-river/:name', async (req, res, next) => {
   try {
-    res.status(200).json(await stationServices.getStationsByRiverSlug(req.params.slug))
+    res.status(200).json(await stationServices.getStationsByRiver(req.params.name))
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -132,9 +132,9 @@ router.get('/service/stations-by-river/:slug', async (req, res, next) => {
 })
 
 // Get stations by catchment slug
-router.get('/service/stations-by-catchment/:query', async (req, res, next) => {
+router.get('/service/stations-by-catchment/:name', async (req, res, next) => {
   try {
-    res.status(200).json(await stationServices.getStationsByCatchmentQuery(req.params.query))
+    res.status(200).json(await stationServices.getStationsByCatchment(req.params.name))
   } catch (err) {
     res.status(500)
     console.log(err)

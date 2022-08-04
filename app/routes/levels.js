@@ -35,8 +35,9 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     }
     // Check rivers
     if (query.searchType === '' || query.searchType === 'river') {
-      const service = query.searchType === 'river' ? 'getRiver' : 'getRivers'
-      const riverResponse = await riverServices[service](cookie, query.search)
+      // const service = query.searchType === 'river' ? 'getRiver' : 'getRivers'
+      // const riverResponse = await riverServices[service](cookie, query.search)
+      const riverResponse = await riverServices.getRivers(cookie, query.search)
       if (riverResponse.status === 200) {
         riverResponse.data.forEach(item => { rivers.push(new River(item)) })
       } else {
@@ -61,7 +62,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     levels = new Levels(query.type, levelResponse.data)
   } else if (rivers.length === 1 && !places.length && !catchments.length) {
     // We have a single river
-    const levelResponse = await levelServices.getLevelsByRiver(cookie, rivers[0].slug)
+    const levelResponse = await levelServices.getLevelsByRiver(cookie, rivers[0].display)
     levels = new Levels(query.type, levelResponse.data)
   } else if (catchments.length === 1 && !rivers.length && !places.length) {
     // We have a single catchment
@@ -69,6 +70,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     levels = new Levels(query.type, levelResponse.data)
   }
   const model = new ViewModel(query, places, rivers, catchments, levels, query.error)
+  console.log(model)
   res.render('levels', { model })
 })
 

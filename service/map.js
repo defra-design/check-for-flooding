@@ -48,9 +48,9 @@ module.exports = {
       WHEN type = 'tide' THEN 'C'
       WHEN type = 'rainfall' THEN 'R'
       ELSE NULL END AS type,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, river_slug, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
-      WHERE CASE WHEN type = 'tide' AND river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_slug IS NULL THEN 'sea' ELSE type END = $1;
+      WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1;
     `, type)
     const features = []
     response.forEach(item => {
@@ -66,7 +66,6 @@ module.exports = {
           name: item.name,
           riverId: item.river_id,
           riverName: item.river_name,
-          riverSlug: item.river_slug,
           catchmentId: item.hydrological_catchment_id,
           catchmentName: item.hydrological_catchment_name,
           status: item.status,
