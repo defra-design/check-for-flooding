@@ -64,16 +64,6 @@ router.get('/service/rivers/:query', async (req, res, next) => {
   }
 })
 
-// Get a single river and stations that is like the slug
-// router.get('/service/river/:slug', async (req, res, next) => {
-//   try {
-//     res.status(200).json(await riverServices.getRiver(req.params.slug))
-//   } catch (err) {
-//     res.status(500)
-//     console.log(err)
-//   }
-// })
-
 // Get all catchments that contain query
 router.get('/service/catchments/:query', async (req, res, next) => {
   try {
@@ -121,7 +111,7 @@ router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) =>
   }
 })
 
-// Get stations by river slug
+// Get stations by river name
 router.get('/service/stations-by-river/:name', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationsByRiver(req.params.name))
@@ -131,7 +121,7 @@ router.get('/service/stations-by-river/:name', async (req, res, next) => {
   }
 })
 
-// Get stations by catchment slug
+// Get stations by catchment name
 router.get('/service/stations-by-catchment/:name', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationsByCatchment(req.params.name))

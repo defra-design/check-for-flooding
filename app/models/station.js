@@ -14,7 +14,6 @@ class Station {
       this.measureType = data.measure_type
       this.riverName = data.river_name
       this.riverDisplay = data.river_display
-      this.riverSlug = data.river_slug
       this.riverOrder = data.river_order
       this.levelMax = data.level_max
       this.levelMaxDatetime = data.level_max_datetime
