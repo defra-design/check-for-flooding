@@ -3,6 +3,7 @@
   position: relative;
   margin-top: -1px;
   margin-bottom: 0px;
+  border-bottom: 1px solid $govuk-border-colour;
   @include mq ($until: tablet) {
     display: block;
   }
@@ -48,24 +49,10 @@
   &__row {
     border-top: 1px solid $govuk-border-colour;
     @include mq ($until: tablet) {
-      // border-top: 1px solid govuk-tint($govuk-border-colour, 50);
       display: block;
       overflow: auto;
     }
   }
-  // First visible child selector
-  // &__row:not([style*="display:none"]):first-child,
-  // &__row[style*="display:none"] + &__row:not([style*="display:none"]) {
-  //   @include mq ($until: tablet) {
-  //     border-top: 0px;
-  //   }
-  // }
-  // &__row:not([style*="display:none"]):first-child ~ &__row,  
-  // &__row[style*="display:none"] + &__row:not([style*="display:none"]) ~ &__row {
-  //   @include mq ($until: tablet) {
-  //     border-top: 1px solid govuk-tint($govuk-border-colour, 50);
-  //   }
-  // }
   &__cell {
     @extend .govuk-table__cell;
     border-bottom: 0px;
