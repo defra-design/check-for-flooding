@@ -454,6 +454,7 @@ function LiveMap (mapId, options) {
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
+    model.id = feature.getId()
     // Format dates and id's for stations
     if (['s', 'r'].includes(feature.getId().toString().charAt(0))) {
       model.id = feature.getId().substring(1)
