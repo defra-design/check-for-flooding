@@ -37,6 +37,9 @@
           padding-bottom:15px;
       }
   }
+  &__value--latest {
+    font-weight: bold;
+  }
   &__value:nth-child(2):before {
       position: absolute;
       content:'';
@@ -102,9 +105,6 @@
   &__row--current {
       &:before {
           background-color: govuk-colour('blue');
-      }
-      .defra-flood-impact-list__value {
-          font-weight: bold;
       }
       .defra-flood-impact-list__value:before {
           background-color: govuk-colour('blue');

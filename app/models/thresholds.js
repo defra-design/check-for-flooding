@@ -8,8 +8,8 @@ class Threshold {
   }
 
   createBands (thresholds, latest) {
-    // Add latest to array
-    thresholds.push({
+    // Add latest at beginning of array
+    thresholds.unshift({
       name: 'latest',
       description: 'Latest level',
       value: latest

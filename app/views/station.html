@@ -232,7 +232,7 @@
           {% endif %}
         </dt>
         {% for threshold in band.values %} 
-        <dd class="defra-flood-impact-list__value"  {% if threshold.type == 'historical' %} data-toggle-list-display-item="impact" {% endif %}>
+        <dd class="defra-flood-impact-list__value{% if threshold.name == 'latest' %} defra-flood-impact-list__value--latest{% endif %}" {% if threshold.type == 'historical' %} data-toggle-list-display-item="impact" {% endif %}>
           <div class="defra-flood-impact-list__container">
             {{ threshold.description | safe }}
             {% if threshold.name != 'latest' %}
