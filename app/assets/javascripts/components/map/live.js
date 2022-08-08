@@ -255,8 +255,6 @@ function LiveMap (mapId, options) {
       }
       if (layer.get('ref') === 'river') {
         toggleRiver(newFeatureId)
-        // Refresh point layers to hide non local rivers
-        // layer.setStyle(layer.getStyle())
       }
       if (layer.get('ref') === 'warnings') {
         // Refresh vector tiles
@@ -319,7 +317,7 @@ function LiveMap (mapId, options) {
       numFeatures: features.length,
       numWarnings: numWarnings,
       mumMeasurements: mumMeasurements,
-      features: features.map(feature => ({
+      features: features.map((feature, i) => ({
         type: feature.get('type'),
         severity: feature.get('severity'),
         name: feature.get('name')
@@ -360,11 +358,11 @@ function LiveMap (mapId, options) {
     const isBigZoom = resolution <= maps.liveMaxBigZoom
     for (const layer of layers) {
       if (labels.getSource().getFeatures().length > 9) break
-      let pointFeatures = layer.getSource().getFeaturesInExtent(extent)
+      const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
       // If we have a local river remove all other points
-      if (maps.selectedRiverId) {
-        pointFeatures = pointFeatures.filter(f => f.get('riverId') === maps.selectedRiverId)
-      }
+      // if (maps.selectedRiverId) {
+      //   pointFeatures = pointFeatures.filter(f => f.get('riverId') === maps.selectedRiverId)
+      // }
       for (const feature of pointFeatures) {
         if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
           const pointFeature = new Feature({
@@ -561,11 +559,6 @@ function LiveMap (mapId, options) {
     })
   })
 
-  // Update river display when new tiles load
-  // vectorTilePolygons.getSource().on('tileloadend', (e) => {
-  //   toggleRiver(state.selectedFeatureId)
-  // })
-
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
   map.addEventListener('moveend', (e) => {
@@ -686,7 +679,7 @@ function LiveMap (mapId, options) {
       toggleSelectedFeature(labels.getSource().getFeatureById(e.key).get('featureId'))
     }
     // Show overlays when any key is pressed other than Escape
-    if (e.key !== 'Escape') {
+    if (e.key !== 'Escape' && visibleFeatures.length > 9) {
       toggleVisibleFeatures()
     }
   })

@@ -24,7 +24,6 @@ router.get('/station/:id', async (req, res) => {
     }
     // Station details
     station = new Station(stationResponse.data)
-    console.log(station)
     // Station telemetry
     if (station.latestDatetime) {
       const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
