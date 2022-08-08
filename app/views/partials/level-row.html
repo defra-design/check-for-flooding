@@ -25,6 +25,7 @@
       {% if item.isWales %}<span class="defra-flood-levels-table-subtitle">(Natural Resources Wales)</span>{% endif %}
     </a>
     {% endif %}
+    {% if not item.isWales %}
     <span class="defra-flood-levels-table-meta">
       {% if item.latestDatetime %}
       {% if item.type === 'rainfall' %}Totals upto{% else %}Latest at{% endif %} {{ item.latestDatetime }}
@@ -32,6 +33,7 @@
       Data not available
       {% endif %}
     </span>
+    {% endif %}
   </td>
 
   <!-- Rainfall -->
@@ -82,9 +84,9 @@
   <!-- River or groundwater -->
   {% else %}
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
-    {% if item.latestHeight %}
+    {% if item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-numeric">
-      {% if item.latestHeight < 0 and item.type == 'river' %}
+      {% if item.latestHeight <= 0 and item.type == 'river' %}
       ≤ 0m
       {% else %}
       {{ item.latestHeight | toFixed(2) }}m
@@ -115,7 +117,7 @@
     {% endif %}
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--state" role="cell">
-    {% if item.latestHeight %}
+    {% if item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-state defra-flood-levels-table-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</span>

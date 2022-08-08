@@ -192,7 +192,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Hide threshold label
     // thresholdsContainer.select('.threshold--selected .threshold-label').style('visibility', 'hidden')
     // Set tooltip text
-    const value = data.type === 'river' && dataPoint.value < 0 ? '≤ 0' : dataPoint.value.toFixed(2) // *DBL below zero addition
+    const value = data.type === 'river' && (Math.round(dataPoint.value * 100) / 100) <= 0 ? '≤ 0' : dataPoint.value.toFixed(2) // *DBL below zero addition
     tooltipValue.text(`${value}m`) // *DBL below zero addition
     tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
     // Set locator properties

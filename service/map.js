@@ -69,7 +69,7 @@ module.exports = {
           catchmentId: item.hydrological_catchment_id,
           catchmentName: item.hydrological_catchment_name,
           status: item.status,
-          value: item.latest_height,
+          value: item.latest_height ? Math.round(Number(item.latest_height) * 100) / 100 : null,
           value1hr: item.rainfall_1hr,
           value6hr: item.rainfall_6hr,
           value24hr: item.rainfall_24hr,

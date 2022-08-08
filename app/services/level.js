@@ -1,5 +1,4 @@
 const axios = require('axios')
-const utils = require('../utils')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {

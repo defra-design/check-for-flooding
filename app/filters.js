@@ -41,5 +41,9 @@ module.exports = (env) => {
     return number.toFixed(digits)
   }
 
+  filters.isNumber = (value) => {
+    return typeof value === 'number'
+  }
+
   return filters
 }

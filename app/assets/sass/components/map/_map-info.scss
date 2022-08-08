@@ -13,6 +13,9 @@
       color: $govuk-text-colour;
     }
   }
+  &__name-subtitle {
+    @include govuk-font($size: 16);
+  }
   &__name--emphasis {
     font-weight: bold;
   }

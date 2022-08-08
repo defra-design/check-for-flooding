@@ -20,7 +20,7 @@ class Station {
       this.levelHigh = data.level_high
       this.levelLow = data.level_low
       this.latestTrend = data.latest_trend
-      this.latestHeight = data.latest_height
+      this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
       this.latestState = data.latest_state
       this.latestStatus = data.latest_status
       this.upStationId = data.station_up

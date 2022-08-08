@@ -163,7 +163,7 @@ function LiveMap (mapId, options) {
       let state = ''
       if (['S', 'M', 'G'].includes(props.type)) {
         // River or groundwater
-        if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
+        if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
           state = props.type === 'G' ? 'groundError' : 'riverError'
         } else if (props.value && props.atrisk && props.type !== 'C' && !props.iswales) {
           state = props.type === 'G' ? 'groundHigh' : 'riverHigh'
@@ -173,14 +173,14 @@ function LiveMap (mapId, options) {
       } else if (props.type === 'C') {
         // River (Tidal)
         if (props.riverSlug) {
-          if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
+          if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
             state = 'riverError'
           } else {
             state = 'river'
           }
         // Sea level
         } else {
-          if (props.status === 'Suspended' || props.status === 'Closed' || (!props.value && !props.iswales)) {
+          if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
             state = 'seaError'
           } else {
             state = 'sea'
@@ -459,7 +459,9 @@ function LiveMap (mapId, options) {
     } else if (model.issuedDate) {
       model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
     }
-    const html = window.nunjucks.render('info-live.html', { model: model })
+    const env = window.nunjucks.configure('views')
+    env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
+    const html = env.render('info-live.html', { model: model })
     feature.set('html', html)
   }
 

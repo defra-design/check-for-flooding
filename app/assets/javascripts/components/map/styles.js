@@ -69,7 +69,6 @@ window.flood.maps.styles = {
         zIndex: 1
       })
     } else if (featureLayer === 'rivers' && maps.selectedRiverId) {
-      console.log(maps.selectedRiverId)
       if (feature.get('river_id') !== maps.selectedRiverId) return
       return new Style({
         stroke: new Stroke({ color: '#1d70b8', width: 3 }),
