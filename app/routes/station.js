@@ -24,11 +24,16 @@ router.get('/station/:id', async (req, res) => {
     }
     // Station details
     station = new Station(stationResponse.data)
+    console.log(station)
     // Station telemetry
-    const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
-    const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-    telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
-    telemetry = telemetry.data
+    if (station.latestDatetime) {
+      const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
+      const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
+      telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
+      telemetry = telemetry.data
+    } else {
+      telemetry = {}
+    }
     // Thresholds
     thresholds = new Thresholds([
       { id: `${station.id}-max`, name: 'max', value: station.levelMax, date: station.levelMaxDateTime },

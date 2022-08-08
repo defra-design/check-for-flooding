@@ -22,14 +22,13 @@ class Station {
       this.latestTrend = data.latest_trend
       this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
       this.latestState = data.latest_state
-      this.latestStatus = data.latest_status
+      this.latestStatus = data.latest_height ? data.latest_status : 'missing'
       this.upStationId = data.station_up
       this.downStationId = data.station_down
       this.isMultiStage = data.is_multi_stage
       this.isDownstage = data.is_downstage
     }
     this.latestDatetime = data.latest_datetime
-    this.latestStatus = data.latest_status
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)
     this.isWales = data.is_wales
     this.measureId = data.measure_id
