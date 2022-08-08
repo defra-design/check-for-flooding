@@ -56,6 +56,10 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
       }
     }
   }
+  // Remove Bing broad 'admindivision2' match when we have a single river
+  const isBingBroadRiverMatch = places.length === 1 && places[0].type === 'admindivision2' && rivers.length === 1
+  places.length = isBingBroadRiverMatch ? 0 : places.length
+
   if (places.length === 1 && !rivers.length && !catchments.length) {
     // We have a single place
     const levelResponse = await levelServices.getLevelsWithin(cookie, places[0].bboxBuffered)

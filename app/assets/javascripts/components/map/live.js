@@ -64,7 +64,7 @@ function LiveMap (mapId, options) {
     view: view,
     // layers: layers,
     controls: [osLogo],
-    queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
+    queryParamKeys: ['v', 'lyr', 'ext', 'fid', 'rid'],
     // interactions: interactions,
     originalTitle: options.originalTitle,
     title: options.title,
@@ -202,21 +202,19 @@ function LiveMap (mapId, options) {
     maps.selectedRiverId = riverId
     vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
 
-    //
-    // Test
-    //
-    riverLine.getSource().clear()
-    riverLine.setVisible(false)
-    if (riverId) {
-      xhr(`/service/geojson/river-line/${riverId}`, (error, response) => {
-        if (!error) {
-          const features = new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(response)
-          riverLine.setVisible(true)
-          riverLine.getSource().addFeatures(features)
-          riverLine.setStyle(riverLine.getStyle())
-        }
-      }, 'json')
-    }
+    // *DBL Test
+    // riverLine.getSource().clear()
+    // riverLine.setVisible(false)
+    // if (riverId) {
+    //   xhr(`/service/geojson/river-line/${riverId}`, (error, response) => {
+    //     if (!error) {
+    //       const features = new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(response)
+    //       riverLine.setVisible(true)
+    //       riverLine.getSource().addFeatures(features)
+    //       riverLine.setStyle(riverLine.getStyle())
+    //     }
+    //   }, 'json')
+    // }
   }
 
   // Show or hide warnings within warning layer
@@ -255,16 +253,15 @@ function LiveMap (mapId, options) {
         selected.setStyle(maps.styles[layer.get('ref') === 'warnings' ? 'warnings' : 'stations']) // WebGL: layers don't use a style function
         container.showInfo('Selected feature information', newFeature.get('html'))
       }
-      // If a river station has been selected determin and stor the vector tile segments
       if (layer.get('ref') === 'river') {
         toggleRiver(newFeatureId)
+        // Refresh point layers to hide non local rivers
+        // layer.setStyle(layer.getStyle())
       }
-      // Refresh vector tiles
       if (layer.get('ref') === 'warnings') {
+        // Refresh vector tiles
         vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       }
-      // Refresh point layers to hide non local rivers
-      layer.setStyle(layer.getStyle())
     })
     state.selectedFeatureId = newFeatureId
     // Update url
@@ -475,6 +472,11 @@ function LiveMap (mapId, options) {
     state.selectedFeatureId = decodeURI(getParameterByName('fid'))
   }
 
+  // Set initial river line
+  if (getParameterByName('rid')) {
+    maps.selectedRiverId = decodeURI(getParameterByName('rid'))
+  }
+
   // Create optional target area feature
   if (options.targetArea) {
     targetArea.pointFeature = new Feature({
@@ -540,16 +542,14 @@ function LiveMap (mapId, options) {
               warnings.getSource().addFeature(targetArea.pointFeature)
             }
           }
+          const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+          setWarningVisibility(lyrs)
+          // Store reference to warnings source for use in vector tiles style function
+          maps.warningsSource = warnings.getSource()
         }
         // WebGL: Limited dynamic styling could be done server side for client performance
         if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
           setFeatueState(layer)
-        }
-        // Store reference to warnings source for use in vector tiles style function
-        if (layer.get('ref') === 'warnings') {
-          const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-          setWarningVisibility(lyrs)
-          maps.warningsSource = warnings.getSource()
         }
         // Attempt to set selected feature when layer is ready
         toggleSelectedFeature(state.selectedFeatureId)
@@ -612,11 +612,11 @@ function LiveMap (mapId, options) {
     }
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      // DBL Test
-      if (layer === vectorTilePolygons) {
-        console.log(feature.getId())
-        console.log(feature.getProperties())
-      }
+      // *DBL Test
+      // if (layer === vectorTilePolygons) {
+      //   console.log(feature.getId())
+      //   console.log(feature.getProperties())
+      // }
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }
@@ -729,6 +729,7 @@ maps.createLiveMap = (mapId, options = {}) => {
   uri = addOrUpdateParameter(uri, 'lyr', options.layers || '')
   uri = addOrUpdateParameter(uri, 'ext', options.extent || '')
   uri = addOrUpdateParameter(uri, 'fid', options.selectedId || '')
+  uri = addOrUpdateParameter(uri, 'rid', options.riverId || '')
 
   // Create map button
   const btnContainer = document.getElementById(mapId)

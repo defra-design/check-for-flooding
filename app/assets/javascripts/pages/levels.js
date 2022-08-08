@@ -16,7 +16,8 @@ if (document.getElementById('map')) {
     btnText: 'View map of levels',
     btnClasses: 'defra-button-secondary defra-button-secondary--icon',
     layers: 'mv,ri,ti,gr,rf',
-    extent: window.flood.model.bbox
+    extent: window.flood.model.bbox,
+    riverId: window.flood.model.riverId || null
   })
 }
 

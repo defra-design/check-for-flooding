@@ -13,6 +13,7 @@ class ViewModel {
     this.catchment = catchments.length ? catchments[0] : null
     this.catchments = catchments
     this.levels = levels
+    this.riverId = rivers.length === 1 && !places.length && !catchments.length ? this.river.id : null
     this.bingApiKey = bingApiKey
     // Results
     this.isSinglePlace = places.length === 1 && !rivers.length && !catchments.length

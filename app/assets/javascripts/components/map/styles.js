@@ -68,25 +68,27 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
-    // } else if (featureLayer === 'rivers' && maps.selectedRiverId) {
-    //   if (feature.get('riverId') !== maps.selectedRiverId) return
-    //   return new Style({
-    //     stroke: new Stroke({ color: '#1d70b8', width: 3 }),
-    //     fill: new Fill({ color: 'transparent' })
-    //   })
-    // }
-    } else if (featureLayer === 'rivers') {
-      const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
-      if (!showRivers) return
-      let colour = '#b1b4b6'
-      if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
-        colour = '#ffdd00'
-      }
+    } else if (featureLayer === 'rivers' && maps.selectedRiverId) {
+      console.log(maps.selectedRiverId)
+      if (feature.get('river_id') !== maps.selectedRiverId) return
       return new Style({
-        stroke: new Stroke({ color: colour, width: 3 }),
+        stroke: new Stroke({ color: '#1d70b8', width: 3 }),
         fill: new Fill({ color: 'transparent' })
       })
     }
+    // *DBL Test
+    // } else if (featureLayer === 'rivers') {
+    //   const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
+    //   if (!showRivers) return
+    //   let colour = '#b1b4b6'
+    //   if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
+    //     colour = '#ffdd00'
+    //   }
+    //   return new Style({
+    //     stroke: new Stroke({ color: colour, width: 3 }),
+    //     fill: new Fill({ color: 'transparent' })
+    //   })
+    // }
   },
 
   warnings: (feature, resolution) => {
