@@ -603,10 +603,10 @@ function LiveMap (mapId, options) {
     // Get mouse coordinates and check for feature
     const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       // *DBL Test
-      // if (layer === vectorTilePolygons) {
-      //   console.log(feature.getId())
-      //   console.log(feature.getProperties())
-      // }
+      if (layer === vectorTilePolygons) {
+        console.log(feature.getId())
+        console.log(feature.getProperties())
+      }
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }

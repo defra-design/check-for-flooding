@@ -19,6 +19,7 @@ window.flood.maps.styles = {
     const warningsSource = maps.warningsSource
     const featureId = feature.getId()
     const featureLayer = feature.get('layer')
+
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
       if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
@@ -89,52 +90,50 @@ window.flood.maps.styles = {
         }),
         zIndex: 1
       })
-    } else if (featureLayer === 'rivers' && getParameterByName('rid')) {
-      const visibleRiverId = Number(decodeURI(getParameterByName('rid')))
-      if (feature.get('river_id') !== visibleRiverId) return
-      var coords = feature.getGeometry().getCoordinates()
-      var start = coords[0]
-      var end = coords[1]
-      var dx = end[0] - start[0]
-      var dy = end[1] - start[1]
-      var rotation = Math.atan2(dy, dx)
-      const arrow = new Style({
-        geometry: new Point(end),
-        image: new Icon({
-          src: '/public/images/map-symbols-2x.png',
-          size: [100, 100],
-          anchor: [0.5, 0.5],
-          offset: [0, 2000],
-          scale: 0.5,
-          rotateWithView: true,
-          rotation: -rotation
-        }),
-        zIndex: 1
-      })
-      const line = new Style({
-        stroke: new Stroke({
-          color: '#1d70b8',
-          width: 3
-        }),
-        fill: new Fill({
-          color: 'transparent'
+    } else if (featureLayer === 'rivers') {
+      const riverId = getParameterByName('rid') && Number(decodeURI(getParameterByName('rid')))
+      if (feature.get('river_id') === riverId) {
+        var coords = feature.getGeometry().getCoordinates()
+        var start = coords[0]
+        var end = coords[1]
+        var dx = end[0] - start[0]
+        var dy = end[1] - start[1]
+        var rotation = Math.atan2(dy, dx)
+        const arrow = new Style({
+          geometry: new Point(end),
+          image: new Icon({
+            src: '/public/images/map-symbols-2x.png',
+            size: [100, 100],
+            anchor: [0.5, 0.5],
+            offset: [0, 2000],
+            scale: 0.5,
+            rotateWithView: true,
+            rotation: -rotation
+          }),
+          zIndex: 1
         })
-      })
-      return [line, arrow]
+        const line = new Style({
+          stroke: new Stroke({
+            color: '#1d70b8',
+            width: 3
+          }),
+          fill: new Fill({
+            color: 'transparent'
+          })
+        })
+        return [line, arrow]
+      } else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')) {
+        // *DBL Test
+        let colour = '#b1b4b6'
+        if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
+          colour = '#ffdd00'
+        }
+        return new Style({
+          stroke: new Stroke({ color: colour, width: 3 }),
+          fill: new Fill({ color: 'transparent' })
+        })
+      }
     }
-    // *DBL Test
-    // } else if (featureLayer === 'rivers') {
-    //   const showRivers = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
-    //   if (!showRivers) return
-    //   let colour = '#b1b4b6'
-    //   if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
-    //     colour = '#ffdd00'
-    //   }
-    //   return new Style({
-    //     stroke: new Stroke({ color: colour, width: 3 }),
-    //     fill: new Fill({ color: 'transparent' })
-    //   })
-    // }
   },
 
   warnings: (feature, resolution) => {
