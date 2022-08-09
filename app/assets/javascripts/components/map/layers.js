@@ -7,6 +7,7 @@ import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource }
 import Feature from 'ol/Feature'
 import { GeoJSON, MVT } from 'ol/format'
 const bingApiKey = process.env.BING_API_KEY
+const osApiKey = process.env.OS_API_KEY
 
 //
 // Vector source
@@ -22,7 +23,7 @@ window.flood.maps.layers = {
     return new TileLayer({
       ref: 'road',
       source: new BingMaps({
-        key: 'AtbOHVZK_YNqr1Cu_FIB39nZ8Uq9XPB-RmLjk6cxJwRW3I0J3kkDZ_5qQaiMu6H-' + '&c4w=1&cstl=rd&src=h&st=me|lv:0_trs|v:0_pt|v:0',
+        key: `${bingApiKey}&c4w=1&cstl=rd&src=h&st=me|lv:0_trs|v:0_pt|v:0`,
         imagerySet: 'RoadOnDemand',
         hidpi: true
       }),
@@ -36,12 +37,12 @@ window.flood.maps.layers = {
     return new TileLayer({
       ref: 'road',
       // source: new BingMaps({
-      //   key: window.flood.model.bingApiKey,
+      //   key: bingApiKey,
       //   imagerySet: 'RoadOnDemand',
       //   hidpi: true
       // }),
       source: new XYZ({
-        url: 'https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=4flNisK69QG6w6NGkDZ4CZz0CObcUA5h',
+        url: `https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=${osApiKey}`,
         attributions: `Contains OS data &copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
       }),
       visible: false,
