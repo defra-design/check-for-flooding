@@ -151,8 +151,7 @@
   window.flood = {
     model: {
       id: {{ model.station.id | dump | safe }},
-      centroid: {{ model.station.centroid | dump | safe }},
-      bingApiKey: {{ model.bingApiKey | dump | safe }},
+      centroid: {{ model.station.centroid | dump | safe }}
       telemetry: {{ model.telemetry | dump | safe }}
     }
   }

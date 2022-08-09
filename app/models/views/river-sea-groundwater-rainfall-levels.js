@@ -1,4 +1,5 @@
 const bingApiKey = process.env.BING_API_KEY
+const nrwURL = process.env.NRW_URL
 
 class ViewModel {
   constructor (query, places, rivers, catchments, levels, error) {
@@ -15,6 +16,7 @@ class ViewModel {
     this.levels = levels
     this.riverId = rivers.length === 1 && !places.length && !catchments.length ? this.river.id : null
     this.bingApiKey = bingApiKey
+    this.nrwURL = nrwURL
     // Results
     this.isSinglePlace = places.length === 1 && !rivers.length && !catchments.length
     this.isSingleRiver = rivers.length === 1 && !places.length && !catchments.length

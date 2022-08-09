@@ -23,6 +23,7 @@ const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.
 const maps = window.flood.maps
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
 const MapContainer = maps.MapContainer
+const nrwUrl = process.env.NRW_URL
 
 function LiveMap (mapId, options) {
   // Set maxBigZoom value
@@ -454,6 +455,7 @@ function LiveMap (mapId, options) {
     if (['s', 'r'].includes(feature.getId().toString().charAt(0))) {
       model.id = feature.getId().substring(1)
       model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
+      model.nrwUrl = nrwUrl
     } else if (model.issuedDate) {
       model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
     }

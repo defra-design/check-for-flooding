@@ -6,6 +6,7 @@ import { Tile as TileLayer, Vector as VectorLayer, VectorImage, VectorTile as Ve
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import Feature from 'ol/Feature'
 import { GeoJSON, MVT } from 'ol/format'
+const bingApiKey = process.env.BING_API_KEY
 
 //
 // Vector source
@@ -53,7 +54,7 @@ window.flood.maps.layers = {
     return new TileLayer({
       ref: 'satellite',
       source: new BingMaps({
-        key: window.flood.model.bingApiKey,
+        key: bingApiKey,
         imagerySet: 'AerialWithLabelsOnDemand',
         hidpi: true
       }),

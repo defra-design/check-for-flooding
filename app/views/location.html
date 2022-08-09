@@ -84,8 +84,7 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
     model: {
       bbox: {{ model.place.bbox | dump | safe }},
       hasWarnings: {{ model.hasWarnings | dump | safe }},
-      outlookDays: {{ model.outlook.days | dump | safe }},
-      bingApiKey: {{ model.bingApiKey | dump | safe }}
+      outlookDays: {{ model.outlook.days | dump | safe }}
     }
   }
 </script>

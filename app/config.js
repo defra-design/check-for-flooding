@@ -21,5 +21,4 @@ module.exports = {
 
   // Enable or disable Browser Sync
   useBrowserSync: 'false'
-
 }

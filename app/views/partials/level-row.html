@@ -8,7 +8,7 @@
     {% if item.type === 'rainfall' %}
     <a href="/rainfall-station/{{ item.id | urlencode }}">Rainfall at {{ item.name }}</a>
     {% else %}
-    <a href="/station/{{ item.id | urlencode }}">
+    <a href="{% if item.isWales %}{{ model.nrwURL }}{% endif %}/station/{{ item.id | urlencode }}">
       {% if item.group_type == 'river' %}
       {{ item.riverName }} at
       {% elif item.group_type == 'sea' %}

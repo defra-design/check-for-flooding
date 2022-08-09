@@ -31,7 +31,7 @@
 {% elif model.type === 'S' or model.type === 'M' or model.type === 'G' or model.type === 'C' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name">
-        <a href="/station/{{ model.id }}">
+        <a href="{% if model.iswales %}{{ model.nrwUrl }}{% endif %}/station/{{ model.id }}">
             {% if model.type === 'C' and not model.riverSlug %}
             Sea level
             {% elif model.type === 'G' %}
