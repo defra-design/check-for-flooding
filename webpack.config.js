@@ -5,7 +5,6 @@ const dotenv = require('dotenv')
 dotenv.config({ path: './.env' })
 const nodeEnv = process.env.NODE_ENV
 const nrwUrl = process.env.NRW_URL
-const bingApiKey = process.env.BING_API_KEY
 const inDev = nodeEnv === 'dev' || nodeEnv === 'development'
 
 module.exports = (env, argv) => ({
@@ -50,7 +49,8 @@ module.exports = (env, argv) => ({
     new webpack.DefinePlugin({
       'process.env': {
         NRW_URL: JSON.stringify(nrwUrl),
-        BING_API_KEY: JSON.stringify(bingApiKey)
+        BING_API_KEY: JSON.stringify(process.env.BING_API_KEY),
+        OS_API_KEY: JSON.stringify(process.env.OS_API_KEY)
       }
     })
   ],
