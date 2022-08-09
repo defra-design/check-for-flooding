@@ -71,6 +71,7 @@ window.flood.maps.layers = {
   vectorTilePolygons: () => {
     return new VectorTileLayer({
       ref: 'polygons',
+      className: 'defra-map-layer', // Needs custom class to fiz zIndex issue introduced with declutter
       source: new VectorTileSource({
         format: new MVT({
           idProperty: 'id',
@@ -79,6 +80,7 @@ window.flood.maps.layers = {
         url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
         maxZoom: 12
       }),
+      declutter: true,
       // renderMode: 'hybrid',
       renderMode: 'vector',
       extent: window.flood.maps.extent,

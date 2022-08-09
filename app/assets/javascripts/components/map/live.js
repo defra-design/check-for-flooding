@@ -174,7 +174,7 @@ function LiveMap (mapId, options) {
         }
       } else if (props.type === 'C') {
         // River (Tidal)
-        if (props.riverSlug) {
+        if (props.riverId) {
           if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
             state = 'riverError'
           } else {
@@ -588,7 +588,7 @@ function LiveMap (mapId, options) {
   map.addEventListener('pointermove', (e) => {
     // Detect vector feature at mouse coords
     const hit = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (feature.get('layer') !== 'hydrologicalboundaries' && (!defaultLayers.includes(layer) || layer === vectorTilePolygons)) { return true }
+      if (!['hydrologicalboundaries', 'rivers'].includes(feature.get('layer')) && !defaultLayers.includes(layer)) { return true }
     })
     map.getTarget().style.cursor = hit ? 'pointer' : ''
   })

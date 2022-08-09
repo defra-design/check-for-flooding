@@ -32,14 +32,14 @@
 <div id="infoDescription">
     <strong class="defra-map-info__name">
         <a href="{% if model.iswales %}{{ model.nrwUrl }}{% endif %}/station/{{ model.id }}">
-            {% if model.type === 'C' and not model.riverSlug %}
+            {% if model.type === 'C' and not model.riverId %}
             Sea level
             {% elif model.type === 'G' %}
             Groundwater
             {% else %}
             {{ model.riverName }}
             {% endif %} at {{ model.name }}
-            {% if model.type === 'C' and model.riverSlug%} (tidal){% endif %}
+            {% if model.type === 'C' and model.riverId %} (tidal){% endif %}
             {% if model.iswales %}<br/><span class="defra-map-info__name-subtitle">(Natural Resources Wales)</span>{% endif %}
         </a>
     </strong>

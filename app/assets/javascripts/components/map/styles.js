@@ -3,6 +3,7 @@
 Sets up the window.flood.maps styles objects
 */
 import { Style, Icon, Fill, Stroke, Text, Circle } from 'ol/style'
+import Point from 'ol/geom/Point'
 const { getParameterByName } = window.flood.utils
 
 const maps = window.flood.maps
@@ -54,27 +55,72 @@ window.flood.maps.styles = {
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
 
-      const selectedStroke = new Style({ stroke: new Stroke({ color: '#FFDD00', width: 16 }), zIndex: zIndex })
-      const stroke = new Style({ stroke: new Stroke({ color: strokeColour, width: 2 }), zIndex: zIndex })
-      const fill = new Style({ fill: new Fill({ color: fillColour }), zIndex: zIndex })
-
+      const selectedStroke = new Style({
+        stroke: new Stroke({
+          color: '#FFDD00',
+          width: 16
+        }),
+        zIndex: zIndex
+      })
+      const stroke = new Style({
+        stroke: new Stroke({
+          color: strokeColour,
+          width: 2
+        }),
+        zIndex: zIndex
+      })
+      const fill = new Style({
+        fill: new Fill({
+          color: fillColour
+        }),
+        zIndex: zIndex
+      })
       return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
     } else if (featureLayer === 'hydrologicalboundaries') {
       const showCatchments = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('ct')
       if (!showCatchments) return
       return new Style({
-        stroke: new Stroke({ color: '#1d70b8', width: 1 }),
-        // fill: new Fill({ color: 'rgba(29, 112, 184, 0.2)' }),
-        fill: new Fill({ color: 'transparent' }),
+        stroke: new Stroke({
+          color: '#1d70b8',
+          width: 1
+        }),
+        fill: new Fill({
+          color: 'transparent'
+        }),
         zIndex: 1
       })
     } else if (featureLayer === 'rivers' && getParameterByName('rid')) {
       const visibleRiverId = Number(decodeURI(getParameterByName('rid')))
       if (feature.get('river_id') !== visibleRiverId) return
-      return new Style({
-        stroke: new Stroke({ color: '#1d70b8', width: 3 }),
-        fill: new Fill({ color: 'transparent' })
+      var coords = feature.getGeometry().getCoordinates()
+      var start = coords[0]
+      var end = coords[1]
+      var dx = end[0] - start[0]
+      var dy = end[1] - start[1]
+      var rotation = Math.atan2(dy, dx)
+      const arrow = new Style({
+        geometry: new Point(end),
+        image: new Icon({
+          src: '/public/images/map-symbols-2x.png',
+          size: [100, 100],
+          anchor: [0.5, 0.5],
+          offset: [0, 2000],
+          scale: 0.5,
+          rotateWithView: true,
+          rotation: -rotation
+        }),
+        zIndex: 1
       })
+      const line = new Style({
+        stroke: new Stroke({
+          color: '#1d70b8',
+          width: 3
+        }),
+        fill: new Fill({
+          color: 'transparent'
+        })
+      })
+      return [line, arrow]
     }
     // *DBL Test
     // } else if (featureLayer === 'rivers') {
