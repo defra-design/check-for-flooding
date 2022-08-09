@@ -36,6 +36,7 @@ function LiveMap (mapId, options) {
   const state = {
     visibleFeatures: [],
     selectedFeatureId: '',
+    riverId: null,
     initialExt: []
   }
 
@@ -197,12 +198,11 @@ function LiveMap (mapId, options) {
   }
 
   // Show or hide rivers
-  const toggleRiver = (featureId) => {
+  const toggleRiver = (featureId = '') => {
     const feature = river.getSource().getFeatureById(featureId)
-    const riverId = feature ? feature.get('riverId') : null
-    maps.selectedRiverId = riverId
+    const riverId = feature ? feature.get('riverId') : state.riverId
+    replaceHistory('rid', riverId)
     vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
-
     // *DBL Test
     // riverLine.getSource().clear()
     // riverLine.setVisible(false)
@@ -253,9 +253,6 @@ function LiveMap (mapId, options) {
         selected.getSource().addFeature(newFeature)
         selected.setStyle(maps.styles[layer.get('ref') === 'warnings' ? 'warnings' : 'stations']) // WebGL: layers don't use a style function
         container.showInfo('Selected feature information', newFeature.get('html'))
-      }
-      if (layer.get('ref') === 'river') {
-        toggleRiver(newFeatureId)
       }
       if (layer.get('ref') === 'warnings') {
         // Refresh vector tiles
@@ -360,10 +357,6 @@ function LiveMap (mapId, options) {
     for (const layer of layers) {
       if (labels.getSource().getFeatures().length > 9) break
       const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
-      // If we have a local river remove all other points
-      // if (maps.selectedRiverId) {
-      //   pointFeatures = pointFeatures.filter(f => f.get('riverId') === maps.selectedRiverId)
-      // }
       for (const feature of pointFeatures) {
         if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
           const pointFeature = new Feature({
@@ -474,9 +467,9 @@ function LiveMap (mapId, options) {
     state.selectedFeatureId = decodeURI(getParameterByName('fid'))
   }
 
-  // Set initial river line
+  // Set initial river id
   if (getParameterByName('rid')) {
-    maps.selectedRiverId = decodeURI(getParameterByName('rid'))
+    state.riverId = decodeURI(getParameterByName('rid'))
   }
 
   // Create optional target area feature
@@ -576,7 +569,7 @@ function LiveMap (mapId, options) {
     timer = setTimeout(() => {
       if (!container.map) return
       // Update river visibility when new features come into view
-      toggleRiver(state.selectedFeatureId)
+      vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       // Show overlays for visible features
       toggleVisibleFeatures()
       // Update url (history state) to reflect new extent
@@ -619,6 +612,7 @@ function LiveMap (mapId, options) {
       }
     })
     toggleSelectedFeature(featureId)
+    toggleRiver(featureId)
   })
 
   // Show overlays on first tab in from browser controls
@@ -678,7 +672,9 @@ function LiveMap (mapId, options) {
     // Set selected feature on [1-9] key presss
     const visibleFeatures = labels.getSource().getFeatures()
     if (!isNaN(e.key) && e.key >= 1 && e.key <= visibleFeatures.length && visibleFeatures.length <= 9) {
-      toggleSelectedFeature(labels.getSource().getFeatureById(e.key).get('featureId'))
+      const featureId = labels.getSource().getFeatureById(e.key).get('featureId')
+      toggleSelectedFeature(featureId)
+      toggleRiver(featureId)
     }
     // Show overlays when any key is pressed other than Escape
     if (e.key !== 'Escape' && visibleFeatures.length > 9) {

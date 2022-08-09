@@ -68,8 +68,9 @@ window.flood.maps.styles = {
         fill: new Fill({ color: 'transparent' }),
         zIndex: 1
       })
-    } else if (featureLayer === 'rivers' && maps.selectedRiverId) {
-      if (feature.get('river_id') !== maps.selectedRiverId) return
+    } else if (featureLayer === 'rivers' && getParameterByName('rid')) {
+      const visibleRiverId = Number(decodeURI(getParameterByName('rid')))
+      if (feature.get('river_id') !== visibleRiverId) return
       return new Style({
         stroke: new Stroke({ color: '#1d70b8', width: 3 }),
         fill: new Fill({ color: 'transparent' })

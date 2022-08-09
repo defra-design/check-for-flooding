@@ -17,7 +17,7 @@ if (document.getElementById('map')) {
     btnClasses: 'defra-button-secondary defra-button-secondary--icon',
     layers: 'mv,ri,ti,gr,rf',
     extent: window.flood.model.bbox,
-    riverId: window.flood.model.riverId || null
+    riverId: window.flood.model.riverId
   })
 }
 
