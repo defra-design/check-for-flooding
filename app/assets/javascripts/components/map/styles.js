@@ -91,6 +91,8 @@ window.flood.maps.styles = {
         zIndex: 1
       })
     } else if (featureLayer === 'rivers') {
+      const showRiver = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
+      if (!showRiver) return
       const riverId = getParameterByName('rid') && Number(decodeURI(getParameterByName('rid')))
       if (feature.get('river_id') === riverId) {
         var coords = feature.getGeometry().getCoordinates()
@@ -112,27 +114,33 @@ window.flood.maps.styles = {
           }),
           zIndex: 1
         })
-        const line = new Style({
+        const lineOuter = new Style({
           stroke: new Stroke({
             color: '#1d70b8',
-            width: 3
+            width: feature.get('form') === 'tidalRiver' ? 5 : 3
           }),
-          fill: new Fill({
-            color: 'transparent'
-          })
+          zIndex: 2
         })
-        return [line, arrow]
-      } else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')) {
-        // *DBL Test
-        let colour = '#b1b4b6'
-        if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
-          colour = '#ffdd00'
-        }
-        return new Style({
-          stroke: new Stroke({ color: colour, width: 3 }),
-          fill: new Fill({ color: 'transparent' })
+        const lineInner = new Style({
+          stroke: new Stroke({
+            color: '#ffffff',
+            width: 1
+          }),
+          zIndex: 3
         })
+        return feature.get('form') === 'tidalRiver' ? [lineOuter, lineInner, arrow] : [lineOuter, arrow]
       }
+      //  else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')) {
+      //   // *DBL Test
+      //   let colour = '#b1b4b6'
+      //   if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
+      //     colour = '#ffdd00'
+      //   }
+      //   return new Style({
+      //     stroke: new Stroke({ color: colour, width: 3 }),
+      //     fill: new Fill({ color: 'transparent' })
+      //   })
+      // }
     }
   },
 

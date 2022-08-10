@@ -15,7 +15,7 @@ if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
     btnText: 'View map of levels',
     btnClasses: 'defra-button-secondary defra-button-secondary--icon',
-    layers: 'mv,ri,ti,gr,rf',
+    layers: 'mv,ri,ti,gr,rf,rl',
     extent: window.flood.model.bbox,
     riverId: window.flood.model.riverId
   })

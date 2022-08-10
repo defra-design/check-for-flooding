@@ -18,7 +18,7 @@ if (document.getElementById('map')) {
   window.flood.maps.createLiveMap('map', {
     btnText: 'Map',
     btnClasses: 'defra-link-icon-s',
-    layers: 'mv,ri,se,gr',
+    layers: 'mv,ri,se,gr,rl',
     centre: window.flood.model.centroid,
     zoom: 14,
     riverId: window.flood.model.riverId,
