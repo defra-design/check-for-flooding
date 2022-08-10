@@ -111,22 +111,23 @@ window.flood.maps.styles = {
             scale: 0.5,
             rotateWithView: true,
             rotation: -rotation
-          }),
-          zIndex: 1
+          })
         })
         const lineOuter = new Style({
           stroke: new Stroke({
             color: '#1d70b8',
-            width: feature.get('form') === 'tidalRiver' ? 5 : 3
+            width: feature.get('form') === 'tidalRiver' ? 5 : 3,
+            lineCap: 'butt'
           }),
-          zIndex: 2
+          zIndex: 1
         })
         const lineInner = new Style({
           stroke: new Stroke({
             color: '#ffffff',
-            width: 1
+            width: 1,
+            lineCap: 'square'
           }),
-          zIndex: 3
+          zIndex: 2
         })
         return feature.get('form') === 'tidalRiver' ? [lineOuter, lineInner, arrow] : [lineOuter, arrow]
       }

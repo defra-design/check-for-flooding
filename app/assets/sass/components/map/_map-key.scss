@@ -59,7 +59,10 @@
   display:block;
   margin-left:34px;
   &--multi {
-    margin-top:19px;
+    margin-top:24px;
+    @include mq ($from: tablet) {
+      margin-top:19px;
+    }
   }
 }
 .defra-map-key__symbol {
