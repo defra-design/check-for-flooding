@@ -19,7 +19,7 @@ import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
 
-const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.utils
+const { addOrUpdateParameter, getParameterByName, forEach, getSummaryList, xhr } = window.flood.utils
 const maps = window.flood.maps
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
 const MapContainer = maps.MapContainer
@@ -309,16 +309,21 @@ function LiveMap (mapId, options) {
     const hasAccessibleFeatures = maps.isKeyboard && features.length <= 9
     labels.setVisible(hasAccessibleFeatures)
     // Build model
-    const numWarnings = features.filter(feature => feature.get('type') === 'warning').length
-    const mumMeasurements = features.length - numWarnings
+    const numWarnings = features.filter(feature => [1, 2].includes(feature.get('severity'))).length
+    const numAlerts = features.filter(feature => feature.get('severity') === 3).length
+    const mumLevels = features.length - numWarnings - numAlerts
     const model = {
       numFeatures: features.length,
-      numWarnings: numWarnings,
-      mumMeasurements: mumMeasurements,
+      summary: getSummaryList([
+        { count: numWarnings, text: 'flood warning' },
+        { count: numAlerts, text: 'flood alert' },
+        { count: mumLevels, text: 'water level measurement' }
+      ]),
       features: features.map((feature, i) => ({
         type: feature.get('type'),
         severity: feature.get('severity'),
-        name: feature.get('name')
+        name: feature.get('name'),
+        river: feature.get('river')
       }))
     }
     // Update viewport description
@@ -341,7 +346,8 @@ function LiveMap (mapId, options) {
         const warningsPolygon = new Feature({
           geometry: feature.getGeometry(),
           name: warning.get('name'),
-          type: warning.get('type')
+          type: warning.get('type'),
+          severity: warning.get('severity')
         })
         warningsPolygon.setId(feature.getId())
         warningsPolygons.push(warningsPolygon)
@@ -362,7 +368,8 @@ function LiveMap (mapId, options) {
           const pointFeature = new Feature({
             geometry: feature.getGeometry(),
             name: feature.get('name'),
-            type: feature.get('type')
+            type: feature.get('type'),
+            river: feature.get('riverName')
           })
           pointFeature.setId(feature.getId())
           if (labels.getSource().getFeatures().length > 9) break

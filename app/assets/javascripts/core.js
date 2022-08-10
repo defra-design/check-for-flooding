@@ -68,5 +68,18 @@ window.flood.utils = {
   getParameterByName: (name) => {
     const v = window.location.search.match(new RegExp('(?:[?&]' + name + '=)([^&]+)'))
     return v ? v[1] : null
+  },
+  getSummaryList: (values) => {
+    const lines = []
+    let summary = ''
+    values.forEach((v, i) => {
+      if (v.count) {
+        lines.push(`${v.count} ${v.text}${v.count !== 1 ? 's' : ''}`)
+      }
+    })
+    lines.forEach((l, i) => {
+      summary += l + (i + 1 === lines.length - 1 ? ' and ' : i + 1 < lines.length ? ', ' : '')
+    })
+    return summary
   }
 }
