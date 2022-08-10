@@ -77,8 +77,9 @@ window.flood.maps.styles = {
         zIndex: zIndex
       })
       return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
-    } else if (featureLayer === 'hydrologicalboundaries') {
+    } else if (featureLayer === 'catchments') {
       const showCatchments = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('ct')
+      console.log(showCatchments)
       if (!showCatchments) return
       return new Style({
         stroke: new Stroke({
