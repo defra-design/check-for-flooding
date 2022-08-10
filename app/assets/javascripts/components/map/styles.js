@@ -130,18 +130,17 @@ window.flood.maps.styles = {
           zIndex: 2
         })
         return feature.get('form') === 'tidalRiver' ? [lineOuter, lineInner, arrow] : [lineOuter, arrow]
+      } else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('*')) {
+        // *DBL Test
+        let colour = '#b1b4b6'
+        if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
+          colour = '#ffdd00'
+        }
+        return new Style({
+          stroke: new Stroke({ color: colour, width: 3 }),
+          fill: new Fill({ color: 'transparent' })
+        })
       }
-      //  else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')) {
-      //   // *DBL Test
-      //   let colour = '#b1b4b6'
-      //   if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
-      //     colour = '#ffdd00'
-      //   }
-      //   return new Style({
-      //     stroke: new Stroke({ color: colour, width: 3 }),
-      //     fill: new Fill({ color: 'transparent' })
-      //   })
-      // }
     }
   },
 
