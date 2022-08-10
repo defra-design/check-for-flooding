@@ -12,8 +12,8 @@ class Station {
       this.rainfall24hr = data.rainfall_24hr
     } else {
       this.measureType = data.measure_type
+      this.riverId = data.river_id
       this.riverName = data.river_name
-      this.riverDisplay = data.river_display
       this.riverOrder = data.river_order
       this.levelMax = data.level_max
       this.levelMaxDatetime = data.level_max_datetime

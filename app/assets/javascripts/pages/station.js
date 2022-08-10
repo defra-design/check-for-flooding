@@ -21,6 +21,7 @@ if (document.getElementById('map')) {
     layers: 'mv,ri,se,gr',
     centre: window.flood.model.centroid,
     zoom: 14,
+    riverId: window.flood.model.riverId,
     selectedId: `s${window.flood.model.rloiId}`
   })
 }
