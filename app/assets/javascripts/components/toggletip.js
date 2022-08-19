@@ -18,6 +18,7 @@ const toggletips = () => {
     text.innerHTML = ''
     // Timeout recommend to ensure aria-live region is re-read
     window.setTimeout(() => {
+      closeToggletips()
       text.innerHTML = toggletip.getAttribute('data-toggletip-content')
       toggletip.classList.add('defra-toggletip--open')
       const toggletipLeft = toggletip.getBoundingClientRect().left
