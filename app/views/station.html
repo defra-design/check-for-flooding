@@ -155,9 +155,8 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0" data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases">
         Latest at {{ model.time }}
-        <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
       </h2>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
         <div class="defra-flood-statistics__item">
@@ -165,7 +164,9 @@
             Height
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="It is normal for some stations to be 0m or below as height is measured from a fixed point.">
             {% if model.station.latestHeight <= 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
+            </span>
           </dd>
         </div>
         {% if model.station.latestTrend %}
@@ -174,7 +175,9 @@
             Trend
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="The latest two readings are the same. Readings are taken every 15 minutes.">
             {{ model.station.latestTrend | capitalize }}
+            </span>
           </dd>
         </div>
         {% endif %}
@@ -185,7 +188,9 @@
             State
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="The latest level is below the normal range">
             {{ model.station.latestState | capitalize }}
+            </span>
           </dd>
         </div>
         {% endif %}

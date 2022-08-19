@@ -27,7 +27,7 @@ if (document.getElementById('map')) {
 }
 
 // Add toggletips
-if (document.querySelectorAll('.defra-toggletip')) {
+if (document.querySelectorAll('[data-toggletip]')) {
   window.flood.createToggletips()
 }
 

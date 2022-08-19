@@ -47,8 +47,9 @@
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
       <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+        <span data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases">
         Totals up to {{ model.time }}
-        <span class="defra-toggletip" data-label="More information" data-toggletip-content="We get readings more often as the risk of flooding increases"></span>
+        </span>
       </h2>
       <dl class="defra-flood-statistics__list" aria-label="Recent totals">
         <div class="defra-flood-statistics__item"> 
@@ -56,8 +57,9 @@
             1 hour
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="Total for the hour upto {{ model.time }}">
             {{ model.station.rainfall1hr }}mm
-            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
+            </span>
           </dd>
         </div>
         <div class="defra-flood-statistics__item"> 
@@ -65,8 +67,9 @@
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="Total for the 6 hours upto {{ model.time }}">
             {{ model.station.rainfall6hr }}mm
-            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
+            </span>
           </dd>
         </div>
         <div class="defra-flood-statistics__item"> 
@@ -74,8 +77,9 @@
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
+            <span data-toggletip data-toggletip-content="Total for the 24 hours upto {{ model.time }}">
             {{ model.station.rainfall24hr }}mm
-            <!--<span class="defra-flood-statistics__value-detail">upto {{ model.time }}</span>-->
+            </span>
           </dd>
         </div>
       </dl>
