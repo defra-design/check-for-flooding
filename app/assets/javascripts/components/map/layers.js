@@ -43,7 +43,7 @@ window.flood.maps.layers = {
       // }),
       source: new XYZ({
         url: `https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=${osApiKey}`,
-        attributions: `Contains OS data &copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
+        attributions: `Contains OS data<br/>&copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
       }),
       visible: false,
       zIndex: 0
