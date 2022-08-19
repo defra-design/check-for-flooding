@@ -9,6 +9,8 @@
 	&:focus {
 		outline: 3px solid transparent;
 		background-color: $govuk-focus-colour;
+		box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour('black');
+		text-decoration: none;
 	}
 	&:hover {
 		text-decoration-thickness: 3px;
