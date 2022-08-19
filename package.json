@@ -84,7 +84,7 @@
     "node-sass": "^6.0.1",
     "notifications-node-client": "^5.1.0",
     "nunjucks": "^3.2.1",
-    "ol": "^6.14.1",
+    "ol": "^7.0.0",
     "pg": "^8.6.0",
     "pg-promise": "^10.11.1",
     "portscanner": "^2.1.1",
