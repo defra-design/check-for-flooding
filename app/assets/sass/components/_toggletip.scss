@@ -1,58 +1,60 @@
 .defra-toggletip {
   display: inline-block;
   position: relative;
-	text-decoration: underline;
-	text-decoration-style: dashed;
-	text-decoration-thickness: 1px;
-	text-underline-offset: 0.1em;
 	cursor: help;
-	&:focus {
+	&--open {
+		z-index: 99;
+	}
+	&--no-button {
+		text-decoration: underline;
+		text-decoration-style: dashed;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.1em;
+	}
+	&--no-button:focus {
 		outline: 3px solid transparent;
 		background-color: $govuk-focus-colour;
 		box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour('black');
 		text-decoration: none;
 	}
-	&:hover {
+	&--no-button:hover {
 		text-decoration-thickness: 3px;
 		text-decoration-style: solid;
 	}
-	&--open {
-		z-index: 99;
+	.defra-toggletip__button {
+		position: absolute;
+		width: 26px;
+		height: 26px;
+		background-color: white;
+		outline: 3px solid transparent;
+		border: 0px;
+		padding: 0px;
+		text-align: center;
+		color: $govuk-text-colour;
+		cursor: help;
+		span {
+			pointer-events: none;
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			width: 14px;
+			height: 14px;
+			line-height: 14px;
+			font-weight: 900;
+			border-radius: 100%;
+			border: 1px solid govuk-colour('black');
+			font-size: 12px;
+		}
+		&:hover, &:focus {
+			color: govuk-colour('black');
+		}
+		&:hover span {
+			box-shadow: 0 0 0 5px govuk-colour('mid-grey');
+		}
+		&:focus span {
+			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
+		}
 	}
-	// &__button {
-	// 	position: absolute;
-	// 	width: 30px;
-	// 	height: 30px;
-	// 	background-color: white;
-	// 	outline: 3px solid transparent;
-	// 	border: 0px;
-	// 	padding: 0px;
-	// 	text-align: center;
-	// 	color: $govuk-text-colour;
-	// 	cursor: pointer;
-	// 	span {
-	// 		pointer-events: none;
-	// 		position: absolute;
-	// 		top: 5px;
-	// 		left: 5px;
-	// 		width: 18px;
-	// 		height: 18px;
-	// 		line-height: 18px;
-	// 		font-weight: 700;
-	// 		border-radius: 100%;
-	// 		border: 1.5px solid govuk-colour('black');
-	// 		font-size: 14px;
-	// 	}
-	// 	&:hover, &:focus {
-	// 		color: govuk-colour('black');
-	// 	}
-	// 	&:hover span {
-	// 		box-shadow: 0 0 0 5px govuk-colour('mid-grey');
-	// 	}
-	// 	&:focus span {
-	// 		box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
-	// 	}
-	// }
 	&__info {
 		@include govuk-font($size: 16);
 		position:absolute;
