@@ -30,7 +30,7 @@ if (document.getElementById('map')) {
 if (document.querySelectorAll('[data-toggletip]')) {
   const slug = window.location.pathname.split('/').pop()
   window.flood.createToggletips({
-    type: slug === '5171' ? 'i' : 'default'
+    type: slug === '5171' ? 'default' : 'i'
   })
 }
 

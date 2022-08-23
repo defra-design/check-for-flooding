@@ -1,11 +1,13 @@
 .defra-toggletip {
   display: inline-block;
   position: relative;
-	cursor: help;
+	padding-right: 26px;
 	&--open {
 		z-index: 99;
 	}
 	&--no-button {
+		padding-right: 0px;
+		cursor: help;
 		text-decoration: underline;
 		text-decoration-style: dashed;
 		text-decoration-thickness: 1px;
@@ -23,6 +25,11 @@
 	}
 	.defra-toggletip__button {
 		position: absolute;
+		top: -3px;
+		@include mq ($from: tablet) {
+			top: 0px;
+		}
+		right: 0px;
 		width: 26px;
 		height: 26px;
 		background-color: white;
@@ -39,11 +46,12 @@
 			left: 5px;
 			width: 14px;
 			height: 14px;
-			line-height: 14px;
-			font-weight: 900;
 			border-radius: 100%;
-			border: 1px solid govuk-colour('black');
-			font-size: 12px;
+			border: 1px solid $govuk-text-colour;
+			font-size: 14px;
+			font-weight: 700;
+			font-family: 'Courier New', Courier, monospace;
+			line-height: 1em;
 		}
 		&:hover, &:focus {
 			color: govuk-colour('black');

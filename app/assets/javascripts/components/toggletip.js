@@ -11,8 +11,6 @@ const toggletips = (options) => {
 
   // Add tooltip
   const openToggletip = (toggletip) => {
-    // Update reference
-    currentToggletip = toggletip
     // Outer margin
     const viewportMargin = 15
     // Determin position of overlay
@@ -20,16 +18,18 @@ const toggletips = (options) => {
     const text = info.querySelector('.defra-toggletip__text')
     const arrow = info.querySelector('.defra-toggletip__arrow')
     text.innerHTML = ''
-    // Timeout recommend to ensure aria-live region is re-read
+    // Timeout recommended to ensure aria-live region is re-read
     window.setTimeout(() => {
+      // Update reference
       closeToggletips()
+      currentToggletip = toggletip
       text.innerHTML = toggletip.getAttribute('data-toggletip-content')
       toggletip.classList.add('defra-toggletip--open')
       const tooltipWidth = toggletip.getBoundingClientRect().width
       const target = toggletip.querySelector('button') || toggletip
-      const targetOffsetLeft = toggletip.querySelector('button') ? tooltipWidth : 0
       const targetLeft = target.getBoundingClientRect().left
       const targetWidth = target.getBoundingClientRect().width
+      const targetOffsetLeft = toggletip.querySelector('button') ? tooltipWidth - targetWidth : 0
       const viewportWidth = window.innerWidth
       let infoWidth = info.getBoundingClientRect().width
       // Limit info width when zoomed
@@ -119,17 +119,18 @@ const toggletips = (options) => {
   })
 
   // Add on mouse enter
-  document.addEventListener('mouseover', (e) => {
-    const toggletip = e.target.closest('.defra-toggletip')
-    if (toggletip) {
-      closeToggletips()
+  document.addEventListener('mouseenter', (e) => {
+    const isToggletip = !!e.target.closest('.defra-toggletip--no-button') ||
+      !!e.target.classList.contains('defra-toggletip__button')
+    if (isToggletip && !currentToggletip) {
+      const toggletip = e.target.closest('.defra-toggletip')
       openToggletip(toggletip)
     }
-  })
+  }, true)
 
   // Remove on mouse leave
   document.addEventListener('mouseleave', (e) => {
-    const toggletip = e.target.closest('.defra-toggletip')
+    const toggletip = e.target.classList.contains('defra-toggletip')
     if (toggletip) {
       closeToggletips()
     }
