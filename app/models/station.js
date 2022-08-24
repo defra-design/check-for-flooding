@@ -1,3 +1,5 @@
+const moment = require('moment-timezone')
+
 class Station {
   constructor (data) {
     this.id = data.station_id
@@ -32,6 +34,7 @@ class Station {
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)
     this.isWales = data.is_wales
     this.measureId = data.measure_id
+    this.isRecent = data.latest_datetime ? moment().diff(moment(data.latest_datetime), 'minutes') < 60 : false
   }
 }
 

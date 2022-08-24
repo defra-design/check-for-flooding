@@ -28,10 +28,17 @@ if (document.getElementById('map')) {
 
 // Add toggletips
 if (document.querySelectorAll('[data-toggletip]')) {
+  const config = [
+    { id: '5171', type: 'default' },
+    { id: '5127', type: 'i' }
+  ]
   const slug = window.location.pathname.split('/').pop()
-  window.flood.createToggletips({
-    type: slug === '5171' ? 'default' : 'i'
-  })
+  const match = config.find(x => x.id === slug)
+  if (match) {
+    window.flood.createToggletips({
+      type: match.type
+    })
+  }
 }
 
 // Line chart

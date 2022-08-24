@@ -12,6 +12,7 @@
         box-sizing: border-box;
         padding-right: 10px;
         float:left;
+        min-width: 6em;
         @include mq ($from: desktop) {
             width: 25%;
         }

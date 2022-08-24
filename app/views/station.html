@@ -155,7 +155,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0" data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases">
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0" {% if not model.isRecent %}data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases"{% endif %}>
         Latest at {{ model.time }}
       </h2>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">

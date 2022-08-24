@@ -1,37 +1,28 @@
 .defra-toggletip {
   display: inline-block;
   position: relative;
-	padding-right: 26px;
+	&:not(.defra-toggletip-target) {
+		padding-right: 30px;
+	}
 	&--open {
 		z-index: 99;
 	}
-	&--no-button {
-		padding-right: 0px;
-		cursor: help;
-		text-decoration: underline;
-		text-decoration-style: dashed;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 0.1em;
-	}
-	&--no-button:focus {
-		outline: 3px solid transparent;
-		background-color: $govuk-focus-colour;
-		box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour('black');
-		text-decoration: none;
-	}
-	&--no-button:hover {
-		text-decoration-thickness: 3px;
-		text-decoration-style: solid;
-	}
-	.defra-toggletip__button {
+	&__container {
 		position: absolute;
-		top: -3px;
+		top: -6px;
 		@include mq ($from: tablet) {
-			top: 0px;
+			top: -3px;
 		}
 		right: 0px;
-		width: 26px;
-		height: 26px;
+		width: 30px;
+		height: 30px;
+	}
+	&__button {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 30px;
+		height: 30px;
 		background-color: white;
 		outline: 3px solid transparent;
 		border: 0px;
@@ -39,32 +30,36 @@
 		text-align: center;
 		color: $govuk-text-colour;
 		cursor: help;
-		span {
+		&-icon {
 			pointer-events: none;
 			position: absolute;
-			top: 5px;
-			left: 5px;
-			width: 14px;
-			height: 14px;
+			overflow: visible;
+			top: 7px;
+			left: 7px;
+			width: 16px;
+			height: 16px;
 			border-radius: 100%;
-			border: 1px solid $govuk-text-colour;
-			font-size: 14px;
-			font-weight: 700;
-			font-family: 'Courier New', Courier, monospace;
-			line-height: 1em;
+		}
+		&-text {
+			@include defra-visually-hidden();
+		}
+		svg {
+			position: relative;
+			margin: -1px 0px 0px -1px;
 		}
 		&:hover, &:focus {
 			color: govuk-colour('black');
 		}
 		&:hover span {
-			box-shadow: 0 0 0 5px govuk-colour('mid-grey');
+			box-shadow: 0 0 0 7px govuk-colour('mid-grey');
 		}
 		&:focus span {
-			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
+			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 7px $govuk-focus-colour;
 		}
 	}
 	&__info {
 		@include govuk-font($size: 16);
+		cursor: auto;
 		position:absolute;
 		width:0px;
 		overflow: hidden;
@@ -101,6 +96,7 @@
 		bottom: auto;
 		top: 100%;
 		padding-top: 10px;
+		padding-bottom: 0px;
 	}
 	&--bottom &__arrow {
 		bottom: 100%;
@@ -111,5 +107,19 @@
 		visibility: visible;
 		width:200px;
 		overflow: visible;
+	}
+	&.defra-toggletip-target {
+		cursor: help;
+		border-bottom: 1px dashed govuk-colour('black');
+		padding-bottom: 1px;
+		outline: 3px solid transparent;
+		&:focus {
+			border-bottom: 1px solid govuk-colour('black');
+			box-shadow: 0 2px 0 govuk-colour('black'), 0 6px 0 govuk-colour('yellow');
+		}
+		&:hover {
+			border-bottom: 1px solid govuk-colour('black');
+			box-shadow: 0 2px 0 govuk-colour('black');
+		}
 	}
 }

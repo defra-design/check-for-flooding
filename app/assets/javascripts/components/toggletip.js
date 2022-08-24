@@ -9,6 +9,9 @@ const toggletips = (options) => {
   const defaults = { type: 'default' }
   options = Object.assign({}, defaults, options)
 
+  // Referecne to timeout
+  let timeout
+
   // Add tooltip
   const openToggletip = (toggletip) => {
     // Outer margin
@@ -19,33 +22,31 @@ const toggletips = (options) => {
     const arrow = info.querySelector('.defra-toggletip__arrow')
     text.innerHTML = ''
     // Timeout recommended to ensure aria-live region is re-read
-    window.setTimeout(() => {
+    timeout = window.setTimeout(() => {
       // Update reference
       closeToggletips()
       currentToggletip = toggletip
       text.innerHTML = toggletip.getAttribute('data-toggletip-content')
       toggletip.classList.add('defra-toggletip--open')
-      const tooltipWidth = toggletip.getBoundingClientRect().width
-      const target = toggletip.querySelector('button') || toggletip
-      const targetLeft = target.getBoundingClientRect().left
+      const target = toggletip.querySelector('.defra-toggletip-target') || toggletip
       const targetWidth = target.getBoundingClientRect().width
-      const targetOffsetLeft = toggletip.querySelector('button') ? tooltipWidth - targetWidth : 0
+      const targetLeft = target.getBoundingClientRect().left
       const viewportWidth = window.innerWidth
       let infoWidth = info.getBoundingClientRect().width
       // Limit info width when zoomed
       infoWidth = infoWidth > (viewportWidth - (viewportMargin * 2)) ? viewportWidth - (viewportMargin * 2) : infoWidth
-      const infoOffsetCentre = (infoWidth - targetWidth) / 2
       // Centre tip
-      let infoOffsetX = targetOffsetLeft - infoOffsetCentre
+      let infoOffsetX = (targetWidth - infoWidth) / 2
       // Correct offset if near sides
-      if (((targetLeft - targetOffsetLeft) + infoOffsetX) < viewportMargin) {
+      if ((targetLeft + infoOffsetX) < viewportMargin) {
         // Left side
-        infoOffsetX = viewportMargin - (targetLeft - targetOffsetLeft)
-      } else if ((targetLeft - infoOffsetX + infoOffsetCentre) > (viewportWidth - viewportMargin)) {
+        infoOffsetX = viewportMargin - targetLeft
+      } else if ((targetLeft + infoOffsetX + infoWidth) > (viewportWidth - viewportMargin)) {
         // Right side
-        infoOffsetX = targetOffsetLeft - (targetLeft - (viewportWidth - viewportMargin - infoWidth))
+        infoOffsetX = (viewportWidth - viewportMargin - infoWidth) - targetLeft
+        console.log(infoOffsetX)
       }
-      arrow.style.left = `${Math.round(targetOffsetLeft + ((targetWidth / 2) - infoOffsetX))}px`
+      arrow.style.left = `${(0 - infoOffsetX) + (targetWidth / 2)}px`
       info.style.marginLeft = `${infoOffsetX}px`
       // Overide width so it doesn't truncate at zoom levels
       info.style.width = `${infoWidth}px`
@@ -59,6 +60,7 @@ const toggletips = (options) => {
   // Remove tooltip
   const closeToggletips = () => {
     // Update reference
+    clearTimeout(timeout)
     currentToggletip = null
     const toggletips = document.querySelectorAll('.defra-toggletip--open')
     if (toggletips.length) {
@@ -83,30 +85,46 @@ const toggletips = (options) => {
   // Create toggletips
   const toggletips = document.querySelectorAll('[data-toggletip]')
   forEach(toggletips, (toggletip) => {
-    toggletip.classList.add('defra-toggletip')
-    if (['i', '?'].includes(options.type)) {
-      const button = document.createElement('button')
-      button.className = 'defra-toggletip__button'
-      button.setAttribute('aria-label', 'More information')
-      button.innerHTML = `<span>${options.type}</span>`
-      toggletip.appendChild(button)
-    } else {
-      toggletip.classList.add('defra-toggletip--no-button')
-      toggletip.setAttribute('tabindex', 0)
-    }
     const info = document.createElement('span')
     info.className = 'defra-toggletip__info'
     info.setAttribute('role', 'status')
     info.innerHTML = '<span class="defra-toggletip__text"></span><span class="defra-toggletip__arrow"></span>'
-    toggletip.appendChild(info)
+    toggletip.classList.add('defra-toggletip')
+    if (options.type === 'i') {
+      const container = document.createElement('span')
+      container.className = 'defra-toggletip__container'
+      container.setAttribute('data-toggletip-container', '')
+      const button = document.createElement('button')
+      button.className = 'defra-toggletip__button defra-toggletip-target'
+      button.setAttribute('aria-label', 'More information')
+      button.innerHTML = `
+      <span class="defra-toggletip__button-icon">
+      <svg width="18" height="18" viewBox="0 0 18 18" style="fill-rule:evenodd;clip-rule:evenodd">
+      <circle cx="9" cy="9" r="7.5" style="fill:none;stroke:#000;stroke-width:1px;"/>
+      <text x="4.687px" y="12.906px" style="font-family:'Courier-Bold', 'Courier';font-size:14px;">i</text>
+      </svg>
+      </span>
+      <span class="defra-toggletip__button-text">i</span>
+      `
+      container.appendChild(button)
+      container.appendChild(info)
+      toggletip.appendChild(container)
+    } else {
+      toggletip.classList.add('defra-toggletip-target')
+      toggletip.setAttribute('data-toggletip-container', '')
+      toggletip.setAttribute('tabindex', 0)
+      toggletip.appendChild(info)
+    }
   })
 
   // Add on click
   document.addEventListener('click', (e) => {
-    const toggletip = e.target.closest('.defra-toggletip')
-    if (toggletip) {
+    const isTarget = e.target.classList.contains('defra-toggletip-target')
+    const isInfo = !!e.target.closest('.defra-toggletip__info')
+    if (isTarget) {
+      const toggletip = e.target.closest('.defra-toggletip')
       openToggletip(toggletip)
-    } else {
+    } else if (!isInfo) {
       closeToggletips()
     }
   })
@@ -120,9 +138,8 @@ const toggletips = (options) => {
 
   // Add on mouse enter
   document.addEventListener('mouseenter', (e) => {
-    const isToggletip = !!e.target.closest('.defra-toggletip--no-button') ||
-      !!e.target.classList.contains('defra-toggletip__button')
-    if (isToggletip && !currentToggletip) {
+    const isTarget = !!e.target.closest('.defra-toggletip-target')
+    if (isTarget && !currentToggletip) {
       const toggletip = e.target.closest('.defra-toggletip')
       openToggletip(toggletip)
     }
@@ -130,8 +147,8 @@ const toggletips = (options) => {
 
   // Remove on mouse leave
   document.addEventListener('mouseleave', (e) => {
-    const toggletip = e.target.classList.contains('defra-toggletip')
-    if (toggletip) {
+    const isTarget = e.target.hasAttribute('data-toggletip-container')
+    if (isTarget) {
       closeToggletips()
     }
   }, true)
