@@ -2,27 +2,27 @@
   display: inline-block;
   position: relative;
 	&:not(.defra-toggletip-target) {
-		padding-right: 30px;
+		padding-right: 26px;
 	}
 	&--open {
 		z-index: 99;
 	}
 	&__container {
 		position: absolute;
-		top: -5px;
+		top: -3px;
 		@include mq ($from: tablet) {
-			top: -3px;
+			top: -1px;
 		}
 		right: 0px;
-		width: 30px;
-		height: 30px;
+		width: 26px;
+		height: 26px;
 	}
 	&__button {
 		position: absolute;
 		top: 0px;
 		left: 0px;
-		width: 30px;
-		height: 30px;
+		width: 26px;
+		height: 26px;
 		background-color: white;
 		outline: 3px solid transparent;
 		border: 0px;
@@ -34,8 +34,8 @@
 			pointer-events: none;
 			position: absolute;
 			overflow: visible;
-			top: 7px;
-			left: 7px;
+			top: 5px;
+			left: 5px;
 			width: 16px;
 			height: 16px;
 			border-radius: 100%;
@@ -51,10 +51,10 @@
 			color: govuk-colour('black');
 		}
 		&:hover span {
-			box-shadow: 0 0 0 7px govuk-colour('mid-grey');
+			box-shadow: 0 0 0 5px govuk-colour('mid-grey');
 		}
 		&:focus span {
-			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 7px $govuk-focus-colour;
+			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
 		}
 	}
 	&__info {
