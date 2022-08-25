@@ -9,7 +9,7 @@
 	}
 	&__container {
 		position: absolute;
-		top: -6px;
+		top: -5px;
 		@include mq ($from: tablet) {
 			top: -3px;
 		}
@@ -113,9 +113,13 @@
 		border-bottom: 1px dashed govuk-colour('black');
 		padding-bottom: 1px;
 		outline: 3px solid transparent;
-		&:focus {
+		&:focus, &:hover:focus-visible {
 			border-bottom: 1px solid govuk-colour('black');
 			box-shadow: 0 2px 0 govuk-colour('black'), 0 6px 0 govuk-colour('yellow');
+		}
+		&:focus:not(:focus-visible):not(:hover) {
+			border-bottom: 1px dashed govuk-colour('black');
+			box-shadow: none;
 		}
 		&:hover {
 			border-bottom: 1px solid govuk-colour('black');
