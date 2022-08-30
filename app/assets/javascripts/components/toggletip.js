@@ -54,7 +54,7 @@ const toggletips = (options) => {
       if (info.getBoundingClientRect().top < viewportMargin) {
         toggletip.classList.add('defra-toggletip--bottom')
       }
-    }, 100)
+    }, 50)
   }
 
   // Remove tooltip
