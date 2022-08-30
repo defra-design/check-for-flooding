@@ -158,7 +158,7 @@ function LiveMap (mapId, options) {
     }
   }
 
-  // WebGL: Limited dynamic styling could be done server side
+  // WebGL: Limited dynamic styling properties could be set server side
   const setFeatueState = (layer) => {
     layer.getSource().forEachFeature((feature) => {
       const props = feature.getProperties()
@@ -232,7 +232,6 @@ function LiveMap (mapId, options) {
         (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
       )
       // WebGl: Feature properties must be strings or numbers
-      // feature.set('isVisible', isVisible.toString())
       feature.set('isVisible', isVisible)
     })
   }
