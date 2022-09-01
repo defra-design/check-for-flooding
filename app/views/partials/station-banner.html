@@ -1,11 +1,24 @@
-{% if model.banner %}
-<div class="defra-flood-status govuk-!-margin-bottom-3">
-  <div class="defra-flood-status-item defra-flood-status-item--{{ model.banner.severity }}">
-    <span class="defra-flood-status-item__icon">
-      {{ model.banner.icon | safe }}
-    </span>
-    <div class="defra-flood-status-item__text">
-        <strong><a class="govuk-link" href="{{ model.banner.link }}">{{ model.banner.text }}</a></strong>
+{% if model.banner or model.station.rloiId == '8208' %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-flood-status govuk-!-margin-bottom-3">
+      {% if model.banner %}
+      <div class="defra-flood-status-item defra-flood-status-item--{{ model.banner.severity }}">
+        <span class="defra-flood-status-item__icon">
+          {{ model.banner.icon | safe }}
+        </span>
+        <div class="defra-flood-status-item__text">
+            <strong><a class="govuk-link" href="{{ model.banner.link }}">{{ model.banner.text }}</a></strong>
+        </div>
+      </div>
+      {% endif %}
+      {% if model.station.rloiId == '8208' %}
+      <div class="defra-flood-status-item defra-flood-status-item--important">
+        <div class="defra-flood-status-item__text">
+          <p class="govuk-!-margin-bottom-0">This station has a level forecast. It is just one indicator of how the level might change.</p>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>

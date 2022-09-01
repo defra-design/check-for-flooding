@@ -1,6 +1,7 @@
 'use strict'
 import 'elm-pep'
 import '../core'
+import '../simplify'
 import '../components/line-chart'
 import '../components/toggle-list-display'
 import '../build/templates'
@@ -32,7 +33,8 @@ if (document.querySelectorAll('[data-toggletip]')) {
     { id: '5171', type: 'default' },
     { id: '5127', type: 'i' },
     { id: '8343', type: 'default' },
-    { id: '8191', type: 'i' }
+    { id: '8191', type: 'i' },
+    { id: '8208', type: 'i' }
   ]
   const slug = window.location.pathname.split('/').pop()
   const match = config.find(x => x.id === slug)

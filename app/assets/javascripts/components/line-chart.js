@@ -8,7 +8,7 @@ import { timeFormat } from 'd3-time-format'
 import { timeDay } from 'd3-time'
 import { select, selectAll, pointer } from 'd3-selection'
 import { bisector, extent } from 'd3-array'
-const { xhr } = window.flood.utils
+const { xhr, simplify } = window.flood.utils
 
 function LineChart (containerId, stationId, data, options = {}) {
   const renderChart = () => {
@@ -84,11 +84,11 @@ function LineChart (containerId, stationId, data, options = {}) {
     svg.select('.locator-line').attr('y1', 0).attr('y2', height)
 
     // Draw lines and areas
-    if (data.observed.length) {
+    if (dataCache.observed.length) {
       observedArea.datum(observedPoints).attr('d', area)
       observedLine.datum(observedPoints).attr('d', line)
     }
-    if (data.observed.length) {
+    if (dataCache.observed.length) {
       forecastArea.datum(forecastPoints).attr('d', area)
       forecastLine.datum(forecastPoints).attr('d', line)
     }
@@ -127,6 +127,22 @@ function LineChart (containerId, stationId, data, options = {}) {
       thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
     })
 
+    // Add significant points
+    significantContainer.selectAll('*').remove()
+    const significantObserved = observedPoints.filter(x => x.isSignificant).map(p => ({ ...p, type: 'observed' }))
+    const significantForecast = forecastPoints.filter(x => x.isSignificant).map(p => ({ ...p, type: 'forecast' }))
+    significantPoints = significantObserved.concat(significantForecast)
+    const significantCells = significantContainer.selectAll('.point').data(significantPoints).enter()
+      .append('g')
+      .attr('role', 'cell')
+      .attr('class', d => { return 'point point--' + d.type })
+      .attr('tabindex', (d, i) => i === significantPoints.length - 1 ? 0 : -1)
+      .attr('data-index', (d, i) => { return i })
+    significantCells.append('circle').attr('aria-hidden', true)
+      .attr('r', '3')
+      .attr('cx', d => xScale(new Date(d.dateTime)))
+      .attr('cy', d => yScale(d.value))
+
     // Hide x axis labels that overlap with time now label
     const timeNowX = timeLabel.node().getBoundingClientRect().left
     const timeNowWidth = timeLabel.node().getBoundingClientRect().width
@@ -138,6 +154,43 @@ function LineChart (containerId, stationId, data, options = {}) {
       const isOverlap = (tickX + tickWidth + 5) > timeNowX && tickX <= (timeNowX + timeNowWidth + 5)
       select(tick).classed('tick--hidden', isOverlap)
     })
+  }
+
+  // const getNextDataItemIndex = (e) => {
+  //   let index = e.target.getAttribute('data-index')
+  //   if (e.key === 'Home') {
+  //     index = positiveDataItems[positiveDataItems.length - 1]
+  //   } else if (e.key === 'End') {
+  //     index = positiveDataItems[0]
+  //   } else if (e.key === 'ArrowRight') {
+  //     for (let i = index; i > 0; i--) {
+  //       if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
+  //         index = i - 1
+  //         break
+  //       }
+  //     }
+  //   } else {
+  //     for (let i = index; i < dataPage.length - 1; i++) {
+  //       if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
+  //         index = i + 1
+  //         break
+  //       }
+  //     }
+  //   }
+  //   return index
+  // }
+
+  const swapCell = (e) => {
+    console.log(significantPoints)
+    // const nextIndex = getNextDataItemIndex(e)
+    // const cell = e.target
+    // const nextCell = cell.parentNode.children[nextIndex]
+    // cell.setAttribute('focusable', false)
+    // nextCell.setAttribute('focusable', true)
+    // cell.tabIndex = -1
+    // nextCell.tabIndex = 0
+    // nextCell.focus()
+    // dataItem = dataPage[nextIndex]
   }
 
   const getDataPointByX = (x) => {
@@ -180,7 +233,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     tooltip.classed('tooltip--visible', true)
     // Update locator
     const locatorX = Math.floor(xScale(new Date(dataPoint.dateTime)))
-    const locatorY = Math.floor(yScale(data.type === 'river' && dataPoint.value < 0 ? 0 : dataPoint.value)) // *DBL
+    const locatorY = Math.floor(yScale(dataCache.type === 'river' && dataPoint.value < 0 ? 0 : dataPoint.value)) // *DBL
     const latestX = Math.floor(xScale(new Date(dataPoint.dateTime)))
     locator.classed('locator--forecast', locatorX > latestX)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
@@ -192,7 +245,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Hide threshold label
     // thresholdsContainer.select('.threshold--selected .threshold-label').style('visibility', 'hidden')
     // Set tooltip text
-    const value = data.type === 'river' && (Math.round(dataPoint.value * 100) / 100) <= 0 ? '≤ 0' : dataPoint.value.toFixed(2) // *DBL below zero addition
+    const value = dataCache.type === 'river' && (Math.round(dataPoint.value * 100) / 100) <= 0 ? '≤ 0' : dataPoint.value.toFixed(2) // *DBL below zero addition
     tooltipValue.text(`${value}m`) // *DBL below zero addition
     tooltipDescription.text(`${timeFormat('%-I:%M%p')(new Date(dataPoint.dateTime)).toLowerCase()}, ${timeFormat('%e %b')(new Date(dataPoint.dateTime))}`)
     // Set locator properties
@@ -235,7 +288,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   const setScaleX = () => {
     // Set x scale extent
-    xExtent = extent(data.observed.concat(data.forecast), (d, i) => { return new Date(d.dateTime) })
+    xExtent = extent(dataCache.observed.concat(dataCache.forecast), (d, i) => { return new Date(d.dateTime) })
     // Increase x extent by 5% from now value
     let date = new Date()
     const percentile = Math.round(Math.abs(xExtent[0] - date) * 0.05)
@@ -262,7 +315,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     const yRangeUpperBuffered = (maxData + (range / 3))
     const yRangeLowerBuffered = (minData - (range / 3))
     yExtent[1] = yExtentDataMax <= yRangeUpperBuffered ? yRangeUpperBuffered : yExtentDataMax
-    yExtent[0] = data.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
+    yExtent[0] = dataCache.type === 'river' ? (yRangeLowerBuffered < 0 ? 0 : yRangeLowerBuffered) : yRangeLowerBuffered
     // Set min y axis to 1 metre
     yExtent[1] = yExtent[1] < 1 ? 1 : yExtent[1]
     // Update y scale
@@ -296,15 +349,19 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Using raw data for now
 
     // Setup array to combine observed and forecast points and identify startPoint for locator
-    if (data.observed.length) {
+    if (dataCache.observed.length) {
+      // Add isSignificant property to points
+      dataCache.observed = simplify(dataCache.observed)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
-      const filterNegativeValues = ['groundwater', 'tide'].includes(data.type) ? errorFilter : errorAndNegativeFilter
-      lines = data.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
+      const filterNegativeValues = ['groundwater', 'tide'].includes(dataCache.type) ? errorFilter : errorAndNegativeFilter
+      lines = dataCache.observed.filter(filterNegativeValues).map(l => ({ ...l, type: 'observed' })).reverse()
       dataPoint = lines[lines.length - 1] || null
     }
-    if (data.forecast.length) {
-      lines = lines.concat(data.forecast.map(l => ({ ...l, type: 'forecast' })))
+    if (dataCache.forecast.length) {
+      // Add isSignificant property to points
+      dataCache.forecast = simplify(dataCache.forecast)
+      lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
 
     // Get reference to oberved and forecast sections
@@ -315,12 +372,12 @@ function LineChart (containerId, stationId, data, options = {}) {
     area = d3Area().curve(curveMonotoneX)
       .x(d => { return xScale(new Date(d.dateTime)) })
       .y0(d => { return height })
-      .y1(d => { return yScale(data.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
+      .y1(d => { return yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
 
     // Create line generator
     line = d3Line().curve(curveMonotoneX)
       .x((d) => { return xScale(new Date(d.dateTime)) })
-      .y((d) => { return yScale(data.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
+      .y((d) => { return yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value) }) // *DBL below zero addition
 
     // Note: xExtent uses observed and forecast data rather than lines for the scenario where river levels
     // start or end as -ve since we still need to determine the datetime span of the graph even if the
@@ -380,33 +437,36 @@ function LineChart (containerId, stationId, data, options = {}) {
   const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
 
   // Add grid containers
-  svg.append('g').attr('class', 'y grid')
-  svg.append('g').attr('class', 'x grid')
-  svg.append('g').attr('class', 'x axis')
-  svg.append('g').attr('class', 'y axis').style('text-anchor', 'start')
+  svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
+  svg.append('g').attr('class', 'x grid').attr('aria-hidden', true)
+  svg.append('g').attr('class', 'x axis').attr('aria-hidden', true)
+  svg.append('g').attr('class', 'y axis').attr('aria-hidden', true).style('text-anchor', 'start')
 
   // Add containers for observed and forecast lines
   const inner = svg.append('g') // .attr('clip-path', 'url(#clip-text)')
-  inner.append('g').attr('class', 'observed observed-focus')
-  inner.append('g').attr('class', 'forecast')
+  inner.append('g').attr('class', 'observed observed-focus').attr('aria-hidden', true)
+  inner.append('g').attr('class', 'forecast').attr('aria-hidden', true)
   const observedArea = inner.select('.observed').append('path').attr('class', 'observed-area')
   const observedLine = inner.select('.observed').append('path').attr('class', 'observed-line')
   const forecastArea = inner.select('.forecast').append('path').attr('class', 'forecast-area')
   const forecastLine = inner.select('.forecast').append('path').attr('class', 'forecast-line')
 
   // Add timeline
-  const timeLine = svg.append('line').attr('class', 'time-line')
-  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26)
+  const timeLine = svg.append('line').attr('class', 'time-line').attr('aria-hidden', true)
+  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26).attr('aria-hidden', true)
   timeLabel.append('tspan').attr('class', 'time-now-text__time')
   timeLabel.append('tspan').attr('text-anchor', 'middle').attr('class', 'time-now-text__date').attr('x', 0).attr('dy', '15')
 
   // Add locator
-  const locator = inner.append('g').attr('class', 'locator')
+  const locator = inner.append('g').attr('class', 'locator').attr('aria-hidden', true)
   locator.append('line').attr('class', 'locator-line')
   locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
   // Add thresholds group
   const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
+
+  // Add container for significant points
+  const significantContainer = inner.append('g').attr('role', 'grid').attr('class', 'significant').append('g').attr('role', 'row')
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
@@ -431,7 +491,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   let isMobile, interfaceType
   let dataStart, dataPage, dataPoint
   let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
-  let lines, area, line, observedPoints, forecastPoints
+  let lines, area, line, observedPoints, forecastPoints, significantPoints
   let thresholds = []
 
   // Create a mobile width media query
@@ -494,6 +554,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   document.addEventListener('click', (e) => {
+    significantContainer.node().parentNode.classList.remove('significant--visible')
     if (!e.target.hasAttribute('data-line-chart-threshold')) return
     const button = e.target
     addThreshold({
@@ -567,6 +628,15 @@ function LineChart (containerId, stationId, data, options = {}) {
       hideTooltip()
       showThreshold(select(thresholdContainer))
     }
+  })
+
+  document.addEventListener('keydown', (e) => {
+    significantContainer.node().parentNode.classList.add('significant--visible')
+    interfaceType = 'keyboard'
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
+    e.preventDefault()
+    swapCell(e)
   })
 }
 

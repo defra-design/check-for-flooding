@@ -221,4 +221,21 @@
             stroke: $govuk-text-colour;
         }
     }
+    // Significant points
+    .significant .point circle {
+        opacity: 0;
+    }
+    .significant--visible .point circle {
+        opacity: 1;
+    }
+    .point circle {
+        fill: govuk-colour('blue');
+    }
+    .point[keyboard-focus] circle {
+        fill: govuk-colour('black');
+        stroke: govuk-colour('yellow');
+        paint-order: stroke;
+        stroke-width: 10;
+    }
+
 }
