@@ -45,25 +45,7 @@
 
 {% block content %}
 
-{% if model.banner %}
-<div class="defra-flood-status govuk-!-margin-bottom-3">
-  <div class="defra-flood-status-item defra-flood-status-item--{{ model.severityLevel }}">
-    <span class="defra-flood-status-item__icon"></span>
-    <div class="defra-flood-status-item__text">
-        {% if model.severeBanner and model.isSevereLinkRenedered %}
-        <strong><a class="govuk-link" href="{{ model.severeLink }}">{{ model.severeBanner }}</a></strong>
-        {% endif %}
-        {% if model.warningsBanner and model.isWarningLinkRendered %}
-        <strong><a class="govuk-link" href="{{ model.warningsLink }}">{{ model.warningsBanner }}</a></strong>
-        {% endif %}
-        {% if model.alertsBanner and model.isAlertLinkRendered %}
-        <strong><a class="govuk-link" href="{{ model.alertsLink }}">{{ model.alertsBanner }}</a></strong>
-        {% endif %}
-        {{ " in this area" if model.warningAnd or model.severeAnd }}
-    </div>
-  </div>
-</div>
-{% endif %}
+{% include "partials/station-banner.html" %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">

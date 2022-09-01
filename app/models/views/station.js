@@ -2,7 +2,7 @@ const bingApiKey = process.env.BING_API_KEY
 const utils = require('../../utils')
 
 class ViewModel {
-  constructor (station, telemetry, thresholds, place) {
+  constructor (station, banner, telemetry, thresholds, place) {
     this.title = (() => {
       if (station.group_type === 'rainfall') {
         return `Rainfall at ${station.name}`
@@ -15,12 +15,14 @@ class ViewModel {
       }
     })()
     this.station = station
+    this.banner = banner.severity ? banner : null
     this.telemetry = telemetry
     this.thresholds = thresholds
     this.time = utils.formatTimeDate(station.latestDatetime)
     this.timeShort = `${utils.formatTime(station.latestDatetime)} ${utils.formatDate(station.latestDatetime)}`
     this.bingApiKey = bingApiKey
     this.nearby = place.postcode
+
     // Toggletips
     if (station.type === 'river') {
       this.infoHeight = (() => {

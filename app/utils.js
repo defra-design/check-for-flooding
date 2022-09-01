@@ -72,6 +72,11 @@ const bufferBbox = (bbox, m) => {
   return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
 }
 
+const bufferPoint = (point, m) => {
+  const p = turf.point(point)
+  return turf.bbox(turf.buffer(p, m, { units: 'meters' }))
+}
+
 const getNameFromGazetteerEntry = (gazetteerEntry) => {
   const coreCities = [
     'Birmingham, West Midlands',
@@ -117,5 +122,6 @@ module.exports = {
   getSlug,
   groupBy,
   bufferBbox,
+  bufferPoint,
   getNameFromGazetteerEntry
 }

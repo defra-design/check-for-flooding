@@ -3,9 +3,12 @@ const router = express.Router()
 const stationServices = require('../services/station')
 const telemetryServices = require('../services/telemetry')
 const locationServices = require('../services/location')
+const warningServices = require('../services/warning')
 const Station = require('../models/station')
 const Place = require('../models/place')
 const Thresholds = require('../models/thresholds')
+const Warnings = require('../models/warnings')
+const Banner = require('../models/banner-station')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
 
@@ -17,7 +20,7 @@ router.get('/station/:id', async (req, res) => {
   const cookie = req.headers.cookie || null
   const rloiId = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStation(cookie, rloiId)
-  let telemetry, station, thresholds, place
+  let telemetry, station, banner, thresholds, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
       return res.status(404).render('404')
@@ -47,10 +50,12 @@ router.get('/station/:id', async (req, res) => {
       return res.status(404).render('404')
     }
     place = new Place(locationResponse.data.resourceSets[0].resources[0])
+    const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
+    banner = new Banner(new Warnings(warningResponse.data), place)
   } else {
     // Return 500 error
   }
-  const model = new ViewModel(station, telemetry, thresholds, place)
+  const model = new ViewModel(station, banner, telemetry, thresholds, place)
   return res.render('station', { model })
 })
 
