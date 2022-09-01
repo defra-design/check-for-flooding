@@ -8,12 +8,12 @@
         {% elif model.severity === 3 %}
         Flood alert
         {% elif model.severity === 4 %}
-            {% if model.ta_code.charAt(4).toLowerCase() === 'w' %}
+            {% if model.id.charAt(4).toLowerCase() === 'w' %}
             Flood warning removed
             {% else %}
             Flood alert removed
             {% endif %}
-        {% elif model.ta_code.charAt(4).toLowerCase() === 'w' %}
+        {% elif model.id.charAt(4).toLowerCase() === 'w' %}
         Flood warning (inactive)
         {% else %}
         Flood alert (inactive)
