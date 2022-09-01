@@ -15,11 +15,11 @@ module.exports = {
     `
     const queryBbox = `
       (SELECT warning.id, warning.name, warning.severity AS severity, warning.message_changed_date AT TIME ZONE '+00' AS updated FROM warning
-      LEFT JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning.id
+      LEFT JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
       WHERE ST_Intersects(ST_MakeEnvelope($1,$2,$3,$4,4326), flood_alert_areas.geom) AND warning.severity > 0)
       UNION ALL
       (SELECT warning.id, warning.name, warning.severity AS severity, warning.message_changed_date AT TIME ZONE '+00' AS updated FROM warning
-      LEFT JOIN flood_warning_areas ON flood_warning_areas.fws_tacode = warning.id
+      LEFT JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
       WHERE ST_Intersects(ST_MakeEnvelope($1,$2,$3,$4,4326), flood_warning_areas.geom) AND warning.severity > 0)
       ORDER BY severity;  
     `
