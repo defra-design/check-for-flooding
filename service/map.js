@@ -14,15 +14,15 @@ module.exports = {
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
-    FROM warning JOIN flood_warning_areas ON flood_warning_areas.fws_tacode = warning.id UNION
+    FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id) UNION
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
-    FROM warning JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning.id;
+    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id);
     `)
     const features = []
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id,
+        id: item.id.toUpperCase(),
         geometry: item.geometry,
         properties: {
           name: item.name,
@@ -102,10 +102,10 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id,
+        id: item.id.toUpperCase(),
         geometry: item.geometry,
         properties: {
-          fws_tacode: item.fws_tacode
+          fws_tacode: item.fws_tacode.toUpperCase()
         }
       })
     })

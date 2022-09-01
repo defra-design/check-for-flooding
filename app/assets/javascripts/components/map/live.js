@@ -232,7 +232,7 @@ function LiveMap (mapId, options) {
         (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
       )
       // WebGl: Feature properties must be strings or numbers
-      feature.set('isVisible', isVisible)
+      feature.set('isVisible', isVisible.toString())
     })
   }
 

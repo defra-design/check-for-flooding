@@ -216,7 +216,7 @@ window.flood.maps.styles = {
       size: 50,
       rotateWithView: false,
       offset: [0, 0],
-      textureCoord: ['match', ['get', 'severity_value'],
+      textureCoord: ['match', ['get', 'severity'],
         3, [0, 0, 0.5, 0.04761904761],
         2, [0, 0.04761904761, 0.5, 0.09523809523],
         1, [0, 0.09523809523, 0.5, 0.14285714285],
