@@ -17,10 +17,12 @@ class BannerStation {
       slug = alert.items.length === 1 ? alert.items[0].id : null
       severity = alert.severity
     }
-    this.severity = severity.hash
-    this.icon = severity.icon
-    this.text = `There ${count === 1 ? 'is a' : 'are'} ${severity.title.toLowerCase()}${count === 1 ? '' : 's'} within 5 miles of this measuring station`
-    this.link = slug ? `/target-area/${slug}` : `/flood-warnings-and-alerts?search=${place.postcode}`
+    if (severity) {
+      this.severity = severity.hash
+      this.icon = severity.icon
+      this.text = `There ${count === 1 ? 'is a' : 'are'} ${severity.title.toLowerCase()}${count === 1 ? '' : 's'} within 5 miles of this measuring station`
+      this.link = slug ? `/target-area/${slug}` : `/flood-warnings-and-alerts?search=${place.postcode}`
+    }
   }
 }
 
