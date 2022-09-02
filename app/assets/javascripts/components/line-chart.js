@@ -644,7 +644,6 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   document.addEventListener('keyup', (e) => {
-    console.log(e.target)
     const significantParent = significantContainer.node().parentNode
     significantParent.classList.toggle('significant--visible', !!e.target.closest('.defra-line-chart'))
     if (e.target.closest('.defra-line-chart')) {
