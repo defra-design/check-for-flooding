@@ -3,19 +3,43 @@
     @include mq ($from: tablet) {
         padding-bottom:15px;
     }
+    svg {
+        vertical-align: middle;
+        width: 40px;
+        height: 40px;
+        @include mq ($from: tablet) {
+            width: 50px;
+            height: 50px;
+        }
+    }
+    &--small svg {
+        width: 30px;
+        height: 30px;
+        @include mq ($from: tablet) {
+            width: 35px;
+            height: 35px;
+        }
+    }
+    &--full &-item__container {
+        @include mq ($from: tablet) {
+            width: 66.66%;
+        }
+    }
 }
 .defra-flood-status-item {
     @extend .govuk-inset-text;
+    padding: 0px;
     background-color:govuk-colour('light-grey');
-    position:relative;
-    display: table;
-    width:100%;
-    box-sizing: border-box;
-    padding:0px;
     margin-top:0px;
     margin-bottom:10px;
     &:last-of-type {
         margin-bottom:5px;
+    }
+    &__container {
+        position:relative;
+        display: table;
+        width:100%;
+        box-sizing: border-box;
     }
     &__text {
         display: table-cell;
@@ -43,15 +67,6 @@
         @include mq ($from: tablet) {
             padding:10px 12.5px;
         }
-        svg {
-            vertical-align: middle;
-            width: 40px;
-            height: 40px;
-            @include mq ($from: tablet) {
-                width: 50px;
-                height: 50px;
-            }
-        }
     }
 }
 .defra-flood-status-item--severe {
@@ -67,8 +82,18 @@
     border-color:#f18700;
 }
 .defra-flood-status-item--important {
-    background-color: govuk-tint($govuk-link-colour, 85%);
+    background-color: govuk-tint($govuk-link-colour, 90%);
     border-color:$govuk-link-colour;
+    svg {
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        margin: 0px 5px;
+        @include mq ($from: tablet) {
+            width: 25px;
+            height: 25px;
+        }
+    }
 }
 /*
 .defra-flood-status-item--removed {

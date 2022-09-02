@@ -2,34 +2,40 @@
   {% if model.banner.hasSevere or model.banner.hasWarnings or model.banner.hasAlerts %}
     {% if model.banner.severeMainLink %}
     <div class="defra-flood-status-item defra-flood-status-item--severe">
-      <span class="defra-flood-status-item__icon">
-        {{ model.banner.icon | safe }}
-      </span>
-      <div class="defra-flood-status-item__text">
-        <strong>
-          <a href="{{ model.banner.severeMainLink }}">{{ model.banner.severeMainText }}</a>
-        </strong>
-        <span class="defra-flood-status-item__text-secondary">{{ model.banner.severeSub }}</span>
+      <div class="defra-flood-status-item__container">
+        <span class="defra-flood-status-item__icon">
+          {{ model.banner.icon | safe }}
+        </span>
+        <div class="defra-flood-status-item__text">
+          <strong>
+            <a href="{{ model.banner.severeMainLink }}">{{ model.banner.severeMainText }}</a>
+          </strong>
+          <span class="defra-flood-status-item__text-secondary">{{ model.banner.severeSub }}</span>
+        </div>
       </div>
     </div>
     {% endif %}
     {% if model.banner.mainLink%}
     <div class="defra-flood-status-item defra-flood-status-item--{{model.banner.severity}}">
-      <span class="defra-flood-status-item__icon">
-        {{ model.banner.icon | safe }}
-      </span>
-      <div class="defra-flood-status-item__text">
-        <strong>
-          <a href="{{ model.banner.mainLink }}">{{ model.banner.mainText }}</a>
-        </strong>
-        <span class="defra-flood-status-item__text-secondary">{{ model.banner.sub }}</span>
+      <div class="defra-flood-status-item__container">
+        <span class="defra-flood-status-item__icon">
+          {{ model.banner.icon | safe }}
+        </span>
+        <div class="defra-flood-status-item__text">
+          <strong>
+            <a href="{{ model.banner.mainLink }}">{{ model.banner.mainText }}</a>
+          </strong>
+          <span class="defra-flood-status-item__text-secondary">{{ model.banner.sub }}</span>
+        </div>
       </div>
     </div>
     {% endif %}
   {% else %}
   <div class="defra-flood-status-item">
-    <div class="defra-flood-status-item__text">
-      There are no flood warnings or alerts in this area{% if model.banner.hasHighLevels %} but some <a href="/river-sea-groundwater-rainfall-levels?place={{ model.place.name | urlencode }}">river and sea levels</a> are high{% endif %}.
+    <div class="defra-flood-status-item__container">
+      <div class="defra-flood-status-item__text">
+        There are no flood warnings or alerts in this area{% if model.banner.hasHighLevels %} but some <a href="/river-sea-groundwater-rainfall-levels?place={{ model.place.name | urlencode }}">river and sea levels</a> are high{% endif %}.
+      </div>
     </div>
   </div>
   {% endif %}
