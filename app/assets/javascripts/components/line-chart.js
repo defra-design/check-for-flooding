@@ -118,9 +118,10 @@ function LineChart (containerId, stationId, data, options = {}) {
       const textWidth = Math.round(text.node().getBBox().width)
       path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
       label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
-      const remove = thresholdContainer.append('g').attr('class', 'threshold__remove')
+      const remove = thresholdContainer.append('a').attr('class', 'threshold__remove').attr('tabindex', 0).attr('role', 'button')
         .attr('transform', 'translate(20,0)')
-      remove.append('circle').attr('r', 11)
+      remove.append('circle').attr('class', 'threshold__remove-bg').attr('r', 16).attr('x1', -5).attr('y1', -5)
+      remove.append('circle').attr('class', 'threshold__remove-button').attr('r', 11)
       remove.append('line').attr('x1', -3).attr('y1', -3).attr('x2', 3).attr('y2', 3)
       remove.append('line').attr('y1', -3).attr('x2', -3).attr('x1', 3).attr('y2', 3)
       // Set individual elements size and position
@@ -156,41 +157,42 @@ function LineChart (containerId, stationId, data, options = {}) {
     })
   }
 
-  // const getNextDataItemIndex = (e) => {
-  //   let index = e.target.getAttribute('data-index')
-  //   if (e.key === 'Home') {
-  //     index = positiveDataItems[positiveDataItems.length - 1]
-  //   } else if (e.key === 'End') {
-  //     index = positiveDataItems[0]
-  //   } else if (e.key === 'ArrowRight') {
-  //     for (let i = index; i > 0; i--) {
-  //       if (dataPage[i - 1].value > 0 || dataPage[i - 1].isLatest) {
-  //         index = i - 1
-  //         break
-  //       }
-  //     }
-  //   } else {
-  //     for (let i = index; i < dataPage.length - 1; i++) {
-  //       if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
-  //         index = i + 1
-  //         break
-  //       }
-  //     }
-  //   }
-  //   return index
-  // }
+  const getNextDataItemIndex = (e) => {
+    let index = parseInt(e.target.getAttribute('data-index'), 10)
+    const first = 0
+    const last = significantPoints.length - 1
+    if (e.key === 'Home') {
+      index = first
+    } else if (e.key === 'End') {
+      index = last
+    } else if (e.key === 'ArrowRight') {
+      index = index < last ? index += 1 : last
+    } else if (e.key === 'ArrowLeft') {
+      index = index > first ? index -= 1 : first
+    }
+    return index
+  }
 
   const swapCell = (e) => {
-    console.log(significantPoints)
-    // const nextIndex = getNextDataItemIndex(e)
-    // const cell = e.target
-    // const nextCell = cell.parentNode.children[nextIndex]
-    // cell.setAttribute('focusable', false)
-    // nextCell.setAttribute('focusable', true)
-    // cell.tabIndex = -1
-    // nextCell.tabIndex = 0
-    // nextCell.focus()
-    // dataItem = dataPage[nextIndex]
+    const nextIndex = getNextDataItemIndex(e)
+    const cell = e.target
+    const nextCell = cell.parentNode.children[nextIndex]
+    cell.setAttribute('focusable', false)
+    cell.removeAttribute('id')
+    nextCell.setAttribute('focusable', true)
+    nextCell.id = 'focussed-cell'
+    cell.tabIndex = -1
+    nextCell.tabIndex = 0
+    nextCell.focus()
+    dataPoint = significantPoints[nextIndex]
+    // Below needed to chnage zIndex of focussed point
+    svg.select('.focussed-cell').remove()
+    svg.append('use')
+      .attr('aria-hidden', true)
+      .attr('focusable', false)
+      .attr('tabindex', -1)
+      .attr('class', 'focussed-cell')
+      .attr('xlink:href', '#focussed-cell')
   }
 
   const getDataPointByX = (x) => {
@@ -258,6 +260,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const hideTooltip = () => {
     tooltip.classed('tooltip--visible', false)
     locator.classed('locator--visible', false)
+    svg.select('.focussed-cell').remove()
   }
 
   const showThreshold = (threshold) => {
@@ -275,6 +278,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     thresholds.forEach(x => { x.isSelected = false })
     threshold.isSelected = true
     thresholds.push(threshold)
+    thresholds.sort((a, b) => (a.level < b.level) ? 1 : -1)
     // Re-render
     renderChart()
   }
@@ -465,15 +469,15 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Add thresholds group
   const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
 
-  // Add container for significant points
-  const significantContainer = inner.append('g').attr('role', 'grid').attr('class', 'significant').append('g').attr('role', 'row')
-
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong').attr('x', 12).attr('dy', '0.5em')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text').attr('x', 12).attr('dy', '1.4em')
+
+  // Add container for significant points
+  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
 
   // Add optional 'Add threshold' buttons
   document.querySelectorAll('[data-line-chart-threshold]').forEach(container => {
@@ -631,13 +635,43 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   document.addEventListener('keydown', (e) => {
-    significantContainer.node().parentNode.classList.add('significant--visible')
     interfaceType = 'keyboard'
     const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (!(e.target.getAttribute('role') === 'cell' && keys.includes(e.key))) return
+    if (!(e.target.classList.contains('point') && keys.includes(e.key))) return // DB: Needs to be more specific
     e.preventDefault()
     swapCell(e)
+    showTooltip(10)
   })
+
+  document.addEventListener('keyup', (e) => {
+    console.log(e.target)
+    const significantParent = significantContainer.node().parentNode
+    significantParent.classList.toggle('significant--visible', !!e.target.closest('.defra-line-chart'))
+    if (e.target.closest('.defra-line-chart')) {
+      // Inside chart
+      const threshold = e.target.closest('.threshold')
+      const point = e.target.classList.contains('point')
+      if (point) {
+        // On a significant point
+        if (e.key === 'Tab') {
+          swapCell(e)
+          hideThreshold()
+          showTooltip(10)
+        }
+      } else if (threshold) {
+        // On a threshold remove button
+        hideTooltip()
+        showThreshold(select(threshold))
+      }
+    } else {
+      // Outside chart
+      hideTooltip()
+      const threshold = thresholds.find(x => x.isSelected)
+      if (threshold) {
+        showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
+      }
+    }
+  }, true)
 }
 
 window.flood.charts = {

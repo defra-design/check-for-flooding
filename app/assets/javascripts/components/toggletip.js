@@ -44,7 +44,6 @@ const toggletips = (options) => {
       } else if ((targetLeft + infoOffsetX + infoWidth) > (viewportWidth - viewportMargin)) {
         // Right side
         infoOffsetX = (viewportWidth - viewportMargin - infoWidth) - targetLeft
-        console.log(infoOffsetX)
       }
       arrow.style.left = `${(0 - infoOffsetX) + (targetWidth / 2)}px`
       info.style.marginLeft = `${infoOffsetX}px`

@@ -161,13 +161,29 @@
         shape-rendering: crispEdges;
         stroke-linecap: square;
     }
-    .threshold__remove circle {
+    .threshold__remove-button {
         stroke-width: 1;
         stroke: govuk-colour('mid-grey');
         fill: white;
     }
+    .threshold__remove-bg {
+        stroke-width: 0;
+        stroke: transparent;
+        fill: transparent;
+    }
+    .threshold__remove:focus {
+        .threshold__remove-button {
+            stroke-width: 2;
+        }
+        .threshold__remove-bg {
+            fill: $govuk-focus-colour;
+        }
+    }
     .threshold__remove:hover {
         cursor: pointer;
+        .threshold__remove-bg {
+            fill: govuk-colour('mid-grey');
+        }
     }
     .threshold-label {
         visibility: hidden;
@@ -231,7 +247,7 @@
     .point circle {
         fill: govuk-colour('blue');
     }
-    .point[keyboard-focus] circle {
+    .point:focus circle {
         fill: govuk-colour('black');
         stroke: govuk-colour('yellow');
         paint-order: stroke;
