@@ -364,7 +364,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (dataCache.observed.length) {
       // Add isSignificant property to points
-      dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 1750000 : 150000)
+      dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 10000000 : 150000)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
       const filterNegativeValues = ['groundwater', 'tide'].includes(dataCache.type) ? errorFilter : errorAndNegativeFilter
