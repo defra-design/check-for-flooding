@@ -1,7 +1,6 @@
 'use strict'
 import 'elm-pep'
 import '../core'
-import '../simplify'
 import '../components/line-chart'
 import '../components/toggle-list-display'
 import '../build/templates'

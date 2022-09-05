@@ -36,6 +36,25 @@ if (!window.flood) {
   window.flood = {}
 }
 
+// Simplification algorythom
+const douglasPeucker = (points, tolerance) => {
+  const last = points.length - 1
+  const p1 = points[0]
+  const p2 = points[last]
+  const x21 = p2.timestamp - p1.timestamp
+  const y21 = p2.value - p1.value
+  const [dMax, x] = points.slice(1, last)
+    .map(p => Math.abs(y21 * p.timestamp - x21 * p.value + p2.timestamp * p1.value - p2.value * p1.timestamp))
+    .reduce((p, c, i) => {
+      const v = Math.max(p[0], c)
+      return [v, v === p[0] ? p[1] : i + 1]
+    }, [-1, 0])
+  if (dMax > tolerance) {
+    return [...douglasPeucker(points.slice(0, x + 1), tolerance), ...douglasPeucker(points.slice(x), tolerance).slice(1)]
+  }
+  return [points[0], points[last]]
+}
+
 // Flood utilities
 window.flood.utils = {
   xhr: (url, callback, responseType) => {
@@ -96,5 +115,15 @@ window.flood.utils = {
       summary += l + (i + 1 === lines.length - 1 ? ' and ' : i + 1 < lines.length ? ', ' : '')
     })
     return summary
+  },
+  simplify: (points, tolerance) => {
+    points = points.map(obj => ({ ...obj, timestamp: parseInt((new Date(obj.dateTime)).getTime()) }))
+    const significant = douglasPeucker(points, tolerance)
+    const result = points.map((obj, i) => ({
+      dateTime: obj.dateTime,
+      value: obj.value,
+      isSignificant: !!significant.find(x => x.timestamp === obj.timestamp)
+    }))
+    return result
   }
 }

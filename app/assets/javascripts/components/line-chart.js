@@ -195,7 +195,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     dataPoint = significantPoints[nextIndex]
     // Below needed to chnage zIndex of focussed point
     svg.select('.focussed-cell').remove()
-    svg.append('use')
+    svg.insert('use', '.significant + *')
       .attr('aria-hidden', true)
       .attr('focusable', false)
       .attr('tabindex', -1)
@@ -364,7 +364,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (dataCache.observed.length) {
       // Add isSignificant property to points
-      dataCache.observed = simplify(dataCache.observed, 40)
+      dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 1750000 : 150000)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
       const filterNegativeValues = ['groundwater', 'tide'].includes(dataCache.type) ? errorFilter : errorAndNegativeFilter
@@ -373,7 +373,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
     if (dataCache.forecast.length) {
       // Add isSignificant property to points
-      dataCache.forecast = simplify(dataCache.forecast, 40)
+      dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 1000000 : 150000)
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
 
@@ -477,15 +477,15 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Add thresholds group
   const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
 
+  // Add container for significant points
+  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
+
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
   const tooltipPath = tooltip.append('path').attr('class', 'tooltip-bg')
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong').attr('x', 12).attr('dy', '0.5em')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text').attr('x', 12).attr('dy', '1.4em')
-
-  // Add container for significant points
-  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
 
   // Add optional 'Add threshold' buttons
   document.querySelectorAll('[data-add-threshold]').forEach(container => {
