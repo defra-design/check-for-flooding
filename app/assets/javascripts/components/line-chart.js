@@ -225,12 +225,12 @@ function LineChart (containerId, stationId, data, options = {}) {
     tooltipPath.attr('d', pathCentre)
     // Centre tooltip
     x -= pathLength / 2
-    if (x <= 10) {
+    if (x <= 0) {
       // tooltip on the left
-      x = 10
-    } else if (x + ((pathLength / 2) + 10) >= width) {
+      x = 0
+    } else if (x + pathLength >= width) {
       // tooltip on the right
-      x = width - 10
+      x = width - pathLength
     }
     // Set background above or below position
     const tooltipHeight = tooltipPath.node().getBBox().height
@@ -271,10 +271,9 @@ function LineChart (containerId, stationId, data, options = {}) {
     svg.select('.focussed-cell').remove()
   }
 
-  const showThreshold = (threshold, setFocus = true) => {
+  const showThreshold = (threshold) => {
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
-    if (setFocus) threshold.select('a').node().focus()
   }
 
   const hideThreshold = () => {
@@ -295,6 +294,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const removeThreshold = (id) => {
     // Update thresholds array
     thresholds = thresholds.filter(x => x.id.toString() !== id)
+    if (thresholds.length) thresholds[0].isSelected = true
     // Re-render
     renderChart()
   }
@@ -488,13 +488,13 @@ function LineChart (containerId, stationId, data, options = {}) {
   const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
 
   // Add optional 'Add threshold' buttons
-  document.querySelectorAll('[data-line-chart-threshold]').forEach(container => {
+  document.querySelectorAll('[data-add-threshold]').forEach(container => {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
     button.innerHTML = options.btnAddThresholdText
     button.setAttribute('aria-controls', `${containerId}-visualisation`)
     button.setAttribute('data-id', container.getAttribute('data-id'))
-    button.setAttribute('data-line-chart-threshold', '')
+    button.setAttribute('data-add-threshold', '')
     button.setAttribute('data-level', container.getAttribute('data-level'))
     button.setAttribute('data-name', container.getAttribute('data-name'))
     container.parentElement.replaceChild(button, container)
@@ -568,15 +568,13 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   document.addEventListener('click', (e) => {
     significantContainer.node().parentNode.classList.remove('significant--visible')
-    if (!e.target.hasAttribute('data-line-chart-threshold')) return
+    if (!e.target.hasAttribute('data-add-threshold')) return
     const button = e.target
     addThreshold({
       id: button.getAttribute('data-id'),
       level: Number(button.getAttribute('data-level')),
       name: button.getAttribute('data-name')
     })
-    // const threshold = document.querySelector(`.threshold[data-id="${button.getAttribute('data-id')}"]`)
-    // showThreshold(select(threshold))
     const y = container.getBoundingClientRect().top + window.pageYOffset
     window.scrollTo(0, y)
   })
@@ -659,43 +657,53 @@ function LineChart (containerId, stationId, data, options = {}) {
   document.addEventListener('keyup', (e) => {
     const significantParent = significantContainer.node().parentNode
     significantParent.classList.toggle('significant--visible', !!e.target.closest('.defra-line-chart'))
-    if (e.target.closest('.defra-line-chart')) {
-      // Inside chart
+    // Threshold
+    if (e.target.closest('.threshold')) { // Needs to be more specific
       const threshold = e.target.closest('.threshold')
-      const point = e.target.classList.contains('point')
-      if (point) {
-        // Select significant point
-        if (e.key === 'Tab') {
-          swapCell(e)
-          hideThreshold()
-          showTooltip(10)
-        }
-      } else if (threshold) {
-        // Remove threshold
-        if (e.key === 'Enter' || e.key === 'Space') {
-          const id = threshold.getAttribute('data-id')
-          const index = thresholds.findIndex(x => x.id.toString() === id)
-          const nextId = index < thresholds.length - 1 ? thresholds[index + 1].id : null
-          removeThreshold(id)
-          if (nextId) {
-            showThreshold(select(document.querySelector(`.threshold[data-id="${nextId}"]`)))
-          } else {
-            document.querySelector('.significant .point[tabindex="0"]').focus()
-          }
+      // Remove threshold
+      if (['Enter', 'Space'].includes(e.key)) {
+        const id = threshold.getAttribute('data-id')
+        const index = thresholds.findIndex(x => x.id.toString() === id)
+        const nextId = index < thresholds.length - 1 ? thresholds[index + 1].id : null
+        removeThreshold(id)
+        if (nextId) {
+          const nextThreshold = document.querySelector(`.threshold[data-id="${nextId}"]`)
+          showThreshold(select(nextThreshold))
+          nextThreshold.querySelector('a').focus()
         } else {
-          // Select threshold
-          hideTooltip()
-          showThreshold(select(threshold))
+          document.querySelector('.significant .point[tabindex="0"]').focus()
         }
+      } else {
+        // Select threshold
+        hideTooltip()
+        showThreshold(select(threshold))
+        threshold.querySelector('a').focus()
       }
-    } else {
-      // Outside chart
-      hideTooltip()
-      const threshold = thresholds.find(x => x.isSelected)
-      if (threshold) {
-        // Reinstate default threshold?
-        showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`), false)
+      return
+    }
+    // Select point
+    if (e.target.classList.contains('point')) { // Needs to be more specific
+      if (e.key === 'Tab') {
+        swapCell(e)
+        hideThreshold()
+        showTooltip(10)
       }
+      return
+    }
+    // Add threshold button
+    if (e.target.hasAttribute('data-add-threshold') && ['Enter', 'Space'].includes(e.key)) {
+      const thresholdId = e.target.getAttribute('data-id')
+      // console.log(`.threshold [data-id="${id}"] a`)
+      const thresholdRemoveButton = document.querySelector(`.threshold[data-id="${thresholdId}"] a`)
+      thresholdRemoveButton.focus()
+      return
+    }
+    // Outside chart
+    hideTooltip()
+    const threshold = thresholds.find(x => x.isSelected)
+    if (threshold) {
+      // Reinstate default threshold?
+      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
     }
   }, true)
 }

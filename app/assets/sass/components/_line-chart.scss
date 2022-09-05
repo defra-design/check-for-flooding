@@ -134,6 +134,9 @@
         stroke: transparent;
         fill: transparent;
     }
+    .threshold__remove {
+        opacity: 0;
+    }
     .threshold__remove line {
         stroke-width: 2;
         stroke: govuk-colour('mid-grey');
@@ -180,6 +183,9 @@
         fill: $govuk-text-colour;
     }
     .threshold.threshold--selected {
+        .threshold__remove {
+            opacity: 1;
+        }   
         .threshold-label {
             visibility: visible;
             pointer-events: auto;
@@ -225,6 +231,7 @@
     }
     .point circle {
         fill: govuk-colour('blue');
+        outline: 3px solid transparent;
     }
     .point:focus circle {
         fill: govuk-colour('black');
