@@ -22,7 +22,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     const margin = { top: 5, bottom: 45, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
 
     // Get width and height
-    const containerBoundingRect = chart.getBoundingClientRect()
+    const containerBoundingRect = container.getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.left - margin.right
     height = Math.floor(containerBoundingRect.height) - margin.top - margin.bottom
 
@@ -47,7 +47,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     svg.select('.x.axis').selectAll('text').each(formatLabelsX)
 
     // svg.selectAll('.x.axis text').attr('y', 12)
-    clipText.attr('width', width).attr('height', height)
+    // clipText.attr('width', width).attr('height', height)
 
     // Position y ticks
     svg.select('.y.axis').style('text-anchor', 'start')
@@ -102,23 +102,31 @@ function LineChart (containerId, stationId, data, options = {}) {
         .classed('threshold--selected', !!threshold.isSelected)
       thresholdContainer.append('rect')
         .attr('class', 'threshold__bg')
+        .attr('aria-hidden', true)
         .attr('x', 0).attr('y', -10).attr('height', 20)
         .attr('width', xScale(xExtent[1]))
       thresholdContainer.append('line')
         .attr('class', 'threshold__line')
+        .attr('aria-hidden', true)
         .attr('x2', xScale(xExtent[1])).attr('y2', 0)
       const label = thresholdContainer.append('g')
         .attr('class', 'threshold-label')
       const path = label.append('path')
+        .attr('aria-hidden', true)
         .attr('class', 'threshold-label__bg')
       const text = label.append('text')
         .attr('class', 'threshold-label__text')
         .attr('x', 10).attr('y', 22)
-        .text(threshold.name)
+        .text(`${threshold.level}m ${threshold.name}`)
       const textWidth = Math.round(text.node().getBBox().width)
       path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
       label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
-      const remove = thresholdContainer.append('a').attr('class', 'threshold__remove').attr('tabindex', 0).attr('role', 'button')
+      const remove = thresholdContainer.append('a')
+        .attr('class', 'threshold__remove')
+        .attr('tabindex', 0)
+        .attr('role', 'button')
+        .attr('aria-label', 'Remove threshold (Visual only)')
+        .attr('aria-controls', `${containerId}-visualisation`)
         .attr('transform', 'translate(20,0)')
       remove.append('circle').attr('class', 'threshold__remove-bg').attr('r', 16).attr('x1', -5).attr('y1', -5)
       remove.append('circle').attr('class', 'threshold__remove-button').attr('r', 11)
@@ -263,9 +271,10 @@ function LineChart (containerId, stationId, data, options = {}) {
     svg.select('.focussed-cell').remove()
   }
 
-  const showThreshold = (threshold) => {
+  const showThreshold = (threshold, setFocus = true) => {
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
+    if (setFocus) threshold.select('a').node().focus()
   }
 
   const hideThreshold = () => {
@@ -355,7 +364,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (dataCache.observed.length) {
       // Add isSignificant property to points
-      dataCache.observed = simplify(dataCache.observed)
+      dataCache.observed = simplify(dataCache.observed, 40)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
       const filterNegativeValues = ['groundwater', 'tide'].includes(dataCache.type) ? errorFilter : errorAndNegativeFilter
@@ -364,7 +373,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
     if (dataCache.forecast.length) {
       // Add isSignificant property to points
-      dataCache.forecast = simplify(dataCache.forecast)
+      dataCache.forecast = simplify(dataCache.forecast, 40)
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
 
@@ -414,31 +423,30 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Setup
   //
 
-  // Debug
-  const debug = document.createElement('span')
-  debug.setAttribute('style', 'position:fixed;top:10px;right:10px;background-color:white;border:1px solid red;padding:5px')
-  debug.innerText = 'debug'
-  const params = new URLSearchParams(window.location.search)
-  if (params.has('debug')) {
-    document.querySelector('body').appendChild(debug)
-  }
-
   const defaults = {
     btnAddThresholdClass: 'defra-button-text-s',
-    btnAddThresholdText: 'Show on chart'
+    btnAddThresholdText: 'Show on chart <span class="govuk-visually-hidden">(Visual only)</span>'
   }
   options = Object.assign({}, defaults, options)
 
-  const chart = document.getElementById(containerId)
+  const container = document.getElementById(containerId)
+
+  // Description
+  const description = document.createElement('span')
+  description.className = 'govuk-visually-hidden'
+  description.setAttribute('aria-live', 'polite')
+  description.setAttribute('id', 'line-chart-description')
+  container.appendChild(description)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
-    .attr('aria-label', 'Bar chart')
-    .attr('aria-describedby', 'bar-chart-description')
+    .attr('id', `${containerId}-visualisation`)
+    .attr('aria-label', 'Line chart')
+    .attr('aria-describedby', 'line-chart-description')
     .attr('focusable', 'false')
 
   // Clip path to visually hide text
-  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
+  // const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
 
   // Add grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
@@ -484,6 +492,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
     button.innerHTML = options.btnAddThresholdText
+    button.setAttribute('aria-controls', `${containerId}-visualisation`)
     button.setAttribute('data-id', container.getAttribute('data-id'))
     button.setAttribute('data-line-chart-threshold', '')
     button.setAttribute('data-level', container.getAttribute('data-level'))
@@ -540,7 +549,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     addThreshold(threshold)
   }
 
-  this.chart = chart
+  this.chart = container
 
   //
   // Events
@@ -566,6 +575,10 @@ function LineChart (containerId, stationId, data, options = {}) {
       level: Number(button.getAttribute('data-level')),
       name: button.getAttribute('data-name')
     })
+    // const threshold = document.querySelector(`.threshold[data-id="${button.getAttribute('data-id')}"]`)
+    // showThreshold(select(threshold))
+    const y = container.getBoundingClientRect().top + window.pageYOffset
+    window.scrollTo(0, y)
   })
 
   svg.on('click', (e) => {
@@ -651,23 +664,37 @@ function LineChart (containerId, stationId, data, options = {}) {
       const threshold = e.target.closest('.threshold')
       const point = e.target.classList.contains('point')
       if (point) {
-        // On a significant point
+        // Select significant point
         if (e.key === 'Tab') {
           swapCell(e)
           hideThreshold()
           showTooltip(10)
         }
       } else if (threshold) {
-        // On a threshold remove button
-        hideTooltip()
-        showThreshold(select(threshold))
+        // Remove threshold
+        if (e.key === 'Enter' || e.key === 'Space') {
+          const id = threshold.getAttribute('data-id')
+          const index = thresholds.findIndex(x => x.id.toString() === id)
+          const nextId = index < thresholds.length - 1 ? thresholds[index + 1].id : null
+          removeThreshold(id)
+          if (nextId) {
+            showThreshold(select(document.querySelector(`.threshold[data-id="${nextId}"]`)))
+          } else {
+            document.querySelector('.significant .point[tabindex="0"]').focus()
+          }
+        } else {
+          // Select threshold
+          hideTooltip()
+          showThreshold(select(threshold))
+        }
       }
     } else {
       // Outside chart
       hideTooltip()
       const threshold = thresholds.find(x => x.isSelected)
       if (threshold) {
-        showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
+        // Reinstate default threshold?
+        showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`), false)
       }
     }
   }, true)

@@ -38,9 +38,10 @@ const distanceToSquared = (point, p1, p2) => {
 //   return Math.sqrt(distanceToSquared(point, p1, p2))
 // }
 
-window.flood.utils.simplify = (points) => {
+window.flood.utils.simplify = (points, factor) => {
   points = points.map(obj => ({ ...obj, timestamp: parseInt((new Date(obj.dateTime)).getTime()) }))
-  const pointsToKeep = Math.ceil(points.length / 10)
+  const optimalPoints = Math.ceil(points.length / factor)
+  const pointsToKeep = optimalPoints > 2 ? optimalPoints : 2
   const weights = []
   const len = points.length
   const douglasPeucker = (start, end) => {

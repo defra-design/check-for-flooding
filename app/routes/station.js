@@ -63,7 +63,7 @@ router.get('/rainfall-station/:id', async (req, res) => {
   const cookie = req.headers.cookie || null
   const id = req.params.id.toLowerCase()
   const stationResponse = await stationServices.getStationRain(cookie, id)
-  let telemetry, station, place
+  let telemetry, station, banner, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
       return res.status(404).render('404')
@@ -84,10 +84,12 @@ router.get('/rainfall-station/:id', async (req, res) => {
       return res.status(404).render('404')
     }
     place = new Place(locationResponse.data.resourceSets[0].resources[0])
+    const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
+    banner = new Banner(new Warnings(warningResponse.data), place)
   } else {
     // Return 500 error
   }
-  const model = new ViewModel(station, telemetry, null, place)
+  const model = new ViewModel(station, banner, telemetry, null, place)
   return res.render('rainfall', { model })
 })
 
