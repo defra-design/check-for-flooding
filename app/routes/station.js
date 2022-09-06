@@ -49,9 +49,12 @@ router.get('/station/:id', async (req, res) => {
     if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
       return res.status(404).render('404')
     }
-    place = new Place(locationResponse.data.resourceSets[0].resources[0])
-    const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
-    banner = new Banner(new Warnings(warningResponse.data), place)
+    const locationResponsePlace = locationResponse.data.resourceSets[0].resources[0]
+    if (locationResponsePlace) {
+      place = new Place(locationResponsePlace)
+      const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
+      banner = new Banner(new Warnings(warningResponse.data), place)
+    }
   } else {
     // Return 500 error
   }
@@ -83,9 +86,12 @@ router.get('/rainfall-station/:id', async (req, res) => {
     if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
       return res.status(404).render('404')
     }
-    place = new Place(locationResponse.data.resourceSets[0].resources[0])
-    const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
-    banner = new Banner(new Warnings(warningResponse.data), place)
+    const locationResponsePlace = locationResponse.data.resourceSets[0].resources[0]
+    if (locationResponsePlace) {
+      place = new Place(locationResponsePlace)
+      const warningResponse = await warningServices.getWarningsWithin(cookie, place.bboxBuffered)
+      banner = new Banner(new Warnings(warningResponse.data), place)
+    }
   } else {
     // Return 500 error
   }

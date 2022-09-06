@@ -15,13 +15,13 @@ class ViewModel {
       }
     })()
     this.station = station
-    this.banner = banner.severity ? banner : null
+    this.banner = banner?.severity || null
     this.telemetry = telemetry
     this.thresholds = thresholds
     this.time = utils.formatTimeDate(station.latestDatetime)
     this.timeShort = `${utils.formatTime(station.latestDatetime)} ${utils.formatDate(station.latestDatetime)}`
     this.bingApiKey = bingApiKey
-    this.nearby = place.postcode
+    this.nearby = place?.postcode || null
 
     // Toggletips
     if (station.type === 'river') {

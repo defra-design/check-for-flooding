@@ -2,6 +2,9 @@ const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
+  // getLevelsNearLevel: async (cookie, bbox) => {
+
+  // },
   getLevelsWithin: async (cookie, bbox) => {
     const coords = bbox.join('/')
     const url = `/stations-within/${coords}`
