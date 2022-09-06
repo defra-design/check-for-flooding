@@ -19,7 +19,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Set right margin depending on length of labels
     // const numChars = yScale.domain()[1].toFixed(2).length - 1
     const numChars = yScale.domain()[1].toFixed(1).length - 2
-    const margin = { top: 5, bottom: 45, left: 0, right: (isMobile ? 16 : 21) + (numChars * 9) }
+    const margin = { top: 5, bottom: 65, left: 15, right: (isMobile ? 31 : 36) + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = container.getBoundingClientRect()
@@ -45,9 +45,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
     // Format X Axis ticks
     svg.select('.x.axis').selectAll('text').each(formatLabelsX)
-
-    // svg.selectAll('.x.axis text').attr('y', 12)
-    // clipText.attr('width', width).attr('height', height)
 
     // Position y ticks
     svg.select('.y.axis').style('text-anchor', 'start')
@@ -98,8 +95,9 @@ function LineChart (containerId, stationId, data, options = {}) {
     thresholds.forEach(threshold => {
       const thresholdContainer = thresholdsContainer
         .append('g').attr('class', 'threshold')
-        .attr('data-id', threshold.id)
         .classed('threshold--selected', !!threshold.isSelected)
+        .attr('data-id', threshold.id)
+        .attr('data-threshold', '')
       thresholdContainer.append('rect')
         .attr('class', 'threshold__bg')
         .attr('aria-hidden', true)
@@ -122,9 +120,10 @@ function LineChart (containerId, stationId, data, options = {}) {
       path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
       label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
       const remove = thresholdContainer.append('a')
+        .attr('role', 'button')
         .attr('class', 'threshold__remove')
         .attr('tabindex', 0)
-        .attr('role', 'button')
+        .attr('data-threshold-remove', '')
         .attr('aria-label', 'Remove threshold (Visual only)')
         .attr('aria-controls', `${containerId}-visualisation`)
         .attr('transform', 'translate(20,0)')
@@ -146,11 +145,13 @@ function LineChart (containerId, stationId, data, options = {}) {
       .attr('role', 'cell')
       .attr('class', d => { return 'point point--' + d.type })
       .attr('tabindex', (d, i) => i === significantPoints.length - 1 ? 0 : -1)
+      .attr('data-point', '')
       .attr('data-index', (d, i) => { return i })
     significantCells.append('circle').attr('aria-hidden', true)
       .attr('r', '3')
       .attr('cx', d => xScale(new Date(d.dateTime)))
       .attr('cy', d => yScale(d.value))
+    significantCells.insert('text')
 
     // Hide x axis labels that overlap with time now label
     const timeNowX = timeLabel.node().getBoundingClientRect().left
@@ -182,6 +183,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   }
 
   const swapCell = (e) => {
+    // Add threshold
     const nextIndex = getNextDataItemIndex(e)
     const cell = e.target
     const nextCell = cell.parentNode.children[nextIndex]
@@ -193,7 +195,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     nextCell.tabIndex = 0
     nextCell.focus()
     dataPoint = significantPoints[nextIndex]
-    // Below needed to chnage zIndex of focussed point
+    // Below needed to change zIndex of focussed point
     svg.select('.focussed-cell').remove()
     svg.insert('use', '.significant + *')
       .attr('aria-hidden', true)
@@ -268,12 +270,12 @@ function LineChart (containerId, stationId, data, options = {}) {
   const hideTooltip = () => {
     tooltip.classed('tooltip--visible', false)
     locator.classed('locator--visible', false)
-    svg.select('.focussed-cell').remove()
   }
 
   const showThreshold = (threshold) => {
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
+    svg.select('.focussed-cell').remove()
   }
 
   const hideThreshold = () => {
@@ -405,7 +407,6 @@ function LineChart (containerId, stationId, data, options = {}) {
   const formatLabelsX = (d, i, nodes) => {
     // Format X Axis labels
     const element = select(nodes[i])
-    // const formattedTime = timeFormat(period === 'hours' ? '%-I%p' : '%-I:%M%p')(new Date(d)).toLocaleLowerCase()
     const formattedTime = timeFormat('%-I%p')(new Date(d)).toLocaleLowerCase()
     const formattedDate = timeFormat('%-e %b')(new Date(d))
     element.append('tspan').text(formattedTime)
@@ -488,20 +489,20 @@ function LineChart (containerId, stationId, data, options = {}) {
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text').attr('x', 12).attr('dy', '1.4em')
 
   // Add optional 'Add threshold' buttons
-  document.querySelectorAll('[data-add-threshold]').forEach(container => {
+  document.querySelectorAll('[data-threshold-add]').forEach(container => {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
     button.innerHTML = options.btnAddThresholdText
     button.setAttribute('aria-controls', `${containerId}-visualisation`)
     button.setAttribute('data-id', container.getAttribute('data-id'))
-    button.setAttribute('data-add-threshold', '')
+    button.setAttribute('data-threshold-add', '')
     button.setAttribute('data-level', container.getAttribute('data-level'))
     button.setAttribute('data-name', container.getAttribute('data-name'))
     container.parentElement.replaceChild(button, container)
   })
 
   // Define globals
-  let isMobile, interfaceType
+  let isMobile, interfaceType, nextFocusElement
   let dataStart, dataPage, dataPoint
   let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
   let lines, area, line, observedPoints, forecastPoints, significantPoints
@@ -567,16 +568,95 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   document.addEventListener('click', (e) => {
+    // Hide points and focussed cell
     significantContainer.node().parentNode.classList.remove('significant--visible')
-    if (!e.target.hasAttribute('data-add-threshold')) return
+    svg.select('.focussed-cell').remove()
+    // Add threshold button
+    if (!e.target.hasAttribute('data-threshold-add')) return
     const button = e.target
     addThreshold({
       id: button.getAttribute('data-id'),
       level: Number(button.getAttribute('data-level')),
       name: button.getAttribute('data-name')
     })
+    // Scroll upto chart from add threshold button
     const y = container.getBoundingClientRect().top + window.pageYOffset
     window.scrollTo(0, y)
+  })
+
+  document.addEventListener('keydown', (e) => {
+    interfaceType = 'keyboard'
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!(e.target.classList.contains('point') && keys.includes(e.key))) return // DB: Needs to be more specific
+    e.preventDefault()
+    swapCell(e)
+    showTooltip(10)
+  })
+
+  document.addEventListener('keyup', (e) => {
+    // Show points if within line chart
+    const significantParent = significantContainer.node().parentNode
+    significantParent.classList.toggle('significant--visible', !!e.target.closest('.defra-line-chart'))
+    // Threshold
+    if (e.target.closest('[data-threshold]')) {
+      const threshold = e.target.closest('[data-threshold]')
+      // Remove threshold
+      if (['Enter', 'Space'].includes(e.key)) {
+        const id = threshold.getAttribute('data-id')
+        removeThreshold(id)
+        const index = thresholds.findIndex(x => x.id.toString() === id)
+        const nextId = index < thresholds.length - 1 ? thresholds[index + 1].id : null
+        if (nextFocusElement) {
+          nextFocusElement.focus()
+        } else if (nextId) {
+          const nextThreshold = document.querySelector(`[data-threshold][data-id="${nextId}"]`)
+          showThreshold(select(nextThreshold))
+          nextFocusElement = nextThreshold.querySelector('a')
+        } else {
+          nextFocusElement = document.querySelector('[data-point][tabindex="0"]')
+        }
+      } else {
+        // Select threshold
+        hideTooltip()
+        showThreshold(select(threshold))
+        nextFocusElement = threshold.querySelector('a')
+      }
+      nextFocusElement.focus()
+      nextFocusElement = null
+      return
+    }
+    // Select point
+    if (e.target.hasAttribute('data-point')) {
+      if (e.key === 'Tab') {
+        swapCell(e)
+        hideThreshold()
+        showTooltip(10)
+      }
+      return
+    }
+    // Add threshold button
+    if (e.target.hasAttribute('data-threshold-add') && ['Enter', 'Space'].includes(e.key)) {
+      nextFocusElement = e.target
+      const thresholdId = e.target.getAttribute('data-id')
+      const thresholdRemoveButton = document.querySelector(`.threshold[data-id="${thresholdId}"] a`)
+      thresholdRemoveButton.focus()
+      return
+    }
+    // Outside chart
+    hideTooltip()
+    const threshold = thresholds.find(x => x.isSelected)
+    if (threshold) {
+      // Reinstate default threshold?
+      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
+    }
+  }, true)
+
+  container.addEventListener('mouseleave', (e) => {
+    hideTooltip()
+    const threshold = thresholds.find(x => x.isSelected)
+    if (threshold) {
+      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
+    }
   })
 
   svg.on('click', (e) => {
@@ -596,16 +676,6 @@ function LineChart (containerId, stationId, data, options = {}) {
     getDataPointByX(pointer(e)[0])
     hideThreshold()
     showTooltip(pointer(e)[1])
-  })
-
-  svg.on('mouseleave', (e) => {
-    // if (dataPage) {
-    hideTooltip()
-    const threshold = thresholds.find(x => x.isSelected)
-    if (threshold) {
-      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"`))
-    }
-    // }
   })
 
   svg.on('touchstart', (e) => {
@@ -644,68 +714,6 @@ function LineChart (containerId, stationId, data, options = {}) {
       showThreshold(select(thresholdContainer))
     }
   })
-
-  document.addEventListener('keydown', (e) => {
-    interfaceType = 'keyboard'
-    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (!(e.target.classList.contains('point') && keys.includes(e.key))) return // DB: Needs to be more specific
-    e.preventDefault()
-    swapCell(e)
-    showTooltip(10)
-  })
-
-  document.addEventListener('keyup', (e) => {
-    const significantParent = significantContainer.node().parentNode
-    significantParent.classList.toggle('significant--visible', !!e.target.closest('.defra-line-chart'))
-    // Threshold
-    if (e.target.closest('.threshold')) { // Needs to be more specific
-      const threshold = e.target.closest('.threshold')
-      // Remove threshold
-      if (['Enter', 'Space'].includes(e.key)) {
-        const id = threshold.getAttribute('data-id')
-        const index = thresholds.findIndex(x => x.id.toString() === id)
-        const nextId = index < thresholds.length - 1 ? thresholds[index + 1].id : null
-        removeThreshold(id)
-        if (nextId) {
-          const nextThreshold = document.querySelector(`.threshold[data-id="${nextId}"]`)
-          showThreshold(select(nextThreshold))
-          nextThreshold.querySelector('a').focus()
-        } else {
-          document.querySelector('.significant .point[tabindex="0"]').focus()
-        }
-      } else {
-        // Select threshold
-        hideTooltip()
-        showThreshold(select(threshold))
-        threshold.querySelector('a').focus()
-      }
-      return
-    }
-    // Select point
-    if (e.target.classList.contains('point')) { // Needs to be more specific
-      if (e.key === 'Tab') {
-        swapCell(e)
-        hideThreshold()
-        showTooltip(10)
-      }
-      return
-    }
-    // Add threshold button
-    if (e.target.hasAttribute('data-add-threshold') && ['Enter', 'Space'].includes(e.key)) {
-      const thresholdId = e.target.getAttribute('data-id')
-      // console.log(`.threshold [data-id="${id}"] a`)
-      const thresholdRemoveButton = document.querySelector(`.threshold[data-id="${thresholdId}"] a`)
-      thresholdRemoveButton.focus()
-      return
-    }
-    // Outside chart
-    hideTooltip()
-    const threshold = thresholds.find(x => x.isSelected)
-    if (threshold) {
-      // Reinstate default threshold?
-      showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
-    }
-  }, true)
 }
 
 window.flood.charts = {

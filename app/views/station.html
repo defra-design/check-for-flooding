@@ -229,7 +229,7 @@
           <div class="defra-flood-impact-list__container">
             {{ threshold.description | safe }}
             {% if threshold.name != 'latest' %}
-            <span class="defra-flood-impact-list__action" data-add-threshold data-id="threshold-{{ threshold.id }}" data-level="{{ band.level }}" data-name="{{ threshold.name }}"></span>
+            <span class="defra-flood-impact-list__action" data-id="threshold-{{ threshold.id }}" data-level="{{ band.level }}" data-name="{{ threshold.name }}" data-threshold-add></span>
             {% endif %}
           </div>
         </dd>
