@@ -3,9 +3,9 @@
   <form method="post" autocomplete="off">
     <label class="govuk-label defra-search__label" for="search">
       {% if model.searchType == 'placeOnly' %}
-      Search town or postcode
+      Enter town or postcode
       {% else %}
-      Search river, town or postcode
+      Enter river, town or postcode
       {% endif %}
     </label>
     {% if model.isErrorPostcode or model.isErrorEmpty %}

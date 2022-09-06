@@ -50,7 +50,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
-      {{ model.title }}
+      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
     </h1>
   </div>
 </div>
@@ -58,11 +58,11 @@
 {# Multi station #}
 {% if model.station.isMultiStage %}
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-two-thirds">
     {% if model.station.isDownstage %}
-    <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the downstream level. <a href="/station/{{ model.station.id }}">View the upstream level.</a></p>
+    <p>This measuring station takes 2 measurements. You're viewing the downstream level. <a href="/station/{{ model.station.rloiId | truncate(4, true, '') }}">View the upstream level.</a></p>
     {% else %}
-    <p class="govuk-!-margin-bottom-8">This measuring station takes 2 measurements. You're viewing the upstream level. <a href="/station/{{ model.station.id }}">View the downstream level.</a></p>
+    <p>This measuring station takes 2 measurements. You're viewing the upstream level. <a href="/station/{{ model.station.rloiId }}-downstage">View the downstream level.</a></p>
     {% endif %}
   </div>
 </div>
