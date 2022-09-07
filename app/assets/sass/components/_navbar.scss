@@ -150,6 +150,9 @@
     }
     a:focus, .defra-link-icon-s:focus, .defra-button-secondary:focus {
       color: govuk-colour('black');
+      svg {
+        color: govuk-colour('black');
+      }
     }
   }
 }

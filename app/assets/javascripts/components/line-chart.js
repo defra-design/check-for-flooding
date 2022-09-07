@@ -19,7 +19,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Set right margin depending on length of labels
     // const numChars = yScale.domain()[1].toFixed(2).length - 1
     const numChars = yScale.domain()[1].toFixed(1).length - 2
-    const margin = { top: 5, bottom: 65, left: 15, right: (isMobile ? 31 : 36) + (numChars * 9) }
+    margin = { top: 5, bottom: 65, left: 15, right: (isMobile ? 31 : 36) + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = container.getBoundingClientRect()
@@ -230,9 +230,9 @@ function LineChart (containerId, stationId, data, options = {}) {
     if (x <= 0) {
       // tooltip on the left
       x = 0
-    } else if (x + pathLength >= width) {
+    } else if (x + pathLength >= (width + margin.right) - 15) {
       // tooltip on the right
-      x = width - pathLength
+      x = (width + margin.right) - 15 - pathLength
     }
     // Set background above or below position
     const tooltipHeight = tooltipPath.node().getBBox().height
@@ -375,7 +375,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
     if (dataCache.forecast.length) {
       // Add isSignificant property to points
-      dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 1000000 : 1000000)
+      dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 10000000 : 1000000)
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
 
@@ -504,7 +504,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Define globals
   let isMobile, interfaceType, nextFocusElement
   let dataStart, dataPage, dataPoint
-  let width, height, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
+  let width, height, margin, xScaleInitial, xScale, yScale, xExtent, yAxis, yExtent, yExtentDataMin, yExtentDataMax
   let lines, area, line, observedPoints, forecastPoints, significantPoints
   let thresholds = []
 
