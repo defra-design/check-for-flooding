@@ -27,9 +27,9 @@ class ViewModel {
     if (station.type === 'river') {
       this.infoHeight = (() => {
         if (station.latestStatus && station.latestHeight <= 0 && station.type === 'river') {
-          return 'It is normal for some stations to be 0m or below as height is measured from a fixed point.'
+          return 'River height less than or equal to 0: It is normal for some stations to be 0 metres or below. Height is measured from a fixed point, which can change due to erosion or silt deposits.'
         } else {
-          return 'We usually measure the height of rivers relative to a fixed point on or close to the riverbed.'
+          return 'We usually measure the height of rivers from a fixed point on or close to the riverbed.'
         }
       })()
       this.infoTrend = (() => {
@@ -38,7 +38,7 @@ class ViewModel {
         } else if (station.latestTrend === 'falling') {
           return 'The latest level is lower than the previous. Readings are taken every 15 minutes.'
         } else {
-          return 'The latest two readings are the same. Readings are taken every 15 minutes.'
+          return 'The latest 2 readings are the same. Readings are taken every 15 minutes.'
         }
       })()
       this.infoState = (() => {

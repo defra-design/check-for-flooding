@@ -16,47 +16,47 @@ const groupBy = (items, key) => items.reduce(
   {}
 )
 
-const formatTimeElapsed = (date) => {
-  const duration = (new Date() - new Date(date))
-  const mins = Math.floor(duration / (1000 * 60))
-  const hours = Math.floor(duration / (1000 * 60 * 60))
-  const days = parseInt(Math.floor(hours / 24))
-  if (mins < 91 || hours < 2) {
-    return `${mins} minutes ago`
-  } else {
-    if (hours < 48) {
-      return `${hours} hours ago`
-    } else {
-      return `${days} days ago`
-    }
-  }
-}
+// const formatTimeElapsed = (date) => {
+//   const duration = (new Date() - new Date(date))
+//   const mins = Math.floor(duration / (1000 * 60))
+//   const hours = Math.floor(duration / (1000 * 60 * 60))
+//   const days = parseInt(Math.floor(hours / 24))
+//   if (mins < 91 || hours < 2) {
+//     return `${mins} minutes ago`
+//   } else {
+//     if (hours < 48) {
+//       return `${hours} hours ago`
+//     } else {
+//       return `${days} days ago`
+//     }
+//   }
+// }
 
-const formatTimeRecent = (date) => {
-  const today = moment().startOf('day')
-  const tomorrow = moment().add(1, 'days').startOf('day')
-  const dateWhen = (() => {
-    if (moment(date).isSame(today, 'd')) {
-      return 'today'
-    } else if (moment(date).isSame(tomorrow, 'd')) {
-      return 'tomorrow'
-    } else {
-      return `${moment(date).format('D/MM/YY')}`
-    }
-  })()
-  return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
-}
+// const formatTimeRecent = (date) => {
+//   const today = moment().startOf('day')
+//   const tomorrow = moment().add(1, 'days').startOf('day')
+//   const dateWhen = (() => {
+//     if (moment(date).isSame(today, 'd')) {
+//       return 'today'
+//     } else if (moment(date).isSame(tomorrow, 'd')) {
+//       return 'tomorrow'
+//     } else {
+//       return `${moment(date).format('D/MM/YY')}`
+//     }
+//   })()
+//   return `${moment(date).tz('Europe/London').format('h:mma')} ${dateWhen}`
+// }
 
 const formatTimeHour = (date) => {
-  return moment(date).tz('Europe/London').format('h:mma')
+  return moment(date).tz('Europe/London').format(moment(date).minutes() === 0 ? 'ha' : 'h:mma')
 }
 
 const formatTimeDate = (date) => {
-  return `${moment(date).tz('Europe/London').format('h:mma')}, ${moment(date).format('D\xa0MMMM')}`
+  return `${moment(date).tz('Europe/London').format(moment(date).minutes() === 0 ? 'ha' : 'h:mma')}, ${moment(date).format('D\xa0MMMM')}`
 }
 
 const formatTime = (date) => {
-  return `${moment(date).tz('Europe/London').format('h:mma')}`
+  return `${moment(date).tz('Europe/London').format(moment(date).minutes() === 0 ? 'ha' : 'h:mma')}`
 }
 
 const formatDate = (date) => {
@@ -112,8 +112,8 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
 }
 
 module.exports = {
-  formatTimeElapsed,
-  formatTimeRecent,
+  // formatTimeElapsed,
+  // formatTimeRecent,
   formatTimeHour,
   formatTimeDate,
   formatTime,
