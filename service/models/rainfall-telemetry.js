@@ -11,30 +11,32 @@ class RainfallTelemetry {
     const latestHourDateTime = moment(latestDateTime).add(45, 'minutes').minutes(0).seconds(0).milliseconds(0).toDate()
 
     // Extend telemetry upto latest interval, could be 15 or 60 minute intervals
-    while (moment(range[0].dateTime).isSameOrBefore(rangeEnd)) {
-      const nextDateTime = moment(range[0].dateTime).add(valueDuration, 'minutes').toDate()
-      range.unshift({
-        dateTime: nextDateTime,
-        value: 0
-      })
-    }
-
-    // If hourly requested and raw telemetry is in minutes then batch data into hourly totals
     const hours = []
-    if (isMinutes) {
-      let batchTotal = 0
-      range.forEach(item => {
-        const minutes = moment(item.dateTime).minutes()
-        batchTotal += item.value
-        if (minutes === 15) {
-          const batchDateTime = moment(item.dateTime).add(45, 'minutes').toDate()
-          hours.push({
-            dateTime: batchDateTime,
-            value: Math.round(batchTotal * 100) / 100
-          })
-          batchTotal = 0
-        }
-      })
+    if (range.length) {
+      while (moment(range[0].dateTime).isSameOrBefore(rangeEnd)) {
+        const nextDateTime = moment(range[0].dateTime).add(valueDuration, 'minutes').toDate()
+        range.unshift({
+          dateTime: nextDateTime,
+          value: 0
+        })
+      }
+
+      // If hourly requested and raw telemetry is in minutes then batch data into hourly totals
+      if (isMinutes) {
+        let batchTotal = 0
+        range.forEach(item => {
+          const minutes = moment(item.dateTime).minutes()
+          batchTotal += item.value
+          if (minutes === 15) {
+            const batchDateTime = moment(item.dateTime).add(45, 'minutes').toDate()
+            hours.push({
+              dateTime: batchDateTime,
+              value: Math.round(batchTotal * 100) / 100
+            })
+            batchTotal = 0
+          }
+        })
+      }
     }
 
     // Set properties
