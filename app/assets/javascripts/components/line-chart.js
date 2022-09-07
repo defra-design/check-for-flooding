@@ -563,6 +563,8 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   window.addEventListener('resize', () => {
+    // touchmove/scroll on mobile devices also fires resize
+    if (interfaceType === 'touch') return
     hideTooltip()
     renderChart()
   })
@@ -688,12 +690,17 @@ function LineChart (containerId, stationId, data, options = {}) {
   })
 
   svg.on('touchmove', (e) => {
-    // interfaceType = 'touch'
     if (!xScale || e.target.closest('.threshold')) return
+    console.log('touchmove')
     const touchEvent = e.targetTouches[0]
-    getDataPointByX(pointer(touchEvent)[0])
+    const elementOffsetX = svg.node().getBoundingClientRect().left
+    getDataPointByX(pointer(touchEvent)[0] - elementOffsetX)
     hideThreshold()
     showTooltip(10)
+  })
+
+  svg.on('touchend', (e) => {
+    interfaceType = null
   })
 
   thresholdsContainer.on('click', (e) => {
