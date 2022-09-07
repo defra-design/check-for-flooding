@@ -95,12 +95,10 @@ window.flood.maps.styles = {
       if (!showRiver) return
       const riverId = getParameterByName('rid') && Number(decodeURI(getParameterByName('rid')))
       if (feature.get('river_id') === riverId) {
-        var coords = feature.getGeometry().getCoordinates()
-        var start = coords[0]
-        var end = coords[1]
-        var dx = end[0] - start[0]
-        var dy = end[1] - start[1]
-        var rotation = Math.atan2(dy, dx)
+        const coords = feature.getGeometry().getCoordinates()
+        const start = coords[0]
+        const end = coords[1]
+        const rotation = Math.atan2((end[1] - start[1]), (end[0] - start[0]))
         const arrow = new Style({
           geometry: new Point(end),
           image: new Icon({
