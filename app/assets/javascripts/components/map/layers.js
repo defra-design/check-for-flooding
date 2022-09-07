@@ -37,6 +37,7 @@ window.flood.maps.layers = {
   // Default base map
   road: () => {
     return new TileLayer({
+      cacheSize: 128,
       ref: 'road',
       // source: new BingMaps({
       //   key: bingApiKey,
