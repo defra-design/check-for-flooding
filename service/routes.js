@@ -112,9 +112,9 @@ router.get('/service/stations-within/:x1/:y1/:x2/:y2', async (req, res, next) =>
 })
 
 // Get stations by river slug
-router.get('/service/stations-by-river/:slug', async (req, res, next) => {
+router.get('/service/stations-by-river/:display', async (req, res, next) => {
   try {
-    res.status(200).json(await stationServices.getStationsByRiverSlug(req.params.slug))
+    res.status(200).json(await stationServices.getStationsByRiverDisplay(req.params.display))
   } catch (err) {
     res.status(500)
     console.log(err)

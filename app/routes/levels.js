@@ -42,7 +42,7 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
     levels = new Levels(query.type, levelResponse.data)
   } else if (rivers.length === 1 && !places.length) {
     // We have a single river
-    const levelResponse = await levelServices.getLevelsByRiver(rivers[0].slug)
+    const levelResponse = await levelServices.getLevelsByRiver(rivers[0].display)
     levels = new Levels(query.type, levelResponse.data)
   }
   const model = new ViewModel(query, places, rivers, levels)
