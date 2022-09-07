@@ -9,11 +9,10 @@ module.exports = {
       name,
       status,
       type,
-      CASE WHEN type = 'tide' AND river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_slug IS NULL THEN 'sea' ELSE type END AS group_type,
+      CASE WHEN type = 'tide' AND measure_with_latest.river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND measure_with_latest.river_id IS NULL THEN 'sea' ELSE measure_with_latest.type END AS group_type,
       ROUND (ST_Distance(ST_Centroid(ST_MakeEnvelope($1, $2, $3, $4, 4326))::geography, geom::geography)) AS distance,
       river_name,
       river_display,
-      river_slug,
       river_order,
       rainfall_1hr,
       rainfall_6hr,
@@ -36,17 +35,16 @@ module.exports = {
   },
 
   // Used on list page
-  getStationsByRiverSlug: async (slug) => {
+  getStationsByRiverDisplay: async (display) => {
     const response = await db.query(`
       SELECT 
       CASE WHEN type = 'rainfall' THEN station_id ELSE rloi_id END AS id,
       name,
       status,
       type,
-      CASE WHEN type = 'tide' AND river_slug IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_slug IS NULL THEN 'sea' ELSE type END AS group_type,
+      CASE WHEN type = 'tide' AND measure_with_latest.river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND measure_with_latest.river_id IS NULL THEN 'sea' ELSE measure_with_latest.type END AS group_type,
       river_name,
       river_display,
-      river_slug,
       river_order,
       rainfall_1hr,
       rainfall_6hr,
@@ -62,9 +60,9 @@ module.exports = {
       lon,
       lat
       FROM measure_with_latest
-      WHERE river_slug SIMILAR TO $1
+      WHERE river_display SIMILAR TO $1
       ORDER BY river_order, is_downstage;
-    `, [`%(-${slug}|${slug}-|${slug})%`])
+    `, [`%(-${display}|${display}-|${display})%`])
     return response
   },
 
@@ -83,7 +81,6 @@ module.exports = {
       station_down,
       river_name,
       river_display,
-      river_slug,
       river_order,
       level_max,
       level_max_datetime,
