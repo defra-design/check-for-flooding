@@ -150,7 +150,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     significantCells.append('circle').attr('aria-hidden', true)
       .attr('r', '3')
       .attr('cx', d => xScale(new Date(d.dateTime)))
-      .attr('cy', d => yScale(d.value))
+      .attr('cy', d => yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value))
     significantCells.insert('text')
 
     // Hide x axis labels that overlap with time now label
@@ -366,7 +366,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (dataCache.observed.length) {
       // Add isSignificant property to points
-      dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 10000000 : 150000)
+      dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 10000000 : 1000000)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
       const filterNegativeValues = ['groundwater', 'tide'].includes(dataCache.type) ? errorFilter : errorAndNegativeFilter
@@ -375,7 +375,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }
     if (dataCache.forecast.length) {
       // Add isSignificant property to points
-      dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 1000000 : 150000)
+      dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 1000000 : 1000000)
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
 
