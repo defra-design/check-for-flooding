@@ -1,5 +1,6 @@
 .defra-chart-controls {
   position: relative;
+  overflow: auto;
   z-index: 1;
 }
 .defra-chart-controls__period {
@@ -8,8 +9,11 @@
   padding-bottom: 20px;
 }
 .defra-chart-controls__pagination {
-  // display: inline-block;
-  float: right;
+  display: block;
+  padding-bottom: 20px;
+  @include mq ($from: tablet) {
+    float: right;
+  }
     // border: 0px;
     // background-color: white;
     // margin: 0px 0px 15px;

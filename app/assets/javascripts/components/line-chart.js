@@ -19,7 +19,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Set right margin depending on length of labels
     // const numChars = yScale.domain()[1].toFixed(2).length - 1
     const numChars = yScale.domain()[1].toFixed(1).length - 2
-    margin = { top: 5, bottom: 65, left: 15, right: (isMobile ? 31 : 36) + (numChars * 9) }
+    margin = { top: 5, bottom: 45, left: 15, right: (isMobile ? 31 : 36) + (numChars * 9) }
 
     // Get width and height
     const containerBoundingRect = container.getBoundingClientRect()

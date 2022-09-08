@@ -17,7 +17,7 @@ function BarChart (containerId, stationId, data) {
 
     // Set right margin depending on length of labels
     const numChars = yScale.domain()[1].toString().length
-    const margin = { top: 5, bottom: 65, left: 0, right: 8 + (numChars * 9) }
+    const margin = { top: 5, bottom: 45, left: 0, right: 8 + (numChars * 9) }
 
     // Define width and height
     const containerBoundingRect = container.getBoundingClientRect()
