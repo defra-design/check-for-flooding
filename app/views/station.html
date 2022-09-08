@@ -73,7 +73,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-6">
+    <div class="defra-service-error govuk-!-margin-bottom-2">
       <h2 class="defra-service-error__title" id="error-summary-title">
         This measuring station is offline
       </h2>
@@ -94,7 +94,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-6">
+    <div class="defra-service-error govuk-!-margin-bottom-2">
       <h2 class="defra-service-error__title" id="error-summary-title">
         This measuring station is closed
       </h2>
@@ -109,7 +109,7 @@
 {% elif model.station.latestStatus == 'missing' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-6">
+    <div class="defra-service-error govuk-!-margin-bottom-2">
       <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
       <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
     </div>
@@ -120,7 +120,7 @@
 {% elif model.station.latestStatus == 'unreliable' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-6">
+    <div class="defra-service-error govuk-!-margin-bottom-2">
       <h2 class="defra-service-error__title" id="error-summary-title">
         There's a problem with the latest measurement
       </h2>
@@ -245,7 +245,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <details class="govuk-details govuk-!-margin-top-6 govuk-!-font-size-16" data-module="govuk-details">
+    <details class="govuk-details govuk-!-margin-top-4 govuk-!-font-size-16" data-module="govuk-details">
       <summary class="govuk-details__summary">
         <span class="govuk-details__summary-text">
           View technical information

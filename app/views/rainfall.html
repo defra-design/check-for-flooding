@@ -43,6 +43,18 @@
   </div>
 </div>
 
+{# No recent value #}
+{% if model.telemetry.status == 'missing' %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-bottom-2">
+      <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
+    </div>
+  </div>
+</div>
+
+{% else %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
@@ -97,6 +109,7 @@
     </a>
   </div>
 </div>
+{% endif %}
 
 {# Station Details #}
 <div class="govuk-grid-row">

@@ -58,6 +58,7 @@ class RainfallTelemetry {
       latestDateTime: latestHourDateTime,
       values: isMinutes ? hours : range
     }
+    this.status = range.length && recent.length ? 'success' : 'missing'
   }
 }
 module.exports = RainfallTelemetry
