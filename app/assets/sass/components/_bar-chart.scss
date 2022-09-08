@@ -1,20 +1,11 @@
 // Bar graph
+.defra-bar-chart {
+  position: relative;
+  margin: 0 -15px;
+}
 .js-enabled .defra-bar-chart {
-  &__caption {
-    display:block;
-    @extend .govuk-body;
-    margin-bottom:30px;
-    @include mq ($from: tablet) {
-      margin-bottom:40px;
-    }
-    margin-right:0px;
-    text-align:left;
-  }
-  &__container {
-    position:relative;
-    margin:0;
-    outline: 0px;
-  }
+  padding-right: 15px;
+  padding-left: 15px;
 }
 .defra-bar-chart > svg {
   position:relative;

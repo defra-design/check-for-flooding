@@ -691,7 +691,6 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   svg.on('touchmove', (e) => {
     if (!xScale || e.target.closest('.threshold')) return
-    console.log('touchmove')
     const touchEvent = e.targetTouches[0]
     const elementOffsetX = svg.node().getBoundingClientRect().left
     getDataPointByX(pointer(touchEvent)[0] - elementOffsetX)

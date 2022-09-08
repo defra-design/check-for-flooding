@@ -17,7 +17,7 @@ function BarChart (containerId, stationId, data) {
 
     // Set right margin depending on length of labels
     const numChars = yScale.domain()[1].toString().length
-    const margin = { top: 5, bottom: 45, left: 0, right: 8 + (numChars * 9) }
+    const margin = { top: 5, bottom: 45, left: 15, right: (isMobile ? 23 : 24) + (numChars * 9) }
 
     // Define width and height
     const containerBoundingRect = container.getBoundingClientRect()
@@ -498,10 +498,10 @@ function BarChart (containerId, stationId, data) {
 
   // Set defaults
   let width, height, xScale, yScale, dataStart, dataPage, dataItem, latestDateTime, period, positiveDataItems, direction, interfaceType
-  // let isMobile
 
-  // Get mobile media query list
-  // const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
+  // Create a mobile width media query
+  const mobileMediaQuery = window.matchMedia('(max-width: 640px)')
+  let isMobile = mobileMediaQuery.matches
 
   // Default page size is 5 days
   let pageStart = new Date()
@@ -531,7 +531,11 @@ function BarChart (containerId, stationId, data) {
   // Events
   //
 
-  // mobileMediaQuery.addEventListener('change', renderChart)
+  mobileMediaQuery.addEventListener('change', (e) => {
+    isMobile = e.matches
+    hideTooltip()
+    renderChart()
+  })
 
   window.addEventListener('resize', () => {
     renderChart()
@@ -608,9 +612,10 @@ function BarChart (containerId, stationId, data) {
   })
 
   svg.on('touchmove', (e) => {
-    const touchEvent = e.targetTouches[0]
     if (!xScale) return
-    getDataItemByX(pointer(touchEvent)[0])
+    const touchEvent = e.targetTouches[0]
+    const elementOffsetX = svg.node().getBoundingClientRect().left
+    getDataItemByX(pointer(touchEvent)[0] - elementOffsetX)
     showTooltip(10)
   })
 

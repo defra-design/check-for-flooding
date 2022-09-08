@@ -27,7 +27,7 @@ class ViewModel {
     if (station.type === 'river') {
       this.infoHeight = (() => {
         if (station.latestStatus && station.latestHeight <= 0 && station.type === 'river') {
-          return 'River height less than or equal to 0: It is normal for some stations to be 0 metres or below. Height is measured from a fixed point, which can change due to erosion or silt deposits.'
+          return 'The river height is 0 metres or below. This is normal because height is measured from a fixed point, which can change due to erosion or silt deposits.'
         } else {
           return 'We usually measure the height of rivers from a fixed point on or close to the riverbed.'
         }
