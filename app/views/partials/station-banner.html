@@ -1,7 +1,10 @@
+{# Station has a warnings baner #}
 {% if model.banner or model.station.rloiId == '8208' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-status defra-flood-status--small defra-flood-status--full govuk-!-margin-bottom-3">
+
+      {# Station has nearby warnings #}
       {% if model.banner %}
       <div class="defra-flood-status-item defra-flood-status-item--{{ model.banner.severity }}">
         <div class="defra-flood-status-item__container">
@@ -14,6 +17,8 @@
         </div>
       </div>
       {% endif %}
+
+      {# Station forecast interpretation #}
       {% if model.station.rloiId == '8208' %}
       <div class="defra-flood-status-item defra-flood-status-item--important">
         <div class="defra-flood-status-item__container">
@@ -27,6 +32,55 @@
           </div>
         </div>
       </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{# Station has an error with the data #}
+{% if model.station.status != 'active' or model.station.latestStatus != 'success' %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
+
+      {# Station is suspended #}
+      {% if model.station.status == 'suspended' %}
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        This measuring station is offline
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        {% if model.station.statusReason %}
+          {{ model.station.statusReason}}
+        {% else %}
+          We are working to get it back online.
+        {% endif %} 
+        You can <a href="/river-and-sea-levels">check another river, sea, groundwater or rainfall level</a>.
+      </p>
+
+      {# Station is closed #}
+      {% elif model.station.status == 'closed' %}
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        This measuring station is closed
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        No data is available. You can <a href="/river-sea-groundwater-rainfall-levels">check another river, sea, groundwater or rainfall level</a>.
+      </p>
+
+      {# No recent value #}
+      {% elif model.station.latestStatus == 'missing' %}
+      <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
+
+      {# Latest mesurement unrelaible #}
+      {% elif model.station.latestStatus == 'unreliable' %}
+      <h2 class="defra-service-error__title" id="error-summary-title">
+        There's a problem with the latest measurement
+      </h2>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        The latest measurement is unreliable. This could be due to a fault with the measuring equipment.
+      </p>
+
       {% endif %}
     </div>
   </div>

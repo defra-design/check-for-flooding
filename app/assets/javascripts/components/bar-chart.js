@@ -17,15 +17,14 @@ function BarChart (containerId, stationId, data) {
 
     // Set right margin depending on length of labels
     const numChars = yScale.domain()[1].toString().length
-    const margin = { top: 5, bottom: 45, left: 0, right: 8 + (numChars * 9) }
+    const margin = { top: 5, bottom: 65, left: 0, right: 8 + (numChars * 9) }
 
     // Define width and height
     const containerBoundingRect = container.getBoundingClientRect()
     const controlsBoundingRect = controls.getBoundingClientRect()
-    const paginationBoundingRect = pagination.getBoundingClientRect()
     width = Math.floor(containerBoundingRect.width) - margin.right - margin.left
     height = Math.floor(containerBoundingRect.height) - margin.bottom - margin.top
-    height -= (Math.floor(controlsBoundingRect.height) + Math.floor(paginationBoundingRect.height))
+    height -= Math.floor(controlsBoundingRect.height)
 
     // Calculate new xScale from range
     xScale = xScale.range([0, width]).padding(0.4)
@@ -234,7 +233,7 @@ function BarChart (containerId, stationId, data) {
     locatorBackground.classed('locator__background--visible', false)
   }
 
-  const updateNavbar = () => {
+  const updatePeriodControls = () => {
     const now = new Date()
     const dataDurationDays = Math.round((new Date(now.getTime() - dataStart.getTime())) / (1000 * 60 * 60 * 24))
     // Check there are at least 2 telemetry arrays
@@ -243,16 +242,15 @@ function BarChart (containerId, stationId, data) {
       numBands += Object.getOwnPropertyDescriptor(dataCache, bands[i].period) ? 1 : 0
     }
     // Determin which controls to display
-    forEach(navbar.querySelectorAll('.defra-chart-navbar input'), input => {
-      const isBand = period === input.getAttribute('data-period')
-      const band = bands.find(x => x.period === input.getAttribute('data-period'))
-      input.checked = isBand
-      input.parentNode.style.display = (band.days <= dataDurationDays) && numBands > 1 ? 'inline-block' : 'none'
-      input.parentNode.classList.toggle('defra-chart-navbar__item--selected', isBand)
+    forEach(periodControls.querySelectorAll('.defra-chart-controls-button'), button => {
+      const isBand = period === button.getAttribute('data-period')
+      const band = bands.find(x => x.period === button.getAttribute('data-period'))
+      button.style.display = (band.days <= dataDurationDays) && numBands > 1 ? 'inline-block' : 'none'
+      button.classList.toggle('defra-chart-controls-button--selected', isBand)
     })
   }
 
-  const updatePagination = (start, end, duration, durationHours) => {
+  const updatePaginationControls = (start, end, duration, durationHours) => {
     // Set paging values and ensure they are within data range
     const now = new Date()
     let nextStart = new Date(start.getTime() + duration)
@@ -264,7 +262,7 @@ function BarChart (containerId, stationId, data) {
     previousStart = previousStart.getTime() >= dataStart.getTime() ? previousStart.toISOString().replace(/.\d+Z$/g, 'Z') : null
     previousEnd = previousStart ? previousEnd.toISOString().replace(/.\d+Z$/g, 'Z') : null
     // Set properties
-    paginationInner.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
+    paginationControls.style.display = (nextStart || previousEnd) ? 'inline-block' : 'none'
     pageForward.setAttribute('data-start', nextStart)
     pageForward.setAttribute('data-end', nextEnd)
     pageBack.setAttribute('data-start', previousStart)
@@ -338,20 +336,12 @@ function BarChart (containerId, stationId, data) {
       dataItem = direction === 'forward' ? dataPage[positiveDataItems[positiveDataItems.length - 1]] : dataPage[positiveDataItems[0]]
     }
     // Update html control properties
-    updateNavbar()
-    updatePagination(pageStart, pageEnd, pageDuration, pageDurationHours)
+    updatePeriodControls()
+    updatePaginationControls(pageStart, pageEnd, pageDuration, pageDurationHours)
     const totalPageRainfall = dataPage.reduce((a, b) => { return a + b.value }, 0)
     const pageValueStart = new Date(new Date(dataPage[dataPage.length - 1].dateTime).getTime() - valueDuration)
     const pageValueEnd = new Date(dataPage[0].dateTime)
     updateGrid(positiveDataItems.length, totalPageRainfall, pageDurationHours, pageDurationDays, pageValueStart, pageValueEnd)
-  }
-
-  const changePage = (event) => {
-    const target = event.target
-    direction = target.getAttribute('data-direction')
-    pageStart = new Date(target.getAttribute('data-start'))
-    pageEnd = new Date(target.getAttribute('data-end'))
-    initChart()
   }
 
   const scaleBandInvert = (scale) => {
@@ -404,27 +394,77 @@ function BarChart (containerId, stationId, data) {
   container.appendChild(controls)
 
   // Data resolutions in days, ascending order
-  const bands = [{ period: 'minutes', label: '15 Minutes', days: 1 }, { period: 'hours', label: 'Hours', days: 5 }]
+  const bands = [{ period: 'minutes', label: '24 hours', days: 1 }, { period: 'hours', label: '5 days', days: 5 }]
 
   // Add time scale buttons
-  const navbar = document.createElement('div')
-  navbar.className = 'defra-chart-navbar'
+  const periodControls = document.createElement('div')
+  periodControls.className = 'defra-chart-controls__period'
   for (let i = bands.length - 1; i >= 0; i--) {
-    const control = document.createElement('div')
-    control.className = 'defra-chart-navbar__item'
-    control.style.display = 'none'
+    const button = document.createElement('button')
+    button.className = 'defra-chart-controls-button'
+    button.style.display = 'none'
+    button.id = `time${bands[i].label}`
     let start = new Date()
     let end = new Date()
     start.setHours(start.getHours() - (bands.find(x => x.period === bands[i].period).days * 24))
     start = start.toISOString().replace(/.\d+Z$/g, 'Z')
     end = end.toISOString().replace(/.\d+Z$/g, 'Z')
-    control.innerHTML = `
-      <input class="defra-chart-navbar__input" name="time" type="radio" id="time${bands[i].label}" data-period="${bands[i].period}" data-start="${start}" data-end="${end}" aria-controls="bar-chart"/>
-      <label for="time${bands[i].label}">${bands[i].label}</label>
-    `
-    navbar.appendChild(control)
+    button.setAttribute('data-period', bands[i].period)
+    button.setAttribute('data-start', start)
+    button.setAttribute('data-end', end)
+    button.setAttribute('aria-controls', 'bar-chart')
+    button.innerHTML = `<span class="defra-chart-controls-button__text">${bands[i].label}</span>`
+    periodControls.appendChild(button)
   }
-  controls.appendChild(navbar)
+  controls.appendChild(periodControls)
+
+  // Add paging control
+  const paginationControls = document.createElement('div')
+  paginationControls.className = 'defra-chart-controls__pagination'
+  paginationControls.style.display = 'none'
+  const pageBack = document.createElement('button')
+  pageBack.className = 'defra-chart-controls-button defra-chart-controls-button--back'
+  pageBack.setAttribute('data-direction', 'back')
+  pageBack.setAttribute('aria-controls', 'bar-chart')
+  pageBack.setAttribute('aria-describedby', 'page-back-description')
+  const pageBackIcon = document.createElement('span')
+  pageBackIcon.setAttribute('class', 'defra-chart-controls-button__icon')
+  pageBackIcon.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+    <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+  </svg>
+  `
+  pageBack.appendChild(pageBackIcon)
+  const pageBackText = document.createElement('span')
+  pageBackText.className = 'defra-chart-controls-button__text'
+  pageBack.appendChild(pageBackText)
+  const pageBackDescription = document.createElement('span')
+  pageBackDescription.className = 'govuk-visually-hidden'
+  pageBackDescription.setAttribute('aria-live', 'polite')
+  pageBack.appendChild(pageBackDescription)
+  const pageForward = document.createElement('button')
+  pageForward.className = 'defra-chart-controls-button defra-chart-controls-button--forward'
+  pageForward.setAttribute('data-direction', 'forward')
+  pageForward.setAttribute('aria-controls', 'bar-chart')
+  pageForward.setAttribute('aria-describedby', 'page-forward-description')
+  const pageForwardText = document.createElement('span')
+  pageForwardText.className = 'defra-chart-controls-button__text'
+  pageForward.appendChild(pageForwardText)
+  const pageForwardDescription = document.createElement('span')
+  pageForwardDescription.className = 'govuk-visually-hidden'
+  pageForwardDescription.setAttribute('aria-live', 'polite')
+  pageForward.appendChild(pageForwardDescription)
+  const pageForwardIcon = document.createElement('span')
+  pageForwardIcon.setAttribute('class', 'defra-chart-controls-button__icon')
+  pageForwardIcon.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+    <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+  </svg>
+  `
+  pageForward.appendChild(pageForwardIcon)
+  paginationControls.appendChild(pageBack)
+  paginationControls.appendChild(pageForward)
+  controls.appendChild(paginationControls)
 
   // Create chart container elements
   const svg = select(`#${containerId}`).append('svg')
@@ -455,43 +495,6 @@ function BarChart (containerId, stationId, data) {
   const tooltipText = tooltip.append('text').attr('class', 'tooltip-text')
   const tooltipValue = tooltipText.append('tspan').attr('class', 'tooltip-text__strong')
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text')
-
-  // Add paging control
-  const pagination = document.createElement('div')
-  pagination.className = 'defra-chart-pagination'
-  const paginationInner = document.createElement('div')
-  paginationInner.style.display = 'none'
-  paginationInner.className = 'defra-chart-pagination_inner'
-  const pageBack = document.createElement('button')
-  pageBack.className = 'defra-chart-pagination__button defra-chart-pagination__button--back'
-  pageBack.setAttribute('data-direction', 'back')
-  pageBack.setAttribute('aria-controls', 'bar-chart')
-  pageBack.setAttribute('aria-describedby', 'page-back-description')
-  const pageBackText = document.createElement('span')
-  pageBackText.className = 'defra-chart-pagination__text'
-  pageBack.appendChild(pageBackText)
-  const pageBackDescription = document.createElement('span')
-  pageBackDescription.id = 'page-back-description'
-  pageBackDescription.className = 'govuk-visually-hidden'
-  pageBackDescription.setAttribute('aria-live', 'polite')
-  pageBack.appendChild(pageBackDescription)
-  const pageForward = document.createElement('button')
-  pageForward.className = 'defra-chart-pagination__button defra-chart-pagination__button--forward'
-  pageForward.setAttribute('data-direction', 'forward')
-  pageForward.setAttribute('aria-controls', 'bar-chart')
-  pageForward.setAttribute('aria-describedby', 'page-forward-description')
-  const pageForwardText = document.createElement('span')
-  pageForwardText.className = 'defra-chart-pagination__text'
-  pageForward.appendChild(pageForwardText)
-  const pageForwardDescription = document.createElement('span')
-  pageForwardDescription.id = 'page-forward-description'
-  pageForwardDescription.className = 'govuk-visually-hidden'
-  pageForwardDescription.setAttribute('aria-live', 'polite')
-  pageForward.appendChild(pageForwardDescription)
-  paginationInner.appendChild(pageBack)
-  paginationInner.appendChild(pageForward)
-  pagination.appendChild(paginationInner)
-  container.appendChild(pagination)
 
   // Set defaults
   let width, height, xScale, yScale, dataStart, dataPage, dataItem, latestDateTime, period, positiveDataItems, direction, interfaceType
@@ -536,17 +539,21 @@ function BarChart (containerId, stationId, data) {
   })
 
   container.addEventListener('click', (e) => {
-    const classNames = ['defra-chart-navbar__input', 'defra-chart-pagination__button']
-    if (!classNames.some(className => e.target.classList.contains(className))) return
-    if (e.target.getAttribute('aria-disabled') === 'true') {
-      const container = e.target.classList.contains('defra-chart-pagination__button--back') ? pageBackDescription : pageForwardDescription
-      container.innerText = ''
+    const button = e.target.closest('.defra-chart-controls-button')
+    if (!button) return
+    if (button.getAttribute('aria-disabled') === 'true') {
+      const description = button.querySelector('.govuk-visually-hidden')
+      description.innerText = ''
       window.setTimeout(() => {
-        container.innerText = container === pageBackDescription ? 'No previous data' : 'No more data'
+        description.innerText = button.getAttribute('data-direction') === 'forward' ? 'No more data' : 'No previous data'
       }, 100)
       return
     }
-    changePage(e)
+    // Change page
+    direction = button.getAttribute('data-direction')
+    pageStart = new Date(button.getAttribute('data-start'))
+    pageEnd = new Date(button.getAttribute('data-end'))
+    initChart()
   })
 
   document.addEventListener('keyup', (e) => {

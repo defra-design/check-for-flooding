@@ -15,7 +15,7 @@ class ViewModel {
       }
     })()
     this.station = station
-    this.banner = banner?.severity || null
+    this.banner = banner?.severity ? banner : null
     this.telemetry = telemetry
     this.thresholds = thresholds
     this.time = utils.formatTimeDate(station.latestDatetime)

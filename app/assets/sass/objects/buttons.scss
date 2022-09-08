@@ -19,32 +19,18 @@
     }
 }
 
-// Text button
+// Buttons like hyperlinks
 .defra-button-text {
-    @extend .govuk-body;
+    @extend .govuk-link;
     position: relative;
     margin:0px;
+    padding:0;
     color:$govuk-link-colour;
     background-color: transparent;
     border:0px;
     text-align:left;
-    text-decoration: underline;
-    padding:0;
     border-radius: 0;
     cursor:pointer;
-    &:focus {
-        outline:3px solid transparent;
-        background-color: $govuk-focus-colour;
-        color: $govuk-text-colour !important;
-        box-shadow: 0 -2px #ffdd00, 0 4px currentColor;
-        text-decoration: none;
-    }
-    &:active {
-        color: $govuk-text-colour !important;
-    }
-    &:hover {
-        color:$govuk-link-hover-colour;
-    }
 }
 .defra-button-text-s {
     @extend .defra-button-text;
@@ -88,16 +74,6 @@ button.defra-button-secondary {
             margin-top: -11px;
         }
     }
-    // &--river-up,
-    // &--river-down {
-    //     padding-left: 31px;
-    //     svg {
-    //         position: absolute;
-    //         left: 10px;
-    //         top: 50%;
-    //         margin-top: -8px;
-    //     }
-    // }
 }
 .defra-button-secondary-s {
     @extend .defra-button-secondary;
@@ -105,7 +81,7 @@ button.defra-button-secondary {
     padding: 6px 7px 7px;
 }
 
-// Text buttons with icons
+// Hyperlinks with icons
 .defra-link-icon {
     position:relative;
     display:inline-block;

@@ -1,5 +1,6 @@
 // Bar graph
-.defra-bar-chart {
+.js-enabled .defra-bar-chart {
+  padding-top: 20px;
   &__caption {
     display:block;
     @extend .govuk-body;
@@ -16,7 +17,7 @@
     outline: 0px;
   }
 }
-.defra-bar-chart svg {
+.defra-bar-chart > svg {
   position:relative;
   overflow:visible;
   height:300px;

@@ -68,71 +68,6 @@
 </div>
 {% endif %}
 
-{# Station is suspended #}
-{% if model.station.status == 'suspended' %}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-2">
-      <h2 class="defra-service-error__title" id="error-summary-title">
-        This measuring station is offline
-      </h2>
-      <p class="govuk-body govuk-!-margin-bottom-0">
-        {% if model.station.statusReason %}
-          {{ model.station.statusReason}}
-        {% else %}
-          We are working to get it back online.
-        {% endif %} 
-        You can <a href="/river-and-sea-levels">check another river, sea, groundwater or rainfall level</a>.
-      </p>
-    </div>
-  </div>
-</div>
-
-{# Station is closed #}
-{% elif model.station.status == 'closed' %}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-2">
-      <h2 class="defra-service-error__title" id="error-summary-title">
-        This measuring station is closed
-      </h2>
-      <p class="govuk-body govuk-!-margin-bottom-0">
-        No data is available. You can <a href="/river-sea-groundwater-rainfall-levels">check another river, sea, groundwater or rainfall level</a>.
-      </p>
-    </div>
-  </div>
-</div>
-
-{# No recent value #}
-{% elif model.station.latestStatus == 'missing' %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-2">
-      <h2 class="defra-service-error__title" id="error-summary-title">There's a problem with the data</h2>
-      <p class="govuk-body govuk-!-margin-bottom-0">There's no recent data. Try again later.</p>
-    </div>
-  </div>
-</div>
-
-{# Latest mesurement unrelaible #}
-{% elif model.station.latestStatus == 'unreliable' %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <div class="defra-service-error govuk-!-margin-bottom-2">
-      <h2 class="defra-service-error__title" id="error-summary-title">
-        There's a problem with the latest measurement
-      </h2>
-      <p class="govuk-body govuk-!-margin-bottom-0">
-        The latest measurement is unreliable. This could be due to a fault with the measuring equipment.
-      </p>
-    </div>
-  </div>
-</div>
-
-{% endif %}
-
 {% if model.station.status == 'active' and model.station.latestStatus == 'success' %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
@@ -200,8 +135,8 @@
     {% endif %}
     <!-- End toggletip research -->
 
-    <a href="" class="defra-link-icon-s govuk-!-margin-bottom-2 govuk-!-margin-top-4">
-      <svg width="13" height="20" viewBox="0 0 13 20"><rect x="0" y="1.5" width="10.5" height="14.5" style="fill: currentColor"/><path d="M2,18.5L13,18.5L13,3.5L11.5,3.5L11.5,17.009L2,17.009L2,18.5Z" style="fill: currentColor"/></svg>Download height data CSV (123KB)
+    <a href="" class="defra-link-icon-s govuk-!-margin-bottom-6" download>
+      <svg width="13" height="20" viewBox="0 0 13 20"><rect x="0" y="1.5" width="10.5" height="14.5" style="fill: currentColor"/><path d="M2,18.5L13,18.5L13,3.5L11.5,3.5L11.5,17.009L2,17.009L2,18.5Z" style="fill: currentColor"/></svg>Download data CSV (123KB)
     </a>
   </div>
 </div>
@@ -211,11 +146,11 @@
 {% if model.thresholds.length > 1 %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h2 class="govuk-heading-s govuk-!-margin-top-6">How levels here could affect nearby areas</h2>
+    <h2 class="govuk-heading-s">How levels here could affect nearby areas</h2>
     {% if model.station.hasImpacts %}
     <span id="toggle-list-display" data-toggle-list-display-type="impact"></span>
     {% endif %}
-    <dl class="defra-flood-impact-list govuk-!-margin-bottom-0" id="impact-list">
+    <dl class="defra-flood-impact-list govuk-!-margin-bottom-6" id="impact-list">
       {% for band in model.thresholds %}
       <div class="defra-flood-impact-list__row {% if band.isLatest %} defra-flood-impact-list__row--current {% elif band.isExceeded %} defra-flood-impact-list__row--exceeded{% endif %}" {% if band.type === 'historical' %} data-toggle-list-display-item="impact" {% endif %}>
         <dt class="defra-flood-impact-list__key">
@@ -245,7 +180,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <details class="govuk-details govuk-!-margin-top-4 govuk-!-font-size-16" data-module="govuk-details">
+    <details class="govuk-details govuk-!-font-size-16" data-module="govuk-details">
       <summary class="govuk-details__summary">
         <span class="govuk-details__summary-text">
           View technical information
