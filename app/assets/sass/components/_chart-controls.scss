@@ -14,6 +14,7 @@
   float: right;
 }
 .defra-chart-controls-button {
+  touch-action: manipulation;
   @extend .defra-button-text-s;
   padding: 5px 0px;
   display: inline-block;
