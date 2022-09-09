@@ -71,6 +71,7 @@ const createIconStyle = (options) => {
 
 const styleCache = (() => {
   return {
+    // Warnings
     severe: createIconStyle({ offset: [0, 0], zIndex: 5 }),
     severeSelected: createIconStyle({ offset: [100, 0], zIndex: 10 }),
     warning: createIconStyle({ offset: [0, 100], zIndex: 4 }),
@@ -186,19 +187,6 @@ window.flood.maps.styles = {
         zIndex: zIndex
       })
       return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
-    } else if (featureLayer === 'catchments') {
-      const showCatchments = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('ct')
-      if (!showCatchments) return
-      return new Style({
-        stroke: new Stroke({
-          color: '#1d70b8',
-          width: 1
-        }),
-        fill: new Fill({
-          color: 'transparent'
-        }),
-        zIndex: 1
-      })
     } else if (featureLayer === 'rivers') {
       const showRiver = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
       if (!showRiver) return
@@ -237,16 +225,6 @@ window.flood.maps.styles = {
           zIndex: 2
         })
         return feature.get('form') === 'tidalRiver' ? [lineOuter, lineInner, arrow] : [lineOuter, arrow]
-      } else if (getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('*')) {
-        // *DBL Test
-        let colour = '#b1b4b6'
-        if (!feature.get('riverId') && !feature.get('name1') && !feature.get('name2')) {
-          colour = '#ffdd00'
-        }
-        return new Style({
-          stroke: new Stroke({ color: colour, width: 3 }),
-          fill: new Fill({ color: 'transparent' })
-        })
       }
     }
   },
@@ -307,62 +285,51 @@ window.flood.maps.styles = {
   // WebGL styles
   //
 
-  // warningsJSON: {
-  //   filter: ['case',
-  //     ['<', ['resolution'], 100],
-  //     false,
-  //     ['case',
-  //       ['==', ['get', 'isVisible'], 'true'],
-  //       true,
-  //       false
-  //     ]
-  //   ],
-  //   symbol: {
-  //     symbolType: 'image',
-  //     src: '/public/images/map-symbols-2x.png',
-  //     size: 50,
-  //     rotateWithView: false,
-  //     offset: [0, 0],
-  //     textureCoord: ['match', ['get', 'severity'],
-  //       3, [0, 0, 0.5, 0.04761904761],
-  //       2, [0, 0.04761904761, 0.5, 0.09523809523],
-  //       1, [0, 0.09523809523, 0.5, 0.14285714285],
-  //       [0, 0.14285714285, 0.5, 0.19047619047]
-  //     ]
-  //   }
-  // },
+  warningsJSON: {
+    filter: ['case',
+      ['<', ['resolution'], 100],
+      false,
+      ['case',
+        ['==', ['get', 'isVisible'], 'true'],
+        true,
+        false
+      ]
+    ],
+    symbol: {
+      symbolType: 'image',
+      src: '/public/images/map-symbols-2x.png',
+      size: 50,
+      rotateWithView: false,
+      offset: [0, 0],
+      textureCoord: ['match', ['get', 'severity'],
+        3, [0, 0, 0.5, 0.04761904761],
+        2, [0, 0.04761904761, 0.5, 0.09523809523],
+        1, [0, 0.09523809523, 0.5, 0.14285714285],
+        [0, 0.14285714285, 0.5, 0.19047619047]
+      ]
+    }
+  },
 
-  // stationsJSON: {
-  //   symbol: {
-  //     symbolType: 'image',
-  //     src: '/public/images/map-symbols-2x.png',
-  //     size: 50,
-  //     rotateWithView: false,
-  //     offset: [0, 0],
-  //     textureCoord: ['match', ['get', 'state'],
-  //       'rain', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.8095238095, 0.5, 0.85714285714]],
-  //       'rainDry', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
-  //       'sea', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
-  //       'seaError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
-  //       'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.8095238095, 0.5, 0.85714285714]],
-  //       'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.7619047619, 0.5, 0.8095238095]],
-  //       'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.85714285714, 0.5, 0.90476190476]],
-  //       'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.7619047619, 0.5, 0.8095238095]],
-  //       'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.85714285714, 0.5, 0.90476190476]],
-  //       ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.8095238095, 0.5, 0.85714285714]]
-  //     ]
-  //   }
-  // },
-
-  //
-  // Test
-  //
-
-  riverLine: (feature) => {
-    return new Style({
-      stroke: new Stroke({ color: '#1d70b8', width: 3 }),
-      fill: new Fill({ color: 'transparent' })
-    })
+  stationsJSON: {
+    symbol: {
+      symbolType: 'image',
+      src: '/public/images/map-symbols-2x.png',
+      size: 50,
+      rotateWithView: false,
+      offset: [0, 0],
+      textureCoord: ['match', ['get', 'state'],
+        'rain', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.8095238095, 0.5, 0.85714285714]],
+        'rainDry', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
+        'sea', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
+        'seaError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
+        'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.8095238095, 0.5, 0.85714285714]],
+        'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.7619047619, 0.5, 0.8095238095]],
+        'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.85714285714, 0.5, 0.90476190476]],
+        'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.7619047619, 0.5, 0.8095238095]],
+        'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.85714285714, 0.5, 0.90476190476]],
+        ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.8095238095, 0.5, 0.85714285714]]
+      ]
+    }
   },
 
   //
