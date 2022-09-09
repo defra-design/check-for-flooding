@@ -109,7 +109,7 @@ function LiveMap (mapId, options) {
 
   // These layers can be manipulated
   const dataLayers = [
-    vectorTilePolygons,
+    // vectorTilePolygons,
     riverLine, // Test
     river,
     sea,
