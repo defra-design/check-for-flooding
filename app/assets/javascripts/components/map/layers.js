@@ -39,15 +39,15 @@ window.flood.maps.layers = {
     return new TileLayer({
       cacheSize: 128,
       ref: 'road',
-      // source: new BingMaps({
-      //   key: bingApiKey,
-      //   imagerySet: 'RoadOnDemand',
-      //   hidpi: true
-      // }),
-      source: new XYZ({
-        url: `https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=${osApiKey}`,
-        attributions: `Contains OS data<br/>&copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
+      source: new BingMaps({
+        key: bingApiKey,
+        imagerySet: 'RoadOnDemand'
+        // hidpi: true
       }),
+      // source: new XYZ({
+      //   url: `https://api.os.uk/maps/raster/v1/zxy/Outdoor_3857/{z}/{x}/{y}.png?key=${osApiKey}`,
+      //   attributions: `Contains OS data<br/>&copy; Crown copyright and database rights ${(new Date()).getFullYear()}`
+      // }),
       extent: window.flood.maps.extent,
       visible: false,
       zIndex: 0
