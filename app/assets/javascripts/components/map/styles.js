@@ -8,6 +8,115 @@ const { getParameterByName } = window.flood.utils
 
 const maps = window.flood.maps
 
+//
+// Style caching, improves render performance
+//
+
+const createTextStyle = (options) => {
+  const defaults = {
+    font: '14px GDS Transport, Arial, sans-serif',
+    offsetY: -12,
+    radius: 2
+  }
+  options = Object.assign({}, defaults, options)
+  return [
+    new Style({
+      text: new Text({
+        font: options.font,
+        offsetY: options.offsetY,
+        stroke: new Stroke({
+          color: '#ffffff',
+          width: 2
+        })
+      })
+    }),
+    new Style({
+      text: new Text({
+        font: options.font,
+        offsetY: options.offsetY
+      }),
+      image: new Circle({
+        fill: new Fill({
+          color: '#0b0c0c'
+        }),
+        stroke: new Stroke({
+          width: 0
+        }),
+        radius: options.radius
+      })
+    })
+  ]
+}
+
+const createIconStyle = (options) => {
+  const defaults = {
+    size: [100, 100],
+    anchor: [0.5, 0.5],
+    offset: [0, 0],
+    scale: 0.5,
+    zIndex: 1
+  }
+  options = Object.assign({}, defaults, options)
+  return new Style({
+    image: new Icon({
+      src: '/public/images/map-symbols-2x.png',
+      size: options.size,
+      anchor: options.anchor,
+      offset: options.offset,
+      scale: options.scale
+    }),
+    zIndex: options.zIndex
+  })
+}
+
+const styleCache = (() => {
+  return {
+    severe: createIconStyle({ offset: [0, 0], zIndex: 5 }),
+    severeSelected: createIconStyle({ offset: [100, 0], zIndex: 10 }),
+    warning: createIconStyle({ offset: [0, 100], zIndex: 4 }),
+    warningSelected: createIconStyle({ offset: [100, 100], zIndex: 10 }),
+    alert: createIconStyle({ offset: [0, 200], zIndex: 3 }),
+    alertSelected: createIconStyle({ offset: [100, 200], zIndex: 10 }),
+    targetArea: createIconStyle({ offset: [0, 300], zIndex: 1 }),
+    targetAreaSelected: createIconStyle({ offset: [100, 300], zIndex: 10 }),
+    // River
+    river: createIconStyle({ offset: [0, 600], zIndex: 2 }),
+    riverSelected: createIconStyle({ offset: [100, 600], zIndex: 10 }),
+    riverHigh: createIconStyle({ offset: [0, 500], zIndex: 3 }),
+    riverHighSelected: createIconStyle({ offset: [100, 500], zIndex: 10 }),
+    riverError: createIconStyle({ offset: [0, 700], zIndex: 1 }),
+    riverErrorSelected: createIconStyle({ offset: [100, 700], zIndex: 10 }),
+    // Tide
+    sea: createIconStyle({ offset: [0, 800], zIndex: 2 }),
+    seaSelected: createIconStyle({ offset: [100, 800], zIndex: 10 }),
+    seaError: createIconStyle({ offset: [0, 900], zIndex: 1 }),
+    seaErrorSelected: createIconStyle({ offset: [100, 900], zIndex: 10 }),
+    // Groundwater
+    ground: createIconStyle({ offset: [0, 1100], zIndex: 2 }),
+    groundSelected: createIconStyle({ offset: [100, 1100], zIndex: 10 }),
+    groundHigh: createIconStyle({ offset: [0, 1000], zIndex: 3 }),
+    groundHighSelected: createIconStyle({ offset: [100, 1000], zIndex: 10 }),
+    groundError: createIconStyle({ offset: [0, 1200], zIndex: 1 }),
+    groundErrorSelected: createIconStyle({ offset: [100, 1200], zIndex: 10 }),
+    // Rainfall
+    rain: createIconStyle({ offset: [0, 1300], zIndex: 3 }),
+    rainSelected: createIconStyle({ offset: [100, 1300], zIndex: 10 }),
+    rainDry: createIconStyle({ offset: [0, 1400], zIndex: 3 }),
+    rainDrySelected: createIconStyle({ offset: [100, 1400], zIndex: 10 }),
+    // Measurements
+    measurementAlert: createIconStyle({ offset: [0, 1600], zIndex: 3 }),
+    measurementAlertSelected: createIconStyle({ offset: [100, 1600], zIndex: 10 }),
+    measurement: createIconStyle({ offset: [0, 1700], zIndex: 2 }),
+    measurementSelected: createIconStyle({ offset: [100, 1700], zIndex: 10 }),
+    measurementError: createIconStyle({ offset: [0, 1800], zIndex: 1 }),
+    measurementErrorSelected: createIconStyle({ offset: [100, 1800], zIndex: 10 }),
+    measurementNone: createIconStyle({ offset: [0, 1900], zIndex: 1 }),
+    measurementNoneSelected: createIconStyle({ offset: [100, 1900], zIndex: 10 }),
+    text: createTextStyle(),
+    textLarge: createTextStyle({ font: 'Bold 16px GDS Transport, Arial, sans-serif', offsetY: -13, radius: 3 })
+  }
+})()
+
 window.flood.maps.styles = {
 
   //
@@ -198,52 +307,52 @@ window.flood.maps.styles = {
   // WebGL styles
   //
 
-  warningsJSON: {
-    filter: ['case',
-      ['<', ['resolution'], 100],
-      false,
-      ['case',
-        ['==', ['get', 'isVisible'], 'true'],
-        true,
-        false
-      ]
-    ],
-    symbol: {
-      symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
-      size: 50,
-      rotateWithView: false,
-      offset: [0, 0],
-      textureCoord: ['match', ['get', 'severity'],
-        3, [0, 0, 0.5, 0.04761904761],
-        2, [0, 0.04761904761, 0.5, 0.09523809523],
-        1, [0, 0.09523809523, 0.5, 0.14285714285],
-        [0, 0.14285714285, 0.5, 0.19047619047]
-      ]
-    }
-  },
+  // warningsJSON: {
+  //   filter: ['case',
+  //     ['<', ['resolution'], 100],
+  //     false,
+  //     ['case',
+  //       ['==', ['get', 'isVisible'], 'true'],
+  //       true,
+  //       false
+  //     ]
+  //   ],
+  //   symbol: {
+  //     symbolType: 'image',
+  //     src: '/public/images/map-symbols-2x.png',
+  //     size: 50,
+  //     rotateWithView: false,
+  //     offset: [0, 0],
+  //     textureCoord: ['match', ['get', 'severity'],
+  //       3, [0, 0, 0.5, 0.04761904761],
+  //       2, [0, 0.04761904761, 0.5, 0.09523809523],
+  //       1, [0, 0.09523809523, 0.5, 0.14285714285],
+  //       [0, 0.14285714285, 0.5, 0.19047619047]
+  //     ]
+  //   }
+  // },
 
-  stationsJSON: {
-    symbol: {
-      symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
-      size: 50,
-      rotateWithView: false,
-      offset: [0, 0],
-      textureCoord: ['match', ['get', 'state'],
-        'rain', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.8095238095, 0.5, 0.85714285714]],
-        'rainDry', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'sea', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
-        'seaError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
-        'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.8095238095, 0.5, 0.85714285714]],
-        'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.7619047619, 0.5, 0.8095238095]],
-        'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.85714285714, 0.5, 0.90476190476]],
-        'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.7619047619, 0.5, 0.8095238095]],
-        'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.85714285714, 0.5, 0.90476190476]],
-        ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.8095238095, 0.5, 0.85714285714]]
-      ]
-    }
-  },
+  // stationsJSON: {
+  //   symbol: {
+  //     symbolType: 'image',
+  //     src: '/public/images/map-symbols-2x.png',
+  //     size: 50,
+  //     rotateWithView: false,
+  //     offset: [0, 0],
+  //     textureCoord: ['match', ['get', 'state'],
+  //       'rain', ['case', ['<=', ['resolution'], 100], [0, 0.61904761904, 0.5, 0.66666666666], [0, 0.8095238095, 0.5, 0.85714285714]],
+  //       'rainDry', ['case', ['<=', ['resolution'], 100], [0, 0.66666666666, 0.5, 0.71428571428], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'sea', ['case', ['<=', ['resolution'], 100], [0, 0.38095238095, 0.5, 0.42857142857], [0, 0.90476190476, 0.5, 0.95238095238]],
+  //       'seaError', ['case', ['<=', ['resolution'], 100], [0, 0.42857142857, 0.5, 0.47619047619], [0, 0.95238095238, 0.5, 1]],
+  //       'ground', ['case', ['<=', ['resolution'], 100], [0, 0.52380952381, 0.5, 0.57142857142], [0, 0.8095238095, 0.5, 0.85714285714]],
+  //       'groundHigh', ['case', ['<=', ['resolution'], 100], [0, 0.47619047619, 0.5, 0.52380952381], [0, 0.7619047619, 0.5, 0.8095238095]],
+  //       'groundError', ['case', ['<=', ['resolution'], 100], [0, 0.57142857142, 0.5, 0.61904761904], [0, 0.85714285714, 0.5, 0.90476190476]],
+  //       'riverHigh', ['case', ['<=', ['resolution'], 100], [0, 0.23809523809, 0.5, 0.28571428571], [0, 0.7619047619, 0.5, 0.8095238095]],
+  //       'riverError', ['case', ['<=', ['resolution'], 100], [0, 0.33333333333, 0.5, 0.38095238095], [0, 0.85714285714, 0.5, 0.90476190476]],
+  //       ['case', ['<=', ['resolution'], 100], [0, 0.28571428571, 0.5, 0.33333333333], [0, 0.8095238095, 0.5, 0.85714285714]]
+  //     ]
+  //   }
+  // },
 
   //
   // Test
@@ -504,111 +613,4 @@ const outlookPolygonPattern = (style) => {
   }
   ctx.restore()
   return ctx.createPattern(canvas, 'repeat')
-}
-
-//
-// Style caching, improves render performance
-//
-
-const createTextStyle = (options) => {
-  const defaults = {
-    font: '14px GDS Transport, Arial, sans-serif',
-    offsetY: -12,
-    radius: 2
-  }
-  options = Object.assign({}, defaults, options)
-  return [
-    new Style({
-      text: new Text({
-        font: options.font,
-        offsetY: options.offsetY,
-        stroke: new Stroke({
-          color: '#ffffff',
-          width: 2
-        })
-      })
-    }),
-    new Style({
-      text: new Text({
-        font: options.font,
-        offsetY: options.offsetY
-      }),
-      image: new Circle({
-        fill: new Fill({
-          color: '#0b0c0c'
-        }),
-        stroke: new Stroke({
-          width: 0
-        }),
-        radius: options.radius
-      })
-    })
-  ]
-}
-
-const createIconStyle = (options) => {
-  const defaults = {
-    size: [100, 100],
-    anchor: [0.5, 0.5],
-    offset: [0, 0],
-    scale: 0.5,
-    zIndex: 1
-  }
-  options = Object.assign({}, defaults, options)
-  return new Style({
-    image: new Icon({
-      src: '/public/images/map-symbols-2x.png',
-      size: options.size,
-      anchor: options.anchor,
-      offset: options.offset,
-      scale: options.scale
-    }),
-    zIndex: options.zIndex
-  })
-}
-
-const styleCache = {
-  severe: createIconStyle({ offset: [0, 0], zIndex: 5 }),
-  severeSelected: createIconStyle({ offset: [100, 0], zIndex: 10 }),
-  warning: createIconStyle({ offset: [0, 100], zIndex: 4 }),
-  warningSelected: createIconStyle({ offset: [100, 100], zIndex: 10 }),
-  alert: createIconStyle({ offset: [0, 200], zIndex: 3 }),
-  alertSelected: createIconStyle({ offset: [100, 200], zIndex: 10 }),
-  targetArea: createIconStyle({ offset: [0, 300], zIndex: 1 }),
-  targetAreaSelected: createIconStyle({ offset: [100, 300], zIndex: 10 }),
-  // River
-  river: createIconStyle({ offset: [0, 600], zIndex: 2 }),
-  riverSelected: createIconStyle({ offset: [100, 600], zIndex: 10 }),
-  riverHigh: createIconStyle({ offset: [0, 500], zIndex: 3 }),
-  riverHighSelected: createIconStyle({ offset: [100, 500], zIndex: 10 }),
-  riverError: createIconStyle({ offset: [0, 700], zIndex: 1 }),
-  riverErrorSelected: createIconStyle({ offset: [100, 700], zIndex: 10 }),
-  // Tide
-  sea: createIconStyle({ offset: [0, 800], zIndex: 2 }),
-  seaSelected: createIconStyle({ offset: [100, 800], zIndex: 10 }),
-  seaError: createIconStyle({ offset: [0, 900], zIndex: 1 }),
-  seaErrorSelected: createIconStyle({ offset: [100, 900], zIndex: 10 }),
-  // Groundwater
-  ground: createIconStyle({ offset: [0, 1100], zIndex: 2 }),
-  groundSelected: createIconStyle({ offset: [100, 1100], zIndex: 10 }),
-  groundHigh: createIconStyle({ offset: [0, 1000], zIndex: 3 }),
-  groundHighSelected: createIconStyle({ offset: [100, 1000], zIndex: 10 }),
-  groundError: createIconStyle({ offset: [0, 1200], zIndex: 1 }),
-  groundErrorSelected: createIconStyle({ offset: [100, 1200], zIndex: 10 }),
-  // Rainfall
-  rain: createIconStyle({ offset: [0, 1300], zIndex: 3 }),
-  rainSelected: createIconStyle({ offset: [100, 1300], zIndex: 10 }),
-  rainDry: createIconStyle({ offset: [0, 1400], zIndex: 3 }),
-  rainDrySelected: createIconStyle({ offset: [100, 1400], zIndex: 10 }),
-  // Measurements
-  measurementAlert: createIconStyle({ offset: [0, 1600], zIndex: 3 }),
-  measurementAlertSelected: createIconStyle({ offset: [100, 1600], zIndex: 10 }),
-  measurement: createIconStyle({ offset: [0, 1700], zIndex: 2 }),
-  measurementSelected: createIconStyle({ offset: [100, 1700], zIndex: 10 }),
-  measurementError: createIconStyle({ offset: [0, 1800], zIndex: 1 }),
-  measurementErrorSelected: createIconStyle({ offset: [100, 1800], zIndex: 10 }),
-  measurementNone: createIconStyle({ offset: [0, 1900], zIndex: 1 }),
-  measurementNoneSelected: createIconStyle({ offset: [100, 1900], zIndex: 10 }),
-  text: createTextStyle(),
-  textLarge: createTextStyle({ font: 'Bold 16px GDS Transport, Arial, sans-serif', offsetY: -13, radius: 3 })
 }
