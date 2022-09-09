@@ -31,5 +31,7 @@ if (document.getElementById('bar-chart')) {
 
 // Add toggletips
 if (document.querySelectorAll('.defra-toggletip')) {
-  window.flood.createToggletips()
+  window.flood.createToggletips({
+    type: 'i'
+  })
 }
