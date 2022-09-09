@@ -462,15 +462,15 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   })
 
   // Disable pinch and double tap zoom
-  containerElement.addEventListener('gesturestart', function (e) {
+  containerElement.addEventListener('gesturestart', (e) => {
     e.preventDefault()
     document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
   })
-  containerElement.addEventListener('gesturechange', function (e) {
+  containerElement.addEventListener('gesturechange', (e) => {
     e.preventDefault()
     document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
   })
-  containerElement.addEventListener('gestureend', function (e) {
+  containerElement.addEventListener('gestureend', (e) => {
     e.preventDefault()
     document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
   })
@@ -576,8 +576,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   window.addEventListener('popstate', popstate)
 
   // Redraw map on browser zoom otherise it becomes pixelated
-  // We need to refreh any vector layers as this appears the only way to redraw canvas
-  // Doesnt work in Safari as devicePixelRatio doesn't change on browserZoom
+  // We need to refresh any vector layers as this appears the only way to redraw canvas
+  // Doesn't work in Safari as devicePixelRatio doesn't change on browserZoom
   let devicePixelRatio = window.devicePixelRatio
   const windowResize = (e) => {
     const newPixelRatio = window.devicePixelRatio
