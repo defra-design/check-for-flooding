@@ -450,86 +450,90 @@ window.flood.maps.styles = {
 //
 
 const targetAreaPolygonPattern = (type, alpha) => {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  const dpr = window.devicePixelRatio || 1
-  canvas.width = 8 * dpr
-  canvas.height = 8 * dpr
-  ctx.scale(dpr, dpr)
-  switch (type) {
-    case 'severe':
-      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.moveTo(0, 3.3)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(3.3, 8)
-      ctx.lineTo(0, 4.7)
-      ctx.closePath()
-      ctx.moveTo(3.3, 0)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(8, 3.3)
-      ctx.lineTo(8, 4.7)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'warning':
-      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.moveTo(3.3, 0)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(0, 4.7)
-      ctx.lineTo(0, 3.3)
-      ctx.closePath()
-      ctx.moveTo(3.3, 8)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(8, 4.7)
-      ctx.lineTo(8, 3.3)
-      ctx.closePath()
-      ctx.moveTo(4.7, 0)
-      ctx.lineTo(8, 3.3)
-      ctx.lineTo(7.3, 4)
-      ctx.lineTo(4, 0.7)
-      ctx.closePath()
-      ctx.moveTo(0, 4.7)
-      ctx.lineTo(3.3, 8)
-      ctx.lineTo(4, 7.3)
-      ctx.lineTo(0.7, 4)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'alert':
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgb(244, 119, 56, ${alpha})` // '#F47738'
-      ctx.moveTo(0, 3.3)
-      ctx.lineTo(0, 4.7)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(3.3, 0)
-      ctx.closePath()
-      ctx.moveTo(3.3, 8)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(8, 4.7)
-      ctx.lineTo(8, 3.3)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'removed':
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgb(98, 106, 110, ${alpha})` // '#626A6E'
-      ctx.arc(4, 4, 1, 0, 2 * Math.PI)
-      ctx.closePath()
-      ctx.fill()
-      break
-  }
-  ctx.restore()
-  return ctx.createPattern(canvas, 'repeat')
+  // const canvas = document.createElement('canvas')
+  // const ctx = canvas.getContext('2d')
+  // const dpr = window.devicePixelRatio || 1
+  // canvas.width = 8 * dpr
+  // canvas.height = 8 * dpr
+  // ctx.scale(dpr, dpr)
+  // switch (type) {
+  //   case 'severe':
+  //     ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
+  //     ctx.fillRect(0, 0, 8, 8)
+  //     ctx.beginPath()
+  //     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
+  //     ctx.moveTo(0, 3.3)
+  //     ctx.lineTo(4.7, 8)
+  //     ctx.lineTo(3.3, 8)
+  //     ctx.lineTo(0, 4.7)
+  //     ctx.closePath()
+  //     ctx.moveTo(3.3, 0)
+  //     ctx.lineTo(4.7, 0)
+  //     ctx.lineTo(8, 3.3)
+  //     ctx.lineTo(8, 4.7)
+  //     ctx.closePath()
+  //     ctx.fill()
+  //     break
+  //   case 'warning':
+  //     ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
+  //     ctx.fillRect(0, 0, 8, 8)
+  //     ctx.beginPath()
+  //     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
+  //     ctx.moveTo(3.3, 0)
+  //     ctx.lineTo(4.7, 0)
+  //     ctx.lineTo(0, 4.7)
+  //     ctx.lineTo(0, 3.3)
+  //     ctx.closePath()
+  //     ctx.moveTo(3.3, 8)
+  //     ctx.lineTo(4.7, 8)
+  //     ctx.lineTo(8, 4.7)
+  //     ctx.lineTo(8, 3.3)
+  //     ctx.closePath()
+  //     ctx.moveTo(4.7, 0)
+  //     ctx.lineTo(8, 3.3)
+  //     ctx.lineTo(7.3, 4)
+  //     ctx.lineTo(4, 0.7)
+  //     ctx.closePath()
+  //     ctx.moveTo(0, 4.7)
+  //     ctx.lineTo(3.3, 8)
+  //     ctx.lineTo(4, 7.3)
+  //     ctx.lineTo(0.7, 4)
+  //     ctx.closePath()
+  //     ctx.fill()
+  //     break
+  //   case 'alert':
+  //     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
+  //     ctx.fillRect(0, 0, 8, 8)
+  //     ctx.beginPath()
+  //     ctx.fillStyle = `rgb(244, 119, 56, ${alpha})` // '#F47738'
+  //     ctx.moveTo(0, 3.3)
+  //     ctx.lineTo(0, 4.7)
+  //     ctx.lineTo(4.7, 0)
+  //     ctx.lineTo(3.3, 0)
+  //     ctx.closePath()
+  //     ctx.moveTo(3.3, 8)
+  //     ctx.lineTo(4.7, 8)
+  //     ctx.lineTo(8, 4.7)
+  //     ctx.lineTo(8, 3.3)
+  //     ctx.closePath()
+  //     ctx.fill()
+  //     break
+  //   case 'removed':
+  //     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
+  //     ctx.fillRect(0, 0, 8, 8)
+  //     ctx.beginPath()
+  //     ctx.fillStyle = `rgb(98, 106, 110, ${alpha})` // '#626A6E'
+  //     ctx.arc(4, 4, 1, 0, 2 * Math.PI)
+  //     ctx.closePath()
+  //     ctx.fill()
+  //     break
+  // }
+  // ctx.restore()
+  // return ctx.createPattern(canvas, 'repeat')
+  return new Style({
+    stroke: new Stroke({ color: '#ffdd00', width: 1 }),
+    fill: new Fill({ color: '#ffdd00' })
+  })
 }
 
 const outlookPolygonPattern = (style) => {

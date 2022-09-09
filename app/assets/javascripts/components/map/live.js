@@ -90,7 +90,7 @@ function LiveMap (mapId, options) {
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
   const vectorTilePolygons = maps.layers.vectorTilePolygons()
-  const riverLine = maps.layers.riverLine() // Test
+  // const riverLine = maps.layers.riverLine()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -109,8 +109,8 @@ function LiveMap (mapId, options) {
 
   // These layers can be manipulated
   const dataLayers = [
-    // vectorTilePolygons,
-    riverLine, // Test
+    vectorTilePolygons,
+    // riverLine,
     river,
     sea,
     groundwater,
