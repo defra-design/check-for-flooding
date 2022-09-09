@@ -269,8 +269,10 @@ function BarChart (containerId, stationId, data) {
     pageBack.setAttribute('data-end', previousEnd)
     pageForward.setAttribute('aria-disabled', !(nextStart && nextEnd))
     pageBack.setAttribute('aria-disabled', !(previousStart && previousEnd))
-    pageForwardText.innerText = `Next ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
-    pageBackText.innerText = `Previous ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    // pageForwardText.innerText = `Forward ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    // pageBackText.innerText = `Back ${durationHours > 1 ? durationHours : duration} ${durationHours > 1 ? 'hours' : 'minutes'}`
+    pageForwardText.innerText = 'Forward'
+    pageBackText.innerText = 'Back'
     pageForwardDescription.innerText = ''
     pageBackDescription.innerText = ''
   }
@@ -426,7 +428,7 @@ function BarChart (containerId, stationId, data) {
   pageBack.className = 'defra-chart-controls-button defra-chart-controls-button--back'
   pageBack.setAttribute('data-direction', 'back')
   pageBack.setAttribute('aria-controls', 'bar-chart')
-  pageBack.setAttribute('aria-describedby', 'page-back-description')
+  // pageBack.setAttribute('aria-describedby', 'page-back-description')
   const pageBackIcon = document.createElement('span')
   pageBackIcon.setAttribute('class', 'defra-chart-controls-button__icon')
   pageBackIcon.innerHTML = `
@@ -446,7 +448,7 @@ function BarChart (containerId, stationId, data) {
   pageForward.className = 'defra-chart-controls-button defra-chart-controls-button--forward'
   pageForward.setAttribute('data-direction', 'forward')
   pageForward.setAttribute('aria-controls', 'bar-chart')
-  pageForward.setAttribute('aria-describedby', 'page-forward-description')
+  // pageForward.setAttribute('aria-describedby', 'page-forward-description')
   const pageForwardText = document.createElement('span')
   pageForwardText.className = 'defra-chart-controls-button__text'
   pageForward.appendChild(pageForwardText)

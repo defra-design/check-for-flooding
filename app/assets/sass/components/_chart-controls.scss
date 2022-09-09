@@ -11,12 +11,11 @@
 .defra-chart-controls__pagination {
   display: block;
   padding-bottom: 20px;
-  @include mq ($from: tablet) {
-    float: right;
-  }
+  float: right;
 }
 .defra-chart-controls-button {
   @extend .defra-button-text-s;
+  padding: 5px 0px;
   display: inline-block;
   position: relative;
   text-align: center;
