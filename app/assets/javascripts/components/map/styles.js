@@ -129,15 +129,6 @@ window.flood.maps.styles = {
     const featureId = feature.getId()
     const featureLayer = feature.get('layer')
 
-    return
-    // return Style({
-    //   stroke: new Stroke({ color: strokeColour, width: 1 }),
-    //   fill: new Fill({ color: fillColour }),
-    //   lineDash: lineDash,
-    //   zIndex: zIndex
-    // })
-    // return isSelected ? [selectedStroke, style] : style
-
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
       if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
