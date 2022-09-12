@@ -248,6 +248,7 @@
 .defra-map-key__content {
   flex: 1;
   overflow:auto;
+  touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -463,6 +464,7 @@
 // Map information dialog
 .defra-map-info {
   position:absolute;
+  touch-action: none;
   background-color:white;
   bottom:0;
   left:0;

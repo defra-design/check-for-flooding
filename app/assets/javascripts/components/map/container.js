@@ -37,7 +37,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     isBack: options.isBack
   }
 
-  // Disable body scrolling and hide non-map elements
+  // Hide non-map elements
   document.title = options.title
   document.body.classList.add('defra-map-body')
   document.documentElement.classList.add('defra-map-html')
@@ -216,10 +216,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   keyElement.appendChild(keyContainer)
   containerElement.appendChild(keyElement)
 
-  // Lock body scroll (https://github.com/willmcpo/body-scroll-lock)
-  // disableBodyScroll(document.querySelector('.defra-map-key__content'))
-  disableBodyScroll(keyContent)
-
   // Add any custom controls into the controls container after the info panel
   options.controls.forEach(control => {
     control.setTarget(controlsBottomElement)
@@ -283,7 +279,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       containerElement.parentNode.removeChild(containerElement)
       const button = document.getElementById(mapId + '-btn')
       button.focus()
-      // Tidy up any document or window listeners
+      // Remove any document or window listeners
       window.removeEventListener('keydown', keydown)
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
@@ -466,20 +462,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     }
   })
 
-  // Disable pinch and double tap zoom
-  containerElement.addEventListener('gesturestart', (e) => {
-    e.preventDefault()
-    document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
-  })
-  containerElement.addEventListener('gesturechange', (e) => {
-    e.preventDefault()
-    document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
-  })
-  containerElement.addEventListener('gestureend', (e) => {
-    e.preventDefault()
-    document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
-  })
-
   // Tabrings and regions
   const keydown = (e) => {
     if (!['Tab', 'F6', '-', '+'].includes(e.key)) { return }
@@ -580,6 +562,22 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   }
   window.addEventListener('popstate', popstate)
 
+  // Disable pinch and double tap zoom (iOS12)
+  if (!window.CSS.supports('touch-action', 'pan-y')) {
+    containerElement.addEventListener('gesturestart', (e) => {
+      e.preventDefault()
+      document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
+    })
+    containerElement.addEventListener('gesturechange', (e) => {
+      e.preventDefault()
+      document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
+    })
+    containerElement.addEventListener('gestureend', (e) => {
+      e.preventDefault()
+      document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
+    })
+  }
+
   // Redraw map on browser zoom otherise it becomes pixelated
   // We need to refresh any vector layers as this appears the only way to redraw canvas
   // Doesn't work in Safari as devicePixelRatio doesn't change on browserZoom
@@ -602,14 +600,14 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Rescale map on mobile browser zoom
   // iOS doesn't fire resize event on browser zoom
-  let isMobileBrowserZoom = false
-  const visualViewportResize = (e) => {
-    if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
-      map.updateSize()
-      isMobileBrowserZoom = true
-    }
-  }
   if (window.visualViewport) {
+    let isMobileBrowserZoom = false
+    const visualViewportResize = (e) => {
+      if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
+        map.updateSize()
+        isMobileBrowserZoom = true
+      }
+    }
     window.visualViewport.addEventListener('resize', visualViewportResize)
   }
 }

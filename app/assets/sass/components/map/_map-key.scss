@@ -35,12 +35,6 @@
     @include govuk-font($size: 16);
   }
 }
-.defra-map-key__item-label {
-  padding: 11px 15px 10px 0px;
-  margin-top: -2px;
-  position: relative;
-  @include govuk-font($size: 16);
-}
 .defra-map-key__item:first-of-type {
   padding-top:10px;
 }
