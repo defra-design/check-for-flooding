@@ -216,8 +216,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   keyElement.appendChild(keyContainer)
   containerElement.appendChild(keyElement)
 
-  // Lock body scroll
-  disableBodyScroll(document.querySelector('.defra-map-key__content'))
+  // Lock body scroll (https://github.com/willmcpo/body-scroll-lock)
+  // disableBodyScroll(document.querySelector('.defra-map-key__content'))
+  disableBodyScroll(keyContent)
 
   // Add any custom controls into the controls container after the info panel
   options.controls.forEach(control => {
@@ -306,7 +307,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     keyElement.setAttribute('aria-hidden', false)
     keyElement.focus()
     // Lock body scroll
-    disableBodyScroll(document.querySelector('.defra-map-key__content'))
+    disableBodyScroll(keyContent)
   }
 
   const closeKey = () => {
@@ -369,6 +370,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
     infoContent.innerHTML = body
     containerElement.appendChild(infoElement)
     state.isInfoOpen = true
+    disableBodyScroll(infoContent)
     infoElement.focus()
   }
 
