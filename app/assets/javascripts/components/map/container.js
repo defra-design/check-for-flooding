@@ -216,6 +216,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   keyElement.appendChild(keyContainer)
   containerElement.appendChild(keyElement)
 
+  // Lock body scroll
+  disableBodyScroll(document.querySelector('.defra-map-key__content'))
+
   // Add any custom controls into the controls container after the info panel
   options.controls.forEach(control => {
     control.setTarget(controlsBottomElement)
