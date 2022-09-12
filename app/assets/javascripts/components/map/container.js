@@ -17,8 +17,9 @@ import { Map } from 'ol'
 import { Vector, VectorTile, VectorImage } from 'ol/layer'
 
 const { addOrUpdateParameter, forEach } = window.flood.utils
+const maps = window.flood.maps
 
-window.flood.maps.MapContainer = function MapContainer (mapId, options) {
+maps.MapContainer = function MapContainer (mapId, options) {
   // Setup defaults
   const defaults = {
     minIconResolution: window.flood.maps.minResolution,
@@ -262,8 +263,9 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   const removeContainer = () => {
     if (containerElement) { // Safari fires popstate on page load
-      // Clear referecne to map
-      this.map = null
+      // Clear reference to map
+      this.map = undefined
+      maps.warningsSource = undefined
       // Reinstate document properties
       document.title = options.originalTitle
       // Unlock body scroll
@@ -284,7 +286,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       window.removeEventListener('keyup', keyup)
       window.removeEventListener('popstate', popstate)
       window.removeEventListener('resize', windowResize)
-      if (window.visualViewport) {
+      if (visualViewportResize) {
         window.visualViewport.removeEventListener('resize', visualViewportResize)
       }
     }
@@ -600,9 +602,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Rescale map on mobile browser zoom
   // iOS doesn't fire resize event on browser zoom
+  let visualViewportResize
   if (window.visualViewport) {
     let isMobileBrowserZoom = false
-    const visualViewportResize = (e) => {
+    visualViewportResize = (e) => {
       if (window.visualViewport.scale !== 1 || isMobileBrowserZoom) {
         map.updateSize()
         isMobileBrowserZoom = true

@@ -30,6 +30,11 @@
   bottom:0px;
   left:0px;
 }
+.defra-map-button:not([keyboard-focus]):focus {
+  background-color: white;
+  border-color: govuk-colour('mid-grey');
+  box-shadow: none;
+}
 .defra-map-visibility-hidden {
   visibility: hidden;
 }

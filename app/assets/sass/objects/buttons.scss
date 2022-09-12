@@ -19,24 +19,6 @@
     }
 }
 
-// Buttons like hyperlinks
-.defra-button-text {
-    @extend .govuk-link;
-    position: relative;
-    margin:0px;
-    padding:0;
-    color:$govuk-link-colour;
-    background-color: transparent;
-    border:0px;
-    text-align:left;
-    border-radius: 0;
-    cursor:pointer;
-}
-.defra-button-text-s {
-    @extend .defra-button-text;
-    @include govuk-font($size: 16);
-}
-
 // Secondoary button
 a.defra-button-secondary,
 button.defra-button-secondary {
@@ -79,6 +61,24 @@ button.defra-button-secondary {
     @extend .defra-button-secondary;
     @include govuk-font($size: 14);
     padding: 6px 7px 7px;
+}
+
+// Buttons like hyperlinks
+.defra-button-text {
+    @extend .govuk-link;
+    position: relative;
+    margin:0px;
+    padding:0;
+    color:$govuk-link-colour;
+    background-color: transparent;
+    border:0px;
+    text-align:left;
+    border-radius: 0;
+    cursor:pointer;
+}
+.defra-button-text-s {
+    @extend .defra-button-text;
+    @include govuk-font($size: 16);
 }
 
 // Hyperlinks with icons
