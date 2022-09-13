@@ -546,10 +546,10 @@ function LiveMap (mapId, options) {
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
   container.map.addEventListener('moveend', (e) => {
-    // Toggle key symbols depending on resolution
-    toggleKeySymbol()
     // Timer used to stop 100 url replaces in 30 seconds limit
     clearTimeout(timer)
+    // Toggle key symbols depending on resolution
+    toggleKeySymbol()
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
     // Vector tiles with featureClass ol.feature have redraw bug

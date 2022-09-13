@@ -291,7 +291,6 @@ maps.MapContainer = function MapContainer (mapId, options) {
     // Return focus
     const button = document.getElementById(mapId + '-btn')
     button.focus()
-    console.log('Container removed')
   }
 
   const openKey = () => {
