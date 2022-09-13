@@ -7,6 +7,7 @@ import Point from 'ol/geom/Point'
 const { getParameterByName } = window.flood.utils
 
 const maps = window.flood.maps
+const bigZoom = 100
 
 //
 // Style caching, improves render performance
@@ -126,13 +127,13 @@ window.flood.maps.styles = {
 
   vectorTilePolygons: (feature, resolution) => {
     // Use corresposnding warning feature propeties for styling
-    const warningsSource = maps.warningsSource
+    const warningsSource = maps.liveMapWarningsSource
     const featureId = feature.getId()
     const featureLayer = feature.get('layer')
 
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
-      if (!warning || !warning.get('isVisible') || resolution >= maps.liveMaxBigZoom) { return new Style() }
+      if (!warning || !warning.get('isVisible') || resolution >= bigZoom) { return new Style() }
       const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
       const severity = warning.get('severity')
       const isSelected = warning.get('isSelected')
@@ -231,7 +232,7 @@ window.flood.maps.styles = {
 
   warnings: (feature, resolution) => {
     // Hide warning symbols or hide when polygon is shown
-    if (!feature.get('isVisible') || resolution < maps.liveMaxBigZoom) {
+    if (!feature.get('isVisible') || resolution < bigZoom) {
       return
     }
     const severity = feature.get('severity')
@@ -252,7 +253,7 @@ window.flood.maps.styles = {
     if (feature.get('isVisible') === false) return
     const state = feature.get('state')
     const isSelected = feature.get('isSelected')
-    const isSymbol = resolution <= maps.liveMaxBigZoom
+    const isSymbol = resolution <= bigZoom
     switch (state) {
       // Rivers
       case 'river':
@@ -364,9 +365,9 @@ window.flood.maps.styles = {
   },
 
   labels: (feature, resolution) => {
-    let offsetY = resolution >= maps.liveMaxBigZoom ? 30 : 35
+    let offsetY = resolution >= bigZoom ? 30 : 35
     if (feature.get('type') === 'TA') {
-      offsetY = resolution >= maps.liveMaxBigZoom ? 37 : 0
+      offsetY = resolution >= bigZoom ? 37 : 0
     }
     return new Style({
       text: new Text({

@@ -447,14 +447,6 @@ maps.createOutlookMap = (mapId, options = {}) => {
     })
   })
 
-  // Manage scroll position
-  if (!maps.hasScrollListener) {
-    window.addEventListener('scroll', () => {
-      document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`)
-    })
-    maps.hasScrollListener = true
-  }
-
   // Create map on button press
   button.addEventListener('click', (e) => {
     // Advance history

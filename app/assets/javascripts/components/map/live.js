@@ -19,15 +19,15 @@ import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
 
-const { addOrUpdateParameter, getParameterByName, forEach, getSummaryList, xhr } = window.flood.utils
-const maps = window.flood.maps
+const { addOrUpdateParameter, getParameterByName, forEach, getSummaryList } = window.flood.utils
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
+const maps = window.flood.maps
 const MapContainer = maps.MapContainer
 const nrwUrl = process.env.NRW_URL
 
 function LiveMap (mapId, options) {
   // Set maxBigZoom value
-  maps.liveMaxBigZoom = 100
+  const bigZoom = 100
 
   // Optional target area features
   const targetArea = {}
@@ -62,7 +62,7 @@ function LiveMap (mapId, options) {
 
   // Options to pass to the MapContainer constructor
   const containerOptions = {
-    maxBigZoom: maps.liveMaxBigZoom,
+    maxBigZoom: bigZoom,
     view: view,
     // layers: layers,
     controls: [osLogo],
@@ -77,7 +77,6 @@ function LiveMap (mapId, options) {
 
   // Create MapContainer
   const container = new MapContainer(mapId, containerOptions)
-  const map = container.map
   const containerElement = container.containerElement
   const viewport = container.viewport
   const viewportDescription = container.viewportDescription
@@ -90,7 +89,6 @@ function LiveMap (mapId, options) {
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
   const vectorTilePolygons = maps.layers.vectorTilePolygons()
-  // const riverLine = maps.layers.riverLine()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -110,7 +108,6 @@ function LiveMap (mapId, options) {
   // These layers can be manipulated
   const dataLayers = [
     vectorTilePolygons,
-    // riverLine,
     river,
     sea,
     groundwater,
@@ -120,7 +117,7 @@ function LiveMap (mapId, options) {
   const layers = defaultLayers.concat(dataLayers)
 
   // Add layers
-  map.getLayers().extend(layers)
+  container.map.getLayers().extend(layers)
 
   //
   // Private methods
@@ -203,19 +200,6 @@ function LiveMap (mapId, options) {
     const riverId = feature ? feature.get('riverId') : state.riverId
     replaceHistory('rid', riverId)
     vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
-    // *DBL Test
-    // riverLine.getSource().clear()
-    // riverLine.setVisible(false)
-    // if (riverId) {
-    //   xhr(`/service/geojson/river-line/${riverId}`, (error, response) => {
-    //     if (!error) {
-    //       const features = new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(response)
-    //       riverLine.setVisible(true)
-    //       riverLine.getSource().addFeatures(features)
-    //       riverLine.setStyle(riverLine.getStyle())
-    //     }
-    //   }, 'json')
-    // }
   }
 
   // Show or hide warnings within warning layer
@@ -266,7 +250,7 @@ function LiveMap (mapId, options) {
   // Toggle key symbols based on resolution
   const toggleKeySymbol = () => {
     forEach(containerElement.querySelectorAll('.defra-map-key__symbol[data-display="toggle-image"]'), (symbol) => {
-      const isBigZoom = map.getView().getResolution() <= maps.liveMaxBigZoom
+      const isBigZoom = container.map.getView().getResolution() <= bigZoom
       if (isBigZoom) {
         symbol.classList.add('defra-map-key__symbol--big')
         symbol.classList.remove('defra-map-key__symbol--small')
@@ -289,9 +273,9 @@ function LiveMap (mapId, options) {
   const toggleVisibleFeatures = () => {
     labels.getSource().clear()
     const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-    const resolution = map.getView().getResolution()
-    const isBigZoom = resolution <= maps.liveMaxBigZoom
-    const extent = map.getView().calculateExtent(map.getSize())
+    const resolution = container.map.getView().getResolution()
+    const isBigZoom = resolution <= bigZoom
+    const extent = container.map.getView().calculateExtent(container.map.getSize())
     const layers = dataLayers.filter(layer => layer !== vectorTilePolygons && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
     // Add target area isn't an active alert or warning
     if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
@@ -357,8 +341,8 @@ function LiveMap (mapId, options) {
 
   // Add point features intersecting extent to labels source
   const addPointFeaturesToLabels = (layers, extent) => {
-    const resolution = map.getView().getResolution()
-    const isBigZoom = resolution <= maps.liveMaxBigZoom
+    const resolution = container.map.getView().getResolution()
+    const isBigZoom = resolution <= bigZoom
     for (const layer of layers) {
       if (labels.getSource().getFeatures().length > 9) break
       const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
@@ -424,10 +408,10 @@ function LiveMap (mapId, options) {
 
   // Pan map
   const panToFeature = (feature) => {
-    let extent = map.getView().calculateExtent(map.getSize())
+    let extent = container.map.getView().calculateExtent(container.map.getSize())
     extent = bufferExtent(extent, -1000)
     if (!containsExtent(extent, feature.getGeometry().getExtent())) {
-      map.getView().setCenter(feature.getGeometry().getCoordinates())
+      container.map.getView().setCenter(feature.getGeometry().getCoordinates())
     }
   }
 
@@ -503,14 +487,14 @@ function LiveMap (mapId, options) {
 
   // Set map viewport
   if (!getParameterByName('ext') && options.centre) {
-    map.getView().setCenter(transform(options.centre, 'EPSG:4326', 'EPSG:3857'))
-    map.getView().setZoom(options.zoom || 6)
+    container.map.getView().setCenter(transform(options.centre, 'EPSG:4326', 'EPSG:3857'))
+    container.map.getView().setZoom(options.zoom || 6)
   } else {
-    setExtentFromLonLat(map, extent)
+    setExtentFromLonLat(container.map, extent)
   }
 
   // Store extent for use with reset button
-  state.initialExt = window.history.state.initialExt || getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
+  state.initialExt = window.history.state.initialExt || getLonLatFromExtent(container.map.getView().calculateExtent(container.map.getSize()))
 
   // Set layers from querystring
   if (getParameterByName('lyr')) {
@@ -533,36 +517,35 @@ function LiveMap (mapId, options) {
   // Set selected feature and polygon states when features have loaded
   dataLayers.forEach(layer => {
     const change = layer.getSource().on('change', (e) => {
-      if (e.target.getState() === 'ready') {
-        unByKey(change) // Remove ready event when layer is ready
-        if (layer.get('ref') === 'warnings') {
-          // Add optional target area
-          if (targetArea.pointFeature) {
-            if (!warnings.getSource().getFeatureById(targetArea.pointFeature.getId())) {
-              // Add point feature
-              warnings.getSource().addFeature(targetArea.pointFeature)
-            }
+      if (!container.map || e.target.getState() !== 'ready') return
+      unByKey(change) // Remove ready event when layer is ready
+      if (layer.get('ref') === 'warnings') {
+        // Add optional target area
+        if (targetArea.pointFeature) {
+          if (!warnings.getSource().getFeatureById(targetArea.pointFeature.getId())) {
+            // Add point feature
+            warnings.getSource().addFeature(targetArea.pointFeature)
           }
-          const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-          setWarningVisibility(lyrs)
-          // Store reference to warnings source for use in vector tiles style function
-          maps.warningsSource = warnings.getSource()
         }
-        // WebGL: Limited dynamic styling could be done server side for client performance
-        if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
-          setFeatueState(layer)
-        }
-        // Attempt to set selected feature when layer is ready
-        toggleSelectedFeature(state.selectedFeatureId)
-        // Show overlays
-        toggleVisibleFeatures()
+        const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+        setWarningVisibility(lyrs)
+        // Store reference to warnings source for use in vector tiles style function
+        maps.liveMapWarningsSource = warnings.getSource()
       }
+      // WebGL: Limited dynamic styling could be done server side for client performance
+      if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
+        setFeatueState(layer)
+      }
+      // Attempt to set selected feature when layer is ready
+      toggleSelectedFeature(state.selectedFeatureId)
+      // Show overlays
+      toggleVisibleFeatures()
     })
   })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
-  map.addEventListener('moveend', (e) => {
+  container.map.addEventListener('moveend', (e) => {
     // Toggle key symbols depending on resolution
     toggleKeySymbol()
     // Timer used to stop 100 url replaces in 30 seconds limit
@@ -573,46 +556,44 @@ function LiveMap (mapId, options) {
     // vectorTilePolygons.getSource().refresh({ force: true })
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
-      if (!container.map) return
+      if (!container.map) {
+        clearTimeout(timer)
+        return
+      }
       // Update river visibility when new features come into view
       vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       // Show overlays for visible features
       toggleVisibleFeatures()
       // Update url (history state) to reflect new extent
-      const ext = getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
+      const ext = getLonLatFromExtent(container.map.getView().calculateExtent(container.map.getSize()))
       replaceHistory('ext', ext.join(','))
       // Show reset button if extent has changed
       if (isNewExtent(ext)) {
         resetButton.removeAttribute('disabled')
       }
       // Fix margin issue
-      map.updateSize()
+      container.map.updateSize()
     }, 350)
   })
 
   // Show cursor when hovering over features
-  map.addEventListener('pointermove', (e) => {
+  container.map.addEventListener('pointermove', (e) => {
     // Detect vector feature at mouse coords
-    const hit = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+    const hit = container.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       if (!['hydrologicalboundaries', 'rivers'].includes(feature.get('layer')) && !defaultLayers.includes(layer)) { return true }
     })
-    map.getTarget().style.cursor = hit ? 'pointer' : ''
+    container.map.getTarget().style.cursor = hit ? 'pointer' : ''
   })
 
   // Set selected feature if map is clicked
   // Clear overlays if non-keyboard interaction
-  map.addEventListener('click', (e) => {
+  container.map.addEventListener('click', (e) => {
     // Hide overlays if non-keyboard interaction
     if (!maps.isKeyboard) {
       labels.setVisible(false)
     }
     // Get mouse coordinates and check for feature
-    const featureId = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      // *DBL Test
-      if (layer === vectorTilePolygons) {
-        console.log(feature.getId())
-        console.log(feature.getProperties())
-      }
+    const featureId = container.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
         return feature.getId()
       }
@@ -697,11 +678,6 @@ function LiveMap (mapId, options) {
       panToFeature(feature)
     }
   })
-
-  // Show attributions click
-  // backgroundElement.addEventListener('click', (e) => {
-  //   container.showInfo('Choose base map type', '<span>Some controls here...</span>')
-  // })
 }
 
 // Export a helper factory to create this map
@@ -779,7 +755,6 @@ maps.createLiveMap = (mapId, options = {}) => {
   // Recreate map on browser history change
   window.addEventListener('popstate', (e) => {
     if (e.state && e.state.v === mapId) {
-      console.log(window.flood.maps)
       options.isBack = window.history.state.isBack
       return new LiveMap(e.state.v, options)
     }

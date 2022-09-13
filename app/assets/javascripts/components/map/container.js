@@ -262,34 +262,36 @@ maps.MapContainer = function MapContainer (mapId, options) {
   }
 
   const removeContainer = () => {
-    if (containerElement) { // Safari fires popstate on page load
-      // Clear reference to map
-      this.map = undefined
-      maps.warningsSource = undefined
-      // Reinstate document properties
-      document.title = options.originalTitle
-      // Unlock body scroll
-      document.body.classList.remove('defra-map-body')
-      document.documentElement.classList.remove('defra-map-html')
-      clearAllBodyScrollLocks()
-      // Re-instate aria-hidden elements
-      forEach(mapSiblings, (mapSibling) => {
-        mapSibling.removeAttribute('aria-hidden')
-        mapSibling.classList.remove('defra-map-visibility-hidden')
-      })
-      // Remove map and return focus
-      containerElement.parentNode.removeChild(containerElement)
-      const button = document.getElementById(mapId + '-btn')
-      button.focus()
-      // Remove any document or window listeners
-      window.removeEventListener('keydown', keydown)
-      window.removeEventListener('keyup', keyup)
-      window.removeEventListener('popstate', popstate)
-      window.removeEventListener('resize', windowResize)
-      if (visualViewportResize) {
-        window.visualViewport.removeEventListener('resize', visualViewportResize)
-      }
+    if (!containerElement) return // Safari fires popstate on page load
+    // Map layers memory leak issue
+    this.map.getLayers().forEach(l => l.setSource(null))
+    // Clear reference to map
+    this.map = null
+    // Reinstate page title
+    document.title = options.originalTitle
+    // Unlock body scroll
+    document.body.classList.remove('defra-map-body')
+    document.documentElement.classList.remove('defra-map-html')
+    clearAllBodyScrollLocks()
+    // Re-instate aria-hidden elements
+    forEach(mapSiblings, (mapSibling) => {
+      mapSibling.removeAttribute('aria-hidden')
+      mapSibling.classList.remove('defra-map-visibility-hidden')
+    })
+    // Remove DOM elements
+    containerElement.parentNode.removeChild(containerElement)
+    // Remove any document or window listeners
+    window.removeEventListener('keydown', keydown)
+    window.removeEventListener('keyup', keyup)
+    window.removeEventListener('popstate', popstate)
+    window.removeEventListener('resize', windowResize)
+    if (visualViewportResize) {
+      window.visualViewport.removeEventListener('resize', visualViewportResize)
     }
+    // Return focus
+    const button = document.getElementById(mapId + '-btn')
+    button.focus()
+    console.log('Container removed')
   }
 
   const openKey = () => {
