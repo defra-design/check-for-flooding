@@ -556,10 +556,7 @@ function LiveMap (mapId, options) {
     // vectorTilePolygons.getSource().refresh({ force: true })
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
-      if (!container.map) {
-        clearTimeout(timer)
-        return
-      }
+      if (!container.map) return
       // Update river visibility when new features come into view
       vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
       // Show overlays for visible features
