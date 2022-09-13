@@ -3,11 +3,11 @@
 Initialises the window.flood.maps layers
 */
 // WebGL
-// import { Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
-// import WebGLPointsLayer from 'ol/layer/WebGLPoints'
-// import TileLayer from 'ol/layer/WebGLTile'
+import { Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer } from 'ol/layer'
+import WebGLPointsLayer from 'ol/layer/WebGLPoints'
+import TileLayer from 'ol/layer/WebGLTile'
 // Canvas
-import { Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Tile as TileLayer } from 'ol/layer'
+// import { Vector as VectorLayer, VectorImage, VectorTile as VectorTileLayer, Tile as TileLayer } from 'ol/layer'
 import { BingMaps, XYZ, Vector as VectorSource, VectorTile as VectorTileSource } from 'ol/source'
 import Feature from 'ol/Feature'
 import { GeoJSON, MVT } from 'ol/format'
@@ -117,87 +117,8 @@ window.flood.maps.layers = {
     })
   },
 
-  warnings: () => {
-    return new VectorLayer({
-      ref: 'warnings',
-      featureCodes: 'ts, tw, ta, tr',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/warnings'
-      }),
-      style: window.flood.maps.styles.warnings,
-      visible: false,
-      zIndex: 5
-    })
-  },
-
-  river: () => {
-    return new VectorLayer({
-      ref: 'river',
-      featureCodes: 'ri',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/river'
-      }),
-      style: window.flood.maps.styles.stations,
-      visible: false,
-      zIndex: 4
-    })
-  },
-
-  sea: () => {
-    return new VectorLayer({
-      ref: 'sea',
-      featureCodes: 'se',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/sea'
-      }),
-      style: window.flood.maps.styles.stations,
-      visible: false,
-      zIndex: 4
-    })
-  },
-
-  groundwater: () => {
-    return new VectorLayer({
-      ref: 'groundwater',
-      featureCodes: 'gr',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/groundwater'
-      }),
-      style: window.flood.maps.styles.stations,
-      visible: false,
-      zIndex: 4
-    })
-  },
-
-  rainfall: () => {
-    return new VectorLayer({
-      ref: 'rainfall',
-      featureCodes: 'rf',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/rainfall'
-      }),
-      style: window.flood.maps.styles.stations,
-      visible: false,
-      zIndex: 3
-    })
-  },
-
-  //
-  // WebGL layers
-  //
-
   // warnings: () => {
-  //   return new WebGLPointsLayer({
+  //   return new VectorLayer({
   //     ref: 'warnings',
   //     featureCodes: 'ts, tw, ta, tr',
   //     source: new VectorSource({
@@ -205,14 +126,14 @@ window.flood.maps.layers = {
   //       projection: 'EPSG:3857',
   //       url: '/service/geojson/warnings'
   //     }),
-  //     style: window.flood.maps.styles.warningsJSON,
+  //     style: window.flood.maps.styles.warnings,
   //     visible: false,
-  //     zIndex: 4
+  //     zIndex: 5
   //   })
   // },
 
   // river: () => {
-  //   return new WebGLPointsLayer({
+  //   return new VectorLayer({
   //     ref: 'river',
   //     featureCodes: 'ri',
   //     source: new VectorSource({
@@ -220,14 +141,14 @@ window.flood.maps.layers = {
   //       projection: 'EPSG:3857',
   //       url: '/service/geojson/river'
   //     }),
-  //     style: window.flood.maps.styles.stationsJSON,
+  //     style: window.flood.maps.styles.stations,
   //     visible: false,
   //     zIndex: 4
   //   })
   // },
 
   // sea: () => {
-  //   return new WebGLPointsLayer({
+  //   return new VectorLayer({
   //     ref: 'sea',
   //     featureCodes: 'se',
   //     source: new VectorSource({
@@ -235,14 +156,14 @@ window.flood.maps.layers = {
   //       projection: 'EPSG:3857',
   //       url: '/service/geojson/sea'
   //     }),
-  //     style: window.flood.maps.styles.stationsJSON,
+  //     style: window.flood.maps.styles.stations,
   //     visible: false,
   //     zIndex: 4
   //   })
   // },
 
   // groundwater: () => {
-  //   return new WebGLPointsLayer({
+  //   return new VectorLayer({
   //     ref: 'groundwater',
   //     featureCodes: 'gr',
   //     source: new VectorSource({
@@ -250,14 +171,14 @@ window.flood.maps.layers = {
   //       projection: 'EPSG:3857',
   //       url: '/service/geojson/groundwater'
   //     }),
-  //     style: window.flood.maps.styles.stationsJSON,
+  //     style: window.flood.maps.styles.stations,
   //     visible: false,
   //     zIndex: 4
   //   })
   // },
 
   // rainfall: () => {
-  //   return new WebGLPointsLayer({
+  //   return new VectorLayer({
   //     ref: 'rainfall',
   //     featureCodes: 'rf',
   //     source: new VectorSource({
@@ -265,11 +186,90 @@ window.flood.maps.layers = {
   //       projection: 'EPSG:3857',
   //       url: '/service/geojson/rainfall'
   //     }),
-  //     style: window.flood.maps.styles.stationsJSON,
+  //     style: window.flood.maps.styles.stations,
   //     visible: false,
   //     zIndex: 3
   //   })
   // },
+
+  //
+  // WebGL layers
+  //
+
+  warnings: () => {
+    return new WebGLPointsLayer({
+      ref: 'warnings',
+      featureCodes: 'ts, tw, ta, tr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/warnings'
+      }),
+      style: window.flood.maps.styles.warningsJSON,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  river: () => {
+    return new WebGLPointsLayer({
+      ref: 'river',
+      featureCodes: 'ri',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/river'
+      }),
+      style: window.flood.maps.styles.stationsJSON,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  sea: () => {
+    return new WebGLPointsLayer({
+      ref: 'sea',
+      featureCodes: 'se',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/sea'
+      }),
+      style: window.flood.maps.styles.stationsJSON,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  groundwater: () => {
+    return new WebGLPointsLayer({
+      ref: 'groundwater',
+      featureCodes: 'gr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/groundwater'
+      }),
+      style: window.flood.maps.styles.stationsJSON,
+      visible: false,
+      zIndex: 4
+    })
+  },
+
+  rainfall: () => {
+    return new WebGLPointsLayer({
+      ref: 'rainfall',
+      featureCodes: 'rf',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/rainfall'
+      }),
+      style: window.flood.maps.styles.stationsJSON,
+      visible: false,
+      zIndex: 3
+    })
+  },
 
   areasOfConcern: () => {
     return new VectorImage({

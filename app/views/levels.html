@@ -1,5 +1,10 @@
 {% extends "layout.html" %}
 
+{% block head %}
+{% include "includes/head.html" %}
+<meta name="description" content="There are around 3,500 water level gauges in England and most are along main rivers. These levels can help you understand your flood risk now and over the next few days.">
+{% endblock %}
+
 {% block pageTitle %}
 {% if model.isErrorBing %}
 Sorry, there is a problem with the search - Check for flooding - GOV.UK
