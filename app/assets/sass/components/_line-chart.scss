@@ -1,13 +1,14 @@
 // Line graph
 .defra-line-chart {
+    border-bottom: 1px solid $govuk-border-colour;
+}
+.js-enabled .defra-line-chart__container {
     position: relative;
     margin: 0 -15px;
-}
-.js-enabled .defra-line-chart {
     padding-right: 15px;
     padding-left: 15px;
 }
-.defra-line-chart svg {
+.defra-line-chart__container svg {
     position: relative;
     overflow: visible;
     height: 300px;

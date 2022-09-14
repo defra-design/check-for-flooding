@@ -45,7 +45,7 @@ if (document.querySelectorAll('[data-toggletip]')) {
 }
 
 // Line chart
-if (document.querySelector('.defra-line-chart')) {
+if (document.getElementById('line-chart')) {
   const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
   const thresholdId = `threshold-${window.flood.model.id}-high`
   const threshold = document.querySelector(`[data-id="${thresholdId}"]`)

@@ -1,13 +1,14 @@
 // Bar graph
 .defra-bar-chart {
+  border-bottom: 1px solid $govuk-border-colour;
+}
+.js-enabled .defra-bar-chart__container {
   position: relative;
   margin: 0 -15px;
-}
-.js-enabled .defra-bar-chart {
   padding-right: 15px;
   padding-left: 15px;
 }
-.defra-bar-chart > svg {
+.defra-bar-chart__container > svg {
   position:relative;
   overflow:visible;
   height:300px;
