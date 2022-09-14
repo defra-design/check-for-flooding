@@ -32,8 +32,8 @@ function LineChart (containerId, stationId, data, options = {}) {
 
     // Draw axis
     const xAxis = axisBottom().tickSizeOuter(0)
-    xAxis.scale(xScale).ticks(timeDay).tickFormat((d) => { return '' })
-    yAxis = axisLeft().ticks(5).tickFormat((d) => {
+    xAxis.scale(xScale).ticks(timeDay).tickFormat(d => { return '' })
+    yAxis = axisLeft().ticks(5).tickFormat(d => {
       // return parseFloat(d).toFixed(2) + 'm'
       return parseFloat(d).toFixed(1)
     }).tickSizeOuter(0)
@@ -135,6 +135,9 @@ function LineChart (containerId, stationId, data, options = {}) {
       thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
     })
 
+    // Update clip text
+    clipText.attr('width', width).attr('height', height)
+
     // Add significant points
     significantContainer.selectAll('*').remove()
     const significantObserved = observedPoints.filter(x => x.isSignificant).map(p => ({ ...p, type: 'observed' }))
@@ -151,7 +154,12 @@ function LineChart (containerId, stationId, data, options = {}) {
       .attr('r', '3')
       .attr('cx', d => xScale(new Date(d.dateTime)))
       .attr('cy', d => yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value))
-    significantCells.insert('text')
+    significantCells.insert('text').text(d => {
+      const value = `${dataCache.type === 'river' && d.value < 0 ? 0 : d.value.toFixed(2)}m`
+      const time = timeFormat('%-I:%M%p')(new Date(d.dateTime)).toLowerCase()
+      const date = timeFormat('%e %b')(new Date(d.dateTime))
+      return `${value} ${time}, ${date}`
+    })
 
     // Hide x axis labels that overlap with time now label
     const timeNowX = timeLabel.node().getBoundingClientRect().left
@@ -448,7 +456,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     .attr('focusable', 'false')
 
   // Clip path to visually hide text
-  // const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
+  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
 
   // Add grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
@@ -476,11 +484,9 @@ function LineChart (containerId, stationId, data, options = {}) {
   locator.append('line').attr('class', 'locator-line')
   locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
-  // Add container for significant points
-  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
-
-  // Add thresholds group
+  // Add thresholds and significant containers
   const thresholdsContainer = svg.append('g').attr('class', 'thresholds')
+  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').attr('clip-path', 'url(#clip-text)').append('g').attr('role', 'row')
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)

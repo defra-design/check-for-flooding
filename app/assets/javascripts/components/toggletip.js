@@ -137,6 +137,7 @@ const toggletips = (options) => {
 
   // Add on mouse enter
   document.addEventListener('mouseenter', (e) => {
+    if (e.target === document) return
     const isTarget = !!e.target.closest('.defra-toggletip-target')
     if (isTarget && !currentToggletip) {
       const toggletip = e.target.closest('.defra-toggletip')
@@ -146,6 +147,7 @@ const toggletips = (options) => {
 
   // Remove on mouse leave
   document.addEventListener('mouseleave', (e) => {
+    if (e.target === document) return
     const isTarget = e.target.hasAttribute('data-toggletip-container')
     if (isTarget) {
       closeToggletips()

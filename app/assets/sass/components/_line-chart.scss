@@ -237,6 +237,9 @@
     .point circle {
         fill: govuk-colour('blue');
     }
+    .point text {
+        font-size: 0;
+    }
     .point:focus circle {
         fill: govuk-colour('black');
         stroke: govuk-colour('yellow');
