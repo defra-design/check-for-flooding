@@ -14,7 +14,7 @@ import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { defaults as defaultControls, Attribution, Zoom, Control } from 'ol/control'
 import { KeyboardZoom, PinchRotate } from 'ol/interaction'
 import { Map } from 'ol'
-import { Vector, VectorTile, VectorImage } from 'ol/layer'
+import { Vector, VectorTile, VectorImage, WebGLPoints, WebGLTile } from 'ol/layer'
 
 const { addOrUpdateParameter, forEach } = window.flood.utils
 const maps = window.flood.maps
@@ -263,8 +263,12 @@ maps.MapContainer = function MapContainer (mapId, options) {
 
   const removeContainer = () => {
     if (!containerElement) return // Safari fires popstate on page load
-    // Map layers memory leak issue
-    this.map.getLayers().forEach(l => l.setSource(null))
+    // Need to clean up WebGL resources
+    const layers = [...this.map.getLayers().getArray()]
+    layers.forEach(l => {
+      this.map.removeLayer(l)
+      if (l instanceof WebGLPoints || l instanceof WebGLTile) l.dispose()
+    })
     // Clear reference to map
     this.map = null
     // Reinstate page title

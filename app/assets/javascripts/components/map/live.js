@@ -546,6 +546,8 @@ function LiveMap (mapId, options) {
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
   container.map.addEventListener('moveend', (e) => {
+    // Map can be removed before instance event listeners
+    if (!container.map) return
     // Timer used to stop 100 url replaces in 30 seconds limit
     clearTimeout(timer)
     // Toggle key symbols depending on resolution
