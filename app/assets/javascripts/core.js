@@ -30,12 +30,6 @@ if (!Element.prototype.closest) {
   }
 }
 
-// "flood" represents the global namespace for
-// client-side javascript across all our pages
-if (!window.flood) {
-  window.flood = {}
-}
-
 // Simplification algorythom
 const douglasPeucker = (points, tolerance) => {
   const last = points.length - 1
@@ -53,6 +47,12 @@ const douglasPeucker = (points, tolerance) => {
     return [...douglasPeucker(points.slice(0, x + 1), tolerance), ...douglasPeucker(points.slice(x), tolerance).slice(1)]
   }
   return [points[0], points[last]]
+}
+
+// "flood" represents the global namespace for
+// client-side javascript across all our pages
+if (!window.flood) {
+  window.flood = {}
 }
 
 // Flood utilities

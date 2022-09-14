@@ -366,6 +366,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Setup array to combine observed and forecast points and identify startPoint for locator
     if (dataCache.observed.length) {
       // Add isSignificant property to points
+      // Simply function could be improved using dynamic tolerance to better place key points
       dataCache.observed = simplify(dataCache.observed, dataCache.type === 'tide' ? 10000000 : 1000000)
       const errorFilter = l => !l.err
       const errorAndNegativeFilter = l => errorFilter(l) // && l.value >= 0 *DBL below zero addition
@@ -475,11 +476,11 @@ function LineChart (containerId, stationId, data, options = {}) {
   locator.append('line').attr('class', 'locator-line')
   locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
-  // Add thresholds group
-  const thresholdsContainer = inner.append('g').attr('class', 'thresholds')
-
   // Add container for significant points
   const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row')
+
+  // Add thresholds group
+  const thresholdsContainer = svg.append('g').attr('class', 'thresholds')
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
