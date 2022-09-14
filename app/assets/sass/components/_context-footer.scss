@@ -1,7 +1,6 @@
 .defra-context-footer {
     border-top:2px solid govuk-colour('blue');
-    @include govuk-responsive-margin(9, 'top');
-    margin-top: 20px;
+    margin-top: 30px;
     padding-top: 10px;
     @include mq ($from: tablet) {
         margin-top: 40px;
