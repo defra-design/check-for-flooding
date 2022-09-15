@@ -16,7 +16,8 @@ module.exports = {
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
     FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id) UNION
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date
-    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id);
+    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
+    ORDER BY severity DESC;
     `)
     const features = []
     response.forEach(item => {
@@ -50,8 +51,10 @@ module.exports = {
       ELSE NULL END AS type,
       is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
-      WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1;
+      WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1
+      ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
     `, type)
+    // Build GeoJSON
     const features = []
     response.forEach(item => {
       features.push({
