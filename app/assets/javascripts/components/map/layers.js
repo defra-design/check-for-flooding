@@ -75,7 +75,7 @@ window.flood.maps.layers = {
   // Vector tile layers
   //
 
-  vectorTilePolygons: () => {
+  vectorTiles: () => {
     return new VectorTileLayer({
       ref: 'polygons',
       className: 'defra-map-layer', // Needs custom class to fiz zIndex issue introduced with declutter
@@ -91,7 +91,7 @@ window.flood.maps.layers = {
       // renderMode: 'hybrid',
       renderMode: 'vector',
       extent: window.flood.maps.extent,
-      style: window.flood.maps.styles.vectorTilePolygons,
+      style: window.flood.maps.styles.vectorTiles,
       zIndex: 1
     })
   },
@@ -207,7 +207,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.warningsJSON,
       visible: false,
-      zIndex: 4
+      zIndex: 6
     })
   },
 
@@ -222,7 +222,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 4
+      zIndex: 5
     })
   },
 
@@ -252,7 +252,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 4
+      zIndex: 3
     })
   },
 
@@ -267,7 +267,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 3
+      zIndex: 2
     })
   },
 

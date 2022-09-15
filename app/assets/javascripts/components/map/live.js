@@ -88,7 +88,7 @@ function LiveMap (mapId, options) {
   // Layers
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
-  const vectorTilePolygons = maps.layers.vectorTilePolygons()
+  const vectorTiles = maps.layers.vectorTiles()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -107,7 +107,7 @@ function LiveMap (mapId, options) {
 
   // These layers can be manipulated
   const dataLayers = [
-    vectorTilePolygons,
+    vectorTiles,
     river,
     sea,
     groundwater,
@@ -142,7 +142,7 @@ function LiveMap (mapId, options) {
   // Show or hide layers
   const toggleLayerVisibility = (lyrCodes) => {
     dataLayers.forEach(layer => {
-      if (layer === vectorTilePolygons) return
+      if (layer === vectorTiles) return
       const isVisible = lyrCodes.some(lyrCode => layer.get('featureCodes').includes(lyrCode))
       layer.setVisible(isVisible)
     })
@@ -199,7 +199,7 @@ function LiveMap (mapId, options) {
     const feature = river.getSource().getFeatureById(featureId)
     const riverId = feature ? feature.get('riverId') : state.riverId
     replaceHistory('rid', riverId)
-    vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+    vectorTiles.setStyle(maps.styles.vectorTiles)
   }
 
   // Show or hide warnings within warning layer
@@ -224,7 +224,7 @@ function LiveMap (mapId, options) {
   const toggleSelectedFeature = (newFeatureId = '') => {
     selected.getSource().clear()
     dataLayers.forEach(layer => {
-      if (layer === vectorTilePolygons) return
+      if (layer === vectorTiles) return
       const originalFeature = layer.getSource().getFeatureById(state.selectedFeatureId)
       const newFeature = layer.getSource().getFeatureById(newFeatureId)
       if (originalFeature) {
@@ -239,7 +239,7 @@ function LiveMap (mapId, options) {
       }
       if (layer.get('ref') === 'warnings') {
         // Refresh vector tiles
-        vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+        vectorTiles.setStyle(maps.styles.vectorTiles)
       }
     })
     state.selectedFeatureId = newFeatureId
@@ -276,7 +276,7 @@ function LiveMap (mapId, options) {
     const resolution = container.map.getView().getResolution()
     const isBigZoom = resolution <= bigZoom
     const extent = container.map.getView().calculateExtent(container.map.getSize())
-    const layers = dataLayers.filter(layer => layer !== vectorTilePolygons && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
+    const layers = dataLayers.filter(layer => layer !== vectorTiles && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
     // Add target area isn't an active alert or warning
     if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
     // Add vectortile polygons to labels
@@ -323,7 +323,7 @@ function LiveMap (mapId, options) {
   // Get VectorTile Features Intersecting Extent
   const getWarningPolygonsIntersectingExtent = (extent) => {
     const warningsPolygons = []
-    vectorTilePolygons.getSource().getFeaturesInExtent(extent).forEach(feature => {
+    vectorTiles.getSource().getFeaturesInExtent(extent).forEach(feature => {
       const warning = warnings.getSource().getFeatureById(feature.getId())
       if (!!warning && warning.get('isVisible')) {
         const warningsPolygon = new Feature({
@@ -555,12 +555,12 @@ function LiveMap (mapId, options) {
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
     // Vector tiles with featureClass ol.feature have redraw bug
-    // vectorTilePolygons.getSource().refresh({ force: true })
+    // vectorTiles.getSource().refresh({ force: true })
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
       if (!container.map) return
       // Update river visibility when new features come into view
-      vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+      vectorTiles.setStyle(maps.styles.vectorTiles)
       // Show overlays for visible features
       toggleVisibleFeatures()
       // Update url (history state) to reflect new extent
@@ -593,7 +593,7 @@ function LiveMap (mapId, options) {
     }
     // Get mouse coordinates and check for feature
     const featureId = container.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (!defaultLayers.includes(layer) || layer === vectorTilePolygons) {
+      if (!defaultLayers.includes(layer) || layer === vectorTiles) {
         return feature.getId()
       }
     })
@@ -625,7 +625,7 @@ function LiveMap (mapId, options) {
         lyrs.push(e.target.id)
       }
       toggleLayerVisibility(lyrs)
-      vectorTilePolygons.setStyle(maps.styles.vectorTilePolygons)
+      vectorTiles.setStyle(maps.styles.vectorTiles)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)
       toggleVisibleFeatures()
