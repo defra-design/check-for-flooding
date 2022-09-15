@@ -19,7 +19,7 @@
       {% endif %}
 
       {# Station forecast interpretation #}
-      {% if model.station.rloiId == '8208' %}
+      {% if model.station.status == 'active' and model.station.rloiId == '8208' %}
       <div class="defra-flood-status-item defra-flood-status-item--important">
         <div class="defra-flood-status-item__container">
           <span class="defra-flood-status-item__icon">
