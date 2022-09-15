@@ -49,6 +49,17 @@ module.exports = {
       WHEN type = 'tide' THEN 'C'
       WHEN type = 'rainfall' THEN 'R'
       ELSE NULL END AS type,
+      CASE
+      WHEN type = 'river' AND status != 'active' AND status != 'ukcmf' THEN 'riverError'
+      WHEN type = 'river' AND latest_state = 'high' THEN 'riverHigh'
+      WHEN type = 'river' OR (type = 'tide' AND river_id IS NOT NULL) THEN 'river'
+      WHEN type = 'groundwater' AND status != 'active' THEN 'groundError'
+      WHEN type = 'groundwater' AND latest_state = 'high' THEN 'groundHigh'
+      WHEN type = 'groundwater' THEN 'ground'
+      WHEN type = 'tide' AND status != 'active' THEN 'seaError'
+      WHEN type = 'tide' THEN 'sea'
+      WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'rain'
+      WHEN type = 'rainfall' THEN 'rainDry' END AS state,
       is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
       FROM measure_with_latest
       WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1
@@ -83,7 +94,8 @@ module.exports = {
           up: item.station_up,
           down: item.station_down,
           atrisk: item.latest_state === 'High',
-          iswales: item.is_wales
+          iswales: item.is_wales,
+          state: item.state
         }
       })
     })

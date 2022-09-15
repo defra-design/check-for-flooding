@@ -155,44 +155,45 @@ function LiveMap (mapId, options) {
     }
   }
 
-  // WebGL: Limited dynamic styling properties could be set server side
-  const setFeatueState = (layer) => {
-    layer.getSource().forEachFeature((feature) => {
-      const props = feature.getProperties()
-      let state = ''
-      if (['S', 'M', 'G'].includes(props.type)) {
-        // River or groundwater
-        if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
-          state = props.type === 'G' ? 'groundError' : 'riverError'
-        } else if (props.value && props.atrisk && props.type !== 'C' && !props.iswales) {
-          state = props.type === 'G' ? 'groundHigh' : 'riverHigh'
-        } else {
-          state = props.type === 'G' ? 'ground' : 'river'
-        }
-      } else if (props.type === 'C') {
-        // River (Tidal)
-        if (props.riverId) {
-          if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
-            state = 'riverError'
-          } else {
-            state = 'river'
-          }
-        // Sea level
-        } else {
-          if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
-            state = 'seaError'
-          } else {
-            state = 'sea'
-          }
-        }
-      } else if (props.type === 'R') {
-        // Rainfall
-        state = props.value24hr && props.value24hr > 0 ? 'rain' : 'rainDry'
-      }
-      // WebGl: Feature properties must be strings or numbers
-      feature.set('state', state)
-    })
-  }
+  // WebGL: Limited dynamic styling properties
+  // This is inefficient, should be set server side
+  // const setFeatueState = (layer) => {
+  //   layer.getSource().forEachFeature((feature) => {
+  //     const props = feature.getProperties()
+  //     let state = ''
+  //     if (['S', 'M', 'G'].includes(props.type)) {
+  //       // River or groundwater
+  //       if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
+  //         state = props.type === 'G' ? 'groundError' : 'riverError'
+  //       } else if (props.value && props.atrisk && props.type !== 'C' && !props.iswales) {
+  //         state = props.type === 'G' ? 'groundHigh' : 'riverHigh'
+  //       } else {
+  //         state = props.type === 'G' ? 'ground' : 'river'
+  //       }
+  //     } else if (props.type === 'C') {
+  //       // River (Tidal)
+  //       if (props.riverId) {
+  //         if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
+  //           state = 'riverError'
+  //         } else {
+  //           state = 'river'
+  //         }
+  //       // Sea level
+  //       } else {
+  //         if (props.status.toLowerCase() === 'suspended' || props.status.toLowerCase() === 'closed' || (isNaN(props.value) && !props.iswales)) {
+  //           state = 'seaError'
+  //         } else {
+  //           state = 'sea'
+  //         }
+  //       }
+  //     } else if (props.type === 'R') {
+  //       // Rainfall
+  //       state = props.value24hr && props.value24hr > 0 ? 'rain' : 'rainDry'
+  //     }
+  //     // WebGl: Feature properties must be strings or numbers
+  //     feature.set('state', state)
+  //   })
+  // }
 
   // Show or hide rivers
   const toggleRiver = (featureId = '') => {
@@ -514,32 +515,35 @@ function LiveMap (mapId, options) {
   // Events
   //
 
-  // Set feature states, visibility and keyboard numbers when map has first rendered
-  container.map.once('rendercomplete', () => {
-    if (!container.map) return
-    // Add optional target area
-    const warningsSource = warnings.getSource()
-    const targetAreaId = targetArea.pointFeature ? targetArea.pointFeature.getId() : null
-    if (targetAreaId && !warningsSource.getFeatureById(targetAreaId)) warningsSource.addFeature(targetArea.pointFeature)
-    // Set warning feature visibility
-    const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-    setWarningVisibility(lyrs)
-    // Store reference to warnings source for use in vector tiles style function
-    maps.liveMapWarningsSource = warningsSource
-    // Set feature state for use with vector tiles style function
-    dataLayers.forEach(layer => { if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) setFeatueState(layer) })
-    // Set selected feature when layer is ready
-    toggleSelectedFeature(state.selectedFeatureId)
-    // Style vector tiles after point features state has been set
-    vectorTiles.setStyle(maps.styles.vectorTiles)
-    // Show keyboard overlays
-    toggleVisibleFeatures()
+  // Set feature states, visibility and keyboard overlays when features have loaded
+  dataLayers.forEach(layer => {
+    const sourceChange = layer.getSource().on('change', (e) => {
+      if (!container.map || e.target.getState() !== 'ready') return
+      console.log(layer.get('ref'), 'ready')
+      unByKey(sourceChange) // Remove ready event when layer is ready
+      if (layer.get('ref') === 'warnings') {
+        const warningsSource = warnings.getSource()
+        const targetAreaId = targetArea.pointFeature ? targetArea.pointFeature.getId() : null
+        // Add optional target area
+        if (targetAreaId && !warningsSource.getFeatureById(targetAreaId)) warningsSource.addFeature(targetArea.pointFeature)
+        // Set warning feature visibility
+        const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+        setWarningVisibility(lyrs)
+        // Store reference to warnings source for use in vector tiles style function
+        maps.liveMapWarningsSource = warnings.getSource()
+      }
+      layer.set('updated', new Date())
+      // Attempt to set selected feature when layer is ready
+      toggleSelectedFeature(state.selectedFeatureId)
+      // Show overlays
+      toggleVisibleFeatures()
+    })
   })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   let timer = null
   container.map.addEventListener('moveend', (e) => {
-    // Map can be removed before instance event listeners
+    // Listeners can remain after map has been removed
     if (!container.map) return
     // Timer used to stop 100 url replaces in 30 seconds limit
     clearTimeout(timer)
@@ -547,8 +551,6 @@ function LiveMap (mapId, options) {
     toggleKeySymbol()
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
-    // Vector tiles with featureClass ol.feature have redraw bug
-    // vectorTiles.getSource().refresh({ force: true })
     // Tasks dependent on a time delay
     timer = setTimeout(() => {
       if (!container.map) return
@@ -607,15 +609,13 @@ function LiveMap (mapId, options) {
       if (e.target.type === 'checkbox') {
         const checkbox = e.target
         checkbox.checked ? lyrs.push(checkbox.id) : lyrs.splice(lyrs.indexOf(checkbox.id), 1)
-        if (['ts', 'tw', 'ta', 'tr'].includes(checkbox.id)) {
-          setWarningVisibility(lyrs)
-        }
       } else if (e.target.type === 'radio') {
-        if (lyrs.includes('mv')) { lyrs.splice(lyrs.indexOf('mv'), 1) }
-        if (lyrs.includes('sv')) { lyrs.splice(lyrs.indexOf('sv'), 1) }
+        if (lyrs.includes('mv')) lyrs.splice(lyrs.indexOf('mv'), 1)
+        if (lyrs.includes('sv')) lyrs.splice(lyrs.indexOf('sv'), 1)
         lyrs.push(e.target.id)
       }
       toggleLayerVisibility(lyrs)
+      setWarningVisibility(lyrs)
       vectorTiles.setStyle(maps.styles.vectorTiles)
       lyrs = lyrs.join(',')
       replaceHistory('lyr', lyrs)

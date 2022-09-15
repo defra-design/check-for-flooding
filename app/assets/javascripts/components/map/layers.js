@@ -79,7 +79,7 @@ window.flood.maps.layers = {
 
   vectorTiles: () => {
     return new VectorTileLayer({
-      ref: 'polygons',
+      ref: 'vectorTiles',
       className: 'defra-map-vt-layer', // Needs custom class to fix zIndex issue introduced with declutter
       source: new VectorTileSource({
         format: new MVT({
