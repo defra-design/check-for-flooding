@@ -519,7 +519,6 @@ function LiveMap (mapId, options) {
   dataLayers.forEach(layer => {
     const sourceChange = layer.getSource().on('change', (e) => {
       if (!container.map || e.target.getState() !== 'ready') return
-      console.log(layer.get('ref'), 'ready')
       unByKey(sourceChange) // Remove ready event when layer is ready
       if (layer.get('ref') === 'warnings') {
         const warningsSource = warnings.getSource()
