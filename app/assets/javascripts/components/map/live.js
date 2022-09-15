@@ -514,33 +514,26 @@ function LiveMap (mapId, options) {
   // Events
   //
 
-  // Set selected feature and polygon states when features have loaded
-  dataLayers.forEach(layer => {
-    const change = layer.getSource().on('change', (e) => {
-      if (!container.map || e.target.getState() !== 'ready') return
-      unByKey(change) // Remove ready event when layer is ready
-      if (layer.get('ref') === 'warnings') {
-        // Add optional target area
-        if (targetArea.pointFeature) {
-          if (!warnings.getSource().getFeatureById(targetArea.pointFeature.getId())) {
-            // Add point feature
-            warnings.getSource().addFeature(targetArea.pointFeature)
-          }
-        }
-        const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-        setWarningVisibility(lyrs)
-        // Store reference to warnings source for use in vector tiles style function
-        maps.liveMapWarningsSource = warnings.getSource()
-      }
-      // WebGL: Limited dynamic styling could be done server side for client performance
-      if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
-        setFeatueState(layer)
-      }
-      // Attempt to set selected feature when layer is ready
-      toggleSelectedFeature(state.selectedFeatureId)
-      // Show overlays
-      toggleVisibleFeatures()
-    })
+  // Set feature states, visibility and keyboard numbers when map has first rendered
+  container.map.once('rendercomplete', () => {
+    if (!container.map) return
+    // Add optional target area
+    const warningsSource = warnings.getSource()
+    const targetAreaId = targetArea.pointFeature ? targetArea.pointFeature.getId() : null
+    if (targetAreaId && !warningsSource.getFeatureById(targetAreaId)) warningsSource.addFeature(targetArea.pointFeature)
+    // Set warning feature visibility
+    const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+    setWarningVisibility(lyrs)
+    // Store reference to warnings source for use in vector tiles style function
+    maps.liveMapWarningsSource = warningsSource
+    // Set feature state for use with vector tiles style function
+    dataLayers.forEach(layer => { if (['river', 'sea', 'groundwater', 'rainfall'].includes(layer.get('ref'))) setFeatueState(layer) })
+    // Set selected feature when layer is ready
+    toggleSelectedFeature(state.selectedFeatureId)
+    // Style vector tiles after point features state has been set
+    vectorTiles.setStyle(maps.styles.vectorTiles)
+    // Show keyboard overlays
+    toggleVisibleFeatures()
   })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
@@ -567,9 +560,7 @@ function LiveMap (mapId, options) {
       const ext = getLonLatFromExtent(container.map.getView().calculateExtent(container.map.getSize()))
       replaceHistory('ext', ext.join(','))
       // Show reset button if extent has changed
-      if (isNewExtent(ext)) {
-        resetButton.removeAttribute('disabled')
-      }
+      if (isNewExtent(ext)) resetButton.removeAttribute('disabled')
       // Fix margin issue
       container.map.updateSize()
     }, 350)
@@ -579,7 +570,7 @@ function LiveMap (mapId, options) {
   container.map.addEventListener('pointermove', (e) => {
     // Detect vector feature at mouse coords
     const hit = container.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-      if (!['hydrologicalboundaries', 'rivers'].includes(feature.get('layer')) && !defaultLayers.includes(layer)) { return true }
+      return feature.get('layer') !== 'rivers' && !defaultLayers.includes(layer)
     })
     container.map.getTarget().style.cursor = hit ? 'pointer' : ''
   })

@@ -130,10 +130,9 @@ window.flood.maps.styles = {
     const warningsSource = maps.liveMapWarningsSource
     const featureId = feature.getId()
     const featureLayer = feature.get('layer')
-
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
-      if (!warning || !warning.get('isVisible') || resolution >= bigZoom) { return new Style() }
+      if (!warning || warning.get('isVisible') === 'false' || resolution >= bigZoom) { return new Style() }
       const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
       const severity = warning.get('severity')
       const isSelected = warning.get('isSelected')

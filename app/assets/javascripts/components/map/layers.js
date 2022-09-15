@@ -90,7 +90,6 @@ window.flood.maps.layers = {
         maxZoom: 12
       }),
       declutter: true,
-      // renderMode: 'hybrid',
       renderMode: 'vector',
       extent: window.flood.maps.extent,
       style: window.flood.maps.styles.vectorTiles,
