@@ -136,14 +136,17 @@ function LineChart (containerId, stationId, data, options = {}) {
     })
 
     // Update clip text
-    clipText.attr('width', width).attr('height', height)
+    clipText.attr('width', width + 5).attr('height', height)
 
     // Add significant points
     significantContainer.selectAll('*').remove()
     const significantObserved = observedPoints.filter(x => x.isSignificant).map(p => ({ ...p, type: 'observed' }))
     const significantForecast = forecastPoints.filter(x => x.isSignificant).map(p => ({ ...p, type: 'forecast' }))
     significantPoints = significantObserved.concat(significantForecast)
-    const significantCells = significantContainer.selectAll('.point').data(significantPoints).enter()
+    const significantCells = significantContainer
+      .attr('aria-rowcount', 1)
+      .attr('aria-colcount', significantPoints.length)
+      .selectAll('.point').data(significantPoints).enter()
       .append('g')
       .attr('role', 'cell')
       .attr('class', d => { return 'point point--' + d.type })
@@ -456,7 +459,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     .attr('focusable', 'false')
 
   // Clip path to visually hide text
-  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', 0).attr('y', 0)
+  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', -5).attr('y', 0)
 
   // Add grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
