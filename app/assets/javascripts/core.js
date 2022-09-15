@@ -103,6 +103,7 @@ window.flood.utils = {
     const v = window.location.search.match(new RegExp('(?:[?&]' + name + '=)([^&]+)'))
     return v ? v[1] : null
   },
+  // Takes a valuesobject and concatentates items using commas and 'and'.
   getSummaryList: (values) => {
     const lines = []
     let summary = ''
@@ -116,6 +117,7 @@ window.flood.utils = {
     })
     return summary
   },
+  // Takes a points collection and adds an isSignificant property to key points
   simplify: (points, tolerance) => {
     points = points.map(obj => ({ ...obj, timestamp: parseInt((new Date(obj.dateTime)).getTime()) }))
     const significant = douglasPeucker(points, tolerance)

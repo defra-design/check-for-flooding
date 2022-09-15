@@ -27,6 +27,7 @@ window.flood.maps.layers = {
   topography: () => {
     return new TileLayer({
       ref: 'road',
+      className: 'defra-map-bg-canvas',
       source: new BingMaps({
         key: `${bingApiKey}&c4w=1&cstl=rd&src=h&st=me|lv:0_trs|v:0_pt|v:0`,
         imagerySet: 'RoadOnDemand',
@@ -40,8 +41,8 @@ window.flood.maps.layers = {
   // Default base map
   road: () => {
     return new TileLayer({
-      cacheSize: 128,
       ref: 'road',
+      className: 'defra-map-bg-canvas',
       // source: new BingMaps({
       //   key: bingApiKey,
       //   imagerySet: 'RoadOnDemand'
@@ -61,6 +62,7 @@ window.flood.maps.layers = {
   satellite: () => {
     return new TileLayer({
       ref: 'satellite',
+      className: 'defra-map-bg-canvas',
       source: new BingMaps({
         key: bingApiKey,
         imagerySet: 'AerialWithLabelsOnDemand',
@@ -78,7 +80,7 @@ window.flood.maps.layers = {
   vectorTiles: () => {
     return new VectorTileLayer({
       ref: 'polygons',
-      className: 'defra-map-layer', // Needs custom class to fiz zIndex issue introduced with declutter
+      className: 'defra-map-vt-layer', // Needs custom class to fix zIndex issue introduced with declutter
       source: new VectorTileSource({
         format: new MVT({
           idProperty: 'id',
@@ -103,6 +105,7 @@ window.flood.maps.layers = {
   places: () => {
     return new VectorLayer({
       ref: 'places',
+      className: 'defra-map-vl-layer',
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
@@ -199,6 +202,7 @@ window.flood.maps.layers = {
   warnings: () => {
     return new WebGLPointsLayer({
       ref: 'warnings',
+      className: 'defra-map-webgl-layer',
       featureCodes: 'ts, tw, ta, tr',
       source: new VectorSource({
         format: new GeoJSON(),
@@ -214,6 +218,7 @@ window.flood.maps.layers = {
   river: () => {
     return new WebGLPointsLayer({
       ref: 'river',
+      className: 'defra-map-webgl-layer',
       featureCodes: 'ri',
       source: new VectorSource({
         format: new GeoJSON(),
@@ -229,6 +234,7 @@ window.flood.maps.layers = {
   sea: () => {
     return new WebGLPointsLayer({
       ref: 'sea',
+      className: 'defra-map-webgl-layer',
       featureCodes: 'se',
       source: new VectorSource({
         format: new GeoJSON(),
@@ -244,6 +250,7 @@ window.flood.maps.layers = {
   groundwater: () => {
     return new WebGLPointsLayer({
       ref: 'groundwater',
+      className: 'defra-map-webgl-layer',
       featureCodes: 'gr',
       source: new VectorSource({
         format: new GeoJSON(),
@@ -259,6 +266,7 @@ window.flood.maps.layers = {
   rainfall: () => {
     return new WebGLPointsLayer({
       ref: 'rainfall',
+      className: 'defra-map-webgl-layer',
       featureCodes: 'rf',
       source: new VectorSource({
         format: new GeoJSON(),
