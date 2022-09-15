@@ -450,6 +450,26 @@ function LiveMap (mapId, options) {
     feature.set('html', html)
   }
 
+  // Set feature warning states when a source changes
+  const updateMapOnSourceChange = (layer) => {
+    if (layer.get('ref') === 'warnings') {
+      const warningsSource = warnings.getSource()
+      const targetAreaId = targetArea.pointFeature ? targetArea.pointFeature.getId() : null
+      // Add optional target area
+      if (targetAreaId && !warningsSource.getFeatureById(targetAreaId)) warningsSource.addFeature(targetArea.pointFeature)
+      // Set warning feature visibility
+      const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+      setWarningVisibility(lyrs)
+      // Store reference to warnings source for use in vector tiles style function
+      maps.liveMapWarningsSource = warnings.getSource()
+    }
+    layer.set('updated', new Date())
+    // Attempt to set selected feature when layer is ready
+    toggleSelectedFeature(state.selectedFeatureId)
+    // Show overlays
+    toggleVisibleFeatures()
+  }
+
   //
   // Setup
   //
@@ -516,28 +536,12 @@ function LiveMap (mapId, options) {
   // Events
   //
 
-  // Set feature states, visibility and keyboard overlays when features have loaded
+  // Update map once when each layer has loaded its features
   dataLayers.forEach(layer => {
     const sourceChange = layer.getSource().on('change', (e) => {
       if (!container.map || e.target.getState() !== 'ready') return
       unByKey(sourceChange) // Remove ready event when layer is ready
-      if (layer.get('ref') === 'warnings') {
-        const warningsSource = warnings.getSource()
-        const targetAreaId = targetArea.pointFeature ? targetArea.pointFeature.getId() : null
-        // Add optional target area
-        if (targetAreaId && !warningsSource.getFeatureById(targetAreaId)) warningsSource.addFeature(targetArea.pointFeature)
-        // Set warning feature visibility
-        const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-        setWarningVisibility(lyrs)
-        // Store reference to warnings source for use in vector tiles style function
-        maps.liveMapWarningsSource = warnings.getSource()
-      }
-      console.log(layer.get('ref'))
-      layer.set('updated', new Date())
-      // Attempt to set selected feature when layer is ready
-      toggleSelectedFeature(state.selectedFeatureId)
-      // Show overlays
-      toggleVisibleFeatures()
+      updateMapOnSourceChange(layer)
     })
   })
 
