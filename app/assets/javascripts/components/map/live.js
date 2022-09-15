@@ -205,6 +205,7 @@ function LiveMap (mapId, options) {
 
   // Show or hide warnings within warning layer
   // Need to be careful as each feature change triggers a map render
+  // If each warning type was on a seperate layer we could reduce map renders
   const setWarningVisibility = (lyrCodes) => {
     warnings.getSource().forEachFeature((feature) => {
       const props = feature.getProperties()
