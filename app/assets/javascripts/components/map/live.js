@@ -204,6 +204,7 @@ function LiveMap (mapId, options) {
   }
 
   // Show or hide warnings within warning layer
+  // Need to be careful as each feature chnage triggers a map render
   const setWarningVisibility = (lyrCodes) => {
     warnings.getSource().forEachFeature((feature) => {
       const props = feature.getProperties()
@@ -531,6 +532,7 @@ function LiveMap (mapId, options) {
         // Store reference to warnings source for use in vector tiles style function
         maps.liveMapWarningsSource = warnings.getSource()
       }
+      console.log(layer.get('ref'))
       layer.set('updated', new Date())
       // Attempt to set selected feature when layer is ready
       toggleSelectedFeature(state.selectedFeatureId)
