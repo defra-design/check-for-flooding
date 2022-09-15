@@ -37,10 +37,19 @@ router.get('/station/:id', async (req, res) => {
       telemetry = {}
     }
     // Thresholds
-    thresholds = new Thresholds([
-      { id: `${station.id}-max`, name: 'max', value: station.levelMax, date: station.levelMaxDateTime },
-      { id: `${station.id}-high`, name: 'high', value: station.levelHigh, date: null }
-    ], station.latestHeight)
+    thresholds = new Thresholds([{
+      id: `${station.id}-max`,
+      name: 'max',
+      value: station.levelMax,
+      date: station.levelMaxDateTime
+    },
+    {
+      id: `${station.id}-high`,
+      name: 'high',
+      value: station.levelHigh,
+      date: null
+    }
+    ], station.status === 'active' ? station.latestHeight : null)
   } else {
     // Return 500 error
   }

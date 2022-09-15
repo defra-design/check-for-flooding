@@ -1,19 +1,21 @@
 const utils = require('../utils')
 
 class Threshold {
-  constructor (thresholds, latest) {
+  constructor (thresholds, latest = null) {
     thresholds = thresholds.filter(x => !!(x.value))
-    latest = Math.round(latest * 100) / 100
+    if (latest) latest = Math.round(latest * 100) / 100
     return this.createBands(thresholds, latest)
   }
 
   createBands (thresholds, latest) {
     // Add latest at beginning of array
-    thresholds.unshift({
-      name: 'latest',
-      description: 'Latest level',
-      value: latest
-    })
+    if (latest) {
+      thresholds.unshift({
+        name: 'latest',
+        description: 'Latest level',
+        value: latest
+      })
+    }
     // Group on value
     const groups = utils.groupBy(thresholds, 'value')
     // Create bands
