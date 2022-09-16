@@ -7,7 +7,6 @@
 
 import { View, Feature } from 'ol'
 import { transform, transformExtent } from 'ol/proj'
-import { unByKey } from 'ol/Observable'
 import { Point } from 'ol/geom'
 import { buffer as bufferExtent, containsExtent } from 'ol/extent'
 import { fromExtent } from 'ol/geom/Polygon'
@@ -19,7 +18,7 @@ import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
 
-const { addOrUpdateParameter, getParameterByName, forEach, getSummaryList } = window.flood.utils
+const { xhr, addOrUpdateParameter, getParameterByName, forEach, getSummaryList } = window.flood.utils
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
 const maps = window.flood.maps
 const MapContainer = maps.MapContainer
@@ -464,13 +463,27 @@ function LiveMap (mapId, options) {
       // Store reference to warnings source for use in vector tiles style function
       maps.liveMapWarningsSource = warnings.getSource()
     }
-    layer.set('updated', new Date())
     // Attempt to set selected feature when layer is ready
     toggleSelectedFeature(state.selectedFeatureId)
     // Show overlays
     toggleVisibleFeatures()
   }
 
+  // Update sources
+  const refreshSources = () => {
+    dataLayers.filter(l => l !== vectorTiles).forEach(layer => {
+      if (!layer.getVisible()) return
+      xhr(window.location.origin + layer.getSource().getUrl(), (err, response) => {
+        if (err) {
+          console.log('Error: ' + err)
+        } else {
+          console.log(response)
+        }
+      }, 'json')
+    })
+  }
+
+  //
   //
   // Setup
   //
@@ -533,35 +546,37 @@ function LiveMap (mapId, options) {
     })
   }
 
+  // Update sources at interval
+  // setInterval(refreshSources, 10000)
+
   //
   // Events
   //
 
-  // Update map once when each layer has loaded its features
-  dataLayers.forEach(layer => {
-    const sourceChange = layer.getSource().on('change', (e) => {
-      if (!container.map || e.target.getState() !== 'ready') return
-      unByKey(sourceChange) // Remove ready event when layer is ready
+  // Update map when ever features have been added to a layer
+  dataLayers.filter(l => l !== vectorTiles).forEach(layer => {
+    layer.getSource().on('featuresloadend', (e) => {
+      if (!container.map) return
       updateMapOnSourceChange(layer)
     })
   })
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
-  let timer = null
+  let historyTimer = null
   container.map.addEventListener('moveend', (e) => {
     // Listeners can remain after map has been removed
     if (!container.map) return
     // Timer used to stop 100 url replaces in 30 seconds limit
-    clearTimeout(timer)
+    clearTimeout(historyTimer)
     // Toggle key symbols depending on resolution
     toggleKeySymbol()
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
     // Tasks dependent on a time delay
-    timer = setTimeout(() => {
+    historyTimer = setTimeout(() => {
       if (!container.map) return
       // Update river visibility when new features come into view
-      vectorTiles.setStyle(maps.styles.vectorTiles)
+      // vectorTiles.setStyle(maps.styles.vectorTiles)
       // Show overlays for visible features
       toggleVisibleFeatures()
       // Update url (history state) to reflect new extent
