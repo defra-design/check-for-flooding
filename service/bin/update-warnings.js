@@ -31,7 +31,8 @@ module.exports = async (processStartDatetime) => {
     for (const item of response.data.items) {
       warnings.push({
         id: item['@id'].substring(item['@id'].lastIndexOf('floods/') + 7),
-        name: item.eaAreaName,
+        // name: item.eaAreaName,
+        name: item.description,
         message: item.message,
         severity: item.severityLevel,
         raised_date: item.timeRaised,
