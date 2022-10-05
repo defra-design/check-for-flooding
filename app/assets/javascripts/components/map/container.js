@@ -569,7 +569,7 @@ maps.MapContainer = function MapContainer (mapId, options) {
   window.addEventListener('popstate', popstate)
 
   // Disable pinch and double tap zoom (iOS12)
-  if (!window.CSS.supports('touch-action', 'pan-y')) {
+  if (window.CSS && !window.CSS.supports('touch-action', 'pan-y')) {
     containerElement.addEventListener('gesturestart', (e) => {
       e.preventDefault()
       document.body.style.zoom = 0.99 // Disable Safari zoom-to-tabs gesture
