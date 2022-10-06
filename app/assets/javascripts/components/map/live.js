@@ -327,7 +327,7 @@ function LiveMap (mapId, options) {
     const warningsPolygons = []
     vectorTiles.getSource().getFeaturesInExtent(extent).forEach(feature => {
       const warning = warnings.getSource().getFeatureById(feature.getId())
-      if (!!warning && warning.get('isVisible')) {
+      if (warning && warning.get('isVisible') === 'true') {
         const warningsPolygon = new Feature({
           geometry: feature.getGeometry(),
           name: warning.get('name'),
@@ -349,7 +349,7 @@ function LiveMap (mapId, options) {
       if (labels.getSource().getFeatures().length > 9) break
       const pointFeatures = layer.getSource().getFeaturesInExtent(extent)
       for (const feature of pointFeatures) {
-        if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible'))) {
+        if (layer.get('ref') !== 'warnings' || (layer.get('ref') === 'warnings' && !isBigZoom && feature.get('isVisible') === 'true')) {
           const pointFeature = new Feature({
             geometry: feature.getGeometry(),
             name: feature.get('name'),
