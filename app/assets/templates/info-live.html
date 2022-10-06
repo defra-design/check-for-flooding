@@ -1,19 +1,19 @@
-{% if model.type === 'TA' %}
+{% if model.type == 'TA' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name defra-map-info__name--emphasis">
-        {% if model.severity === 1 %}
+        {% if model.severity == 1 %}
         Severe flood warning
-        {% elif model.severity === 2 %}
+        {% elif model.severity == 2 %}
         Flood warning
-        {% elif model.severity === 3 %}
+        {% elif model.severity == 3 %}
         Flood alert
-        {% elif model.severity === 4 %}
-            {% if model.id.charAt(4).toLowerCase() === 'w' %}
+        {% elif model.severity == 4 %}
+            {% if model.id.charAt(4).toLowerCase() == 'w' %}
             Flood warning removed
             {% else %}
             Flood alert removed
             {% endif %}
-        {% elif model.id.charAt(4).toLowerCase() === 'w' %}
+        {% elif model.id.charAt(4).toLowerCase() == 'w' %}
         Flood warning (inactive)
         {% else %}
         Flood alert (inactive)
@@ -22,10 +22,10 @@
     <p class="defra-map-info__description">
         <a href="/target-area/{{ model.id }}">{{ model.name }}</a>
     </p>
-    {% if model.date %}
-    <p class="defra-map-info__meta">
-        Issued {{ model.date }}
-    </p>
+    {% if model.date and model.severity < 4 %}
+    <p class="defra-map-info__meta">Issued {{ model.date }}</p>
+    {% elif model.severityChangedDate and model.severity == 4 %}
+    <p class="defra-map-info__meta">Removed {{ model.severityChangedDate }}</p>
     {% endif %}
 </div>
 {% elif model.type === 'S' or model.type === 'M' or model.type === 'G' or model.type === 'C' %}

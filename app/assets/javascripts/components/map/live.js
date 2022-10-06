@@ -443,6 +443,7 @@ function LiveMap (mapId, options) {
       model.nrwUrl = nrwUrl
     } else if (model.issuedDate) {
       model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
+      model.severityChangedDate = `${formatTime(new Date(model.severityChangedDate))}, ${formatDayMonth(new Date(model.severityChangedDate))}`
     }
     const env = window.nunjucks.configure('views')
     env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
