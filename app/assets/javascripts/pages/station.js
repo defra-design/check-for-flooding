@@ -33,7 +33,8 @@ if (document.querySelectorAll('[data-toggletip]')) {
     { id: '5127', type: 'i' },
     { id: '8343', type: 'default' },
     { id: '8191', type: 'i' },
-    { id: '8208', type: 'i' }
+    { id: '8208', type: 'i' },
+    { id: '8032', type: 'i' }
   ]
   const slug = window.location.pathname.split('/').pop()
   const match = config.find(x => x.id === slug)
