@@ -133,7 +133,7 @@ window.flood.maps.styles = {
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
       if (!warning || warning.get('isVisible') === 'false' || resolution >= bigZoom) { return new Style() }
-      const alpha = Math.floor(resolution) <= 20 ? Math.floor(resolution) <= 10 ? 0.2 : 0.6 : 1
+      const alpha = resolution <= 14 ? resolution >= 4 ? (Math.floor(resolution) / 20) : 0.2 : 0.7
       const severity = warning.get('severity')
       const isSelected = warning.get('isSelected')
       const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
@@ -145,34 +145,34 @@ window.flood.maps.styles = {
 
       switch (severity) {
         case 1: // Severe warning
-          strokeColour = '#D4351C'
-          fillColour = targetAreaPolygonPattern('severe', alpha)
+          strokeColour = isSelected ? '#E3000F' : 'transparent'
+          fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('severe', alpha)
           zIndex = 11
           break
         case 2: // Warning
-          strokeColour = '#D4351C'
-          fillColour = targetAreaPolygonPattern('warning', alpha)
+          strokeColour = isSelected ? '#E3000F' : 'transparent'
+          fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('warning', alpha)
           zIndex = 10
           break
         case 3: // Alert
-          strokeColour = '#F47738'
-          fillColour = targetAreaPolygonPattern('alert', alpha)
+          strokeColour = isSelected ? '#F18700' : 'transparent'
+          fillColour = `rgb(241, 135, 0, ${alpha})` // targetAreaPolygonPattern('alert', alpha)
           zIndex = isGroundwater ? 4 : 7
           break
         default: // Removed or inactive
-          strokeColour = '#626A6E'
-          fillColour = targetAreaPolygonPattern('removed', alpha)
+          strokeColour = isSelected ? '#626A6E' : 'transparent'
+          fillColour = `rgb(98, 106, 110, ${alpha})` // targetAreaPolygonPattern('removed', alpha)
           zIndex = 1
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
 
-      const selectedStroke = new Style({
-        stroke: new Stroke({
-          color: '#FFDD00',
-          width: 16
-        }),
-        zIndex: zIndex
-      })
+      // const selectedStroke = new Style({
+      //   stroke: new Stroke({
+      //     color: '#FFDD00',
+      //     width: 5 // 16
+      //   }),
+      //   zIndex: zIndex
+      // })
       const stroke = new Style({
         stroke: new Stroke({
           color: strokeColour,
@@ -186,7 +186,8 @@ window.flood.maps.styles = {
         }),
         zIndex: zIndex
       })
-      return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
+      // return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
+      return [stroke, fill]
     } else if (featureLayer === 'rivers') {
       const showRiver = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
       if (!showRiver) return
