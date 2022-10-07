@@ -174,8 +174,8 @@ router.get('/service/outlook', async (req, res, next) => {
 router.get('/service/geojson/:type', async (req, res, next) => {
   const type = req.params.type
   try {
-    if (['river', 'sea', 'groundwater', 'rainfall'].includes(type)) {
-      res.status(200).json(await mapServices.getStationsGeoJSON(type))
+    if (type === 'stations') {
+      res.status(200).json(await mapServices.getStationsGeoJSON())
     } else if (type === 'warnings') {
       res.status(200).json(await mapServices.getWarningsGeoJSON())
     } else if (type === 'outlook') {
@@ -192,7 +192,7 @@ router.get('/service/geojson/:type', async (req, res, next) => {
 })
 
 // Vector tiles
-router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
+router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
   const { x, y, z } = req.params
   fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
     if (err) {

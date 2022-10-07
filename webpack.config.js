@@ -27,7 +27,7 @@ module.exports = (env, argv) => ({
     rules: [
       {
         // Default exclude removes all node_modules but d3 is now distributed es6 so include d3 (& our own src) in transpile
-        include: mPath => mPath.indexOf('app/assets') > -1 || mPath.indexOf('node_modules/d3') > -1 || mPath.indexOf('node_modules/internmap') > -1 || mPath.indexOf('node_modules/ol') > -1,
+        include: mPath => mPath.indexOf('app/assets') > -1 || mPath.indexOf('node_modules/d3') > -1 || mPath.indexOf('node_modules/internmap') > -1,
         use: {
           loader: 'babel-loader',
           options: {
@@ -42,6 +42,13 @@ module.exports = (env, argv) => ({
             ]
           }
         }
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: [
+          'file-loader',
+          'image-webpack-loader'
+        ]
       }
     ]
   },

@@ -13,11 +13,14 @@ module.exports = {
   },
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
-    FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id) UNION
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
-    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
-    ORDER BY severity DESC;
+    SELECT * FROM (SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom), 6)::JSONB AS geometry, warning.name, warning.severity,
+    CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state,
+    warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
+    FROM warning JOIN flood_warning_areas ON flood_warning_areas.fws_tacode = warning.id UNION
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom), 6)::JSONB AS geometry, warning.name, warning.severity,
+    CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state,
+    warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
+    FROM warning JOIN flood_alert_areas ON flood_alert_areas.fws_tacode = warning.id) q ORDER BY q.severity DESC;
     `)
     const features = []
     response.forEach(item => {
@@ -26,11 +29,12 @@ module.exports = {
         id: item.id.toUpperCase(),
         geometry: item.geometry,
         properties: {
+          id: item.id,
+          type: 'targetarea',
           name: item.name,
-          severity: Number(item.severity),
+          state: item.state,
           issuedDate: item.raised_date,
-          severityChangedDate: item.severity_changed_date,
-          type: 'TA'
+          severityChangedDate: item.severity_changed_date
         }
       })
     })
@@ -40,63 +44,49 @@ module.exports = {
     }
     return geoJSON
   },
-  getStationsGeoJSON: async (type) => {
+  getStationsGeoJSON: async () => {
     const response = await db.query(`
-      SELECT station_id, rloi_id, lon, lat,
-      CASE
-      WHEN type = 'river' AND is_multi_stage THEN 'M'
-      WHEN type = 'river' AND NOT is_multi_stage THEN 'S'
-      WHEN type = 'groundwater' THEN 'G'
-      WHEN type = 'tide' THEN 'C'
-      WHEN type = 'rainfall' THEN 'R'
-      ELSE NULL END AS type,
-      CASE
-      WHEN type = 'river' AND status != 'active' AND status != 'ukcmf' THEN 'riverError'
-      WHEN type = 'river' AND latest_state = 'high' THEN 'riverHigh'
-      WHEN type = 'river' OR (type = 'tide' AND river_id IS NOT NULL) THEN 'river'
-      WHEN type = 'groundwater' AND status != 'active' THEN 'groundError'
-      WHEN type = 'groundwater' AND latest_state = 'high' THEN 'groundHigh'
-      WHEN type = 'groundwater' THEN 'ground'
-      WHEN type = 'tide' AND status != 'active' THEN 'seaError'
-      WHEN type = 'tide' THEN 'sea'
-      WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'rain'
-      WHEN type = 'rainfall' THEN 'rainDry' END AS state,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
-      FROM measure_with_latest
-      WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1
-      ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
-    `, type)
+    SELECT station_id,
+    CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' WHEN type = 'rainfall' THEN 'rain' ELSE type END AS type,
+    rloi_id, lon, lat, is_multi_stage, measure_type,
+    is_wales, latest_state,
+    CASE
+    WHEN latest_state = 'high' THEN 'withrisk'
+    WHEN type = 'rainfall' AND rainfall_24hr = 0 THEN 'norisk'
+    WHEN status != 'active' THEN 'error'
+    ELSE 'default' END AS state,
+    name, river_name, hydrological_catchment_id, hydrological_catchment_name, latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+    FROM measure_with_latest
+    ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
+    `)
     // Build GeoJSON
     const features = []
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.type === 'R' ? `r${item.station_id}` : `s${item.rloi_id}`,
         geometry: {
           type: 'Point',
           coordinates: [item.lon, item.lat]
         },
         properties: {
+          id: item.type === 'R' ? `r${item.station_id}` : `s${item.rloi_id}`,
           type: item.type,
           name: item.name,
           riverId: item.river_id,
           riverName: item.river_name,
-          // catchmentId: item.hydrological_catchment_id,
-          // catchmentName: item.hydrological_catchment_name,
+          state: item.state,
           status: item.status,
-          value: item.latest_height ? Math.round(Number(item.latest_height) * 100) / 100 : null,
           value1hr: item.rainfall_1hr,
           value6hr: item.rainfall_6hr,
           value24hr: item.rainfall_24hr,
-          trend: item.latest_trend,
-          valueDate: item.latest_datetime,
-          percentile5: item.level_high,
-          percentile95: item.level_low,
-          up: item.station_up,
-          down: item.station_down,
-          atrisk: item.latest_state === 'High',
-          iswales: item.is_wales,
-          state: item.state
+          latestHeight: item.latest_height ? Math.round(Number(item.latest_height) * 100) / 100 : null,
+          latestTrend: item.trend,
+          latestState: item.latest_state,
+          latestDate: item.latest_datetime,
+          stationUp: item.station_up,
+          stationDown: item.station_down,
+          isMultiStage: item.is_multi_stage,
+          isDownstage: item.measure_type === 'downstage'
         }
       })
     })

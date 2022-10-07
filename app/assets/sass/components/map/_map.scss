@@ -39,6 +39,10 @@
   visibility: hidden;
 }
 .defra-map-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -350,7 +354,8 @@
 }
 
 // Map controls - zoom
-.defra-map-zoom {
+.defra-map-zoom-in,
+.defra-map-zoom-out {
   display: none;
   @include mq ($from: tablet) {
     display: block;
@@ -358,11 +363,6 @@
     clear:right;
     width:40px;
     height:auto;
-    margin-top:5px;
-  }
-  &-in,
-  &-out {
-    display:block;
     position:relative;
     border:0;
     height:40px;
@@ -372,27 +372,25 @@
     background-color: white;
     color: govuk-colour('black');
   }
-  &-in svg,
-  &-out svg {
+  svg {
     display: block;
     margin: 10px;
   }
-  &-in::-moz-focus-inner,
-  &-out::-moz-focus-inner {
+  &::-moz-focus-inner {
     border: 0;
   }
-  &-in:hover,
-  &-out:hover {
+  &:hover {
     background-color: govuk-colour('light-grey');
   }
-  &-in:focus,
-  &-out:focus {
+  &:focus {
     outline: none;
   }
-  &-in:focus[keyboard-focus]:after,
-  &-out:focus[keyboard-focus]:after {
+  &:focus[keyboard-focus]:after {
     @include focus;
   }
+}
+.defra-map-zoom-in {
+  margin-top: 5px;
 }
 
 // Map controls - Show attributions
