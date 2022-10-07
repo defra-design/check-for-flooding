@@ -48,14 +48,13 @@ module.exports = {
     const response = await db.query(`
     SELECT station_id,
     CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' WHEN type = 'rainfall' THEN 'rain' ELSE type END AS type,
-    rloi_id, lon, lat, is_multi_stage, measure_type,
-    is_wales, latest_state,
+    rloi_id, lon, lat, is_multi_stage, measure_type, is_wales, latest_state,
     CASE
     WHEN latest_state = 'high' THEN 'withrisk'
     WHEN type = 'rainfall' AND rainfall_24hr = 0 THEN 'norisk'
     WHEN status != 'active' THEN 'error'
     ELSE 'default' END AS state,
-    name, river_name, hydrological_catchment_id, hydrological_catchment_name, latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+    name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
     FROM measure_with_latest
     ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
     `)

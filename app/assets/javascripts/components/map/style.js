@@ -111,6 +111,17 @@ window.flood.maps.style = {
       ]
     }
   },
+  rivers: {
+    id: 'rivers',
+    source: 'polygons',
+    'source-layer': 'rivers',
+    type: 'line',
+    paint: {
+      'line-color': '#1d70b8',
+      'line-width': 3
+    },
+    filter: ['in', ['get', 'id'], '']
+  },
   selected: {
     id: 'selected',
     source: 'selected',

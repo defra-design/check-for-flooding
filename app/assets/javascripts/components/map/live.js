@@ -44,7 +44,7 @@ function LiveMap (mapId, options) {
     }
     // Add point data here to save on requests
     map.getSource('warnings').setData(geojson)
-    const warnings = geojson.features.filter(f => f.properties.state !== 'removed')
+    const warnings = geojson.features // .filter(f => f.properties.state !== 'removed')
     // Set fill colour for target areas
     const severe = warnings.filter(w => w.properties.state === 'severe').map(w => w.properties.id)
     const warning = warnings.filter(w => w.properties.state === 'warning').map(w => w.properties.id)
@@ -117,11 +117,29 @@ function LiveMap (mapId, options) {
     replaceHistory('fid', feature ? feature.properties.id : '')
   }
 
+  // Show or hide rivers
+  const toggleRiver = (feature) => {
+    if (feature && feature.properites.type === 'river') {
+      map.setFilter('rivers', ['in', 'river_id', feature.properites.riverId])
+    } else {
+      map.setFilter(['in', ['get', 'id'], ''])
+    }
+    // console.log(feature)
+    // const feature = map.queryRenderedFeatures(point, {
+    //   layers: featureLayers,
+    //   filter: id ? ['in', ['get', 'id'], id] : undefined,
+    //   validate: false
+    // }).find(f => f !== undefined)
+    // const feature = river.getSource().getFeatureById(featureId)
+    // const riverId = feature ? feature.get('riverId') : state.riverId
+    // replaceHistory('rid', riverId)
+    // vectorTiles.setStyle(maps.styles.vectorTiles)
+  }
+
   // Toggle key symbols based on resolution
   const toggleKeySymbol = () => {
     forEach(containerElement.querySelectorAll('.defra-map-key__symbol[data-display="toggle-image"]'), (symbol) => {
-      // const isBigZoom = map.getView().getResolution() <= maps.liveMaxBigZoom
-      const isBigZoom = true
+      const isBigZoom = map.getZoom() > 10
       if (isBigZoom) {
         symbol.classList.add('defra-map-key__symbol--big')
         symbol.classList.remove('defra-map-key__symbol--small')
@@ -234,7 +252,7 @@ function LiveMap (mapId, options) {
   // Set target area polygon opacity
   const setFillOpacity = (layers) => {
     const settings = ['interpolate', ['exponential', 0.5], ['zoom'], 10, 1, 16, 0.3]
-    layers.forEach(layer => { map.setPaintProperty(layer, 'fill-opacity', settings) })
+    layers.forEach(l => { map.setPaintProperty(l, 'fill-opacity', settings) })
   }
 
   // Pan map
@@ -322,6 +340,7 @@ function LiveMap (mapId, options) {
       const fid = decodeURI(getParameterByName('fid'))
       const feature = getFeatureInView(null, fid, state.warnings)
       toggleSelectedFeature(feature)
+      toggleRiver(feature)
     }
   }
 
@@ -356,6 +375,8 @@ function LiveMap (mapId, options) {
     // Target areas
     map.addLayer(maps.style['target-areas'], 'surfacewater shadow')
     map.addLayer(maps.style['target-areas-selected'], 'road numbers')
+    // River centre lines
+    map.addLayer(maps.style.rivers, 'road numbers')
     // Points
     map.addLayer(maps.style.stations)
     map.addLayer(maps.style.warnings)
@@ -388,7 +409,8 @@ function LiveMap (mapId, options) {
   const state = {
     warnings: [],
     visibleFeatures: [],
-    selectedFeature: '',
+    selectedFeature: null,
+    riverId: null,
     targetArea: null,
     initialExt: [],
     layers: []
@@ -559,6 +581,8 @@ function LiveMap (mapId, options) {
 
   let timer = null
   map.on('moveend', () => {
+    // Toggle key symbols depending on resolution
+    toggleKeySymbol()
     // Clear viewport description to force screen reader to re-read
     viewportDescription.innerHTML = ''
     // Tasks dependent on a time delay
@@ -578,6 +602,7 @@ function LiveMap (mapId, options) {
   map.on('click', (e) => {
     const feature = getFeatureInView(e.point, null, state.warnings)
     toggleSelectedFeature(feature)
+    toggleRiver(feature)
   })
 
   // Change cursor on feature hover
