@@ -141,16 +141,6 @@ function LiveMap (mapId, options) {
     if (updateHistory) {
       replaceHistory('rid', riverId)
     }
-    // console.log(feature)
-    // const feature = map.queryRenderedFeatures(point, {
-    //   layers: featureLayers,
-    //   filter: id ? ['in', ['get', 'id'], id] : undefined,
-    //   validate: false
-    // }).find(f => f !== undefined)
-    // const feature = river.getSource().getFeatureById(featureId)
-    // const riverId = feature ? feature.get('riverId') : state.riverId
-    // replaceHistory('rid', riverId)
-    // vectorTiles.setStyle(maps.styles.vectorTiles)
   }
 
   // Toggle key symbols based on resolution
