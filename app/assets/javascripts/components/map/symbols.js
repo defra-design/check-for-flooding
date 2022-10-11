@@ -44,5 +44,6 @@ window.flood.maps.symbols = {
   'level-error': { left: 33, top: 1833, size: 34 },
   'level-error-selected': { left: 115, top: 1815, size: 70 },
   'level-norisk': { left: 33, top: 1933, size: 34 },
-  'level-norisk-selected': { left: 115, top: 1915, size: 70 }
+  'level-norisk-selected': { left: 115, top: 1915, size: 70 },
+  arrow: { left: 33, top: 2033, size: 34 }
 }

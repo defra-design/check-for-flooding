@@ -95,10 +95,15 @@ function LiveMap (mapId, options) {
       warnings.push(state.targetArea.properties.id)
     }
     map.setFilter('target-areas', ['match', ['get', 'id'], warnings.length ? warnings : '', true, false])
+    // Toggle river line visibility
+    map.setLayoutProperty('rivers-fluvial', 'visibility', state.layers.includes('rl') ? 'visible' : 'none')
+    map.setLayoutProperty('rivers-tidal-outer', 'visibility', state.layers.includes('rl') ? 'visible' : 'none')
+    map.setLayoutProperty('rivers-tidal-inner', 'visibility', state.layers.includes('rl') ? 'visible' : 'none')
+    map.setLayoutProperty('rivers-arrow', 'visibility', state.layers.includes('rl') ? 'visible' : 'none')
   }
 
   // Set selected feature
-  const toggleSelectedFeature = (feature) => {
+  const toggleSelectedFeature = (feature, updateHistory = true) => {
     if (feature) {
       state.selectedFeature = feature
       feature.properties.selected = '-selected'
@@ -114,15 +119,27 @@ function LiveMap (mapId, options) {
       map.getSource('selected').setData({ type: 'FeatureCollection', features: [] })
       map.setFilter('target-areas-selected', ['in', 'id', ''])
     }
-    replaceHistory('fid', feature ? feature.properties.id : '')
+    if (updateHistory) {
+      replaceHistory('fid', feature ? feature.properties.id : '')
+    }
   }
 
   // Show or hide rivers
-  const toggleRiver = (feature) => {
-    if (feature && feature.properites.type === 'river') {
-      map.setFilter('rivers', ['in', 'river_id', feature.properites.riverId])
+  const toggleRiver = (riverId, updateHistory = true) => {
+    if (riverId) {
+      console.log(riverId)
+      map.setFilter('rivers-fluvial', ['all', ['==', 'river_id', riverId], ['==', 'form', 'inlandRiver']])
+      map.setFilter('rivers-tidal-outer', ['all', ['==', 'river_id', riverId], ['==', 'form', 'tidalRiver']])
+      map.setFilter('rivers-tidal-inner', ['all', ['==', 'river_id', riverId], ['==', 'form', 'tidalRiver']])
+      map.setFilter('rivers-arrow', ['==', 'river_id', riverId])
     } else {
-      map.setFilter(['in', ['get', 'id'], ''])
+      map.setFilter('rivers-fluvial', ['==', 'id', ''])
+      map.setFilter('rivers-tidal-outer', ['==', 'id', ''])
+      map.setFilter('rivers-tidal-inner', ['==', 'id', ''])
+      map.setFilter('rivers-arrow', ['==', 'id', ''])
+    }
+    if (updateHistory) {
+      replaceHistory('rid', riverId)
     }
     // console.log(feature)
     // const feature = map.queryRenderedFeatures(point, {
@@ -339,8 +356,12 @@ function LiveMap (mapId, options) {
     if (getParameterByName('fid')) {
       const fid = decodeURI(getParameterByName('fid'))
       const feature = getFeatureInView(null, fid, state.warnings)
-      toggleSelectedFeature(feature)
-      toggleRiver(feature)
+      toggleSelectedFeature(feature, false)
+    }
+    // Show selected river
+    if (getParameterByName('rid')) {
+      const rid = parseInt(decodeURI(getParameterByName('rid')), 10)
+      toggleRiver(rid, false)
     }
   }
 
@@ -376,7 +397,10 @@ function LiveMap (mapId, options) {
     map.addLayer(maps.style['target-areas'], 'surfacewater shadow')
     map.addLayer(maps.style['target-areas-selected'], 'road numbers')
     // River centre lines
-    map.addLayer(maps.style.rivers, 'road numbers')
+    map.addLayer(maps.style['rivers-fluvial'], 'road numbers')
+    map.addLayer(maps.style['rivers-tidal-outer'], 'road numbers')
+    map.addLayer(maps.style['rivers-tidal-inner'], 'road numbers')
+    map.addLayer(maps.style['rivers-arrow'], 'road numbers')
     // Points
     map.addLayer(maps.style.stations)
     map.addLayer(maps.style.warnings)
@@ -602,7 +626,7 @@ function LiveMap (mapId, options) {
   map.on('click', (e) => {
     const feature = getFeatureInView(e.point, null, state.warnings)
     toggleSelectedFeature(feature)
-    toggleRiver(feature)
+    toggleRiver(feature ? feature.properties.riverId : '')
   })
 
   // Change cursor on feature hover

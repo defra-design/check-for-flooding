@@ -55,7 +55,7 @@ window.flood.maps.style = {
         '#6F777B'
       ]
     },
-    filter: ['in', ['get', 'id'], ''],
+    filter: ['==', 'id', ''],
     minzoom: 10
   },
   'target-areas-selected': {
@@ -64,10 +64,11 @@ window.flood.maps.style = {
     'source-layer': 'targetareas',
     type: 'line',
     paint: {
-      'line-color': '#ffdd00',
-      'line-width': 3
+      'line-color': '#0b0c0c',
+      'line-width': 2,
+      'line-opacity': 0.75
     },
-    filter: ['in', ['get', 'id'], ''],
+    filter: ['==', 'id', ''],
     minzoom: 10
   },
   warnings: {
@@ -111,8 +112,8 @@ window.flood.maps.style = {
       ]
     }
   },
-  rivers: {
-    id: 'rivers',
+  'rivers-fluvial': {
+    id: 'rivers-fluvial',
     source: 'polygons',
     'source-layer': 'rivers',
     type: 'line',
@@ -120,7 +121,45 @@ window.flood.maps.style = {
       'line-color': '#1d70b8',
       'line-width': 3
     },
-    filter: ['in', ['get', 'id'], '']
+    filter: ['==', 'id', '']
+  },
+  'rivers-tidal-outer': {
+    id: 'rivers-tidal-outer',
+    source: 'polygons',
+    'source-layer': 'rivers',
+    type: 'line',
+    paint: {
+      'line-color': '#1d70b8',
+      'line-width': 5
+    },
+    filter: ['==', 'id', '']
+  },
+  'rivers-tidal-inner': {
+    id: 'rivers-tidal-inner',
+    source: 'polygons',
+    'source-layer': 'rivers',
+    type: 'line',
+    paint: {
+      'line-color': '#ffffff',
+      'line-width': 1
+    },
+    filter: ['==', 'id', '']
+  },
+  'rivers-arrow': {
+    id: 'rivers-arrow',
+    source: 'polygons',
+    'source-layer': 'rivers',
+    type: 'symbol',
+    layout: {
+      'symbol-placement': 'line',
+      // 'symbol-spacing': 100,
+      'icon-allow-overlap': true,
+      'icon-anchor': 'center',
+      'icon-image': 'arrow',
+      'icon-size': 0.5,
+      visibility: 'visible'
+    },
+    filter: ['==', 'id', '']
   },
   selected: {
     id: 'selected',
