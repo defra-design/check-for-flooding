@@ -112,7 +112,7 @@ function LiveMap (mapId, options) {
       map.setLayoutProperty('selected', 'icon-image', layoutIconImage, { validate: false })
       map.setFilter('selected', map.getFilter(feature.layer.id))
       map.setFilter('target-areas-selected', ['in', 'id', feature.properties.id])
-      const html = '<span>Text</span>'
+      const html = getFeatureHtml(feature.properties)
       container.showInfo('Selected feature information', html)
     } else {
       state.selectedFeature = null
@@ -127,7 +127,6 @@ function LiveMap (mapId, options) {
   // Show or hide rivers
   const toggleRiver = (riverId, updateHistory = true) => {
     if (riverId) {
-      console.log(riverId)
       map.setFilter('rivers-fluvial', ['all', ['==', 'river_id', riverId], ['==', 'form', 'inlandRiver']])
       map.setFilter('rivers-tidal-outer', ['all', ['==', 'river_id', riverId], ['==', 'form', 'tidalRiver']])
       map.setFilter('rivers-tidal-inner', ['all', ['==', 'river_id', riverId], ['==', 'form', 'tidalRiver']])
@@ -271,14 +270,6 @@ function LiveMap (mapId, options) {
     // }
   }
 
-  // Time format function
-  const formatTime = (date) => {
-    const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
-    const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-    const amPm = (date.getHours() > 12) ? 'pm' : 'am'
-    return hours + ':' + minutes + amPm
-  }
-
   // Day format function
   const formatDay = (date) => {
     const day = date.getDate()
@@ -307,32 +298,32 @@ function LiveMap (mapId, options) {
     }
   }
 
-  // Format expired time
-  const formatExpiredTime = (date) => {
-    const duration = (new Date() - new Date(date)) // milliseconds between now & Christmas
-    const mins = Math.floor(duration / (1000 * 60)) // minutes
-    const hours = Math.floor(duration / (1000 * 60 * 60)) // hours
-    const days = parseInt(Math.floor(hours / 24)) // days
-    return (mins < 91 ? mins + ' minutes' : (hours < 48 ? hours + ' hours' : days + ' days')) + ' ago'
+  // Time format function
+  const formatTime = (date) => {
+    const hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
+    const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
+    const amPm = (date.getHours() < 12) ? 'am' : 'pm'
+    return hours + ':' + minutes + amPm
   }
 
-  // Capitalise string
-  // const capitalise = (str) => {
-  //   return str.toLowerCase().replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-  // }
+  // Day format function
+  const formatDayMonth = (date) => {
+    const day = date.getDate()
+    const month = date.toLocaleString('en-GB', { month: 'long' })
+    return `${day} ${month}`
+  }
 
   // Set feature overlay html
-  const setFeatureHtml = (feature) => {
-    const model = feature.properties
-    model.id = feature.properties.id
-    // Format dates for river levels
-    if (feature.getId().startsWith('stations')) {
-      model.date = formatExpiredTime(model.latestDate)
-    } else if (model.issuedDate) {
-      model.date = `${formatTime(new Date(model.issuedDate))} ${formatDay(new Date(model.issuedDate))}`
+  const getFeatureHtml = (properties) => {
+    if (properties.type === 'targetarea') {
+      const date = properties.state === 'removed' ? properties.severityChangedDate : properties.issuedDate
+      properties.date = `${formatTime(new Date(date))}, ${formatDayMonth(new Date(date))}`
+    } else if (properties.latestDate) {
+      properties.date = `${formatTime(new Date(properties.latestDate))}, ${formatDayMonth(new Date(properties.latestDate))}`
     }
-    const html = window.nunjucks.render('info-live.html', { model: model })
-    feature.set('html', html)
+    const env = window.nunjucks.configure('views')
+    env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
+    return env.render('info-live.html', { model: properties })
   }
 
   // Map has rendered so we can now customise the setup
@@ -523,7 +514,10 @@ function LiveMap (mapId, options) {
   })
 
   // Map has finishing drawing so we have the bounds
-  map.once('load', setup)
+  map.on('load', () => {
+    console.log('load')
+    setup()
+  })
 
   // Set selected feature and polygon states when features have loaded
   // dataLayers.forEach((layer) => {

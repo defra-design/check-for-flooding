@@ -1,13 +1,13 @@
-{% if model.type == 'TA' %}
+{% if model.type == 'targetarea' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name defra-map-info__name--emphasis">
-        {% if model.severity == 1 %}
+        {% if model.state == 'severe' %}
         Severe flood warning
-        {% elif model.severity == 2 %}
+        {% elif model.state == 'warning' %}
         Flood warning
-        {% elif model.severity == 3 %}
+        {% elif model.state == 'alert' %}
         Flood alert
-        {% elif model.severity == 4 %}
+        {% elif model.state == 'removed' %}
             {% if model.id.charAt(4).toLowerCase() == 'w' %}
             Flood warning removed
             {% else %}
@@ -19,16 +19,10 @@
         Flood alert (inactive)
         {% endif %}
     </strong>
-    <p class="defra-map-info__description">
-        <a href="/target-area/{{ model.id }}">{{ model.name }}</a>
-    </p>
-    {% if model.date and model.severity < 4 %}
-    <p class="defra-map-info__meta">Issued {{ model.date }}</p>
-    {% elif model.severityChangedDate and model.severity == 4 %}
-    <p class="defra-map-info__meta">Removed {{ model.severityChangedDate }}</p>
-    {% endif %}
+    <p class="defra-map-info__description"><a href="/target-area/{{ model.id }}">{{ model.name }}</a></p>
+    <p class="defra-map-info__meta">{% if model.state == 'removed' %}Removed{% else %}Issued{% endif %} {{ model.date }}</p>
 </div>
-{% elif model.type === 'S' or model.type === 'M' or model.type === 'G' or model.type === 'C' %}
+{% elif model.type === 'river' or model.type === 'sea' or model.type === 'groundwater' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name">
         <a href="{% if model.iswales %}{{ model.nrwUrl }}{% endif %}/station/{{ model.id }}">
