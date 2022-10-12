@@ -522,34 +522,6 @@ function LiveMap (mapId, options) {
   }
   map.on('idle', isFirstRenderComplete)
 
-  // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
-  // let timer = null
-  // map.addEventListener('moveend', (e) => {
-  //   // Toggle key symbols depending on resolution
-  //   toggleKeySymbol()
-  //   // Set polygon layer opacity
-  //   setOpacityTargetAreaPolygons()
-  //   // Timer used to stop 100 url replaces in 30 seconds limit
-  //   clearTimeout(timer)
-  //   // Clear viewport description to force screen reader to re-read
-  //   viewportDescription.innerHTML = ''
-  //   // Tasks dependent on a time delay
-  //   timer = setTimeout(() => {
-  //     if (!container.map) return
-  //     // Show overlays for visible features
-  //     showOverlays()
-  //     // Update url (history state) to reflect new extent
-  //     const ext = getLonLatFromExtent(map.getView().calculateExtent(map.getSize()))
-  //     replaceHistory('ext', ext.join(','))
-  //     // Show reset button if extent has changed
-  //     if (isNewExtent(ext)) {
-  //       resetButton.removeAttribute('disabled')
-  //     }
-  //     // Fix margin issue
-  //     map.updateSize()
-  //   }, 350)
-  // })
-
   let timer = null
   map.on('moveend', () => {
     // Toggle key symbols depending on resolution
@@ -586,15 +558,6 @@ function LiveMap (mapId, options) {
       map.getCanvas().style.cursor = ''
     })
   })
-
-  // Show cursor when hovering over features
-  // map.addEventListener('pointermove', (e) => {
-  //   // Detect vector feature at mouse coords
-  //   const hit = map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
-  //     if (!defaultLayers.includes(layer)) { return true }
-  //   })
-  //   map.getTarget().style.cursor = hit ? 'pointer' : ''
-  // })
 
   // Set selected feature if map is clicked
   // Clear overlays if non-keyboard interaction
