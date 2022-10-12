@@ -662,6 +662,7 @@ maps.createLiveMap = (mapId, options = {}) => {
   uri = addOrUpdateParameter(uri, 'lyr', options.layers || '')
   uri = addOrUpdateParameter(uri, 'ext', options.extent || '')
   uri = addOrUpdateParameter(uri, 'fid', options.selectedId || '')
+  uri = addOrUpdateParameter(uri, 'rid', options.riverId || '')
 
   // Create map button
   const btnContainer = document.getElementById(mapId)
