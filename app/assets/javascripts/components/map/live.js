@@ -326,6 +326,20 @@ function LiveMap (mapId, options) {
     return env.render('info-live.html', { model: properties })
   }
 
+  // Get feature by id or point, requires state.warnings
+  const getFeatureInView = (point, id, warnings) => {
+    let feature = map.queryRenderedFeatures(point, {
+      layers: featureLayers,
+      filter: id ? ['in', ['get', 'id'], id] : undefined,
+      validate: false
+    }).find(f => f !== undefined)
+    if (feature && feature.source === 'polygons') {
+      feature = warnings.find(f => f.properties.id === feature.id)
+      feature.layer = { id: 'warnings' }
+    }
+    return feature
+  }
+
   // Map has rendered so we can now customise the setup
   const setup = () => {
     // Show reset button if extent has changed
@@ -344,20 +358,6 @@ function LiveMap (mapId, options) {
       const rid = parseInt(decodeURI(getParameterByName('rid')), 10)
       toggleRiver(rid, false)
     }
-  }
-
-  // Get feature by id or point, requirs state.warnings
-  const getFeatureInView = (point, id, warnings) => {
-    let feature = map.queryRenderedFeatures(point, {
-      layers: featureLayers,
-      filter: id ? ['in', ['get', 'id'], id] : undefined,
-      validate: false
-    }).find(f => f !== undefined)
-    if (feature && feature.source === 'polygons') {
-      feature = warnings.find(f => f.properties.id === feature.id)
-      feature.layer = { id: 'warnings' }
-    }
-    return feature
   }
 
   // We need to wait for style data to load before adding sources and layers
@@ -412,6 +412,7 @@ function LiveMap (mapId, options) {
 
   // State object
   const state = {
+    isFirstRenderComplete: false,
     warnings: [],
     visibleFeatures: [],
     selectedFeature: null,
@@ -513,51 +514,13 @@ function LiveMap (mapId, options) {
     })
   })
 
-  // Map has finishing drawing so we have the bounds
-  map.on('load', () => {
-    console.log('load')
+  // Hack! We need to know when features have been rendered so we can query them
+  const isFirstRenderComplete = () => {
+    map.off('idle', isFirstRenderComplete)
+    state.isFirstRenderComplete = true
     setup()
-  })
-
-  // Set selected feature and polygon states when features have loaded
-  // dataLayers.forEach((layer) => {
-  //   const change = layer.getSource().on('change', (e) => {
-  //     if (e.target.getState() === 'ready') {
-  //       unByKey(change) // Remove ready event when layer is ready
-  //       if (layer.get('ref') === 'warnings') {
-  //         // Add optional target area
-  //         if (targetArea.pointFeature) {
-  //           if (!warnings.getSource().getFeatureById(targetArea.pointFeature.getId())) {
-  //             // Add point feature
-  //             warnings.getSource().addFeature(targetArea.pointFeature)
-  //             // VectorSource: Add polygon not required if VectorTileSource
-  //             if (targetArea.polygonFeature && targetAreaPolygons.getSource() instanceof VectorSource) {
-  //               targetAreaPolygons.getSource().addFeature(targetArea.polygonFeature)
-  //             }
-  //           }
-  //         }
-  //       }
-  //       // WebGL: Limited dynamic styling could be done server side for client performance
-  //       if (['river', 'tide', 'groundwater', 'rainfall'].includes(layer.get('ref'))) {
-  //         setFeatueState(layer)
-  //       }
-  //       // Set feature visibility after all features have loaded
-  //       // const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-  //       // setFeatureVisibility(lyrs, layer)
-  //       // Store reference to warnings source for use in vector tiles style function
-  //       if (layer.get('ref') === 'warnings') {
-  //         const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-  //         setFeatureVisibility(lyrs)
-  //         maps.warningsSource = warnings.getSource()
-  //         map.addLayer(targetAreaPolygons)
-  //       }
-  //       // Attempt to set selected feature when layer is ready
-  //       setSelectedFeature(state.selectedFeatureId)
-  //       // Show overlays
-  //       showOverlays()
-  //     }
-  //   })
-  // })
+  }
+  map.on('idle', isFirstRenderComplete)
 
   // Set key symbols, opacity, history and overlays on map pan or zoom (fires on map load aswell)
   // let timer = null
@@ -608,6 +571,7 @@ function LiveMap (mapId, options) {
 
   // Map click
   map.on('click', (e) => {
+    if (!state.isFirstRenderComplete) return
     const feature = getFeatureInView(e.point, null, state.warnings)
     toggleSelectedFeature(feature)
     toggleRiver(feature ? feature.properties.riverId : '')
