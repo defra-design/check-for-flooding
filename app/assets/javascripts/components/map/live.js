@@ -10,6 +10,7 @@ import { LngLatBounds, LngLat } from 'maplibre-gl'
 const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.utils
 const maps = window.flood.maps
 const MapContainer = maps.MapContainer
+const nrwUrl = process.env.NRW_URL
 
 function LiveMap (mapId, options) {
   //
@@ -321,6 +322,7 @@ function LiveMap (mapId, options) {
     } else if (properties.latestDate) {
       properties.date = `${formatTime(new Date(properties.latestDate))}, ${formatDayMonth(new Date(properties.latestDate))}`
     }
+    properties.nrwUrl = nrwUrl
     const env = window.nunjucks.configure('views')
     env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
     return env.render('info-live.html', { model: properties })

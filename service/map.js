@@ -68,7 +68,7 @@ module.exports = {
           coordinates: [item.lon, item.lat]
         },
         properties: {
-          id: item.type === 'R' ? `r${item.station_id}` : `s${item.rloi_id}`,
+          id: item.type === 'rain' ? `r${item.station_id}` : `s${item.rloi_id}`,
           type: item.type,
           name: item.name,
           riverId: item.river_id,
@@ -79,13 +79,14 @@ module.exports = {
           value6hr: item.rainfall_6hr,
           value24hr: item.rainfall_24hr,
           latestHeight: item.latest_height ? Math.round(Number(item.latest_height) * 100) / 100 : null,
-          latestTrend: item.trend,
+          latestTrend: item.latest_trend,
           latestState: item.latest_state,
           latestDate: item.latest_datetime,
           stationUp: item.station_up,
           stationDown: item.station_down,
           isMultiStage: item.is_multi_stage,
-          isDownstage: item.measure_type === 'downstage'
+          isDownstage: item.measure_type === 'downstage',
+          isWales: item.is_wales
         }
       })
     })
