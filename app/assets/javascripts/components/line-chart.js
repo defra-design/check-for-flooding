@@ -154,7 +154,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       .attr('data-point', '')
       .attr('data-index', (d, i) => { return i })
     significantCells.append('circle').attr('aria-hidden', true)
-      .attr('r', '3')
+      .attr('r', '5')
       .attr('cx', d => xScale(new Date(d.dateTime)))
       .attr('cy', d => yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value))
     significantCells.insert('text').text(d => {
