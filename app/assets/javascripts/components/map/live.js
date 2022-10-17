@@ -657,7 +657,7 @@ function LiveMap (mapId, options) {
 
   // Reset map extent on reset button click
   resetButton.addEventListener('click', (e) => {
-    setExtentFromLonLat(map, state.initialExt)
+    setExtentFromLonLat(container.map, state.initialExt)
     resetButton.setAttribute('disabled', '')
     viewport.focus()
   })

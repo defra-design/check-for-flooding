@@ -145,49 +145,32 @@ window.flood.maps.styles = {
 
       switch (severity) {
         case 1: // Severe warning
-          strokeColour = isSelected ? '#E3000F' : 'transparent'
           fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('severe', alpha)
           zIndex = 11
           break
         case 2: // Warning
-          strokeColour = isSelected ? '#E3000F' : 'transparent'
           fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('warning', alpha)
           zIndex = 10
           break
         case 3: // Alert
-          strokeColour = isSelected ? '#F18700' : 'transparent'
           fillColour = `rgb(241, 135, 0, ${alpha})` // targetAreaPolygonPattern('alert', alpha)
           zIndex = isGroundwater ? 4 : 7
           break
         default: // Removed or inactive
-          strokeColour = isSelected ? '#626A6E' : 'transparent'
           fillColour = `rgb(98, 106, 110, ${alpha})` // targetAreaPolygonPattern('removed', alpha)
           zIndex = 1
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
-
-      // const selectedStroke = new Style({
-      //   stroke: new Stroke({
-      //     color: '#FFDD00',
-      //     width: 5 // 16
-      //   }),
-      //   zIndex: zIndex
-      // })
-      const stroke = new Style({
+      return new Style({
         stroke: new Stroke({
-          color: strokeColour,
+          color: isSelected ? 'rgb(11, 12, 12, 0.65)' : 'transparent',
           width: 2
         }),
-        zIndex: zIndex
-      })
-      const fill = new Style({
         fill: new Fill({
           color: fillColour
         }),
         zIndex: zIndex
       })
-      // return isSelected ? [selectedStroke, stroke, fill] : [stroke, fill]
-      return [stroke, fill]
     } else if (featureLayer === 'rivers') {
       const showRiver = getParameterByName('lyr') && getParameterByName('lyr').toLowerCase().includes('rl')
       if (!showRiver) return
@@ -416,89 +399,6 @@ window.flood.maps.styles = {
 //
 // SVG fill paterns
 //
-
-const targetAreaPolygonPattern = (type, alpha) => {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  const dpr = window.devicePixelRatio || 1
-  canvas.width = 8 * dpr
-  canvas.height = 8 * dpr
-  ctx.scale(dpr, dpr)
-  switch (type) {
-    case 'severe':
-      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.moveTo(0, 3.3)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(3.3, 8)
-      ctx.lineTo(0, 4.7)
-      ctx.closePath()
-      ctx.moveTo(3.3, 0)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(8, 3.3)
-      ctx.lineTo(8, 4.7)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'warning':
-      ctx.fillStyle = `rgba(212, 52, 28, ${alpha})` // '#D4351C'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.moveTo(3.3, 0)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(0, 4.7)
-      ctx.lineTo(0, 3.3)
-      ctx.closePath()
-      ctx.moveTo(3.3, 8)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(8, 4.7)
-      ctx.lineTo(8, 3.3)
-      ctx.closePath()
-      ctx.moveTo(4.7, 0)
-      ctx.lineTo(8, 3.3)
-      ctx.lineTo(7.3, 4)
-      ctx.lineTo(4, 0.7)
-      ctx.closePath()
-      ctx.moveTo(0, 4.7)
-      ctx.lineTo(3.3, 8)
-      ctx.lineTo(4, 7.3)
-      ctx.lineTo(0.7, 4)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'alert':
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgb(244, 119, 56, ${alpha})` // '#F47738'
-      ctx.moveTo(0, 3.3)
-      ctx.lineTo(0, 4.7)
-      ctx.lineTo(4.7, 0)
-      ctx.lineTo(3.3, 0)
-      ctx.closePath()
-      ctx.moveTo(3.3, 8)
-      ctx.lineTo(4.7, 8)
-      ctx.lineTo(8, 4.7)
-      ctx.lineTo(8, 3.3)
-      ctx.closePath()
-      ctx.fill()
-      break
-    case 'removed':
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})` // '#ffffff'
-      ctx.fillRect(0, 0, 8, 8)
-      ctx.beginPath()
-      ctx.fillStyle = `rgb(98, 106, 110, ${alpha})` // '#626A6E'
-      ctx.arc(4, 4, 1, 0, 2 * Math.PI)
-      ctx.closePath()
-      ctx.fill()
-      break
-  }
-  ctx.restore()
-  return ctx.createPattern(canvas, 'repeat')
-}
 
 const outlookPolygonPattern = (style) => {
   const canvas = document.createElement('canvas')
