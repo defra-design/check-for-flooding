@@ -545,3 +545,8 @@
     width:360px;
   }
 }
+
+// Layer blend modes
+.defra-map-vt-layer canvas {
+  mix-blend-mode: darken;
+}
