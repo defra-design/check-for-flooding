@@ -609,8 +609,6 @@ function LiveMap (mapId, options) {
     // Get mouse coordinates and check for feature
     const featureId = container.map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
       if (!defaultLayers.includes(layer) || layer === vectorTiles) {
-        console.log(layer)
-        console.log(feature)
         return feature.getId()
       }
     })
