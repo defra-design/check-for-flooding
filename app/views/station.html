@@ -72,16 +72,18 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0" {% if not model.station.isRecent %}data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases."{% endif %}>
-        Latest at {{ model.time }}
-      </h2>
+      <div class="govuk-!-margin-top-4" {% if not model.station.isRecent %}data-toggletip data-toggletip-label="More information about the latest reading" data-toggletip-content="We get readings more often as the risk of flooding increases."{% endif %}>
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+          Latest at {{ model.time }}
+        </h2>
+      </div>
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
         <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">
             Height
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-content="{{ model.infoHeight }}"{% endif %}>
+            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the height" data-toggletip-content="{{ model.infoHeight }}"{% endif %}>
             {% if model.station.latestHeight <= 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
             </span>
           </dd>
@@ -92,7 +94,7 @@
             Trend
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-content="{{ model.infoTrend }}"{% endif %}>
+            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the trend" data-toggletip-content="{{ model.infoTrend }}"{% endif %}>
             {{ model.station.latestTrend | capitalize }}
             </span>
           </dd>
@@ -105,7 +107,7 @@
             State
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-content="{{ model.infoState }}"{% endif %}>
+            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the state" data-toggletip-content="{{ model.infoState }}"{% endif %}>
             {{ model.station.latestState | capitalize }}
             </span>
           </dd>

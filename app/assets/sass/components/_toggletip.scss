@@ -1,4 +1,7 @@
 .defra-toggletip {
+	&:first-child {
+		display: inline-block;
+	}
   display: inline-block;
   position: relative;
 	&:not(.defra-toggletip-target) {

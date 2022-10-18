@@ -53,7 +53,7 @@ const toggletips = (options) => {
       if (info.getBoundingClientRect().top < viewportMargin) {
         toggletip.classList.add('defra-toggletip--bottom')
       }
-    }, 50)
+    }, 100)
   }
 
   // Remove tooltip
@@ -95,7 +95,7 @@ const toggletips = (options) => {
       container.setAttribute('data-toggletip-container', '')
       const button = document.createElement('button')
       button.className = 'defra-toggletip__button defra-toggletip-target'
-      button.setAttribute('aria-label', 'More information')
+      button.setAttribute('aria-label', toggletip.getAttribute('data-toggletip-label') || 'More information')
       button.innerHTML = `
       <span class="defra-toggletip__button-icon">
       <svg width="18" height="18" viewBox="0 0 18 18" style="fill-rule:evenodd;clip-rule:evenodd">
