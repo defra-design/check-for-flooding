@@ -598,9 +598,11 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   document.addEventListener('keydown', (e) => {
     interfaceType = 'keyboard'
-    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (!(e.target.classList.contains('point') && keys.includes(e.key))) return // DB: Needs to be more specific
+    const gridKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!(e.target.classList.contains('point') && gridKeys.includes(e.key))) return // DB: Needs to be more specific
     e.preventDefault()
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!keys.includes(e.key)) return
     swapCell(e)
     showTooltip(10)
   })
