@@ -148,7 +148,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       .attr('aria-colcount', significantPoints.length)
       .selectAll('.point').data(significantPoints).enter()
       .append('g')
-      .attr('role', 'cell')
+      .attr('role', 'gridcell')
       .attr('class', d => { return 'point point--' + d.type })
       .attr('tabindex', (d, i) => i === significantPoints.length - 1 ? 0 : -1)
       .attr('data-point', '')
@@ -204,19 +204,19 @@ function LineChart (containerId, stationId, data, options = {}) {
     cell.setAttribute('focusable', false)
     cell.removeAttribute('id')
     nextCell.setAttribute('focusable', true)
-    nextCell.id = 'focussed-cell'
+    // nextCell.id = 'focussed-cell'
     cell.tabIndex = -1
     nextCell.tabIndex = 0
     nextCell.focus()
     dataPoint = significantPoints[nextIndex]
     // Below needed to change zIndex of focussed point
-    svg.select('.focussed-cell').remove()
-    svg.insert('use', '.significant + *')
-      .attr('aria-hidden', true)
-      .attr('focusable', false)
-      .attr('tabindex', -1)
-      .attr('class', 'focussed-cell')
-      .attr('xlink:href', '#focussed-cell')
+    // svg.select('.focussed-cell').remove()
+    // svg.insert('use', '.significant + *')
+    //   .attr('aria-hidden', true)
+    //   .attr('focusable', false)
+    //   .attr('tabindex', -1)
+    //   .attr('class', 'focussed-cell')
+    //   .attr('xlink:href', '#focussed-cell')
   }
 
   const getDataPointByX = (x) => {
@@ -289,7 +289,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const showThreshold = (threshold) => {
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
-    svg.select('.focussed-cell').remove()
+    // svg.select('.focussed-cell').remove()
   }
 
   const hideThreshold = () => {
@@ -585,7 +585,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   document.addEventListener('click', (e) => {
     // Hide points and focussed cell
     significantContainer.node().parentNode.classList.remove('significant--visible')
-    svg.select('.focussed-cell').remove()
+    // svg.select('.focussed-cell').remove()
     // Add threshold button
     if (!e.target.hasAttribute('data-threshold-add')) return
     const button = e.target
@@ -667,7 +667,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
     }
     // Remove focussed significant point
-    svg.select('.focussed-cell').remove()
+    // svg.select('.focussed-cell').remove()
   }, true)
 
   container.addEventListener('mouseleave', (e) => {

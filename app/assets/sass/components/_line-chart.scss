@@ -232,7 +232,7 @@
         opacity: 1;
     }
     .point {
-        outline: 3px solid transparent;
+        // outline: 3px solid transparent;
     }
     .point circle {
         fill: govuk-colour('blue');
@@ -246,5 +246,4 @@
         paint-order: stroke;
         stroke-width: 10;
     }
-
 }
