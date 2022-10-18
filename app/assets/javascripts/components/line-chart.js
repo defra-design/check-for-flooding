@@ -136,7 +136,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     })
 
     // Update clip text
-    clipText.attr('width', width + 5).attr('height', height)
+    // clipText.attr('width', width + 5).attr('height', height)
 
     // Add significant points
     significantContainer.selectAll('*').remove()
@@ -462,7 +462,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     .attr('focusable', 'false')
 
   // Clip path to visually hide text
-  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', -5).attr('y', 0)
+  // const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', -5).attr('y', 0)
 
   // Add grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
@@ -471,9 +471,9 @@ function LineChart (containerId, stationId, data, options = {}) {
   svg.append('g').attr('class', 'y axis').attr('aria-hidden', true).style('text-anchor', 'start')
 
   // Add containers for observed and forecast lines
-  const inner = svg.append('g') // .attr('clip-path', 'url(#clip-text)')
-  inner.append('g').attr('class', 'observed observed-focus').attr('aria-hidden', true)
-  inner.append('g').attr('class', 'forecast').attr('aria-hidden', true)
+  const inner = svg.append('g').attr('class', 'inner').attr('aria-hidden', true) // .attr('clip-path', 'url(#clip-text)')
+  inner.append('g').attr('class', 'observed observed-focus')
+  inner.append('g').attr('class', 'forecast')
   const observedArea = inner.select('.observed').append('path').attr('class', 'observed-area')
   const observedLine = inner.select('.observed').append('path').attr('class', 'observed-line')
   const forecastArea = inner.select('.forecast').append('path').attr('class', 'forecast-area')
@@ -486,13 +486,13 @@ function LineChart (containerId, stationId, data, options = {}) {
   timeLabel.append('tspan').attr('text-anchor', 'middle').attr('class', 'time-now-text__date').attr('x', 0).attr('dy', '15')
 
   // Add locator
-  const locator = inner.append('g').attr('class', 'locator').attr('aria-hidden', true)
+  const locator = inner.append('g').attr('class', 'locator')
   locator.append('line').attr('class', 'locator-line')
   locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
   // Add thresholds and significant containers
   const thresholdsContainer = svg.append('g').attr('class', 'thresholds')
-  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').attr('clip-path', 'url(#clip-text)').append('g').attr('role', 'row')
+  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row') // .attr('clip-path', 'url(#clip-text)')
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
@@ -666,6 +666,8 @@ function LineChart (containerId, stationId, data, options = {}) {
       // Reinstate default threshold?
       showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
     }
+    // Remove focussed significant point
+    svg.select('.focussed-cell').remove()
   }, true)
 
   container.addEventListener('mouseleave', (e) => {
