@@ -685,7 +685,12 @@ function LineChart (containerId, stationId, data, options = {}) {
     showTooltip(pointer(e)[1])
   })
 
+  let lastClientX, lastClientY
   svg.on('mousemove', (e) => {
+    // Safari bug where modifier keys trigger mousemove
+    if (lastClientX === e.clientX && lastClientY === e.clientY) return
+    lastClientX = e.clientX
+    lastClientY = e.clientY
     if (!xScale || e.target.closest('.threshold')) return
     if (interfaceType === 'touch') {
       interfaceType = 'mouse'
