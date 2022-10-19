@@ -78,7 +78,7 @@ button.defra-button-secondary {
 }
 .defra-button-text-s {
     @extend .defra-button-text;
-    @include govuk-font($size: 16);
+    @include govuk-font($size: 16, $weight: bold);
 }
 
 // Hyperlinks with icons

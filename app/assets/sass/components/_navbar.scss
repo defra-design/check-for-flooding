@@ -1,7 +1,7 @@
 .defra-navbar {
   position: relative;
   z-index: 1;
-  @include govuk-font($size: 16);
+  @include govuk-font($size: 16, $weight: bold);
   margin: 0px -15px 6px -15px;
   display: flex;
   flex-wrap: nowrap;
@@ -27,8 +27,7 @@
   }
   &__inner {
     flex: 0 0 auto;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 0px 15px 4px 15px;
     @include mq ($from: tablet) {
       padding-left: 0px;
       padding-right: 0px;
@@ -60,7 +59,6 @@
     display: inline-block;
     position: relative;
     outline: 3px solid transparent;
-    margin-bottom: 0px;
     padding: 5px 0px 5px 0px;
     border: 0px;
     color: govuk-colour('black');
@@ -77,20 +75,18 @@
     color: govuk-colour('black');
     border: 0px;
     box-shadow: 0 4px 0 govuk-colour('black');
-    margin-bottom: 4px;
   }
   // Overides
-  .defra-button-secondary,
   .defra-link-icon-s {
+    @include govuk-font($size: 16, $weight: bold);
     float: left;
-    border: 0px;
-    color: govuk-colour('black');
-    margin: 0px 15px 4px 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    &:focus {
+    margin-right: 15px;
+    &:not([keyboard-focus]):focus {
+      background-color: white;
+      border-color: govuk-colour('mid-grey');
       color: govuk-colour('black');
-      box-shadow: 0 4px 0 govuk-colour('black');
+      box-shadow: none;
+      text-decoration: underline;
     }
     &:hover {
       color: govuk-colour('black');
@@ -104,6 +100,29 @@
     }
   }
   .defra-button-secondary {
+    @include govuk-font($size: 16, $weight: bold);
+    float: left;
+    border: 0px;
+    color: govuk-colour('black');
+    margin: 0px 15px 4px 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    &:focus {
+      color: govuk-colour('black');
+      box-shadow: 0 4px 0 govuk-colour('black');
+    }
+    &:not([keyboard-focus]):focus {
+      background-color: white;
+      border-color: govuk-colour('mid-grey');
+      color: $govuk-link-colour;
+      box-shadow: none;
+    }
+    &:hover:not(:focus) {
+      background-color: transparent;
+    }
+    &:active {
+      color: govuk-colour('black');
+    }
     &:after {
       content: 'Map';
     }
