@@ -23,8 +23,8 @@
   }
   &__head tr {
     @include mq ($until: tablet) {
-      display: block;
-      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
     }
   }
   &__head &__cell {
@@ -51,9 +51,9 @@
     border-bottom: 1px solid $govuk-border-colour;
     @include mq ($until: tablet) {
       position: relative;
+      display: flex;
+      flex-wrap: wrap;
       margin-bottom: -1px;
-      display: block;
-      overflow: auto;
     }
   }
   &__cell {
@@ -63,9 +63,12 @@
     text-align: left;
     padding-left: 0px;
     padding-right: 0px;
+    width: auto;
     @include mq ($until: tablet) {
       border: 0px;
-      float: left;
+      display: inline-block;
+      padding-top:0px;
+      flex: 1 1 auto;
     }
     a {
       display: inline-block;
@@ -79,9 +82,10 @@
     width: 50%;
     padding-right:20px;
     @include mq ($until: tablet) {
+      padding-top:10px;
       padding-right: 0px;
-      display: block;
       width: 100%;
+      flex: none;
     }
   }
   &__cell--location-rainfall {
@@ -89,38 +93,30 @@
     width: 40%;
     padding-right:20px;
     @include mq ($until: tablet) {
+      padding-top:10px;
       padding-right: 0px;
-      display: block;
       width: 100%;
+      flex: none;
     }
   }
   &__cell--trend {
-    width: 22%;
-    @include mq ($until: tablet) {
-      padding-top:0px;
-      width: 44%;
+    @include mq ($from: tablet) {
+      width: 22%;
     }
   }
   &__cell--height {
-    width: 17%;
-    @include mq ($until: tablet) {
-      padding-top:0px;
-      width: 31%;
+    @include mq ($from: tablet) {
+      width: 17%;
     }
   }
   &__cell--state {
-    width: 10%;
-    @include mq ($until: tablet) {
-      padding-top:0px;
-      width: 25%;
+    @include mq ($from: tablet) {
+      width: 10%;
     }
   }
   &__cell--rainfall {
-    width: 20%;
-    @include mq ($until: tablet) {
-      padding-top: 0px;
-      width: 33.33%;
-      min-width: 4em;
+    @include mq ($from: tablet) {
+      width: 20%;
     }
   }
   &-subtitle {
