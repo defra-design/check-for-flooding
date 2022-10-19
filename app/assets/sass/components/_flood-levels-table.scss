@@ -3,7 +3,7 @@
   position: relative;
   margin-top: -1px;
   margin-bottom: 0px;
-  border-bottom: 1px solid $govuk-border-colour;
+  // border-bottom: 1px solid $govuk-border-colour;
   @include mq ($until: tablet) {
     display: block;
   }
@@ -47,7 +47,7 @@
     }
   }
   &__row {
-    border-top: 1px solid $govuk-border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
     @include mq ($until: tablet) {
       display: block;
       overflow: auto;

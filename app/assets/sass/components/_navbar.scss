@@ -150,6 +150,8 @@
   }
   &--search-categories {
     padding-bottom: 15px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid $govuk-border-colour;
     @include mq ($from: tablet) {
       margin-top: 5px;
       padding-bottom: 20px;
