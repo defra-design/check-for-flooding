@@ -71,7 +71,9 @@ function LineChart (containerId, stationId, data, options = {}) {
     const timeX = Math.floor(xScale(new Date()))
     svg.select('.time-line').attr('y1', 0).attr('y2', height)
     timeLine.attr('y1', 0).attr('y2', height).attr('transform', 'translate(' + timeX + ',0)')
-    timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
+    timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)')
+      .attr('dy', '0.71em')
+      .attr('x', isMobile ? -20 : -24)
 
     // X Axis time label
     timeLabel.select('.time-now-text__time').text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
@@ -481,7 +483,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   // Add timeline
   const timeLine = svg.append('line').attr('class', 'time-line').attr('aria-hidden', true)
-  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26).attr('aria-hidden', true)
+  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('aria-hidden', true)
   timeLabel.append('tspan').attr('class', 'time-now-text__time')
   timeLabel.append('tspan').attr('text-anchor', 'middle').attr('class', 'time-now-text__date').attr('x', 0).attr('dy', '15')
 
@@ -666,6 +668,8 @@ function LineChart (containerId, stationId, data, options = {}) {
       // Reinstate default threshold?
       showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
     }
+    // Hide significant points
+    significantContainer.node().parentNode.classList.remove('significant--visible')
     // Remove focussed significant point
     // svg.select('.focussed-cell').remove()
   }, true)
