@@ -63,12 +63,10 @@
     text-align: left;
     padding-left: 0px;
     padding-right: 0px;
-    width: auto;
     @include mq ($until: tablet) {
       border: 0px;
       display: inline-block;
       padding-top:0px;
-      flex: 1 1 auto;
     }
     a {
       display: inline-block;
@@ -85,7 +83,6 @@
       padding-top:10px;
       padding-right: 0px;
       width: 100%;
-      flex: none;
     }
   }
   &__cell--location-rainfall {
@@ -96,27 +93,34 @@
       padding-top:10px;
       padding-right: 0px;
       width: 100%;
-      flex: none;
-    }
-  }
-  &__cell--trend {
-    @include mq ($from: tablet) {
-      width: 22%;
     }
   }
   &__cell--height {
-    @include mq ($from: tablet) {
-      width: 17%;
+    width: 17%;
+    @include mq ($until: tablet) {
+      width: auto;
+      flex: 1 1 1em;
+    }
+  }
+  &__cell--trend {
+    width: 22%;
+    @include mq ($until: tablet) {
+      width: auto;
+      flex: 1 1 3.5em;
     }
   }
   &__cell--state {
-    @include mq ($from: tablet) {
-      width: 10%;
+    width: 10%;
+    @include mq ($until: tablet) {
+      width: auto;
+      flex: 1 1 0.5em;
     }
   }
   &__cell--rainfall {
-    @include mq ($from: tablet) {
-      width: 20%;
+    width: 20%;
+    @include mq ($until: tablet) {
+      width: auto;
+      flex: 1 1 auto;
     }
   }
   &-subtitle {
