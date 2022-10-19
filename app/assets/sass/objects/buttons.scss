@@ -78,7 +78,10 @@ button.defra-button-secondary {
 }
 .defra-button-text-s {
     @extend .defra-button-text;
-    @include govuk-font($size: 16, $weight: bold);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
 }
 
 // Hyperlinks with icons
@@ -115,7 +118,10 @@ button.defra-button-secondary {
 }
 .defra-link-icon-s {
     @extend .defra-link-icon;
-    @include govuk-font($size: 16, $weight: bold);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
     svg {
         margin-right: 6px;
         margin-bottom: -4px;

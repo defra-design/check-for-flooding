@@ -34,10 +34,7 @@
   }
   svg {
     position: relative;
-    top: 2px;
-    @include mq ($from: tablet) {
-      top: 1px;
-    }
+    top: 1px;
     margin-left: 5px;
   }
   &--back svg {

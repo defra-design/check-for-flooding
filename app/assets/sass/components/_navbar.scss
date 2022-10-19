@@ -1,7 +1,10 @@
 .defra-navbar {
   position: relative;
   z-index: 1;
-  @include govuk-font($size: 16, $weight: bold);
+  @include govuk-font($size: 19);
+  @include mq ($from: tablet) {
+    @include govuk-font($size: 16);
+  }
   margin: 0px -15px 6px -15px;
   display: flex;
   flex-wrap: nowrap;
@@ -27,7 +30,7 @@
   }
   &__inner {
     flex: 0 0 auto;
-    padding: 0px 15px 4px 15px;
+    padding: 0px 15px 0px 15px;
     @include mq ($from: tablet) {
       padding-left: 0px;
       padding-right: 0px;
@@ -48,7 +51,6 @@
     height: 0px;
   }
   &__item {
-    color: $govuk-secondary-text-colour;
     float: left;
     margin-right: 15px;
   }
@@ -66,10 +68,6 @@
   a:visited {
     color: govuk-colour('black');
   }
-  &__item--selected a {
-    background-color: transparent;
-    border-bottom: 4px solid currentColor;
-  }
   a:focus {
     background-color: $govuk-focus-colour;
     color: govuk-colour('black');
@@ -78,7 +76,10 @@
   }
   // Overides
   .defra-link-icon-s {
-    @include govuk-font($size: 16, $weight: bold);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
     float: left;
     margin-right: 15px;
     &:not([keyboard-focus]):focus {
@@ -100,7 +101,10 @@
     }
   }
   .defra-button-secondary {
-    @include govuk-font($size: 16, $weight: bold);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
     float: left;
     border: 0px;
     color: govuk-colour('black');
@@ -149,9 +153,9 @@
     border-bottom: 1px solid $govuk-border-colour;
   }
   &--search-categories {
-    padding-bottom: 15px;
+    padding-bottom: 0px;
     margin-bottom: 0px;
-    // border-bottom: 1px solid $govuk-border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
     @include mq ($from: tablet) {
       margin-top: 5px;
       padding-bottom: 20px;
@@ -164,9 +168,9 @@
       color: $govuk-link-colour;
     }
     a:hover, .defra-link-icon-s:hover, .defra-button-secondary:hover {
-      color: $govuk-link-hover-colour;
+      color: $govuk-link-colour;
       svg {
-        color: $govuk-link-hover-colour;
+        color: $govuk-link-colour;
       }
     }
     a:focus, .defra-link-icon-s:focus, .defra-button-secondary:focus {
@@ -175,5 +179,10 @@
         color: govuk-colour('black');
       }
     }
+    .defra-navbar__item--selected a {
+      background-color: transparent;
+      border-bottom: 4px solid currentColor;
+      color: $govuk-link-colour;
+    }  
   }
 }
