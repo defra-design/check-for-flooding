@@ -164,14 +164,15 @@
     a, .defra-link-icon-s, .defra-button-secondary {
       color: $govuk-link-colour;
       text-decoration: none;
+      font-weight: $govuk-font-weight-bold;
     }
     a:visited, .defra-link-icon-s:visited, .defra-button-secondary:visited {
       color: $govuk-link-colour;
     }
     a:hover, .defra-link-icon-s:hover, .defra-button-secondary:hover {
-      color: $govuk-link-colour;
+      color: $govuk-link-hover-colour;
       svg {
-        color: $govuk-link-colour;
+        color: $govuk-link-hover-colour;
       }
     }
     a:focus, .defra-link-icon-s:focus, .defra-button-secondary:focus {
