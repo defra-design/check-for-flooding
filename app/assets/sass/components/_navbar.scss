@@ -159,6 +159,7 @@
     @include mq ($from: tablet) {
       margin-top: 5px;
       padding-bottom: 20px;
+      border-bottom: 0px;
     }
     a, .defra-link-icon-s, .defra-button-secondary {
       color: $govuk-link-colour;
@@ -179,7 +180,7 @@
         color: govuk-colour('black');
       }
     }
-    .defra-navbar__item--selected a {
+    .defra-navbar__item--selected a:not(:focus) {
       background-color: transparent;
       border-bottom: 4px solid currentColor;
       color: $govuk-link-colour;
