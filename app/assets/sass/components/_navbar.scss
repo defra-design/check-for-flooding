@@ -30,7 +30,7 @@
   }
   &__inner {
     flex: 0 0 auto;
-    padding: 0px 15px 0px 15px;
+    padding: 0px 15px 4px 15px;
     @include mq ($from: tablet) {
       padding-left: 0px;
       padding-right: 0px;
@@ -100,82 +100,83 @@
       color: govuk-colour('black');
     }
   }
-  .defra-button-secondary {
-    @include govuk-font($size: 19);
-    @include mq ($from: tablet) {
-      @include govuk-font($size: 16);
-    }
-    float: left;
-    border: 0px;
-    color: govuk-colour('black');
-    margin: 0px 15px 4px 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    &:focus {
-      color: govuk-colour('black');
-      box-shadow: 0 4px 0 govuk-colour('black');
-    }
-    &:not([keyboard-focus]):focus {
-      background-color: white;
-      border-color: govuk-colour('mid-grey');
-      color: $govuk-link-colour;
-      box-shadow: none;
-    }
-    &:hover:not(:focus) {
-      background-color: transparent;
-    }
-    &:active {
-      color: govuk-colour('black');
-    }
-    &:after {
-      content: 'Map';
-    }
-    svg {
-      position: relative;
-      display: inline-block;
-      color: govuk-colour('black');
-      vertical-align: top;
-      left: 0px;
-      margin: 0px 6px -4px 1px;
-      top: -1px;
-      @include mq ($from: tablet) {
-        margin-right: 7px;
-        top: 0px;
-        margin-bottom: -3px;
-      }
-    }
-    span {
-      @include defra-visually-hidden();
-    }
-  }
   // Modifiers
   &--border {
     border-bottom: 1px solid $govuk-border-colour;
   }
   &--search-categories {
-    padding-bottom: 0px;
-    margin-bottom: 0px;
-    border-bottom: 1px solid $govuk-border-colour;
+    padding-top: 5px;
+    margin: 0px -15px 30px -15px;
     @include mq ($from: tablet) {
-      margin-top: 5px;
-      padding-bottom: 20px;
-      border-bottom: 0px;
+      margin-left: 0px;
+      margin-right: 0px;
     }
-    a, .defra-link-icon-s, .defra-button-secondary {
+    border-bottom: 1px solid $govuk-border-colour;
+    .defra-navbar__inner {
+      padding-bottom: 0px;
+    }
+    .defra-navbar__item {
+      margin: 0px;
+    }
+    .defra-button-secondary {
+      @include govuk-font($size: 19);
+      @include mq ($from: tablet) {
+        @include govuk-font($size: 16);
+      }
+      float: left;
+      border: 0px;
+      color: $govuk-link-colour;
+      margin: 0px 7.5px 4px 0px;
+      padding-top: 7.5px;
+      padding-bottom: 7.5px;
+      text-decoration: none;
+      &:visited {
+        color: $govuk-link-colour;
+      }
+      &:hover, &:active {
+        background-color: transparent;
+        color: $govuk-link-hover-colour;
+      }
+      &:focus {
+        color: govuk-colour('black');
+        box-shadow: 0 4px 0 govuk-colour('black');
+      }
+      &:not([keyboard-focus]):focus {
+        background-color: white;
+        color: $govuk-link-colour;
+        box-shadow: none;
+      }
+      &:after {
+        content: 'Map';
+      }
+      svg {
+        position: relative;
+        display: inline-block;
+        color: govuk-colour('black');
+        vertical-align: top;
+        left: 0px;
+        margin: 0px 7px -3px 1px;
+        top: -1px;
+      }
+      span {
+        @include defra-visually-hidden();
+      }
+    }
+    .defra-navbar__item a {
       color: $govuk-link-colour;
       text-decoration: none;
-      font-weight: $govuk-font-weight-bold;
+      padding: 7.5px;
     }
-    a:visited, .defra-link-icon-s:visited, .defra-button-secondary:visited {
+    .defra-navbar__item a:visited {
       color: $govuk-link-colour;
     }
-    a:hover, .defra-link-icon-s:hover, .defra-button-secondary:hover {
+    .defra-navbar__item a:hover {
       color: $govuk-link-hover-colour;
       svg {
         color: $govuk-link-hover-colour;
       }
     }
-    a:focus, .defra-link-icon-s:focus, .defra-button-secondary:focus {
+    .defra-navbar__item a:focus {
       color: govuk-colour('black');
       svg {
         color: govuk-colour('black');

@@ -32,8 +32,6 @@
     @include govuk-font($size: 16);
     @include mq ($until: tablet) {
       color: $govuk-secondary-text-colour;
-      padding-top: 30px;
-      // padding-bottom: 0px;
     }
     &--location {
       @include mq ($until: tablet) {
