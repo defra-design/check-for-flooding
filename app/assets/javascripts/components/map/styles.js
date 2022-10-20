@@ -139,25 +139,24 @@ window.flood.maps.styles = {
       const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
 
       // Defaults
-      let strokeColour = 'transparent'
       let fillColour = 'transparent'
       let zIndex = 1
 
       switch (severity) {
         case 1: // Severe warning
-          fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('severe', alpha)
+          fillColour = `rgba(113, 0, 7, ${alpha})`
           zIndex = 11
           break
         case 2: // Warning
-          fillColour = `rgba(227, 0, 15, ${alpha})` // targetAreaPolygonPattern('warning', alpha)
+          fillColour = `rgba(227, 0, 15, ${alpha})`
           zIndex = 10
           break
         case 3: // Alert
-          fillColour = `rgb(241, 135, 0, ${alpha})` // targetAreaPolygonPattern('alert', alpha)
+          fillColour = `rgb(241, 135, 0, ${alpha})`
           zIndex = isGroundwater ? 4 : 7
           break
         default: // Removed or inactive
-          fillColour = `rgb(98, 106, 110, ${alpha})` // targetAreaPolygonPattern('removed', alpha)
+          fillColour = `rgb(98, 106, 110, ${alpha})`
           zIndex = 1
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
