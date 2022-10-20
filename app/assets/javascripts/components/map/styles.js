@@ -144,7 +144,7 @@ window.flood.maps.styles = {
 
       switch (severity) {
         case 1: // Severe warning
-          fillColour = `rgba(113, 0, 7, ${alpha})`
+          fillColour = `rgba(140, 20, 25, ${alpha})`
           zIndex = 11
           break
         case 2: // Warning
@@ -156,7 +156,7 @@ window.flood.maps.styles = {
           zIndex = isGroundwater ? 4 : 7
           break
         default: // Removed or inactive
-          fillColour = `rgb(98, 106, 110, ${alpha})`
+          fillColour = `rgb(130, 151, 167, ${alpha})`
           zIndex = 1
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
