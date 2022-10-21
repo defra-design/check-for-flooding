@@ -3,7 +3,6 @@
   position: relative;
   margin-top: -1px;
   margin-bottom: 0px;
-  // border-bottom: 1px solid $govuk-border-colour;
   @include mq ($until: tablet) {
     display: block;
   }
@@ -45,8 +44,8 @@
     }
   }
   &__row {
-    border-top: 1px solid $govuk-border-colour;
-    border-bottom: 1px solid $govuk-border-colour;
+    border-top: 1px solid govuk-tint($govuk-border-colour, 70);
+    border-bottom: 1px solid govuk-tint($govuk-border-colour, 70);
     @include mq ($until: tablet) {
       position: relative;
       display: flex;
@@ -62,9 +61,7 @@
     padding-left: 0px;
     padding-right: 0px;
     @include mq ($until: tablet) {
-      border: 0px;
       display: inline-block;
-      padding-top:0px;
     }
     a {
       display: inline-block;
