@@ -20,7 +20,6 @@
   display: inline-block;
   position: relative;
   text-align: center;
-  margin-right: 15px;
   text-decoration: none;
   &--selected:not(:focus) {
     border-bottom: 4px solid govuk-colour('blue');
