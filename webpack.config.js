@@ -52,7 +52,10 @@ module.exports = (env, argv) => ({
         BING_API_KEY: JSON.stringify(process.env.BING_API_KEY),
         OS_API_KEY: JSON.stringify(process.env.OS_API_KEY)
       }
-    })
+    }),
+    new webpack.NormalModuleReplacementPlugin(
+      /node_modules\/ol\/worker\/webgl\.js/, '../../../app/assets/javascripts/ol-worker-webgl-ie11.js'
+    )
   ],
   target: ['web', 'es5']
 })
