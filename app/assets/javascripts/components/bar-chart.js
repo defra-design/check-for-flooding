@@ -533,7 +533,7 @@ function BarChart (containerId, stationId, data) {
   // Events
   //
 
-  mobileMediaQuery.addEventListener('change', (e) => {
+  mobileMediaQuery[mobileMediaQuery.addEventListener ? 'addEventListener' : 'addListener']('change', (e) => {
     isMobile = e.matches
     hideTooltip()
     renderChart()
