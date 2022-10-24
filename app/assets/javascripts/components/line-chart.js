@@ -571,7 +571,8 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Events
   //
 
-  mobileMediaQuery.addEventListener('change', (e) => {
+  // addListener deprectaed but required or ie11 and Safari < 14
+  mobileMediaQuery[mobileMediaQuery.addEventListener ? 'addEventListener' : 'addListener']('change', (e) => {
     isMobile = e.matches
     hideTooltip()
     renderChart()
