@@ -12,10 +12,6 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  @include mq ($from: tablet) {
-    margin-right: 0px;
-    margin-left: 0px;
-  }
   &:before {
     @include mq ($until: tablet) {
       position: absolute;
@@ -31,10 +27,10 @@
   &__inner {
     flex: 0 0 auto;
     padding: 0px 15px 4px 15px;
-    @include mq ($from: tablet) {
-      padding-left: 0px;
-      padding-right: 0px;
-    }
+    // @include mq ($from: tablet) {
+    //   padding-left: 0px;
+    //   padding-right: 0px;
+    // }
   }
   &__group {
     float: left;
@@ -60,7 +56,6 @@
   a {
     display: inline-block;
     position: relative;
-    outline: 3px solid transparent;
     padding: 5px 0px 5px 0px;
     border: 0px;
     color: govuk-colour('black');
@@ -73,6 +68,7 @@
     color: govuk-colour('black');
     border: 0px;
     box-shadow: 0 4px 0 govuk-colour('black');
+    outline: 3px solid transparent;
   }
   // Overides
   .defra-link-icon-s {
@@ -101,17 +97,27 @@
     }
   }
   // Modifiers
-  &--border {
-    border-bottom: 1px solid $govuk-border-colour;
-  }
   &--search-categories {
-    margin: 20px -15px 0px -15px;
-    @include mq ($from: tablet) {
-      margin-left: 0px;
-      margin-right: 0px;
+    margin: 17px -15px 0px -15px;
+    // @include mq ($from: tablet) {
+    //   margin-left: 0px;
+    //   margin-right: 0px;
+    // }
+    &:after {
+      content: '';
+      position: absolute;
+      left:0px;
+      right:0px;
+      bottom:0px;
+      border-bottom: 1px solid $govuk-border-colour;
+      z-index: -1;
+      @include mq ($from: tablet) {
+        left: 15px;
+        right: 15px;
+      }
     }
-    border-bottom: 1px solid $govuk-border-colour;
     .defra-navbar__inner {
+      padding-top: 3px;
       padding-bottom: 0px;
     }
     .defra-navbar__item {

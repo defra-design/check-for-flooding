@@ -99,8 +99,8 @@ const toggletips = (options) => {
       button.innerHTML = `
       <span class="defra-toggletip__button-icon">
       <svg width="18" height="18" viewBox="0 0 18 18" style="fill-rule:evenodd;clip-rule:evenodd">
-      <circle cx="9" cy="9" r="7.5" style="fill:none;stroke:#000;stroke-width:1px;"/>
-      <text x="4.687px" y="12.906px" style="font-family:'Courier-Bold', 'Courier';font-size:14px;">i</text>
+      <circle cx="9" cy="9" r="7.5" style="fill:none;stroke:currentColor;stroke-width:1px;"/>
+      <text x="4.687px" y="12.906px" fill="currentColor" style="font-family:'Courier-Bold', 'Courier';font-size:14px;">i</text>
       </svg>
       </span>
       <span class="defra-toggletip__button-text">i</span>

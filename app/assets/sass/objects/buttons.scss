@@ -31,7 +31,6 @@ button.defra-button-secondary {
     box-shadow: none;
     background-color: white;
     padding: 9px 10px 10px;
-    outline: 3px solid transparent;
     cursor: pointer;
     color: $govuk-text-colour;
     text-decoration: none;
@@ -45,6 +44,7 @@ button.defra-button-secondary {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
         box-shadow: 0 4px 0 govuk-colour('black');
+        outline: 3px solid transparent;
     }
     &--icon {
         padding-left: 31px;
