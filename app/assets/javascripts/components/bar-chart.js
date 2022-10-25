@@ -588,7 +588,12 @@ function BarChart (containerId, stationId, data) {
     }
   })
 
+  let lastClientX, lastClientY
   svg.on('mousemove', (e) => {
+    // Safari bug where modifier keys trigger mousemove
+    if (lastClientX === e.clientX && lastClientY === e.clientY) return
+    lastClientX = e.clientX
+    lastClientY = e.clientY
     if (!xScale) return
     if (interfaceType === 'touch') {
       interfaceType = 'mouse'
