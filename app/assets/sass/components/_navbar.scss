@@ -103,21 +103,28 @@
     //   margin-left: 0px;
     //   margin-right: 0px;
     // }
+    border-bottom: 1px solid $govuk-border-colour;
+    @include mq ($from: tablet) {
+      border-bottom: 0px;
+    }
     &:after {
-      content: '';
-      position: absolute;
-      left:0px;
-      right:0px;
-      bottom:0px;
-      border-bottom: 1px solid $govuk-border-colour;
-      z-index: -1;
       @include mq ($from: tablet) {
+        content: '';
+        position: absolute;
+        left:0px;
+        right:0px;
+        bottom:0px;
+        border-bottom: 1px solid $govuk-border-colour;
+        z-index: -1;
         left: 15px;
         right: 15px;
       }
     }
     .defra-navbar__inner {
       padding-bottom: 0px;
+      @include mq ($from: tablet) {
+        padding-bottom: 1px;
+      }
     }
     .defra-navbar__item {
       margin: 0px;
