@@ -9,11 +9,11 @@
         display: inline-block;
         margin-right: 20px;
         @include govuk-font($size: 16, $weight: bold);
-        height: 32px;
+        height: 30px;
         padding-left: 40px;
         margin-bottom: 10px;
         @include mq ($from: tablet) {
-        margin-right: 30px;
+            margin-right: 30px;
         }
     }
     &__link {
@@ -26,15 +26,15 @@
         position: absolute;
         top:0px;
         left:0px;
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         background-color: govuk-colour('blue');
         box-sizing: border-box;
         border: 1px solid currentcolor;
         color: white;
         svg {
             position: relative;
-            margin: -1px 0 0 -1px;
+            margin: -2px 0 0 -2px;
         }
     }
     &__link:hover .defra-social__icon {

@@ -28,7 +28,8 @@
   }
   .axis.y text,
   .axis.x text {
-    fill: $govuk-secondary-text-colour;
+    color: $govuk-secondary-text-colour;
+    fill: currentColor;
   }
   .axis.y .tick line,
   .axis.y path,
@@ -37,8 +38,9 @@
   }
   .axis path,
   .axis line {
+    color: $govuk-border-colour;
     fill: none;
-    stroke: $govuk-border-colour;
+    stroke: currentColor;
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
@@ -50,35 +52,38 @@
     }
   }
   .bar__fill {
-    fill: govuk-colour('blue');
-  }
-  .bar__fill {
-    fill: govuk-colour('blue');
+    color: govuk-colour('blue');
+    fill: currentColor;
   }
   .bar--selected .bar__fill {
-    fill: govuk-colour('dark-blue');
+    color: govuk-colour('dark-blue');
+    fill: currentColor;
   }
   .bar--incomplete .bar__fill {
-    fill: govuk-colour('mid-grey');
+    color: govuk-colour('mid-grey');
+    fill: currentColor;
   }
   .grid {
     pointer-events: none;
   }
   .grid line {
     fill: none;
-    stroke: #E6E6E6;
+    color: rgba($govuk-text-colour, 0.1);
+    stroke: currentColor;
     stroke-width: 1;
     shape-rendering: crispEdges;
   }
   .latest-line {
     pointer-events: none;
     stroke-width: 1;
-    stroke: govuk-colour('dark-grey');
+    color: govuk-colour('dark-grey');
+    stroke: currentColor;
     stroke-dasharray: 3 3;
     shape-rendering: crispEdges;
   }
   .bar--selected .latest-line {
-    stroke: govuk-colour('black');
+    color: govuk-colour('black');
+    stroke: currentColor;
   }
   // Locator line
   .locator {
@@ -97,7 +102,8 @@
     &__line {
       visibility: hidden;
       stroke-width: 1;
-      stroke: govuk-colour('mid-grey');
+      color: govuk-colour('mid-grey');
+      stroke: currentColor;
       shape-rendering: crispEdges;
     }
     &__line--visible {
@@ -114,11 +120,17 @@
   .tooltip-bg {
       fill:white;
       stroke-width: 1;
-      stroke: $govuk-secondary-text-colour;
+      color: $govuk-secondary-text-colour;
+      stroke: currentColor;
       shape-rendering: geometricPrecision;
+      @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+        fill: window;
+    }
   }
   .tooltip-text {
       @include govuk-font($size: 16);
+      color: $govuk-text-colour;
+      fill: currentColor;
   }
   .tooltip-text__strong {
       @include govuk-font($size: 19, $weight:bold);
