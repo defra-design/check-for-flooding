@@ -10,14 +10,11 @@
         margin-right: 20px;
         @include govuk-font($size: 16, $weight: bold);
         height: 30px;
-        padding-left: 40px;
+        padding-left: 36px;
         margin-bottom: 10px;
-        @include mq ($from: tablet) {
-            margin-right: 30px;
-        }
     }
     &__link {
-        line-height: 32px;
+        line-height: 30px;
     }
     &__link:not(:hover) {
         text-decoration: none
