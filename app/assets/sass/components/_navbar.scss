@@ -5,7 +5,7 @@
   @include mq ($from: tablet) {
     @include govuk-font($size: 16);
   }
-  margin: 0px -15px 6px -15px;
+  margin: 7px -15px 6px -15px;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -26,7 +26,7 @@
   }
   &__inner {
     flex: 0 0 auto;
-    padding: 0px 15px 4px 15px;
+    padding: 3px 15px 4px 15px;
     // @include mq ($from: tablet) {
     //   padding-left: 0px;
     //   padding-right: 0px;
@@ -117,7 +117,6 @@
       }
     }
     .defra-navbar__inner {
-      padding-top: 3px;
       padding-bottom: 0px;
     }
     .defra-navbar__item {

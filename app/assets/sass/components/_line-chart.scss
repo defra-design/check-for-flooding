@@ -1,6 +1,7 @@
 // Line graph
 .defra-line-chart {
-    border-bottom: 1px solid $govuk-border-colour;
+    color: $govuk-border-colour;
+    border-bottom: 1px solid currentColor;
 }
 .js-enabled .defra-line-chart__container {
     position: relative;
@@ -28,12 +29,14 @@
     }
     .axis.y text,
     .axis.x text {
-        fill: $govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
+        fill: currentColor;
     }
     .axis path,
     .axis line {
         fill: none;
-        stroke: $govuk-border-colour;
+        color: $govuk-border-colour;;
+        stroke: currentColor;
         stroke-width: 1;
         shape-rendering: crispEdges;
     }
@@ -48,14 +51,17 @@
         visibility: hidden;
     }
     .axis.y .tick line {
-        stroke: rgba($govuk-text-colour, 0.1);
+        color: rgba($govuk-text-colour, 0.1);
+        stroke: currentColor;
     }
     .axis.y .tick:first-of-type line {
-        stroke: $govuk-border-colour;
+        color: $govuk-border-colour;
+        stroke: currentColor;
     }
     .grid line {
         fill: none;
-        stroke: rgba($govuk-text-colour, 0.1);
+        color: rgba($govuk-text-colour, 0.1);
+        stroke: currentColor;
         stroke-width: 1;
         shape-rendering: crispEdges;
     }
@@ -64,7 +70,8 @@
     }
     // Observed
     .observed-line {
-        stroke: $govuk-link-colour;
+        color: $govuk-link-colour;
+        stroke: currentColor;
         stroke-width: 3;
         fill: none;
     }
@@ -74,7 +81,8 @@
     // Forecast
     .forecast-line {
         stroke-dasharray: 4, 2;
-        stroke: $govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
+        stroke: currentColor;
         stroke-width: 3;
         fill: none;
     }
@@ -90,16 +98,24 @@
     }
     .locator-point {
         stroke-width: 3;
-        stroke: $govuk-link-colour;
+        color: $govuk-link-colour;
+        stroke: currentColor;
         fill: white;
     }
     .locator-line {
         stroke-width: 1;
-        stroke: govuk-colour('mid-grey');
+        color: govuk-colour('mid-grey');
+        stroke: currentColor;
         shape-rendering: crispEdges;
     }
     .locator--forecast .locator-point {
-        stroke: $govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
+        stroke: currentColor;
+    }
+    @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+        .locator-point {
+            fill: window;
+        }
     }
     // Tooltip
     .tooltip {
@@ -112,27 +128,39 @@
     .tooltip-bg {
         fill:white;
         stroke-width: 1;
-        stroke: $govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
+        stroke: currentColor;
         shape-rendering: crispEdges;
     }
     .tooltip-text {
         @include govuk-font($size: 16);
+        color: $govuk-text-colour;
+        fill: currentColor;
     }
     .tooltip-text__strong {
         @include govuk-font($size: 19, $weight:bold);
     }
+    @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+        .tooltip-bg {
+            fill: window;
+        }
+    }
     // Now
     .time-line {
         stroke-width: 1;
-        stroke: $govuk-secondary-text-colour;
+        color: $govuk-secondary-text-colour;
+        stroke: currentColor;
         shape-rendering: crispEdges;
     }
     .time-now-text {
         @include govuk-font($size: 14, $weight: bold);
+        color: $govuk-text-colour;
+        fill: currentColor;
     }
     // Thresholds
     .threshold__line {
-        stroke: govuk-colour('mid-grey');
+        color: govuk-colour('mid-grey');
+        stroke: currentColor;
         stroke-width: 3;
         shape-rendering: geometricPrecision;
     }
@@ -180,13 +208,27 @@
     .threshold-label__bg {
         fill: white;
         stroke-width: 1;
-        stroke: govuk-colour('dark-grey');
+        color: govuk-colour('dark-grey');
+        stroke: currentColor;
         shape-rendering: auto;
         stroke-linecap: square;
     }
     .threshold-label__text {
         @include govuk-font($size: 16);
-        fill: $govuk-text-colour;
+        color: $govuk-text-colour;
+        fill: currentColor;
+    }
+    @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+        .threshold__line {
+            stroke: currentColor;
+        }
+        .threshold__remove-button,
+        .threshold-label__bg {
+            fill: window;
+        }
+        .threshold__remove-bg {
+            fill: transparent !important;
+        }
     }
     .threshold.threshold--selected {
         .threshold__remove {
@@ -197,19 +239,28 @@
             pointer-events: auto;
         }
         .threshold__line {
+            color: $govuk-text-colour;
+            stroke: currentColor;
+        }
+        .threshold__remove circle,
+        .threshold__remove line {
             stroke: $govuk-text-colour;
         }
-        .threshold__remove circle {
-            stroke: govuk-colour('black');
-        }
-        .threshold__remove line {
-            stroke: govuk-colour('black');
+        @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+            .threshold__line {
+                stroke: currentColor;
+            }
+            .threshold__remove circle,
+            .threshold__remove line {
+                stroke: ButtonText;
+            }
         }
     }
     .threshold.threshold--mouseover {
         cursor: pointer;
         .threshold__line {
-            stroke: $govuk-text-colour;
+            color: $govuk-text-colour;
+            stroke: currentColor;
         }
     }
     .threshold:not(.threshold--selected) .threshold__bg,
@@ -217,26 +268,23 @@
         cursor: pointer;
     }
     // Typical/Alert
-    .threshold--alert {
-        .threshold__line {
-            stroke: $govuk-border-colour;
-        }
-    }
-    .threshold.threshold--selected.threshold--alert,
-    .threshold.threshold--mouseover.threshold--alert {
-        .threshold__line {
-            stroke: $govuk-text-colour;
-        }
-    }
+    // .threshold--alert {
+    //     .threshold__line {
+    //         stroke: $govuk-border-colour;
+    //     }
+    // }
+    // .threshold.threshold--selected.threshold--alert,
+    // .threshold.threshold--mouseover.threshold--alert {
+    //     .threshold__line {
+    //         stroke: $govuk-text-colour;
+    //     }
+    // }
     // Significant points
     .significant .point circle {
         opacity: 0;
     }
     .significant--visible .point circle {
         opacity: 1;
-    }
-    .point {
-        // outline: 3px solid transparent;
     }
     .point circle {
         fill: govuk-colour('blue');
