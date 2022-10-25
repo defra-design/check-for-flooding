@@ -125,11 +125,6 @@ button.defra-button-secondary {
     svg {
         margin-right: 6px;
         margin-bottom: -4px;
-        top: -1px;
-        @include mq ($from: tablet) {
-            margin-right: 7px;
-            top: 0px;
-            margin-bottom: -3px;
-        }
+        top: 0px;
     }
 }

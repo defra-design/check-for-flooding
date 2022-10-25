@@ -27,7 +27,6 @@
 		width: 26px;
 		height: 26px;
 		background-color: white;
-		outline: 3px solid transparent;
 		border: 0px;
 		padding: 0px;
 		text-align: center;
@@ -56,8 +55,11 @@
 		&:hover span {
 			box-shadow: 0 0 0 5px govuk-colour('light-grey');
 		}
-		&:focus span {
-			box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
+		&:focus {
+			outline: 3px solid transparent;
+			span {
+				box-shadow: 0 0 0 1px govuk-colour('black'), 0 0 0 5px $govuk-focus-colour;
+			}
 		}
 	}
 	&__info {
@@ -75,21 +77,30 @@
 		text-align: left;
 	}
 	&__text {
+		position: relative;
 		display:block;
+		box-sizing: border-box;
 		padding: 7.5px 10px;
-		background: govuk-colour('black');
-		color: white;
+		color: govuk-colour('black');
+		background: currentcolor;
+		border: 2px solid currentcolor;
+		z-index: 2;
+		span {
+			color: white;
+		}
 	}
 	&__arrow {
 		position: absolute;
+		box-sizing: border-box;
 		z-index: 1;
-		width: 8px;
-		height: 8px;
+		width: 10px;
+		height: 10px;
 		left: 50%;
 		bottom: auto;
 		top: 100%;
-		margin: -14px 0px 0px -4px;
-		background: govuk-colour('black');
+		margin: -15px 0px 0px -5px;
+		color: govuk-colour('black');
+		border: 5px solid currentcolor;
 		-webkit-transform: rotate(135deg);
 		-moz-transform: rotate(135deg);
 		-o-transform: rotate(135deg);
@@ -104,7 +115,7 @@
 	&--bottom &__arrow {
 		bottom: 100%;
 		top: auto;
-		margin: 0px 0px -14px -4px;
+		margin: 0px 0px -15px -5px;
 	}
 	&--open &__info {
 		visibility: visible;

@@ -38,12 +38,11 @@
         margin:0px;
         padding:0px;
         box-shadow:none;
-        background-color:govuk-colour('blue');
-        border: 2px solid govuk-colour('blue');
+        color: govuk-colour('blue');
+        background-color: currentcolor;
+        border: 2px solid currentcolor;
         z-index: 1;
         cursor: pointer;
-        color: white;
-        outline: 3px solid transparent;
         svg {
             position:absolute;
             top: 8px;
@@ -55,8 +54,10 @@
         border-color: govuk-colour('light-blue');
     }
     &__button:focus {
-        outline: 3px solid $govuk-focus-colour;
-        box-shadow: inset 0 0 0 2px govuk-colour('black');
+        outline: 3px solid transparent;
+        box-shadow:
+            inset 0 0 0 2px govuk-colour('black'),
+            0px 0px 0px 3px $govuk-focus-colour;
         border-color: govuk-colour('black');
         z-index: 2;
     }
