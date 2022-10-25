@@ -30,11 +30,11 @@
         height: 32px;
         background-color: govuk-colour('blue');
         box-sizing: border-box;
-        border: 2px solid currentColor;
+        border: 1px solid currentcolor;
         color: white;
         svg {
             position: relative;
-            margin: -2px 0 0 -2px;
+            margin: -1px 0 0 -1px;
         }
     }
     &__link:hover .defra-social__icon {
