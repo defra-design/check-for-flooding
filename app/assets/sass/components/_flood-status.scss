@@ -28,6 +28,7 @@
 }
 .defra-flood-status-item {
     @extend .govuk-inset-text;
+    position: relative;
     padding: 0px;
     background-color:govuk-colour('light-grey');
     margin-top:0px;
@@ -68,22 +69,49 @@
             padding:10px 12.5px;
         }
     }
+    &:after {
+        position: absolute;
+        box-sizing: border-box;
+        content: '';
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        border: 1px solid transparent;
+        pointer-events: none;
+    }
 }
 .defra-flood-status-item--severe {
     background-color: govuk-tint(#e3000f, 85);
     border-color:#e3000f;
+    &:after {
+        color: govuk-tint(#e3000f, 85);
+        border-color: currentColor;
+    }
 }
 .defra-flood-status-item--warning {
     background-color:govuk-tint(#e3000f, 85%);
     border-color:#e3000f;
+    &:after {
+        color: govuk-tint(#e3000f, 85);
+        border-color: currentColor;
+    }
 }
 .defra-flood-status-item--alert {
     background-color: govuk-tint(#f18700, 85%);
     border-color:#f18700;
+    &:after {
+        color: govuk-tint(#f18700, 85%);
+        border-color: currentColor;
+    }
 }
 .defra-flood-status-item--important {
     background-color: govuk-tint($govuk-link-colour, 90%);
     border-color:$govuk-link-colour;
+    &:after {
+        color: govuk-tint($govuk-link-colour, 90%);
+        border-color: currentColor;
+    }
     svg {
         vertical-align: middle;
         width: 20px;
