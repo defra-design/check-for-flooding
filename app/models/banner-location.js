@@ -28,7 +28,6 @@ class BannerLocation {
   }
 
   groupSevere (group, location) {
-    console.log(group)
     this.severeSub = 'There is a danger to life'
     this.severitySevereTitle = group.severity.title
     if (group.items.length === 1) {
