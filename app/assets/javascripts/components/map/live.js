@@ -4,7 +4,7 @@
 // and other layers in the future e.g. Impacts.
 
 // It uses the MapContainer
-import mapSymbols from './map-symbols.png'
+// import mapSymbolsImage from './map-symbols.png'
 import { LngLatBounds, LngLat } from 'maplibre-gl'
 
 const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.utils
@@ -498,7 +498,8 @@ function LiveMap (mapId, options) {
   map.once('styledata', () => {
     // Create multiple images from one sprite file
     const images = []
-    map.loadImage(mapSymbols, (error, sprite) => {
+    // Cant use a base64 image string in ie11
+    map.loadImage('/public/images/map-symbols.png', (error, sprite) => {
       Object.keys(maps.symbols).forEach(key => {
         const pos = maps.symbols[key]
         if (error) throw error
@@ -507,15 +508,16 @@ function LiveMap (mapId, options) {
         context.canvas.width = pos.size
         context.canvas.height = pos.size
         context.drawImage(sprite, pos.left, pos.top, pos.size, pos.size, 0, 0, pos.size, pos.size)
-        const symbol = canvas.toDataURL('img/png')
-        map.loadImage(symbol, (error, image) => {
-          if (error) throw error
+        const dataUrl = canvas.toDataURL('img/png')
+        const image = document.createElement('img')
+        image.src = dataUrl
+        image.onload = () => {
           map.addImage(key, image)
           images.push(key)
           if (images.length === Object.keys(maps.symbols).length) {
             initMap()
           }
-        })
+        }
       })
     })
   })
