@@ -28,6 +28,7 @@ class BannerLocation {
   }
 
   groupSevere (group, location) {
+    console.log(group)
     this.severeSub = 'There is a danger to life'
     this.severitySevereTitle = group.severity.title
     if (group.items.length === 1) {
@@ -37,7 +38,7 @@ class BannerLocation {
       this.severeMainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#severe`
       this.severeMainText = `${group.items.length} severe flood warnings in this area`
     }
-    this.icon = group.severity.icon
+    this.severeIcon = group.severity.icon
   }
 
   groupWarning (group, location) {
@@ -51,7 +52,7 @@ class BannerLocation {
       this.mainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#warnings`
       this.mainText = `${group.items.length} flood warnings in this area`
     }
-    this.icon = group.severity.icon
+    this.mainIcon = group.severity.icon
   }
 
   groupAlert (hasSevere, hasWarnings, group, location) {
@@ -66,7 +67,7 @@ class BannerLocation {
         this.mainLink = `/flood-warnings-and-alerts?place=${encodeURIComponent(location)}#alerts`
         this.mainText = `${group.items.length} flood alerts in this area`
       }
-      this.icon = group.severity.icon
+      this.mainIcon = group.severity.icon
     } else {
       this.alerts = group.items.length
       if (group.items.length === 1) {
