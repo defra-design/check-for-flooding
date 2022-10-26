@@ -4,7 +4,7 @@
     <div class="defra-flood-status-item defra-flood-status-item--severe">
       <div class="defra-flood-status-item__container">
         <span class="defra-flood-status-item__icon">
-          {{ model.banner.icon | safe }}
+          {{ model.banner.severeIcon | safe }}
         </span>
         <div class="defra-flood-status-item__text">
           <strong>
@@ -19,7 +19,7 @@
     <div class="defra-flood-status-item defra-flood-status-item--{{model.banner.severity}}">
       <div class="defra-flood-status-item__container">
         <span class="defra-flood-status-item__icon">
-          {{ model.banner.icon | safe }}
+          {{ model.banner.mainIcon | safe }}
         </span>
         <div class="defra-flood-status-item__text">
           <strong>
