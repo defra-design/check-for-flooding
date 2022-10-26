@@ -106,14 +106,13 @@
         <div class="defra-map-info__buttons">
             {% if model.up %}
             <button class="defra-button-secondary defra-button-secondary--icon" data-id="s{{ model.up }}" aria-controls="viewport infoDescription">
-                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"></path><path d="M8,0l4,6.4l-8,0l4,-6.4Z"></path></svg>
+                <svg focusable="false" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"></path><path d="M8,0l4,6.4l-8,0l4,-6.4Z" style="fill:currentColor"></path></svg>
                 <span class="govuk-visually-hidden">Select next</span> Upstream  <span class="govuk-visually-hidden">measurement</span>
             </button>
             {% endif %}
             {% if model.down %}
             <button class="defra-button-secondary defra-button-secondary--icon" data-id="s{{ model.down }}" aria-controls="viewport infoDescription">
-                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8,9.6l-0,-9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,16l-4,-6.4l8,0l-4,6.4Z"/></svg>
-                <!-- <svg aria-hidden="true" focusable="false" width="14" height="14" viewBox="0 0 14 14"><path d="M6,9.172L2.414,5.586L1,7L7,13L13,7L11.586,5.586L8,9.172L8,1L6,1L6,9.172Z" style="fill:currentColor;"/></svg> -->
+                <svg focusable="false" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8,9.6l-0,-9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,16l-4,-6.4l8,0l-4,6.4Z" style="fill:currentColor"/></svg>
                 <span class="govuk-visually-hidden">Select next</span> Downstream <span class="govuk-visually-hidden">measurement</span>
             </button>
             {% endif %}

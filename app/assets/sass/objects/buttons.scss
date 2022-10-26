@@ -2,20 +2,13 @@
 .defra-button-start {
     @extend .govuk-button;
     @extend .govuk-button--secondary;
-    &:after {
-        content: '';
+    svg {
+        color: govuk-colour('black');
         display: inline-block;
         position:relative;
         margin-left:5px;
         vertical-align: middle;
         top:-1px;
-        width:13px;
-        height:15px;
-        background-image: svg-url('<svg width="13" height="15" viewBox="0 0 13 15" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M0.325,0l4.875,0l7.5,7.5l-7.5,7.5l-4.875,0l7.5,-7.5l-7.5,-7.5Z" style="fill-rule:nonzero;"/></svg>');
-        background-color:transparent;
-        background-size:13px 15px;
-        background-repeat: no-repeat;
-        background-position: top left;
     }
 }
 
