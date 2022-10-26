@@ -2,20 +2,13 @@
 .defra-button-start {
     @extend .govuk-button;
     @extend .govuk-button--secondary;
-    &:after {
-        content: '';
+    svg {
+        color: govuk-colour('black');
         display: inline-block;
         position:relative;
         margin-left:5px;
         vertical-align: middle;
         top:-1px;
-        width:13px;
-        height:15px;
-        background-image: svg-url('<svg width="13" height="15" viewBox="0 0 13 15" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><path d="M0.325,0l4.875,0l7.5,7.5l-7.5,7.5l-4.875,0l7.5,-7.5l-7.5,-7.5Z" style="fill-rule:nonzero;"/></svg>');
-        background-color:transparent;
-        background-size:13px 15px;
-        background-repeat: no-repeat;
-        background-position: top left;
     }
 }
 
@@ -31,7 +24,6 @@ button.defra-button-secondary {
     box-shadow: none;
     background-color: white;
     padding: 9px 10px 10px;
-    outline: 3px solid transparent;
     cursor: pointer;
     color: $govuk-text-colour;
     text-decoration: none;
@@ -45,6 +37,7 @@ button.defra-button-secondary {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
         box-shadow: 0 4px 0 govuk-colour('black');
+        outline: 3px solid transparent;
     }
     &--icon {
         padding-left: 31px;
@@ -78,7 +71,10 @@ button.defra-button-secondary {
 }
 .defra-button-text-s {
     @extend .defra-button-text;
-    @include govuk-font($size: 16);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
 }
 
 // Hyperlinks with icons
@@ -115,15 +111,13 @@ button.defra-button-secondary {
 }
 .defra-link-icon-s {
     @extend .defra-link-icon;
-    @include govuk-font($size: 16);
+    @include govuk-font($size: 19);
+    @include mq ($from: tablet) {
+      @include govuk-font($size: 16);
+    }
     svg {
         margin-right: 6px;
         margin-bottom: -4px;
-        top: -1px;
-        @include mq ($from: tablet) {
-            margin-right: 7px;
-            top: 0px;
-            margin-bottom: -3px;
-        }
+        top: 0px;
     }
 }

@@ -71,7 +71,9 @@ function LineChart (containerId, stationId, data, options = {}) {
     const timeX = Math.floor(xScale(new Date()))
     svg.select('.time-line').attr('y1', 0).attr('y2', height)
     timeLine.attr('y1', 0).attr('y2', height).attr('transform', 'translate(' + timeX + ',0)')
-    timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)').attr('dy', '0.71em')
+    timeLabel.attr('y', height + 9).attr('transform', 'translate(' + timeX + ',0)')
+      .attr('dy', '0.71em')
+      .attr('x', isMobile ? -20 : -24)
 
     // X Axis time label
     timeLabel.select('.time-now-text__time').text(timeFormat('%-I:%M%p')(new Date()).toLowerCase())
@@ -114,8 +116,8 @@ function LineChart (containerId, stationId, data, options = {}) {
         .attr('class', 'threshold-label__bg')
       const text = label.append('text')
         .attr('class', 'threshold-label__text')
-        .attr('x', 10).attr('y', 22)
-        .text(`${threshold.level}m ${threshold.name}`)
+      text.append('tspan').attr('font-size', 0).text('Threshold: ')
+      text.append('tspan').attr('x', 10).attr('y', 22).text(`${threshold.level}m ${threshold.name}`)
       const textWidth = Math.round(text.node().getBBox().width)
       path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
       label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
@@ -136,7 +138,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     })
 
     // Update clip text
-    clipText.attr('width', width + 5).attr('height', height)
+    // clipText.attr('width', width + 5).attr('height', height)
 
     // Add significant points
     significantContainer.selectAll('*').remove()
@@ -148,21 +150,24 @@ function LineChart (containerId, stationId, data, options = {}) {
       .attr('aria-colcount', significantPoints.length)
       .selectAll('.point').data(significantPoints).enter()
       .append('g')
-      .attr('role', 'cell')
+      .attr('role', 'gridcell')
       .attr('class', d => { return 'point point--' + d.type })
       .attr('tabindex', (d, i) => i === significantPoints.length - 1 ? 0 : -1)
       .attr('data-point', '')
       .attr('data-index', (d, i) => { return i })
     significantCells.append('circle').attr('aria-hidden', true)
-      .attr('r', '3')
+      .attr('r', '5')
       .attr('cx', d => xScale(new Date(d.dateTime)))
       .attr('cy', d => yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value))
-    significantCells.insert('text').text(d => {
-      const value = `${dataCache.type === 'river' && d.value < 0 ? 0 : d.value.toFixed(2)}m`
-      const time = timeFormat('%-I:%M%p')(new Date(d.dateTime)).toLowerCase()
-      const date = timeFormat('%e %b')(new Date(d.dateTime))
-      return `${value} ${time}, ${date}`
-    })
+    significantCells.insert('text')
+      .attr('x', d => xScale(new Date(d.dateTime)))
+      .attr('y', d => yScale(dataCache.type === 'river' && d.value < 0 ? 0 : d.value))
+      .text(d => {
+        const value = `${dataCache.type === 'river' && d.value < 0 ? 0 : d.value.toFixed(2)}m`
+        const time = timeFormat('%-I:%M%p')(new Date(d.dateTime)).toLowerCase()
+        const date = timeFormat('%e %b')(new Date(d.dateTime))
+        return `${value} ${time}, ${date}`
+      })
 
     // Hide x axis labels that overlap with time now label
     const timeNowX = timeLabel.node().getBoundingClientRect().left
@@ -201,19 +206,19 @@ function LineChart (containerId, stationId, data, options = {}) {
     cell.setAttribute('focusable', false)
     cell.removeAttribute('id')
     nextCell.setAttribute('focusable', true)
-    nextCell.id = 'focussed-cell'
+    // nextCell.id = 'focussed-cell'
     cell.tabIndex = -1
     nextCell.tabIndex = 0
     nextCell.focus()
     dataPoint = significantPoints[nextIndex]
     // Below needed to change zIndex of focussed point
-    svg.select('.focussed-cell').remove()
-    svg.insert('use', '.significant + *')
-      .attr('aria-hidden', true)
-      .attr('focusable', false)
-      .attr('tabindex', -1)
-      .attr('class', 'focussed-cell')
-      .attr('xlink:href', '#focussed-cell')
+    // svg.select('.focussed-cell').remove()
+    // svg.insert('use', '.significant + *')
+    //   .attr('aria-hidden', true)
+    //   .attr('focusable', false)
+    //   .attr('tabindex', -1)
+    //   .attr('class', 'focussed-cell')
+    //   .attr('xlink:href', '#focussed-cell')
   }
 
   const getDataPointByX = (x) => {
@@ -286,7 +291,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   const showThreshold = (threshold) => {
     thresholdsContainer.selectAll('.threshold').classed('threshold--selected', false)
     threshold.classed('threshold--selected', true)
-    svg.select('.focussed-cell').remove()
+    // svg.select('.focussed-cell').remove()
   }
 
   const hideThreshold = () => {
@@ -459,7 +464,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     .attr('focusable', 'false')
 
   // Clip path to visually hide text
-  const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', -5).attr('y', 0)
+  // const clipText = svg.append('defs').append('clipPath').attr('id', 'clip-text').append('rect').attr('x', -5).attr('y', 0)
 
   // Add grid containers
   svg.append('g').attr('class', 'y grid').attr('aria-hidden', true)
@@ -468,9 +473,9 @@ function LineChart (containerId, stationId, data, options = {}) {
   svg.append('g').attr('class', 'y axis').attr('aria-hidden', true).style('text-anchor', 'start')
 
   // Add containers for observed and forecast lines
-  const inner = svg.append('g') // .attr('clip-path', 'url(#clip-text)')
-  inner.append('g').attr('class', 'observed observed-focus').attr('aria-hidden', true)
-  inner.append('g').attr('class', 'forecast').attr('aria-hidden', true)
+  const inner = svg.append('g').attr('class', 'inner').attr('aria-hidden', true) // .attr('clip-path', 'url(#clip-text)')
+  inner.append('g').attr('class', 'observed observed-focus')
+  inner.append('g').attr('class', 'forecast')
   const observedArea = inner.select('.observed').append('path').attr('class', 'observed-area')
   const observedLine = inner.select('.observed').append('path').attr('class', 'observed-line')
   const forecastArea = inner.select('.forecast').append('path').attr('class', 'forecast-area')
@@ -478,18 +483,18 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   // Add timeline
   const timeLine = svg.append('line').attr('class', 'time-line').attr('aria-hidden', true)
-  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('x', -26).attr('aria-hidden', true)
+  const timeLabel = svg.append('text').attr('class', 'time-now-text').attr('aria-hidden', true)
   timeLabel.append('tspan').attr('class', 'time-now-text__time')
   timeLabel.append('tspan').attr('text-anchor', 'middle').attr('class', 'time-now-text__date').attr('x', 0).attr('dy', '15')
 
   // Add locator
-  const locator = inner.append('g').attr('class', 'locator').attr('aria-hidden', true)
+  const locator = inner.append('g').attr('class', 'locator')
   locator.append('line').attr('class', 'locator-line')
   locator.append('circle').attr('r', 4.5).attr('class', 'locator-point')
 
   // Add thresholds and significant containers
   const thresholdsContainer = svg.append('g').attr('class', 'thresholds')
-  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').attr('clip-path', 'url(#clip-text)').append('g').attr('role', 'row')
+  const significantContainer = svg.append('g').attr('class', 'significant').attr('role', 'grid').append('g').attr('role', 'row') // .attr('clip-path', 'url(#clip-text)')
 
   // Add tooltip container
   const tooltip = svg.append('g').attr('class', 'tooltip').attr('aria-hidden', true)
@@ -566,7 +571,8 @@ function LineChart (containerId, stationId, data, options = {}) {
   // Events
   //
 
-  mobileMediaQuery.addEventListener('change', (e) => {
+  // addListener deprectaed but required or ie11 and Safari < 14
+  mobileMediaQuery[mobileMediaQuery.addEventListener ? 'addEventListener' : 'addListener']('change', (e) => {
     isMobile = e.matches
     hideTooltip()
     renderChart()
@@ -582,7 +588,7 @@ function LineChart (containerId, stationId, data, options = {}) {
   document.addEventListener('click', (e) => {
     // Hide points and focussed cell
     significantContainer.node().parentNode.classList.remove('significant--visible')
-    svg.select('.focussed-cell').remove()
+    // svg.select('.focussed-cell').remove()
     // Add threshold button
     if (!e.target.hasAttribute('data-threshold-add')) return
     const button = e.target
@@ -598,9 +604,11 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   document.addEventListener('keydown', (e) => {
     interfaceType = 'keyboard'
-    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
-    if (!(e.target.classList.contains('point') && keys.includes(e.key))) return // DB: Needs to be more specific
+    const gridKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!(e.target.classList.contains('point') && gridKeys.includes(e.key))) return // DB: Needs to be more specific
     e.preventDefault()
+    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End']
+    if (!keys.includes(e.key)) return
     swapCell(e)
     showTooltip(10)
   })
@@ -661,6 +669,10 @@ function LineChart (containerId, stationId, data, options = {}) {
       // Reinstate default threshold?
       showThreshold(thresholdsContainer.select(`[data-id="${threshold.id}"]`))
     }
+    // Hide significant points
+    significantContainer.node().parentNode.classList.remove('significant--visible')
+    // Remove focussed significant point
+    // svg.select('.focussed-cell').remove()
   }, true)
 
   container.addEventListener('mouseleave', (e) => {
@@ -678,7 +690,12 @@ function LineChart (containerId, stationId, data, options = {}) {
     showTooltip(pointer(e)[1])
   })
 
+  let lastClientX, lastClientY
   svg.on('mousemove', (e) => {
+    // Safari bug where modifier keys trigger mousemove
+    if (lastClientX === e.clientX && lastClientY === e.clientY) return
+    lastClientX = e.clientX
+    lastClientY = e.clientY
     if (!xScale || e.target.closest('.threshold')) return
     if (interfaceType === 'touch') {
       interfaceType = 'mouse'

@@ -18,6 +18,7 @@ class Level {
     this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
     this.latestState = data.latest_state
     this.latestDatetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
+    this.latestStatus = data.latest_status
     this.lon = data.lon
     this.lat = data.lat
     this.isMultiStage = Boolean(data.is_multi_stage)

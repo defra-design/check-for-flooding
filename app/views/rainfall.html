@@ -17,7 +17,7 @@
 </div>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav class="defra-navbar defra-navbar--secondary govuk-!-margin-top-2" aria-label="Related levels">
+    <nav class="defra-navbar defra-navbar--secondary" aria-label="Related levels">
       <div class="defra-navbar__inner">
         <span id="map"></span>
         <div class="defra-navbar__group">
@@ -60,18 +60,18 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-0">
-        <span data-toggletip data-toggletip-content="We get readings more often as the risk of flooding increases">
-        Totals upto {{ model.time }}
-        </span>
-      </h2>
+      <div class="govuk-!-margin-top-4" data-toggletip data-toggletip-label="More information about totals upto" data-toggletip-content="We get readings more often as the risk of flooding increases">
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+          Totals upto {{ model.time }}
+        </h2>
+      </div>
       <dl class="defra-flood-statistics__list" aria-label="Recent totals">
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key">
             1 hour
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span data-toggletip data-toggletip-content="Total for the hour upto {{ model.time }}">
+            <span data-toggletip data-toggletip-label="More information about the 1 hour total" data-toggletip-content="Total for the hour upto {{ model.time }}">
             {{ model.station.rainfall1hr }}mm
             </span>
           </dd>
@@ -81,7 +81,7 @@
             6 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span data-toggletip data-toggletip-content="Total for the 6 hours upto {{ model.time }}">
+            <span data-toggletip data-toggletip-label="More information about the 6 hour total" data-toggletip-content="Total for the 6 hours upto {{ model.time }}">
             {{ model.station.rainfall6hr }}mm
             </span>
           </dd>
@@ -91,7 +91,7 @@
             24 hours
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span data-toggletip data-toggletip-content="Total for the 24 hours upto {{ model.time }}">
+            <span data-toggletip data-toggletip-label="More information about the 24 hour total" data-toggletip-content="Total for the 24 hours upto {{ model.time }}">
             {{ model.station.rainfall24hr }}mm
             </span>
           </dd>
@@ -106,8 +106,8 @@
     <div class="defra-bar-chart govuk-!-margin-bottom-4">
       <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Rainfall over the last 5 days in millimetres</h2>
       <div id="bar-chart" class="defra-bar-chart__container"></div>
-      <a href="" class="defra-link-icon-s govuk-!-margin-bottom-4" download>
-        <svg width="13" height="20" viewBox="0 0 13 20"><rect x="0" y="1.5" width="10.5" height="14.5" style="fill: currentColor"/><path d="M2,18.5L13,18.5L13,3.5L11.5,3.5L11.5,17.009L2,17.009L2,18.5Z" style="fill: currentColor"/></svg>Download data CSV (123KB)
+      <a href="" class="defra-button-secondary defra-button-secondary--icon govuk-!-margin-bottom-4" download>
+        <svg width="14" height="20" viewBox="0 0 14 20"><path d="M1.929 9L7 14.071 12.071 9M7 14.071V1M1 18h12" fill="none" stroke="currentColor" stroke-width="2"/></svg>Download data CSV (123KB)
       </a>
     </div>
   </div>
