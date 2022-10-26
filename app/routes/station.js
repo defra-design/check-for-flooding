@@ -49,7 +49,7 @@ router.get('/station/:id', async (req, res) => {
       value: station.levelHigh,
       date: null
     }
-    ], station.status === 'active' ? station.latestHeight : null)
+    ], station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
   } else {
     // Return 500 error
   }

@@ -27,7 +27,7 @@
     {% endif %}
     {% if not item.isWales %}
     <span class="defra-flood-levels-table-meta">
-      {% if item.latestDatetime %}
+      {% if item.latestStatus == 'success' and item.latestDatetime %}
       {% if item.type === 'rainfall' %}Totals upto{% else %}Latest at{% endif %} {{ item.latestDatetime }}
       {% else %}
       Data not available
@@ -51,14 +51,14 @@
   <!-- Sea or tide -->
   {% elif item.type == 'tide' %}
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
-    {% if item.latestHeight %}
+    {% if item.latestStatus == 'success' and item.latestHeight %}
     <span class="defra-flood-levels-table-numeric">{{ item.latestHeight | toFixed(2) }}m</span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</a>
     {% endif %}
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
-    {% if item.latestTrend %}
+    {% if item.latestStatus == 'success' and item.latestTrend %}
     <span class="defra-flood-levels-table-trend">
       <span class="defra-flood-levels-table-trend__icon defra-flood-levels-tables-trend__icon--{{ item.latestTrend }}">
         <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
@@ -86,7 +86,7 @@
   <!-- River or groundwater -->
   {% else %}
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--height" role="cell">
-    {% if item.latestHeight | isNumber %}
+    {% if item.latestStatus == 'success' and item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-numeric">
       {% if item.latestHeight <= 0 and item.type == 'river' %}
       ≤ 0m
@@ -99,7 +99,7 @@
     {% endif %}
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--trend" role="cell">
-    {% if item.latestTrend %}
+    {% if item.latestStatus == 'success' and item.latestTrend %}
     <span class="defra-flood-levels-table-trend">
       <span class="defra-flood-levels-table-trend__icon defra-flood-levels-tables-trend__icon--{{ item.latestTrend }}">
         <svg width="16" height="16" viewBox="0 0 16 16" style="fill:currentColor">
@@ -121,7 +121,7 @@
     {% endif %}
   </td>
   <td class="defra-flood-levels-table__cell defra-flood-levels-table__cell--state" role="cell">
-    {% if item.latestHeight | isNumber %}
+    {% if item.latestStatus == 'success' and item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-state defra-flood-levels-table-state--{% if item.latestState == 'high' %}blue{% else %}grey{% endif %}">{{ item.latestState | capitalize }}</span>
     {% else %}
     <span class="defra-flood-levels-table-na">n/a</span>
