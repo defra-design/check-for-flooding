@@ -65,7 +65,7 @@ function LiveMap (mapId, options) {
     // Get layers from querystring
     if (getParameterByName('lyr')) {
       state.layers = getParameterByName('lyr').split(',')
-      // Set key input states
+      // Set input states in the key
       const inputs = document.querySelectorAll('.defra-map-key input')
       forEach(inputs, (input) => { input.checked = state.layers.includes(input.id) })
     }
@@ -328,7 +328,7 @@ function LiveMap (mapId, options) {
     return env.render('info-live.html', { model: properties })
   }
 
-  // Get feature by id or point, requires state.warnings
+  // Get feature by id or point, requires warnings object
   const getFeatureInView = (point, id, warnings) => {
     let feature = map.queryRenderedFeatures(point, {
       layers: featureLayers,
@@ -337,7 +337,9 @@ function LiveMap (mapId, options) {
     }).find(f => f !== undefined)
     if (feature && feature.source === 'polygons') {
       feature = warnings.find(f => f.properties.id === feature.id)
-      feature.layer = { id: 'warnings' }
+      if (feature) {
+        feature.layer = { id: 'warnings' }
+      }
     }
     return feature
   }
@@ -399,6 +401,8 @@ function LiveMap (mapId, options) {
     xhr(uri, (err, response) => {
       if (err) {
         console.log('Error: ' + err)
+        // Continue without warnings or display an error?
+        setFeatureVisibility()
       } else {
         callback(response)
       }

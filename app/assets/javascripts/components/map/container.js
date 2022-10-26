@@ -297,7 +297,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   const removeCanvasAttributes = () => {
     // Remove unecessary elements
-    containerElement.getElementsByClassName('maplibregl-control-container')[0].remove()
+    const controlContainer = containerElement.getElementsByClassName('maplibregl-control-container')[0]
+    controlContainer.parentNode.removeChild(controlContainer)
     const canvas = containerElement.getElementsByClassName('mapboxgl-canvas')[0]
     canvas.removeAttribute('class')
     canvas.removeAttribute('tabindex')
