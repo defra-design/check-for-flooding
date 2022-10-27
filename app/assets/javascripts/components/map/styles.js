@@ -60,7 +60,7 @@ const createIconStyle = (options) => {
   options = Object.assign({}, defaults, options)
   return new Style({
     image: new Icon({
-      src: '/public/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols.png',
       size: options.size,
       anchor: options.anchor,
       offset: options.offset,
@@ -182,7 +182,7 @@ window.flood.maps.styles = {
         const arrow = new Style({
           geometry: new Point(end),
           image: new Icon({
-            src: '/public/images/map-symbols-2x.png',
+            src: '/public/images/map-symbols.png',
             size: [100, 100],
             anchor: [0.5, 0.5],
             offset: [0, 2000],
@@ -280,7 +280,7 @@ window.flood.maps.styles = {
     ],
     symbol: {
       symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols.png',
       size: 50,
       rotateWithView: false,
       offset: [0, 0],
@@ -296,7 +296,7 @@ window.flood.maps.styles = {
   stationsJSON: {
     symbol: {
       symbolType: 'image',
-      src: '/public/images/map-symbols-2x.png',
+      src: '/public/images/map-symbols.png',
       size: 50,
       rotateWithView: false,
       offset: [0, 0],

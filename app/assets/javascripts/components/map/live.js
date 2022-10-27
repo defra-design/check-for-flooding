@@ -52,7 +52,7 @@ function LiveMap (mapId, options) {
   const osLogoImage = document.createElement('img')
   osLogoImage.className = 'defra-map-os-logo'
   osLogoImage.setAttribute('alt', 'Ordnance Survey logo')
-  osLogoImage.src = '/public/images/os-logo-maps-2x.png'
+  osLogoImage.src = '/public/images/map-os-logo.png'
   osLogoImage.width = 90
   osLogoImage.height = 24
   const osLogo = new Control({
