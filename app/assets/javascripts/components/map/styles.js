@@ -3,6 +3,7 @@
 Sets up the window.flood.maps styles objects
 */
 import { Style, Icon, Fill, Stroke, Text, Circle } from 'ol/style'
+import { asString as colorAsString } from 'ol/color'
 import Point from 'ol/geom/Point'
 const { getParameterByName } = window.flood.utils
 
@@ -139,30 +140,31 @@ window.flood.maps.styles = {
       const isGroundwater = warning.getId().substring(6, 9) === 'FAG'
 
       // Defaults
+      const strokeColour = isSelected ? colorAsString([11, 12, 12, 0.65]) : 'transparent'
       let fillColour = 'transparent'
       let zIndex = 1
 
       switch (severity) {
         case 1: // Severe warning
-          fillColour = `rgba(140, 20, 25, ${alpha})`
+          fillColour = colorAsString([140, 20, 25, alpha])
           zIndex = 11
           break
         case 2: // Warning
-          fillColour = `rgba(227, 0, 15, ${alpha})`
+          fillColour = colorAsString([227, 0, 15, alpha])
           zIndex = 10
           break
         case 3: // Alert
-          fillColour = `rgb(241, 135, 0, ${alpha})`
+          fillColour = colorAsString([241, 135, 0, alpha])
           zIndex = isGroundwater ? 4 : 7
           break
         default: // Removed or inactive
-          fillColour = `rgb(130, 151, 167, ${alpha})`
+          fillColour = colorAsString([130, 151, 167, alpha])
           zIndex = 1
       }
       zIndex = isSelected ? zIndex + 2 : zIndex
       return new Style({
         stroke: new Stroke({
-          color: isSelected ? 'rgb(11, 12, 12, 0.65)' : 'transparent',
+          color: strokeColour,
           width: 2
         }),
         fill: new Fill({
