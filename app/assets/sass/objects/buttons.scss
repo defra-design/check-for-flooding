@@ -36,7 +36,7 @@ button.defra-button-secondary {
     &:focus {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
-        box-shadow: 0 4px 0 govuk-colour('black');
+        box-shadow: 0 2px 0 govuk-colour('black');
         outline: 3px solid transparent;
     }
     &--icon {
