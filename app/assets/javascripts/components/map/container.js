@@ -222,8 +222,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
       mapSibling.classList.remove('defra-map-visibility-hidden')
     })
     // Remove map and return focus
-    // containerElement.parentNode.removeChild(containerElement)
-    containerElement.remove()
+    const containerElement = document.querySelector(`#${mapId}`)
+    if (containerElement) {
+      containerElement.parentNode.removeChild(containerElement)
+    }
     const button = document.getElementById(mapId + '-btn')
     button.focus()
     // Remove any document or window listeners
@@ -589,7 +591,8 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Remove map on popsate change
   const popstate = (e) => {
-    if (document.querySelector(`#${mapId}`)) removeContainer() // Safari fires popstate on page load
+    // Safari fires popstate on page load
+    if (!window.history.state || window.history.state?.v === '') removeContainer()
   }
   window.addEventListener('popstate', popstate)
 
