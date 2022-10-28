@@ -55,21 +55,6 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   mapLabel.innerText = options.heading || 'Map view'
   containerElement.appendChild(mapLabel)
 
-  // Remove default controls
-  // const controls = defaultControls({
-  //   zoom: false,
-  //   rotate: false,
-  //   attribution: false
-  // })
-
-  // Render map
-  // const map = new Map({
-  //   target: containerElement,
-  //   layers: options.layers,
-  //   view: options.view,
-  //   controls: controls
-  // })
-
   // Define viewport
   const viewport = document.createElement('div')
   viewport.id = 'viewport'
@@ -225,31 +210,30 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   }
 
   const removeContainer = () => {
-    if (containerElement) { // Safari fires popstate on page load
-      // Reinstate document properties
-      document.title = options.originalTitle
-      // Unlock body scroll
-      document.body.classList.remove('defra-map-body')
-      document.documentElement.classList.remove('defra-map-html')
-      clearAllBodyScrollLocks()
-      // Re-instate aria-hidden elements
-      forEach(mapSiblings, (mapSibling) => {
-        mapSibling.removeAttribute('aria-hidden')
-        mapSibling.classList.remove('defra-map-visibility-hidden')
-      })
-      // Remove map and return focus
-      containerElement.parentNode.removeChild(containerElement)
-      const button = document.getElementById(mapId + '-btn')
-      button.focus()
-      // Remove any document or window listeners
-      window.removeEventListener('keydown', manageTabRings)
-      window.removeEventListener('keydown', manageZoomPan)
-      window.removeEventListener('keyup', manageEscapeKeyPress)
-      window.removeEventListener('popstate', popstate)
-      window.removeEventListener('resize', windowResize)
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', visualViewportResize)
-      }
+    // Reinstate document properties
+    document.title = options.originalTitle
+    // Unlock body scroll
+    document.body.classList.remove('defra-map-body')
+    document.documentElement.classList.remove('defra-map-html')
+    clearAllBodyScrollLocks()
+    // Re-instate aria-hidden elements
+    forEach(mapSiblings, (mapSibling) => {
+      mapSibling.removeAttribute('aria-hidden')
+      mapSibling.classList.remove('defra-map-visibility-hidden')
+    })
+    // Remove map and return focus
+    // containerElement.parentNode.removeChild(containerElement)
+    containerElement.remove()
+    const button = document.getElementById(mapId + '-btn')
+    button.focus()
+    // Remove any document or window listeners
+    window.removeEventListener('keydown', manageTabRings)
+    window.removeEventListener('keydown', manageZoomPan)
+    window.removeEventListener('keyup', manageEscapeKeyPress)
+    window.removeEventListener('popstate', popstate)
+    window.removeEventListener('resize', windowResize)
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', visualViewportResize)
     }
   }
 
@@ -297,9 +281,10 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   const removeCanvasAttributes = () => {
     // Remove unecessary elements
-    const controlContainer = containerElement.getElementsByClassName('maplibregl-control-container')[0]
+    const canvas = containerElement.querySelector('.mapboxgl-canvas')
+    const controlContainer = containerElement.querySelector('.maplibregl-control-container')
+    if (!canvas && !controlContainer) return
     controlContainer.parentNode.removeChild(controlContainer)
-    const canvas = containerElement.getElementsByClassName('mapboxgl-canvas')[0]
     canvas.removeAttribute('class')
     canvas.removeAttribute('tabindex')
     canvas.removeAttribute('aria-label')
@@ -604,7 +589,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
 
   // Remove map on popsate change
   const popstate = (e) => {
-    removeContainer()
+    if (document.querySelector(`#${mapId}`)) removeContainer() // Safari fires popstate on page load
   }
   window.addEventListener('popstate', popstate)
 

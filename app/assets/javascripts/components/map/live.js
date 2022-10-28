@@ -4,7 +4,6 @@
 // and other layers in the future e.g. Impacts.
 
 // It uses the MapContainer
-// import mapSymbolsImage from './map-symbols.png'
 import { LngLatBounds, LngLat } from 'maplibre-gl'
 
 const { addOrUpdateParameter, getParameterByName, forEach, xhr } = window.flood.utils
@@ -449,7 +448,7 @@ function LiveMap (mapId, options) {
     bounds: ext,
     centre: options.centre,
     zoom: 10,
-    queryParamKeys: ['v', 'lyr', 'ext', 'fid'],
+    queryParamKeys: ['v', 'lyr', 'ext', 'fid', 'rid'],
     originalTitle: options.originalTitle,
     title: options.title,
     heading: options.heading,
@@ -469,7 +468,7 @@ function LiveMap (mapId, options) {
   const openKeyButton = container.openKeyButton
 
   // Store extent for use with reset button
-  state.initialExt = window.history.state.initialExt || maps.getExtentFromBounds(map.getBounds())
+  state.initialExt = window.history.state?.initialExt || maps.getExtentFromBounds(map.getBounds())
 
   toggleKeySymbol()
 
@@ -655,12 +654,12 @@ maps.createLiveMap = (mapId, options = {}) => {
   options.title = options.heading + ' - Check for flooding - GOV.UK'
 
   // Set initial history state
-  if (!window.history.state) {
-    const data = {}
-    const title = options.title // document.title
-    const uri = window.location.href
-    window.history.replaceState(data, title, uri)
-  }
+  // if (!window.history.state) {
+  //   const data = {}
+  //   const title = options.title // document.title
+  //   const uri = window.location.href
+  //   window.history.replaceState(data, title, uri)
+  // }
 
   // Build default uri
   let uri = window.location.href
@@ -725,13 +724,16 @@ maps.createLiveMap = (mapId, options = {}) => {
   window.addEventListener('popstate', (e) => {
     if (e.state && e.state.v === mapId) {
       options.isBack = window.history.state.isBack
+      // Safari bfcache behaviour
+      const mapLive = document.querySelector('#map-live')
+      if (mapLive) mapLive.remove()
       return new LiveMap(e.state.v, options)
     }
   })
 
   // Recreate map on page refresh
   if (window.flood.utils.getParameterByName('v') === mapId) {
-    options.isBack = window.history.state.isBack
+    options.isBack = window.history.state && window.history.state.isBack
     return new LiveMap(mapId, options)
   }
 }
