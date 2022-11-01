@@ -39,6 +39,11 @@ button.defra-button-secondary {
         box-shadow: 0 2px 0 govuk-colour('black');
         outline: 3px solid transparent;
     }
+    &:not([keyboard-focus]):focus {
+        background-color: white;
+        border: 1px solid govuk-colour('mid-grey');
+        box-shadow: none;
+    }
     &--icon {
         padding-left: 31px;
         svg {
