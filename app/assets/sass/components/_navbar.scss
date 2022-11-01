@@ -80,7 +80,8 @@
     margin-right: 15px;
     &:not([keyboard-focus]):focus {
       background-color: white;
-      border-color: govuk-colour('mid-grey');
+      // border-color: govuk-colour('mid-grey');
+      border: 0px;
       color: govuk-colour('black');
       box-shadow: none;
       text-decoration: underline;
@@ -156,6 +157,7 @@
         background-color: white;
         color: $govuk-link-colour;
         box-shadow: none;
+        border: 0px;
       }
       &:after {
         content: 'Map';
