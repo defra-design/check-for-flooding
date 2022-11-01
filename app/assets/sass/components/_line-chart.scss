@@ -292,10 +292,13 @@
     .point text {
         font-size: 0;
     }
-    .point:focus circle {
-        fill: govuk-colour('black');
-        stroke: govuk-colour('yellow');
-        paint-order: stroke;
-        stroke-width: 10;
+    .point:focus {
+        outline: 3px solid transparent;
+        circle {
+            fill: govuk-colour('black');
+            stroke: govuk-colour('yellow');
+            paint-order: stroke;
+            stroke-width: 10;
+        }
     }
 }
