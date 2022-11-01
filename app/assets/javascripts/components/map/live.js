@@ -653,14 +653,6 @@ maps.createLiveMap = (mapId, options = {}) => {
   options.heading = 'Live flood map'
   options.title = options.heading + ' - Check for flooding - GOV.UK'
 
-  // Set initial history state
-  // if (!window.history.state) {
-  //   const data = {}
-  //   const title = options.title // document.title
-  //   const uri = window.location.href
-  //   window.history.replaceState(data, title, uri)
-  // }
-
   // Build default uri
   let uri = window.location.href
   uri = addOrUpdateParameter(uri, 'v', mapId)
@@ -725,8 +717,8 @@ maps.createLiveMap = (mapId, options = {}) => {
     if (e.state && e.state.v === mapId) {
       options.isBack = window.history.state.isBack
       // Safari bfcache behaviour
-      const mapLive = document.querySelector('#map-live')
-      if (mapLive) mapLive.remove()
+      const container = document.getElementById(mapId)
+      if (container) container.remove()
       return new LiveMap(e.state.v, options)
     }
   })
