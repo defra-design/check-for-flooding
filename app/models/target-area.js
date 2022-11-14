@@ -23,6 +23,7 @@ const matchedLevels = []
 
 const parseMessage = (message, levels) => {
   // Match specific patterns but only once for a level
+  if (!message) return
   levels.forEach(level => {
     const patterns = [
       { find: `${level.name} river gauge`, replace: `<a href="/station/${level.id}">${level.name} river gauge</a>` },
