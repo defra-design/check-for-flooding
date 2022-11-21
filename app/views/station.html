@@ -84,7 +84,7 @@
           </dt>
           <dd class="defra-flood-statistics__value">
             <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the height" data-toggletip-content="{{ model.infoHeight }}"{% endif %}>
-            {% if model.station.latestHeight <= 0 and model.station.type != 'tide' %}&le; 0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
+            {% if model.station.latestHeight <= 0 and model.station.type != 'tide' %}0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
             </span>
           </dd>
         </div>
@@ -104,7 +104,7 @@
         {% if model.station.levelHigh and model.station.levelLow  %}
         <div class="defra-flood-statistics__item"> 
           <dt class="defra-flood-statistics__key">
-            State
+            Current state
           </dt>
           <dd class="defra-flood-statistics__value">
             <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the state" data-toggletip-content="{{ model.infoState }}"{% endif %}>
