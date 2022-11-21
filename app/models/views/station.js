@@ -34,11 +34,11 @@ class ViewModel {
       })()
       this.infoTrend = (() => {
         if (station.latestTrend === 'rising') {
-          return 'The last 2 readings indicate the trend'
+          return 'The last 2 readings indicate the trend.'
         } else if (station.latestTrend === 'falling') {
-          return 'The last 2 readings indicate the trend'
+          return 'The last 2 readings indicate the trend.'
         } else {
-          return 'The last 2 readings indicate the trend'
+          return 'The last 2 readings indicate the trend.'
         }
       })()
       this.infoState = (() => {
