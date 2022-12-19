@@ -19,6 +19,21 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
 
 {% block content %}
 
+{% if model.showBingError %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="defra-service-error govuk-!-margin-bottom-6">
+      <h1 class="defra-service-error__title" id="error-summary-title">
+        Heading
+      </h1>
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        Message
+      </p>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds{% if model.isErrorBing %} govuk-!-padding-bottom-8{% endif %}">
     {% if model.isErrorBing %}

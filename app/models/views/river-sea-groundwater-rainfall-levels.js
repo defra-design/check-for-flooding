@@ -17,6 +17,10 @@ class ViewModel {
     this.riverId = rivers.length === 1 && !places.length && !catchments.length ? this.river.id : null
     this.bingApiKey = bingApiKey
     this.nrwURL = nrwURL
+    // Test
+    if (this.querySearch.toLocaleLowerCase() === 'frome') {
+      this.showBingError = true
+    }
     // Results
     this.isSinglePlace = places.length === 1 && !rivers.length && !catchments.length
     this.isSingleRiver = rivers.length === 1 && !places.length && !catchments.length
