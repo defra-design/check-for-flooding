@@ -326,6 +326,7 @@ function LiveMap (mapId, options) {
   const getWarningPolygonsIntersectingExtent = (extent) => {
     const warningsPolygons = []
     vectorTiles.getSource().getFeaturesInExtent(extent).forEach(feature => {
+      if (feature.get('layer') !== 'targetareas') return
       const warning = warnings.getSource().getFeatureById(feature.getId())
       if (warning && warning.get('isVisible') === 'true') {
         const warningsPolygon = new Feature({

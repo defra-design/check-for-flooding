@@ -86,7 +86,7 @@ window.flood.maps.layers = {
           idProperty: 'id',
           featureClass: Feature
         }),
-        url: '/tiles/target-areas/{z}/{x}/{y}.pbf',
+        url: '/service/vector-tiles/{z}/{x}/{y}.pbf',
         maxZoom: 12
       }),
       declutter: true,

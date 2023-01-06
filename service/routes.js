@@ -191,8 +191,24 @@ router.get('/service/geojson/:type', async (req, res, next) => {
   }
 })
 
-// Vector tiles
-router.get('/tiles/target-areas/:z/:x/:y.pbf', async (req, res, next) => {
+// Vector tiles - dynamic from Postgres
+// router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
+//   const { x, y, z } = req.params
+//   try {
+//     const tiles = await mapServices.getVectorTile(x, y, z)
+//     const tile = tiles[0]
+//     res.setHeader('Content-Type', 'application/x-protobuf')
+//     if (tile.st_asmvt.length === 0) {
+//       res.status(204)
+//     }
+//     res.send(tile.st_asmvt)
+//   } catch (err) {
+//     res.status(404).send({ error: err.toString() })
+//   }
+// })
+
+// Vector tiles - static from file system
+router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
   const { x, y, z } = req.params
   fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {
     if (err) {

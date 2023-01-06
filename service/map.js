@@ -1,4 +1,6 @@
 const db = require('./db')
+const SphericalMercator = require('@mapbox/sphericalmercator')
+const mercator = new SphericalMercator({ size: 256 })
 const places = require('./data/places.json')
 const outlookServices = require('./outlook')
 const OutlookGeoJSON = require('./models/outlook')
@@ -130,6 +132,47 @@ module.exports = {
       features: features
     }
     return geoJSON
+  },
+  // Vector tiles
+  getVectorTile: async (x, y, z) => {
+    const bbox = mercator.bbox(x, y, z, false)
+    const response = await db.query(`
+      (SELECT ST_AsMVT(q, 'targetareas', 4096, 'geom') FROM (
+        (SELECT 
+          fws_tacode AS id,
+          ST_AsMVTGeom(
+            ST_Force2D(geom),
+            ST_MakeEnvelope(${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, 4326),
+            4096,
+            256,
+            true
+          ) geom FROM flood_warning_areas)
+          UNION
+          (SELECT 
+            fws_tacode AS id,
+            ST_AsMVTGeom(
+              ST_Force2D(geom),
+              ST_MakeEnvelope(${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, 4326),
+              4096,
+              256,
+              true
+            ) geom FROM flood_alert_areas)
+        )
+      q) UNION 
+      (SELECT ST_AsMVT(q, 'rivers', 4096, 'geom') FROM (
+        SELECT 
+          river_id, name1, form,
+          ST_AsMVTGeom(
+            ST_Force2D(wkb_geometry),
+            ST_MakeEnvelope(${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, 4326),
+            4096,
+            256,
+            true
+          ) geom FROM river_line
+        )
+      q)
+    `)
+    return response
   },
 
   //
