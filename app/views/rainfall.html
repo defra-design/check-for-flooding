@@ -15,22 +15,6 @@
     </span>
   </p>
 </div>
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <nav class="defra-navbar defra-navbar--secondary" aria-label="Related levels">
-      <div class="defra-navbar__inner">
-        <span id="map"></span>
-        <div class="defra-navbar__group">
-          <ul class="defra-navbar__list">
-            <li class="defra-navbar__item">
-              <a href="/river-sea-groundwater-rainfall-levels?search={{ model.nearby }}">Nearby levels</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </nav>
-</div>
 {% endblock %}
 
 {% block content %}
@@ -49,11 +33,28 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
       {{ model.title }}
     </h1>
     <!-- <span class="govuk-caption-m">Measured {{ model.timeElapsed }}</span> -->
   </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <nav class="defra-navbar defra-navbar--secondary govuk-!-margin-bottom-3" aria-label="Related levels">
+      <div class="defra-navbar__inner">
+        <span id="map"></span>
+        <div class="defra-navbar__group">
+          <ul class="defra-navbar__list">
+            <li class="defra-navbar__item">
+              <a href="/river-sea-groundwater-rainfall-levels?search={{ model.nearby }}">Nearby levels</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
 </div>
 
 {% if model.telemetry.status == 'success' %}

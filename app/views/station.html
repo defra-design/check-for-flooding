@@ -15,9 +15,23 @@
     </span>
   </p>
 </div>
+{% endblock %}
+
+{% block content %}
+
+{% include "partials/station-banner.html" %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
+      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
+    </h1>
+  </div>
+</div>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <nav class="defra-navbar defra-navbar--secondary" aria-label="Related levels">
+    <nav class="defra-navbar defra-navbar--secondary govuk-!-margin-bottom-3" aria-label="Related levels">
       <div class="defra-navbar__inner">
         <span id="map"></span>
         <div class="defra-navbar__group">
@@ -39,19 +53,6 @@
         </div>
       </div>
     </nav>
-  </div>
-</div>
-{% endblock %}
-
-{% block content %}
-
-{% include "partials/station-banner.html" %}
-
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">
-      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
-    </h1>
   </div>
 </div>
 
