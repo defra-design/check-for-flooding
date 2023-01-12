@@ -31,4 +31,3 @@ if (document.getElementById('map-outlook')) {
 
 // Create WebChat
 const webChat = new WebChat('webchat')
-webChat.startChat()

@@ -24,6 +24,7 @@
     "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.10",
     "@mapbox/sphericalmercator": "^1.2.0",
+    "@nice-devone/nice-cxone-chat-web-sdk": "^1.0.0",
     "@turf/helpers": "^6.5.0",
     "@turf/intersect": "^6.5.0",
     "@turf/simplify": "^6.5.0",

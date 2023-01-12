@@ -50,7 +50,9 @@ module.exports = (env, argv) => ({
       'process.env': {
         NRW_URL: JSON.stringify(nrwUrl),
         BING_API_KEY: JSON.stringify(process.env.BING_API_KEY),
-        OS_API_KEY: JSON.stringify(process.env.OS_API_KEY)
+        OS_API_KEY: JSON.stringify(process.env.OS_API_KEY),
+        WEBCHAT_BRANDID: JSON.stringify(process.env.WEBCHAT_BRANDID),
+        WEBCHAT_CHANNELID: JSON.stringify(process.env.WEBCHAT_CHANNELID)
       }
     }),
     new webpack.NormalModuleReplacementPlugin(
