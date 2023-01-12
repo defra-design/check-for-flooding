@@ -6,6 +6,7 @@ const env = window.nunjucks.configure('views')
 class WebChat {
   constructor () {
     this.init()
+    document.addEventListener('click', this.#clickEvent, { capture: true })
   }
 
   async init () {
@@ -24,7 +25,7 @@ class WebChat {
     const container = document.getElementById('webchat')
     if (isOnline) {
       container.innerHTML = `
-        <button class="defra-webchat-start">
+        <button class="defra-webchat-start" data-webchat-start>
           <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><ellipse cx="10.004" cy="10" rx="10" ry="8"/><path d="M4.18 13.168l4.328 3.505L2 19.965l2.18-6.797z"/><g fill="#fff"><circle cx="5.5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="14.5" cy="10" r="1.5"/></g></svg>
           Chat now
         </button>
@@ -58,6 +59,31 @@ class WebChat {
     inner.appendChild(footer)
     container.appendChild(inner)
     document.body.appendChild(container)
+    this.container = container
+  }
+
+  startChat () {
+    this.createDOM()
+  }
+
+  endChat () {
+    this.container.remove()
+  }
+
+  //
+  // Events
+  //
+
+  // Click events
+  #clickEvent = (e) => {
+    const isStartChat = e.target.hasAttribute('data-webchat-start')
+    const isEndChat = e.target.hasAttribute('data-webchat-end')
+    if (isStartChat) {
+      this.startChat()
+    }
+    if (isEndChat) {
+      this.endChat()
+    }
   }
 }
 
