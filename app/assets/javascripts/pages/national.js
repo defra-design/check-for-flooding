@@ -9,6 +9,7 @@ import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
 import '../components/map/outlook'
+import WebChat from '../components/webchat'
 
 // Create LiveMap
 if (document.getElementById('map-live')) {
@@ -27,3 +28,7 @@ if (document.getElementById('map-outlook')) {
     days: window.flood.model.outlookDays
   })
 }
+
+// Create WebChat
+const webChat = new WebChat('webchat')
+webChat.startChat()

@@ -1,0 +1,103 @@
+.defra-webchat {
+  position: fixed;
+  display: flex;
+  flex-wrap: nowrap;
+  z-index: 999;
+  bottom: 0px;
+  right: 0px;
+  width: 360px;
+  height: 450px;
+  max-height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  &__inner {
+    flex: 0 0 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid govuk-colour('black');
+    box-sizing: border-box;
+  }
+  &__header {
+    flex: 0 0 0;
+    background-color: govuk-colour('black');
+    padding: 10px;
+    text-align: right;
+    h2 {
+      @include govuk-font($size: 19, $weight: bold);
+      margin: 0px;
+      color: white;
+    }
+  }
+  &__content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+  &__footer {
+    flex: 0 0 0;
+  }
+}
+.defra-webchat-end {
+  display: inline-block;
+  font-size: 16px;
+  color: white;
+  background-color: transparent;;
+  border: 0px solid transparent;
+  padding: 2px 0px 2px 3px;
+  margin: 0px;
+  cursor: pointer;
+  &:focus {
+    outline: 0px;
+  }
+  &[keyboard-focus] {
+    outline: 3px solid $govuk-focus-colour;
+  }
+  svg {
+    position: relative;
+    color: white;
+    vertical-align: middle;
+  }
+}
+.defra-webchat-message {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  padding: 10px;
+  &__textarea {
+    @extend .govuk-textarea;
+    flex: 1 1 auto;
+    align-self: flex-end;
+    margin: 0px;
+    max-height: 100px;
+  }
+  // &__send {
+  //   position: relative;
+  //   flex: 0 0 40px;
+  //   align-self: flex-end;
+  //   background-color: govuk-colour('blue');
+  //   border: 1px solid govuk-colour('blue');
+  //   padding: 0px;
+  //   margin: auto 0px 0px 0px;
+  //   box-shadow: none;
+  //   text-indent: -5000px;
+  //   width: 40px;
+  //   height: 40px;
+  //   svg {
+  //     position: absolute;
+  //     top: 50%;
+  //     left: 50%;
+  //     margin-left: -13px;
+  //     margin-top: -10px;
+  //     color: white;
+  //   }
+  // }
+}
+.defra-webchat-credit {
+  display: block;
+  @include govuk-font($size: 14);
+  color: $govuk-secondary-text-colour;
+  padding: 0px 10px 5px;
+}
+
