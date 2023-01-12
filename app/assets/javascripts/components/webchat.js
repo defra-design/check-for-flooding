@@ -73,13 +73,20 @@ class WebChat {
   }
 
   async startChat () {
-    const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
-    const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
-    const thread = await this.sdk.getThread(threadId)
-    console.log(thread)
+    // const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
+    // const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
+    // const thread = await this.sdk.getThread(threadId)
+    const thread = await this.sdk.getThread('thread-id')
     await thread.startChat()
+    thread.sendTextMessage('Dans test message 4')
+    console.log(thread)
     this.createDOM()
-    // await thread.sendTextMessage('Dans test message')
+
+    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, (e) => {
+      // Do something with the event
+      const threadId = e.detail.data.message.threadId
+      console.log(e.detail.data.message.threadId)
+    })
   }
 
   endChat () {
