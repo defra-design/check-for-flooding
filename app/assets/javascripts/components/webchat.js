@@ -20,6 +20,8 @@ class WebChat {
     const authResponse = await sdk.authorize()
     const customerId = authResponse?.consumerIdentity.idOnExternalPlatform
     localStorage.setItem('CUSTOMER_ID', customerId || '')
+    this.sdk = sdk
+    this.customerId = customerId
     // Add button
     const isOnline = authResponse?.channel.availability.status === 'online'
     const container = document.getElementById('webchat')
@@ -35,6 +37,14 @@ class WebChat {
         <p class="govuk-body">Web chat currently offline</p>
       `
     }
+    // Get thread id
+    // const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
+    // const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
+    // this.threadId = threadId
+  }
+
+  async getThread () {
+    const thread = await sdk.getThread('thread-id')
   }
 
   createDOM () {
@@ -62,8 +72,14 @@ class WebChat {
     this.container = container
   }
 
-  startChat () {
+  async startChat () {
+    const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
+    const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
+    const thread = await this.sdk.getThread(threadId)
+    console.log(thread)
+    await thread.startChat()
     this.createDOM()
+    // await thread.sendTextMessage('Dans test message')
   }
 
   endChat () {
