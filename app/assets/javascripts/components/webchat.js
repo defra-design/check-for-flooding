@@ -86,6 +86,8 @@ class WebChat {
       this.content.innerHTML = env.render('webchat-content.html', {
         model: { messages: recoveredData.messages.reverse() }
       })
+      // Scroll to bottom
+      this.content.scrollTop = this.content.scrollHeight
     }
     // Add events
     thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
