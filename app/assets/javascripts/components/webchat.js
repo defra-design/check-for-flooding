@@ -103,6 +103,15 @@ class WebChat {
     console.log('Send message: ', value)
   }
 
+  addMessage (message) {
+    const item = document.createElement('li')
+    item.innerText = message.text
+    const list = this.content.querySelector('[data-message-list]')
+    list.appendChild(item)
+    // Scroll content to bottom
+    this.content.scrollTop = this.content.scrollHeight
+  }
+
   //
   // Events
   //
@@ -138,12 +147,14 @@ class WebChat {
     // Storing threadId so we know chat has started, may be a better way to determin this
     const threadId = e.detail.data.thread.idOnExternalPlatform
     localStorage.setItem('THREAD_ID', threadId)
-    // Get message content
-    const text = e.detail.data.message.messageContent.text
-    // inbound for user, outbound for agent, may be another way to determin this
-    const direction = e.detail.data.message.direction
-    console.log(e)
+    // Add message to modal
+    const message = {
+      text: e.detail.data.message.messageContent.text,
+      direction: e.detail.data.message.direction
+    }
+    this.addMessage(message)
   }
+
 }
 
 export default WebChat

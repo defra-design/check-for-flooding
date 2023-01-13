@@ -29,5 +29,5 @@ if (document.getElementById('map-outlook')) {
   })
 }
 
-// Create WebChat
-const webChat = new WebChat('webchat')
+// Webchat
+const webchat = new WebChat('webchat')
