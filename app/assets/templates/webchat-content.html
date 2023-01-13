@@ -1,0 +1,5 @@
+<ul class="govuk-list">
+  {% for message in model.messages %}
+  <li>{{ message.messageContent.text }}</li>
+  {% endfor %}
+</ul>

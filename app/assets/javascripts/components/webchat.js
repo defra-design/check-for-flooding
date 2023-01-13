@@ -5,11 +5,10 @@ const env = window.nunjucks.configure('views')
 
 class WebChat {
   constructor () {
-    this.init()
-    document.addEventListener('click', this.#clickEvent, { capture: true })
+    this.initialise()
   }
 
-  async init () {
+  async initialise () {
     // Authorise
     const sdk = new ChatSdk({
       brandId: process.env.WEBCHAT_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
@@ -17,13 +16,19 @@ class WebChat {
       customerId: localStorage.getItem('CUSTOMER_ID') || '', // This must be generated on every page visit and should be unique to each contact.
       environment: EnvironmentName.EU1 // Your environment's region: AU1, CA1, EU1, JP1, NA1, UK1, or custom.
     })
+    this.sdk = sdk
     const authResponse = await sdk.authorize()
     const customerId = authResponse?.consumerIdentity.idOnExternalPlatform
     localStorage.setItem('CUSTOMER_ID', customerId || '')
-    this.sdk = sdk
     this.customerId = customerId
     // Add button
     const isOnline = authResponse?.channel.availability.status === 'online'
+    this.addButton(isOnline)
+    // Add events
+    document.addEventListener('click', this.#clickEvent, { capture: true })
+  }
+
+  addButton (isOnline) {
     const container = document.getElementById('webchat')
     if (isOnline) {
       container.innerHTML = `
@@ -37,17 +42,9 @@ class WebChat {
         <p class="govuk-body">Web chat currently offline</p>
       `
     }
-    // Get thread id
-    // const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
-    // const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
-    // this.threadId = threadId
   }
 
-  async getThread () {
-    const thread = await sdk.getThread('thread-id')
-  }
-
-  createDOM () {
+  createModal () {
     const container = document.createElement('div')
     container.className = 'defra-webchat'
     const inner = document.createElement('div')
@@ -70,34 +67,46 @@ class WebChat {
     container.appendChild(inner)
     document.body.appendChild(container)
     this.container = container
+    this.content = content
   }
 
   async startChat () {
-    // const newThreadId = `thread${Math.floor(Math.random() * 10000)}`
-    // const threadId = localStorage.getItem('THREAD_ID' || newThreadId)
-    // const thread = await this.sdk.getThread(threadId)
-    const thread = await this.sdk.getThread('thread-id')
-    await thread.startChat()
-    thread.sendTextMessage('Dans test message 4')
-    console.log(thread)
-    this.createDOM()
-
-    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, (e) => {
-      // Do something with the event
-      const threadId = e.detail.data.message.threadId
-      console.log(e.detail.data.message.threadId)
-    })
+    // Get thread
+    const thread = await this.sdk.getThread('thread')
+    // Start chat if not previously started
+    const threadId = localStorage.getItem('THREAD_ID')
+    if (!threadId) {
+      await thread.startChat()
+    }
+    // Show modal
+    this.createModal()
+    // Add previous messages
+    const recoveredData = await thread.recover()
+    if (recoveredData) {
+      this.content.innerHTML = env.render('webchat-content.html', {
+        model: { messages: recoveredData.messages.reverse() }
+      })
+    }
+    // Add events
+    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
+    document.addEventListener('keydown', this.#keydownEvent)
+    document.addEventListener('keyup', this.#keyupEvent)
+    this.thread = thread
   }
 
   endChat () {
     this.container.remove()
   }
 
+  sendMessage (value) {
+    this.thread.sendTextMessage(value)
+    console.log('Send message: ', value)
+  }
+
   //
   // Events
   //
 
-  // Click events
   #clickEvent = (e) => {
     const isStartChat = e.target.hasAttribute('data-webchat-start')
     const isEndChat = e.target.hasAttribute('data-webchat-end')
@@ -107,6 +116,33 @@ class WebChat {
     if (isEndChat) {
       this.endChat()
     }
+  }
+
+  #keydownEvent = (e) => {
+    const isSendMessage = e.target.hasAttribute('data-webchat-message')
+    if (e.key === 'Enter' && isSendMessage) {
+      e.preventDefault()
+    }
+  }
+
+  #keyupEvent = (e) => {
+    const isSendMessage = e.target.hasAttribute('data-webchat-message')
+    if (e.key === 'Enter' && isSendMessage) {
+      this.sendMessage(e.target.value)
+      e.target.value = ''
+    }
+  }
+
+  // This fires when both user and agent send a message
+  #messageCreatedEvent = (e) => {
+    // Storing threadId so we know chat has started, may be a better way to determin this
+    const threadId = e.detail.data.thread.idOnExternalPlatform
+    localStorage.setItem('THREAD_ID', threadId)
+    // Get message content
+    const text = e.detail.data.message.messageContent.text
+    // inbound for user, outbound for agent, may be another way to determin this
+    const direction = e.detail.data.message.direction
+    console.log(e)
   }
 }
 
