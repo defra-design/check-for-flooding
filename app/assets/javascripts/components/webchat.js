@@ -52,7 +52,7 @@ class WebChat {
   }
 
   addButton (isOnline) {
-    const container = document.getElementById('webchat')
+    const container = document.getElementById('webchat-button')
     if (isOnline) {
       container.innerHTML = `
         <button class="defra-webchat-start" data-webchat-start>
