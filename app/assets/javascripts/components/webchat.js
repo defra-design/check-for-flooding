@@ -1,11 +1,14 @@
 'use strict'
+import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { ChatSdk, EnvironmentName, Thread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
 
 const env = window.nunjucks.configure('views')
 
 class WebChat {
   constructor () {
+    this.webchatSiblings = document.querySelectorAll('body > *:not(.defra-webchat):not(script):not([aria-hidden="true"])')
     this.initialise()
+    window.addEventListener('popstate', this.#popstateEvent)
   }
 
   async initialise () {
@@ -26,6 +29,26 @@ class WebChat {
     this.addButton(isOnline)
     // Add events
     document.addEventListener('click', this.#clickEvent, { capture: true })
+    // Conditionaly open modal
+    if (window.location.hash === '#webchat') {
+      this.startChat()
+    }
+  }
+
+  hideSiblings () {
+    // Hide all modal siblings from screen readers
+    this.webchatSiblings.forEach(webchatSibling => {
+      webchatSibling.setAttribute('aria-hidden', 'true')
+      webchatSibling.classList.add('defra-webchat-visibility-hidden')
+    })
+  }
+
+  showSiblings () {
+    // Re-instate aria-hidden elements
+    this.webchatSiblings.forEach(webchatSibling => {
+      webchatSibling.removeAttribute('aria-hidden')
+      webchatSibling.classList.remove('defra-webchat-visibility-hidden')
+    })
   }
 
   addButton (isOnline) {
@@ -80,6 +103,11 @@ class WebChat {
     }
     // Show modal
     this.createModal()
+    // Lock body scroll
+    document.body.classList.add('defra-webchat-body')
+    document.documentElement.classList.add('defra-webchat-html')
+    this.hideSiblings()
+    // disableBodyScroll(content)
     // Add previous messages
     const recoveredData = await thread.recover()
     if (recoveredData) {
@@ -98,6 +126,11 @@ class WebChat {
 
   endChat () {
     this.container.remove()
+    // Unlock body scroll
+    document.body.classList.remove('defra-webchat-body')
+    document.documentElement.classList.remove('defra-webchat-html')
+    // clearAllBodyScrollLocks()
+    this.showSiblings()
   }
 
   sendMessage (value) {
@@ -123,6 +156,8 @@ class WebChat {
     const isEndChat = e.target.hasAttribute('data-webchat-end')
     if (isStartChat) {
       this.startChat()
+      // Push history state
+      window.history.pushState({ path: '#webchat' }, '', '#webchat')
     }
     if (isEndChat) {
       this.endChat()
@@ -157,6 +192,16 @@ class WebChat {
     this.addMessage(message)
   }
 
+  // Recreate webchat on browser history change
+  #popstateEvent = (e) => {
+    e.preventDefault()
+    const path = window.history?.state?.path
+    if (path === '#webchat') {
+      this.startChat()
+    } else {
+      this.endChat()
+    }
+  }
 }
 
 export default WebChat
