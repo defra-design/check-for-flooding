@@ -137,29 +137,29 @@
     flex: 1 1 auto;
     align-self: flex-end;
     margin: 0px;
-    max-height: 100px;
+    max-height: 40px;
   }
-  // &__send {
-  //   position: relative;
-  //   flex: 0 0 40px;
-  //   align-self: flex-end;
-  //   background-color: govuk-colour('blue');
-  //   border: 1px solid govuk-colour('blue');
-  //   padding: 0px;
-  //   margin: auto 0px 0px 0px;
-  //   box-shadow: none;
-  //   text-indent: -5000px;
-  //   width: 40px;
-  //   height: 40px;
-  //   svg {
-  //     position: absolute;
-  //     top: 50%;
-  //     left: 50%;
-  //     margin-left: -13px;
-  //     margin-top: -10px;
-  //     color: white;
-  //   }
-  // }
+  &__send {
+    position: relative;
+    flex: 0 0 40px;
+    align-self: flex-end;
+    background-color: govuk-colour('blue');
+    border: 1px solid govuk-colour('blue');
+    padding: 0px;
+    margin: auto 0px 0px 3px;
+    box-shadow: none;
+    text-indent: -5000px;
+    width: 40px;
+    height: 40px;
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -13px;
+      margin-top: -10px;
+      color: white;
+    }
+  }
 }
 .defra-webchat-credit {
   display: block;
