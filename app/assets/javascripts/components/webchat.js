@@ -25,11 +25,12 @@ class WebChat {
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
     // Add button
+    console.log(authResponse)
     const isOnline = authResponse?.channel.availability.status === 'online'
     this.addButton(isOnline)
     // Add events
     document.addEventListener('click', this.#clickEvent, { capture: true })
-    // Conditionaly open modal
+    // Conditionaly start chat
     if (window.location.hash === '#webchat') {
       this.startChat()
     }
@@ -141,6 +142,7 @@ class WebChat {
   addMessage (message) {
     const item = document.createElement('li')
     item.innerText = message.text
+    item.className = `defra-webchat-list__item defra-webchat-list__item--${message.direction}`
     const list = this.content.querySelector('[data-message-list]')
     list.appendChild(item)
     // Scroll content to bottom
@@ -187,7 +189,7 @@ class WebChat {
     // Add message to modal
     const message = {
       text: e.detail.data.message.messageContent.text,
-      direction: e.detail.data.message.direction
+      direction: e.detail.data.message.direction.toLowerCase()
     }
     this.addMessage(message)
   }
@@ -195,6 +197,8 @@ class WebChat {
   // Recreate webchat on browser history change
   #popstateEvent = (e) => {
     e.preventDefault()
+    if (!e.state) return
+    console.log(e)
     const path = window.history?.state?.path
     if (path === '#webchat') {
       this.startChat()

@@ -72,10 +72,34 @@
 }
 .defra-webchat-list {
   @extend .govuk-list;
-  @include govuk-font($size: 16);
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  font-family: $govuk-font-family-gds-transport;
+  font-size: 16px;
+  line-height: 20px;
   &__item {
-    margin: 0px;
-    padding: 10px;
+    display: block;
+    flex: 0 0 auto;
+    width: 75%;
+    margin: 5px 10px;
+    padding: 15px;
+    background-color: govuk-colour('light-grey');
+    border-radius: 10px;
+  }
+  &__item:first-child {
+    margin-top: 10px;
+  }
+  &__item:last-child {
+    margin-bottom: 10px;
+  }
+  &__item--inbound {
+    align-self: flex-end;
+    background-color: govuk-colour('blue');
+    color: white;
+  }
+  &__item--outbound {
+    align-self: flex-start;
   }
 }
 .defra-webchat-end {
@@ -107,7 +131,9 @@
   padding: 10px;
   &__textarea {
     @extend .govuk-textarea;
-    @include govuk-font($size: 16);
+    font-family: $govuk-font-family-gds-transport;
+    font-size: 16px;
+    line-height: 20px;
     flex: 1 1 auto;
     align-self: flex-end;
     margin: 0px;

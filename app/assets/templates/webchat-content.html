@@ -1,5 +1,5 @@
 <ul class="defra-webchat-list" data-message-list>
   {% for message in model.messages %}
-  <li class="defra-webchat-list__item">{{ message.messageContent.text }}</li>
+  <li class="defra-webchat-list__item defra-webchat-list__item--{{ message.direction | lower }}">{{ message.messageContent.text }}</li>
   {% endfor %}
 </ul>
