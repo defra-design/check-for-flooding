@@ -83,7 +83,7 @@
     flex: 0 0 auto;
     width: 75%;
     margin: 5px 10px;
-    padding: 15px;
+    padding: 12.5px;
     background-color: govuk-colour('light-grey');
     border-radius: 10px;
   }
@@ -137,7 +137,9 @@
     flex: 1 1 auto;
     align-self: flex-end;
     margin: 0px;
-    max-height: 40px;
+    padding: 7.5px 10px;
+    height: 40px;
+    resize: none;
   }
   &__send {
     position: relative;
@@ -162,7 +164,8 @@
   }
 }
 .defra-webchat-credit {
-  display: block;
+  // display: block;
+  display: none;
   @include govuk-font($size: 14);
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
