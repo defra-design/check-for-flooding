@@ -6,8 +6,8 @@ import '../components/toggle-list-display'
 import '../build/templates'
 import '../components/nunjucks'
 import '../components/map/maps'
-import '../components/map/symbols'
-import '../components/map/style'
+import '../components/map/styles'
+import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
 import '../components/tooltip'
@@ -28,24 +28,7 @@ if (document.getElementById('map')) {
 
 // Add toggletips
 if (document.querySelectorAll('[data-toggletip]')) {
-  const config = [
-    { id: '5171', type: 'default' },
-    { id: '5127', type: 'i' },
-    { id: '8343', type: 'default' },
-    { id: '8191', type: 'i' },
-    { id: '8208', type: 'i' },
-    { id: '8032', type: 'i' },
-    { id: '8152', type: 'i' },
-    { id: '9471', type: 'i' },
-    { id: '8081', type: 'i' }
-  ]
-  const slug = window.location.pathname.split('/').pop()
-  const match = config.find(x => x.id === slug)
-  if (match) {
-    window.flood.createToggletips({
-      type: match.type
-    })
-  }
+  window.flood.createToggletips({ type: 'i' })
 }
 
 // Line chart
@@ -60,4 +43,13 @@ if (document.getElementById('line-chart')) {
       level: Number(threshold.getAttribute('data-level'))
     })
   }
+}
+
+// Add toggle historical impacts
+const toggleListDisplay = document.getElementById('toggle-list-display')
+if (toggleListDisplay) {
+  window.flood.createToggleListDisplay(toggleListDisplay, {
+    type: 'impact',
+    btnText: 'historical events'
+  })
 }
