@@ -152,10 +152,8 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-s">How levels here could affect nearby areas</h2>
-    {% if model.station.hasImpacts %}
     <span id="toggle-list-display" data-toggle-list-display-type="impact"></span>
-    {% endif %}
-    <dl class="defra-flood-impact-list govuk-!-margin-bottom-4" id="impact-list">
+    <dl class="defra-flood-impact-list govuk-!-margin-bottom-2" id="impact-list">
       {% for band in model.thresholds %}
       <div class="defra-flood-impact-list__row {% if band.isLatest %} defra-flood-impact-list__row--current {% elif band.isExceeded %} defra-flood-impact-list__row--exceeded{% endif %}" {% if band.type === 'historical' %} data-toggle-list-display-item="impact" {% endif %}>
         <dt class="defra-flood-impact-list__key">
@@ -177,6 +175,7 @@
       </div>
       {% endfor %}
     </dl> 
+    <p class="govuk-body-s govuk-!-margin-top-0 govuk-!-margin-bottom-4">Flooding might not happen again at the same historical levels if, for example, flood defences are now in place.</p>
   </div>
 </div>
 {% endif %}

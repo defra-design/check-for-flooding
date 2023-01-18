@@ -44,3 +44,12 @@ if (document.getElementById('line-chart')) {
     })
   }
 }
+
+// Add toggle historical impacts
+const toggleListDisplay = document.getElementById('toggle-list-display')
+if (toggleListDisplay) {
+  window.flood.createToggleListDisplay(toggleListDisplay, {
+    type: 'impact',
+    btnText: 'historical events'
+  })
+}
