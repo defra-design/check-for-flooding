@@ -82,31 +82,31 @@
     }
 }
 .defra-flood-status-item--severe {
-    background-color: govuk-tint(#e3000f, 85);
+    background-color: govuk-tint(#e3000f, 93);
     border-color:#e3000f;
     &:after {
-        color: govuk-tint(#e3000f, 85);
+        color: govuk-tint(#e3000f, 93);
         border-color: currentColor;
     }
 }
 .defra-flood-status-item--warning {
-    background-color:govuk-tint(#e3000f, 85%);
+    background-color:govuk-tint(#e3000f, 93);
     border-color:#e3000f;
     &:after {
-        color: govuk-tint(#e3000f, 85);
+        color: govuk-tint(#e3000f, 93);
         border-color: currentColor;
     }
 }
 .defra-flood-status-item--alert {
-    background-color: govuk-tint(#f18700, 85%);
+    background-color: govuk-tint(#f18700, 90);
     border-color:#f18700;
     &:after {
-        color: govuk-tint(#f18700, 85%);
+        color: govuk-tint(#f18700, 90);
         border-color: currentColor;
     }
 }
 .defra-flood-status-item--important {
-    background-color: govuk-tint($govuk-link-colour, 90%);
+    background-color: govuk-tint($govuk-link-colour, 90);
     border-color:$govuk-link-colour;
     &:after {
         color: govuk-tint($govuk-link-colour, 90%);
