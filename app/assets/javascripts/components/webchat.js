@@ -25,7 +25,6 @@ class WebChat {
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
     // Add button
-    console.log(authResponse)
     const isOnline = authResponse?.channel.availability.status === 'online'
     this.addButton(isOnline)
     // Add events
@@ -112,7 +111,7 @@ class WebChat {
       await thread.startChat()
     }
     // Show modal
-    this.createModal()
+    this.createModal() // Could this be a template aswell?
     // Lock body scroll
     document.body.classList.add('defra-webchat-body')
     document.documentElement.classList.add('defra-webchat-html')
@@ -149,7 +148,6 @@ class WebChat {
 
   sendMessage (value) {
     this.thread.sendTextMessage(value)
-    console.log('Send message: ', value)
   }
 
   addMessage (message) {
@@ -233,8 +231,8 @@ class WebChat {
     console.log('Keyup: ', document.activeElement)
     const isOpen = window.location.hash === '#webchat'
     if (!isOpen) return
-    const isSendMessage = e.target.hasAttribute('data-webchat-message')
-    if (e.key === 'Enter' && isSendMessage) {
+    const isSendMessageTextarea = e.target.hasAttribute('data-webchat-message')
+    if (e.key === 'Enter' && isSendMessageTextarea) {
       this.sendMessage(e.target.value)
       e.target.value = ''
     }
