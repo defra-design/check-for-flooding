@@ -19,16 +19,21 @@
   max-width: 100%;
   box-sizing: border-box;
   &__inner {
+    position: relative;
     flex: 0 0 100%;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
     background-color: white;
     border: 0px;
+    outline: 0px;
     @include mq ($from: tablet) {
       border: 1px solid govuk-colour('black');
     }
     box-sizing: border-box;
+    &:focus:after {
+      @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
+    }
   }
   &__header {
     flex: 0 0 0;
@@ -112,11 +117,12 @@
   margin: 0px;
   cursor: pointer;
   &:focus {
-    outline: 0px;
-  }
-  &[keyboard-focus] {
+    // outline: 0px;
     outline: 3px solid $govuk-focus-colour;
   }
+  // &[keyboard-focus] {
+  //   outline: 3px solid $govuk-focus-colour;
+  // }
   svg {
     position: relative;
     color: white;
@@ -153,6 +159,12 @@
     text-indent: -5000px;
     width: 40px;
     height: 40px;
+    outline: 0;
+    &:focus {
+      outline: 3px solid $govuk-focus-colour;
+      box-shadow: inset 0 0 0 3px govuk-colour('black');
+      border-color: govuk-colour('black');
+    }
     svg {
       position: absolute;
       top: 50%;

@@ -69,11 +69,19 @@ class WebChat {
   }
 
   createModal () {
+    // Dialog
     const container = document.createElement('div')
+    container.id = 'webchat'
     container.className = 'defra-webchat'
+    container.setAttribute('role', 'dialog')
+    container.setAttribute('aria-label', 'Webchat')
+    container.setAttribute('aria-modal', true)
+    container.setAttribute('open', true)
     const inner = document.createElement('div')
     inner.className = 'defra-webchat__inner'
+    inner.tabIndex = -1
     container.appendChild(inner)
+    // Sections
     const header = document.createElement('div')
     header.className = 'defra-webchat__header'
     header.innerHTML = env.render('webchat-header.html')
@@ -82,16 +90,17 @@ class WebChat {
     const footer = document.createElement('div')
     footer.className = 'defra-webchat__footer'
     footer.innerHTML = env.render('webchat-footer.html')
-    this.header = header
-    this.content = content
-    this.footer = footer
     inner.appendChild(header)
     inner.appendChild(content)
     inner.appendChild(footer)
     container.appendChild(inner)
     document.body.appendChild(container)
     this.container = container
+    this.inner = inner
     this.content = content
+    this.header = header
+    this.content = content
+    this.footer = footer
   }
 
   async startChat () {
@@ -108,6 +117,7 @@ class WebChat {
     document.body.classList.add('defra-webchat-body')
     document.documentElement.classList.add('defra-webchat-html')
     this.hideSiblings()
+    this.container.firstChild.focus()
     // disableBodyScroll(content)
     // Add previous messages
     const recoveredData = await thread.recover()
@@ -132,6 +142,9 @@ class WebChat {
     document.documentElement.classList.remove('defra-webchat-html')
     // clearAllBodyScrollLocks()
     this.showSiblings()
+    // Remove events
+    document.removeEventListener(this.#keydownEvent)
+    document.removeEventListener(this.#keyupEvent)
   }
 
   sendMessage (value) {
@@ -149,36 +162,86 @@ class WebChat {
     this.content.scrollTop = this.content.scrollHeight
   }
 
+  setInitialFocus () {
+    if (!document.activeElement.closest(`#${this.container.id}`)) {
+      this.inner.focus()
+    }
+  }
+
+  constrainFocus (e) {
+    const selectors = [
+      'a[href]:not([disabled]):not([hidden])',
+      'button:not([disabled]):not([hidden])',
+      'textarea:not([disabled]):not([hidden])',
+      'input[type="text"]:not([disabled]):not([hidden])',
+      'input[type="radio"]:not([disabled]):not([hidden])',
+      'input[type="checkbox"]:not([disabled]):not([hidden])',
+      'select:not([disabled]):not([hidden])',
+      '*[tabindex="0"]:not([disabled]):not([hidden])'
+    ]
+    const specificity = selectors.map(i => `#${this.container.id} ${i}`).join(',')
+    const focusableEls = document.querySelectorAll(specificity)
+    const firstFocusableEl = focusableEls[0]
+    const lastFocusableEl = focusableEls[focusableEls.length - 1]
+    // Tab and shift tab
+    if (e.shiftKey) {
+      if (document.activeElement === firstFocusableEl || document.activeElement.getAttribute('tabindex') === '-1') {
+        lastFocusableEl.focus()
+        e.preventDefault()
+      }
+    } else {
+      if (document.activeElement === lastFocusableEl) {
+        firstFocusableEl.focus()
+        e.preventDefault()
+      }
+    }
+  }
+
   //
   // Events
   //
 
   #clickEvent = (e) => {
-    const isStartChat = e.target.hasAttribute('data-webchat-start')
-    const isEndChat = e.target.hasAttribute('data-webchat-end')
-    if (isStartChat) {
+    const isStartChatButton = e.target.hasAttribute('data-webchat-start')
+    const isEndChatButton = e.target.hasAttribute('data-webchat-end')
+    console.log(document.activeElement)
+    if (isStartChatButton) {
       this.startChat()
       // Push history state
       window.history.pushState({ path: '#webchat' }, '', '#webchat')
     }
-    if (isEndChat) {
+    if (isEndChatButton) {
       this.endChat()
     }
   }
 
   #keydownEvent = (e) => {
+    document.activeElement.setAttribute('keyboard-focus', '')
+    console.log('Keydown: ', document.activeElement)
+    const isOpen = window.location.hash === '#webchat'
+    if (!isOpen) return
     const isSendMessage = e.target.hasAttribute('data-webchat-message')
     if (e.key === 'Enter' && isSendMessage) {
       e.preventDefault()
+    } else if (e.key === 'Tab') {
+      this.constrainFocus(e)
     }
   }
 
   #keyupEvent = (e) => {
+    document.activeElement.removeAttribute('keyboard-focus')
+    console.log('Keyup: ', document.activeElement)
+    const isOpen = window.location.hash === '#webchat'
+    if (!isOpen) return
     const isSendMessage = e.target.hasAttribute('data-webchat-message')
     if (e.key === 'Enter' && isSendMessage) {
       this.sendMessage(e.target.value)
       e.target.value = ''
     }
+    // } else if (isOpen && e.key === 'Tab') {
+    //   e.preventDefault()
+    //   this.constrainFocus(e)
+    // }
   }
 
   // This fires when both user and agent send a message

@@ -30,4 +30,4 @@ if (document.getElementById('map-outlook')) {
 }
 
 // Webchat
-const webchat = new WebChat('webchat')
+const webchat = new WebChat('webchat-button')

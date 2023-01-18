@@ -131,15 +131,18 @@ button.defra-button-secondary {
     @extend .govuk-button--secondary;
     margin-bottom: 0px;
     &:focus:not(:active):not(:hover) {
-        border-color: transparent;
-        background-color: #f3f2f1;
-        box-shadow: 0 2px 0 #929191;
-    }
-    &:focus[keyboard-focus]:not(:active):not(:hover) {
+        // border-color: transparent;
+        // background-color: #f3f2f1;
+        // box-shadow: 0 2px 0 #929191;
         border-color: $govuk-focus-colour;
         background-color: $govuk-focus-colour;
         box-shadow: 0 2px 0 govuk-colour('black');
     }
+    // &:focus[keyboard-focus]:not(:active):not(:hover) {
+    //     border-color: $govuk-focus-colour;
+    //     background-color: $govuk-focus-colour;
+    //     box-shadow: 0 2px 0 govuk-colour('black');
+    // }
     svg {
         display: inline-block;
         position: relative;
