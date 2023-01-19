@@ -87,10 +87,10 @@
 @mixin focus($glow: 8px, $strong: 5px, $background: 2px, $inset: 0px) {
     position:absolute;
     content:'';
-    left:5px;
-    right:5px;
-    top:5px;
-    bottom:5px;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
     box-shadow:
         0px 0px 0px $background white,
         inset 0px 0px 0px $inset govuk-colour('black'),

@@ -9,6 +9,10 @@ class WebChat {
     this.webchatSiblings = document.querySelectorAll('body > *:not(.defra-webchat):not(script):not([aria-hidden="true"])')
     this.initialise()
     window.addEventListener('popstate', this.#popstateEvent)
+    // Conditionaly start chat
+    if (window.location.hash === '#webchat') {
+      this.startChat()
+    }
   }
 
   async initialise () {
@@ -25,14 +29,10 @@ class WebChat {
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
     // Add button
-    const isOnline = authResponse?.channel.availability.status === 'online'
-    this.addButton(isOnline)
+    this.isOnline = authResponse?.channel.availability.status === 'online'
+    this.addButton()
     // Add events
     document.addEventListener('click', this.#clickEvent, { capture: true })
-    // Conditionaly start chat
-    if (window.location.hash === '#webchat') {
-      this.startChat()
-    }
   }
 
   hideSiblings () {
@@ -51,9 +51,9 @@ class WebChat {
     })
   }
 
-  addButton (isOnline) {
+  addButton () {
     const container = document.getElementById('webchat-button')
-    if (isOnline) {
+    if (this.isOnline) {
       container.innerHTML = `
         <button class="defra-webchat-start" data-webchat-start>
           <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><ellipse cx="10.004" cy="10" rx="10" ry="8"/><path d="M4.18 13.168l4.328 3.505L2 19.965l2.18-6.797z"/><g fill="#fff"><circle cx="5.5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="14.5" cy="10" r="1.5"/></g></svg>
@@ -102,22 +102,31 @@ class WebChat {
     this.footer = footer
   }
 
-  async startChat () {
-    // Get thread
-    const thread = await this.sdk.getThread('thread')
-    // Start chat if not previously started
-    const threadId = localStorage.getItem('THREAD_ID')
-    if (!threadId) {
-      await thread.startChat()
-    }
+  openModal () {
     // Show modal
     this.createModal() // Could this be a template aswell?
     // Lock body scroll
     document.body.classList.add('defra-webchat-body')
     document.documentElement.classList.add('defra-webchat-html')
     this.hideSiblings()
-    this.container.firstChild.focus()
+    this.inner.focus()
     // disableBodyScroll(content)
+  }
+
+  async startChat () {
+    this.openModal()
+    // Add events
+    window.addEventListener('keydown', this.#keydownEvent)
+    window.addEventListener('keyup', this.#keyupEvent)
+    if (!this.isOnline) return // Show offlie content
+    // Get thread
+    const thread = await this.sdk.getThread('thread')
+    // Start chat if not previously started
+    const threadId = localStorage.getItem('THREAD_ID') // Look for property in thread object instead
+    if (!threadId) {
+      await thread.startChat()
+    }
+    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
     // Add previous messages
     const recoveredData = await thread.recover()
     if (recoveredData) {
@@ -127,23 +136,31 @@ class WebChat {
       // Scroll to bottom
       this.content.scrollTop = this.content.scrollHeight
     }
-    // Add events
-    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
-    document.addEventListener('keydown', this.#keydownEvent)
-    document.addEventListener('keyup', this.#keyupEvent)
     this.thread = thread
   }
 
   endChat () {
+    // History back
+    console.log(window.history.state)
+    if (window.history.state.isBack) {
+      window.history.back()
+      return
+    }
+    // Replace state
+    const url = window.location.href.substring(0, window.location.href.indexOf('#'))
+    window.history.replaceState({ path: null, isBack: false }, '', url)
     this.container.remove()
     // Unlock body scroll
     document.body.classList.remove('defra-webchat-body')
     document.documentElement.classList.remove('defra-webchat-html')
     // clearAllBodyScrollLocks()
     this.showSiblings()
+    // Return focus
+    const startChatButton = document.querySelector('#webchat-button button')
+    if (startChatButton) startChatButton.focus()
     // Remove events
-    document.removeEventListener(this.#keydownEvent)
-    document.removeEventListener(this.#keyupEvent)
+    document.removeEventListener('keydown', this.#keydownEvent)
+    document.removeEventListener('keyup', this.#keyupEvent)
   }
 
   sendMessage (value) {
@@ -200,13 +217,14 @@ class WebChat {
   //
 
   #clickEvent = (e) => {
+    if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
+    console.log('Click on ', e.target)
     const isStartChatButton = e.target.hasAttribute('data-webchat-start')
     const isEndChatButton = e.target.hasAttribute('data-webchat-end')
-    console.log(document.activeElement)
     if (isStartChatButton) {
       this.startChat()
       // Push history state
-      window.history.pushState({ path: '#webchat' }, '', '#webchat')
+      window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
     }
     if (isEndChatButton) {
       this.endChat()
@@ -215,20 +233,19 @@ class WebChat {
 
   #keydownEvent = (e) => {
     document.activeElement.setAttribute('keyboard-focus', '')
-    console.log('Keydown: ', document.activeElement)
     const isOpen = window.location.hash === '#webchat'
     if (!isOpen) return
     const isSendMessage = e.target.hasAttribute('data-webchat-message')
     if (e.key === 'Enter' && isSendMessage) {
       e.preventDefault()
     } else if (e.key === 'Tab') {
+      this.setInitialFocus()
       this.constrainFocus(e)
     }
   }
 
   #keyupEvent = (e) => {
     document.activeElement.removeAttribute('keyboard-focus')
-    console.log('Keyup: ', document.activeElement)
     const isOpen = window.location.hash === '#webchat'
     if (!isOpen) return
     const isSendMessageTextarea = e.target.hasAttribute('data-webchat-message')
@@ -236,10 +253,9 @@ class WebChat {
       this.sendMessage(e.target.value)
       e.target.value = ''
     }
-    // } else if (isOpen && e.key === 'Tab') {
-    //   e.preventDefault()
-    //   this.constrainFocus(e)
-    // }
+    if (e.key === 'Escape') {
+      this.endChat()
+    }
   }
 
   // This fires when both user and agent send a message
@@ -258,8 +274,8 @@ class WebChat {
   // Recreate webchat on browser history change
   #popstateEvent = (e) => {
     e.preventDefault()
+    console.log(e.state)
     if (!e.state) return
-    console.log(e)
     const path = window.history?.state?.path
     if (path === '#webchat') {
       this.startChat()
