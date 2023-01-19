@@ -1,5 +1,4 @@
 'use strict'
-import { disableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { ChatSdk, EnvironmentName, Thread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
 
 const env = window.nunjucks.configure('views')
@@ -76,27 +75,16 @@ class WebChat {
     container.setAttribute('aria-label', 'Webchat')
     container.setAttribute('aria-modal', true)
     container.setAttribute('open', true)
-    const inner = document.createElement('div')
-    inner.className = 'defra-webchat__inner'
-    inner.tabIndex = -1
-    container.appendChild(inner)
-    // Sections
-    const header = document.createElement('div')
-    header.className = 'defra-webchat__header'
+    container.innerHTML = env.render('webchat-modal.html')
+    const inner = container.querySelector('.defra-webchat__inner')
+    const header = container.querySelector('.defra-webchat__header')
+    const content = container.querySelector('.defra-webchat__content')
+    const footer = container.querySelector('.defra-webchat__footer')
     header.innerHTML = env.render('webchat-header.html')
-    const content = document.createElement('div')
-    content.className = 'defra-webchat__content'
-    const footer = document.createElement('div')
-    footer.className = 'defra-webchat__footer'
     footer.innerHTML = env.render('webchat-footer.html')
-    inner.appendChild(header)
-    inner.appendChild(content)
-    inner.appendChild(footer)
-    container.appendChild(inner)
     document.body.appendChild(container)
     this.container = container
     this.inner = inner
-    this.content = content
     this.header = header
     this.content = content
     this.footer = footer
@@ -110,7 +98,6 @@ class WebChat {
     document.documentElement.classList.add('defra-webchat-html')
     this.hideSiblings()
     this.inner.focus()
-    // disableBodyScroll(content)
   }
 
   async startChat () {
@@ -148,11 +135,10 @@ class WebChat {
     // Replace state
     const url = window.location.href.substring(0, window.location.href.indexOf('#'))
     window.history.replaceState({ path: null, isBack: false }, '', url)
+    // Clean up DOM
     this.container.remove()
-    // Unlock body scroll
     document.body.classList.remove('defra-webchat-body')
     document.documentElement.classList.remove('defra-webchat-html')
-    // clearAllBodyScrollLocks()
     this.showSiblings()
     // Return focus
     const startChatButton = document.querySelector('#webchat-button button')
@@ -163,6 +149,7 @@ class WebChat {
   }
 
   sendMessage (value) {
+    if (!(value && value.length)) return
     this.thread.sendTextMessage(value)
   }
 
@@ -220,6 +207,7 @@ class WebChat {
     if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
     const isStartChatButton = e.target.hasAttribute('data-webchat-start')
     const isEndChatButton = e.target.hasAttribute('data-webchat-end')
+    const isSendButton = e.target.hasAttribute('data-webchat-send')
     if (isStartChatButton) {
       this.startChat()
       // Push history state
@@ -227,6 +215,11 @@ class WebChat {
     }
     if (isEndChatButton) {
       this.endChat()
+    }
+    if (isSendButton) {
+      const textarea = document.getElementById('message')
+      this.sendMessage(textarea.value)
+      textarea.value = ''
     }
   }
 
@@ -266,6 +259,7 @@ class WebChat {
       text: e.detail.data.message.messageContent.text,
       direction: e.detail.data.message.direction.toLowerCase()
     }
+    console.log('messageCreatedEvent: ', message)
     this.addMessage(message)
   }
 
