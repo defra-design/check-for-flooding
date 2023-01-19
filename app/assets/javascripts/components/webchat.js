@@ -259,7 +259,6 @@ class WebChat {
       text: e.detail.data.message.messageContent.text,
       direction: e.detail.data.message.direction.toLowerCase()
     }
-    console.log('messageCreatedEvent: ', message)
     this.addMessage(message)
   }
 
