@@ -118,7 +118,8 @@ class WebChat {
     // Add events
     window.addEventListener('keydown', this.#keydownEvent)
     window.addEventListener('keyup', this.#keyupEvent)
-    if (!this.isOnline) return // Show offlie content
+    console.log('Start chat: ', this.isOnline)
+    // We don't yet know if 'online' authorisation still in prgoress
     // Get thread
     const thread = await this.sdk.getThread('thread')
     // Start chat if not previously started
