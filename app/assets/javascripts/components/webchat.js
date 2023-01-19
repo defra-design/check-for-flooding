@@ -118,7 +118,6 @@ class WebChat {
     // Add events
     window.addEventListener('keydown', this.#keydownEvent)
     window.addEventListener('keyup', this.#keyupEvent)
-    console.log('Start chat: ', this.isOnline)
     // We don't yet know if 'online' authorisation still in prgoress
     // Get thread
     const thread = await this.sdk.getThread('thread')
@@ -142,7 +141,6 @@ class WebChat {
 
   endChat () {
     // History back
-    console.log(window.history.state)
     if (window.history.state.isBack) {
       window.history.back()
       return
@@ -218,8 +216,8 @@ class WebChat {
   //
 
   #clickEvent = (e) => {
+    document.activeElement.removeAttribute('keyboard-focus')
     if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
-    console.log('Click on ', e.target)
     const isStartChatButton = e.target.hasAttribute('data-webchat-start')
     const isEndChatButton = e.target.hasAttribute('data-webchat-end')
     if (isStartChatButton) {
@@ -246,7 +244,6 @@ class WebChat {
   }
 
   #keyupEvent = (e) => {
-    document.activeElement.removeAttribute('keyboard-focus')
     const isOpen = window.location.hash === '#webchat'
     if (!isOpen) return
     const isSendMessageTextarea = e.target.hasAttribute('data-webchat-message')
@@ -275,7 +272,6 @@ class WebChat {
   // Recreate webchat on browser history change
   #popstateEvent = (e) => {
     e.preventDefault()
-    console.log(e.state)
     if (!e.state) return
     const path = window.history?.state?.path
     if (path === '#webchat') {

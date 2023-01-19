@@ -31,7 +31,10 @@
       border: 1px solid govuk-colour('black');
     }
     box-sizing: border-box;
-    &:focus:after {
+    &:focus {
+      outline: none;
+    }
+    &:focus[keyboard-focus]:after {
       @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
       left: 4px;
       right: 4px;
@@ -41,12 +44,17 @@
   }
   &__header {
     flex: 0 0 0;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
     background-color: govuk-colour('black');
-    padding: 4px 4px 5px;
-    text-align: right;
+    padding: 4px 4px 5px 10px;
     h2 {
       @include govuk-font($size: 19, $weight: bold);
-      margin: 0px;
+      line-height: 1em;
+      position: relative;
+      margin: -1px 0 0;
       color: white;
     }
   }
@@ -113,20 +121,21 @@
 }
 .defra-webchat-end {
   display: inline-block;
+  flex: 0 0 auto;
+  align-self: flex-end;
   font-size: 16px;
   color: white;
   background-color: transparent;;
   border: 0px solid transparent;
   padding: 5px;
-  margin: 0px;
+  margin: 0px 0px 0px auto;
   cursor: pointer;
   &:focus {
-    // outline: 0px;
+    outline: none;
+  }
+  &:focus[keyboard-focus] {
     outline: 3px solid $govuk-focus-colour;
   }
-  // &[keyboard-focus] {
-  //   outline: 3px solid $govuk-focus-colour;
-  // }
   svg {
     position: relative;
     color: white;
@@ -150,6 +159,15 @@
     padding: 7.5px 10px;
     height: 40px;
     resize: none;
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    &:focus[keyboard-focus] {
+      outline: 3px solid $govuk-focus-colour;
+      outline-offset: 0;
+      box-shadow: inset 0 0 0 2px;
+    }
   }
   &__send {
     position: relative;
