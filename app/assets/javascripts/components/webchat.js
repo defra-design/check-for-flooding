@@ -7,14 +7,15 @@ class WebChat {
   constructor () {
     this.webchatSiblings = document.querySelectorAll('body > *:not(.defra-webchat):not(script):not([aria-hidden="true"])')
     this.initialise()
+    // History change 
     window.addEventListener('popstate', this.#popstateEvent)
-    // Conditionaly start chat
-    if (window.location.hash === '#webchat') {
-      this.openChat()
-    }
   }
 
   async initialise () {
+    // Conditionally open modal
+    if (window.location.hash === '#webchat') {
+      this.createModal()
+    }
     // Authorise
     this.sdk = new ChatSdk({
       brandId: process.env.WEBCHAT_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
@@ -32,6 +33,37 @@ class WebChat {
     this.addButton()
     // Add events
     document.addEventListener('click', this.#clickEvent, { capture: true })
+    // Conditionaly get thread
+    if (window.location.hash === '#webchat') {
+      await this.getThread()
+    }
+  }
+
+  async getThread () {
+    const thread = await this.sdk.getThread('thread')
+    // Start chat if not previously started
+    const isOpen = window.location.hash === '#webchat'
+    if (!localStorage.getItem('IS_THREAD_STARTED') && isOpen) {
+      await thread.startChat()
+    }
+    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
+    this.thread = thread
+    await this.addRecoveredMessages()
+  }
+
+  async addRecoveredMessages () {
+    let recoveredData
+    try {
+      recoveredData = await this.thread.recover()
+    } catch (error) {
+      console.log(error)
+    }
+    if (recoveredData) {
+      this.content.innerHTML = env.render('webchat-content.html', {
+        model: { messages: recoveredData.messages.reverse() }
+      })
+      this.content.scrollTop = this.content.scrollHeight
+    }
   }
 
   hideSiblings () {
@@ -117,34 +149,6 @@ class WebChat {
     document.removeEventListener('keyup', this.#keyupEvent)
   }
 
-  async getThread () {
-    // We don't yet know if 'online' authorisation still in prgoress
-    // Get thread
-    const thread = await this.sdk.getThread('thread')
-    // Start chat if not previously started
-    const threadId = localStorage.getItem('THREAD_ID') // Look for property in thread object instead
-    console.log(thread instanceof LivechatThread)
-    if (!threadId) {
-      await thread.startChat()
-    }
-    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this.#messageCreatedEvent)
-    // Add previous messages
-    const recoveredData = await thread.recover()
-    if (recoveredData) {
-      this.content.innerHTML = env.render('webchat-content.html', {
-        model: { messages: recoveredData.messages.reverse() }
-      })
-      // Scroll to bottom
-      this.content.scrollTop = this.content.scrollHeight
-    }
-    this.thread = thread
-  }
-
-  async openChat () {
-    this.createModal()
-    await this.getThread()
-  }
-
   closeChat () {
     // History back
     if (window.history.state.isBack) {
@@ -212,16 +216,22 @@ class WebChat {
   // Events
   //
 
-  #clickEvent = (e) => {
+  #clickEvent = async (e) => {
     document.activeElement.removeAttribute('keyboard-focus')
     if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
     const isOpenChatButton = e.target.hasAttribute('data-webchat-open')
     const isCloseChatButton = e.target.hasAttribute('data-webchat-close')
     const isSendButton = e.target.hasAttribute('data-webchat-send')
+    const isOpen = window.location.hash === '#webchat'
     if (isOpenChatButton) {
-      this.openChat()
-      // Push history state
-      window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
+      if (!isOpen) {
+        this.createModal()
+        await this.getThread()
+        // Push history state
+        window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
+      } else {
+        this.inner.focus()
+      }
     }
     if (isCloseChatButton) {
       this.closeChat()
@@ -263,7 +273,7 @@ class WebChat {
   #messageCreatedEvent = (e) => {
     // Storing threadId so we know chat has started, may be a better way to determin this
     const threadId = e.detail.data.thread.idOnExternalPlatform
-    localStorage.setItem('THREAD_ID', threadId)
+    localStorage.setItem('IS_THREAD_STARTED', !!threadId)
     // Add message to modal
     const message = {
       text: e.detail.data.message.messageContent.text,
@@ -273,12 +283,13 @@ class WebChat {
   }
 
   // Recreate webchat on browser history change
-  #popstateEvent = (e) => {
+  #popstateEvent = async (e) => {
     e.preventDefault()
     if (!e.state) return
     const path = window.history?.state?.path
     if (path === '#webchat') {
-      this.openChat()
+      this.createModal()
+      await this.getThread()
     } else if (this.container) {
       this.removeModal()
     }
