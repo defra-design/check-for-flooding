@@ -55,9 +55,7 @@ class WebChat {
     let recoveredData
     try {
       recoveredData = await this.thread.recover()
-    } catch (error) {
-      console.log(error)
-    }
+    } catch (error) {}
     if (recoveredData) {
       this.content.innerHTML = env.render('webchat-content.html', {
         model: { messages: recoveredData.messages.reverse() }
