@@ -1,9 +1,15 @@
 'use strict'
 
+import './build/templates'
+import './components/nunjucks'
+import WebChat from './components/webchat'
+
 // Init GOVUK Frontend
 document.onreadystatechange = () => {
   if (document.readyState === 'interactive') {
     window.GOVUKFrontend.initAll()
+    // Webchat
+    const webchat = new WebChat('webchat-button')
   }
 }
 

@@ -1,5 +1,5 @@
 'use strict'
-import { ChatSdk, EnvironmentName, Thread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { ChatSdk, EnvironmentName, Thread, LivechatThread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
 
 const env = window.nunjucks.configure('views')
 
@@ -10,20 +10,20 @@ class WebChat {
     window.addEventListener('popstate', this.#popstateEvent)
     // Conditionaly start chat
     if (window.location.hash === '#webchat') {
-      this.startChat()
+      this.openChat()
     }
   }
 
   async initialise () {
     // Authorise
-    const sdk = new ChatSdk({
+    this.sdk = new ChatSdk({
       brandId: process.env.WEBCHAT_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
       channelId: process.env.WEBCHAT_CHANNELID, // Your channel ID, found in the script on the "Initialization & Test" page for the chat channel.
       customerId: localStorage.getItem('CUSTOMER_ID') || '', // This must be generated on every page visit and should be unique to each contact.
-      environment: EnvironmentName.EU1 // Your environment's region: AU1, CA1, EU1, JP1, NA1, UK1, or custom.
+      environment: EnvironmentName.EU1, // Your environment's region: AU1, CA1, EU1, JP1, NA1, UK1, or custom.
+      isLivechat: true
     })
-    this.sdk = sdk
-    const authResponse = await sdk.authorize()
+    const authResponse = await this.sdk.authorize()
     const customerId = authResponse?.consumerIdentity.idOnExternalPlatform
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
@@ -54,7 +54,7 @@ class WebChat {
     const container = document.getElementById('webchat-button')
     if (this.isOnline) {
       container.innerHTML = `
-        <button class="defra-webchat-start" data-webchat-start>
+        <button class="defra-webchat-open" data-webchat-open>
           <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2"><ellipse cx="10.004" cy="10" rx="10" ry="8"/><path d="M4.18 13.168l4.328 3.505L2 19.965l2.18-6.797z"/><g fill="#fff"><circle cx="5.5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="14.5" cy="10" r="1.5"/></g></svg>
           Chat now
         </button>
@@ -98,6 +98,9 @@ class WebChat {
     document.documentElement.classList.add('defra-webchat-html')
     this.hideSiblings()
     this.inner.focus()
+    // Add events
+    window.addEventListener('keydown', this.#keydownEvent)
+    window.addEventListener('keyup', this.#keyupEvent)
   }
 
   removeModal () {
@@ -107,23 +110,20 @@ class WebChat {
     document.documentElement.classList.remove('defra-webchat-html')
     this.showSiblings()
     // Return focus
-    const startChatButton = document.querySelector('#webchat-button button')
-    if (startChatButton) startChatButton.focus()
+    const openChatButton = document.querySelector('#webchat-button button')
+    if (openChatButton) openChatButton.focus()
     // Remove events
     document.removeEventListener('keydown', this.#keydownEvent)
     document.removeEventListener('keyup', this.#keyupEvent)
   }
 
-  async startChat () {
-    this.createModal()
-    // Add events
-    window.addEventListener('keydown', this.#keydownEvent)
-    window.addEventListener('keyup', this.#keyupEvent)
+  async getThread () {
     // We don't yet know if 'online' authorisation still in prgoress
     // Get thread
     const thread = await this.sdk.getThread('thread')
     // Start chat if not previously started
     const threadId = localStorage.getItem('THREAD_ID') // Look for property in thread object instead
+    console.log(thread instanceof LivechatThread)
     if (!threadId) {
       await thread.startChat()
     }
@@ -138,6 +138,11 @@ class WebChat {
       this.content.scrollTop = this.content.scrollHeight
     }
     this.thread = thread
+  }
+
+  async openChat () {
+    this.createModal()
+    await this.getThread()
   }
 
   closeChat () {
@@ -210,11 +215,11 @@ class WebChat {
   #clickEvent = (e) => {
     document.activeElement.removeAttribute('keyboard-focus')
     if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
-    const isStartChatButton = e.target.hasAttribute('data-webchat-start')
+    const isOpenChatButton = e.target.hasAttribute('data-webchat-open')
     const isCloseChatButton = e.target.hasAttribute('data-webchat-close')
     const isSendButton = e.target.hasAttribute('data-webchat-send')
-    if (isStartChatButton) {
-      this.startChat()
+    if (isOpenChatButton) {
+      this.openChat()
       // Push history state
       window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
     }
@@ -270,11 +275,10 @@ class WebChat {
   // Recreate webchat on browser history change
   #popstateEvent = (e) => {
     e.preventDefault()
-    console.log(window.location.href, e.state)
     if (!e.state) return
     const path = window.history?.state?.path
     if (path === '#webchat') {
-      this.startChat()
+      this.openChat()
     } else if (this.container) {
       this.removeModal()
     }

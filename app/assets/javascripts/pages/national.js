@@ -1,15 +1,12 @@
 'use strict'
 import 'elm-pep'
 import '../core'
-import '../build/templates'
-import '../components/nunjucks'
 import '../components/map/maps'
 import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
 import '../components/map/outlook'
-import WebChat from '../components/webchat'
 
 // Create LiveMap
 if (document.getElementById('map-live')) {
@@ -28,6 +25,3 @@ if (document.getElementById('map-outlook')) {
     days: window.flood.model.outlookDays
   })
 }
-
-// Webchat
-const webchat = new WebChat('webchat-button')
