@@ -66,7 +66,7 @@ class WebChat {
     }
   }
 
-  createModal () {
+  createContainers () {
     // Dialog
     const container = document.createElement('div')
     container.id = 'webchat'
@@ -90,9 +90,9 @@ class WebChat {
     this.footer = footer
   }
 
-  openModal () {
+  createModal () {
     // Show modal
-    this.createModal() // Could this be a template aswell?
+    this.createContainers() // Could this be a template aswell?
     // Lock body scroll
     document.body.classList.add('defra-webchat-body')
     document.documentElement.classList.add('defra-webchat-html')
@@ -100,8 +100,22 @@ class WebChat {
     this.inner.focus()
   }
 
+  removeModal () {
+    // Clean up DOM
+    this.container.remove()
+    document.body.classList.remove('defra-webchat-body')
+    document.documentElement.classList.remove('defra-webchat-html')
+    this.showSiblings()
+    // Return focus
+    const startChatButton = document.querySelector('#webchat-button button')
+    if (startChatButton) startChatButton.focus()
+    // Remove events
+    document.removeEventListener('keydown', this.#keydownEvent)
+    document.removeEventListener('keyup', this.#keyupEvent)
+  }
+
   async startChat () {
-    this.openModal()
+    this.createModal()
     // Add events
     window.addEventListener('keydown', this.#keydownEvent)
     window.addEventListener('keyup', this.#keyupEvent)
@@ -126,7 +140,7 @@ class WebChat {
     this.thread = thread
   }
 
-  endChat () {
+  closeChat () {
     // History back
     if (window.history.state.isBack) {
       window.history.back()
@@ -135,17 +149,8 @@ class WebChat {
     // Replace state
     const url = window.location.href.substring(0, window.location.href.indexOf('#'))
     window.history.replaceState({ path: null, isBack: false }, '', url)
-    // Clean up DOM
-    this.container.remove()
-    document.body.classList.remove('defra-webchat-body')
-    document.documentElement.classList.remove('defra-webchat-html')
-    this.showSiblings()
-    // Return focus
-    const startChatButton = document.querySelector('#webchat-button button')
-    if (startChatButton) startChatButton.focus()
-    // Remove events
-    document.removeEventListener('keydown', this.#keydownEvent)
-    document.removeEventListener('keyup', this.#keyupEvent)
+    // Remove modal
+    this.removeModal()
   }
 
   sendMessage (value) {
@@ -206,15 +211,15 @@ class WebChat {
     document.activeElement.removeAttribute('keyboard-focus')
     if (!['a', 'button'].includes(e.target.tagName.toLowerCase())) return
     const isStartChatButton = e.target.hasAttribute('data-webchat-start')
-    const isEndChatButton = e.target.hasAttribute('data-webchat-end')
+    const isCloseChatButton = e.target.hasAttribute('data-webchat-close')
     const isSendButton = e.target.hasAttribute('data-webchat-send')
     if (isStartChatButton) {
       this.startChat()
       // Push history state
       window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
     }
-    if (isEndChatButton) {
-      this.endChat()
+    if (isCloseChatButton) {
+      this.closeChat()
     }
     if (isSendButton) {
       const textarea = document.getElementById('message')
@@ -245,7 +250,7 @@ class WebChat {
       e.target.value = ''
     }
     if (e.key === 'Escape') {
-      this.endChat()
+      this.closeChat()
     }
   }
 
@@ -265,12 +270,13 @@ class WebChat {
   // Recreate webchat on browser history change
   #popstateEvent = (e) => {
     e.preventDefault()
+    console.log(window.location.href, e.state)
     if (!e.state) return
     const path = window.history?.state?.path
     if (path === '#webchat') {
       this.startChat()
-    } else {
-      this.endChat()
+    } else if (this.container) {
+      this.removeModal()
     }
   }
 }
