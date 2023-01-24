@@ -47,6 +47,7 @@ const bufferPoint = (point, m) => {
 }
 
 const getNameFromGazetteerEntry = (gazetteerEntry) => {
+  console.log(gazetteerEntry)
   const coreCities = [
     'Birmingham, West Midlands',
     'Brighton, Brighton and Hove',
@@ -73,7 +74,7 @@ const getNameFromGazetteerEntry = (gazetteerEntry) => {
   } else if (gazetteerEntry.entityType === 'Postcode1') {
     // If full postcode re-construct name
     name = `${gazetteerEntry.address.locality}, ${gazetteerEntry.address.postalCode}`
-  } else if (gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
+  } else if (gazetteerEntry.address.adminDistrict2 && gazetteerEntry.address.adminDistrict2 === gazetteerEntry.address.locality) {
     // Remove duplication within the name
     name = gazetteerEntry.address.locality
   }
