@@ -94,5 +94,22 @@ module.exports = {
       return response
     }
     return new RainfallTelemetry(recent, range, dataStart, dataEnd, rangeStart, rangeEnd)
+  },
+
+  generateForecast: async (startDateTime, startValue) => {
+    let dateTime = moment(startDateTime).subtract(15, 'minutes')
+    const values = Array.from(Array(144)).map((_, i) => {
+      dateTime = dateTime.add(15, 'minutes')
+      return {
+        dateTime: moment(dateTime).format('YYYY-MM-DDTHH:mm:ssZ'),
+        value: Number(startValue)
+      }
+    })
+    const highest = values.reduce((acc, i) => (i.value > acc.value ? i : acc))
+    return {
+      values: values,
+      highestValue: highest.value,
+      highestValueDateTime: highest.dateTime
+    }
   }
 }

@@ -16,6 +16,19 @@ module.exports = {
     }
   },
 
+  getStationForecastTelemetry: async (cookie, startDateTime, value) => {
+    const url = `/telemetry-forecast/${startDateTime}/${value}`
+    try {
+      const response = await axios.get(url, {
+        headers: { Cookie: cookie },
+        baseURL: serviceUrl
+      })
+      return response
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
   getRainfallTelemetry: async (cookie, id, start, end, latest = null) => {
     let url = `/telemetry-rainfall/${id}/${start}/${end}`
     url = latest ? `${url}/${latest}` : url

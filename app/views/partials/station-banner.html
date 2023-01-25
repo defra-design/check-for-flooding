@@ -1,5 +1,5 @@
 {# Station has a warnings baner #}
-{% if model.banner or model.station.rloiId == '8208' %}
+{% if model.banner or model.station.isForecast %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-status defra-flood-status--small defra-flood-status--full govuk-!-margin-bottom-3">
@@ -19,7 +19,7 @@
       {% endif %}
 
       {# Station forecast interpretation #}
-      {% if model.station.status == 'active' and model.station.rloiId == '8208' %}
+      {% if model.station.status == 'active' and model.station.isForecast %}
       <div class="defra-flood-status-item defra-flood-status-item--important">
         <div class="defra-flood-status-item__container">
           <span class="defra-flood-status-item__icon">
@@ -28,7 +28,7 @@
           </span>
           <div class="defra-flood-status-item__text">
             <span class="govuk-visually-hidden">Warning:</span>
-            <p class="govuk-!-margin-bottom-0">This station includes an automatic river level model which should be considered alongside other factors. The highest level in our model is {{ model.station.latestHeight | round(2) }}m at {{ model.time }}.</p>
+            <p class="govuk-!-margin-bottom-0">This station includes an automatic river level model which should be considered alongside other factors. The highest level in our model is {{ model.station.forecastHighest | round(2) }}m at {{ model.forecastHighestTime }}.</p>
           </div>
         </div>
       </div>

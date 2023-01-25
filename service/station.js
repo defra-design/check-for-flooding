@@ -26,6 +26,7 @@ module.exports = {
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
+      is_forecast,
       CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
       lon,
       lat
@@ -60,6 +61,7 @@ module.exports = {
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
+      is_forecast,
       CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
       lon,
       lat
@@ -95,6 +97,7 @@ module.exports = {
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
+      is_forecast,
       CASE WHEN measure_id IS NOT NULL THEN true ELSE false END AS has_detail,
       lon,
       lat
@@ -135,6 +138,7 @@ module.exports = {
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
+      is_forecast,
       measure_id
       FROM measure_with_latest
       WHERE lower(rloi_id) = lower($1)

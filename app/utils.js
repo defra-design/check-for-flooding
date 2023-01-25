@@ -47,7 +47,6 @@ const bufferPoint = (point, m) => {
 }
 
 const getNameFromGazetteerEntry = (gazetteerEntry) => {
-  console.log(gazetteerEntry)
   const coreCities = [
     'Birmingham, West Midlands',
     'Brighton, Brighton and Hove',
