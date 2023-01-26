@@ -126,7 +126,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-line-chart govuk-!-margin-bottom-4">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height over the last 5 days {% if model.isFfoi %}and upto 36 hour forecast{% endif %} in metres</h2>
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height in metres over the last 5 days {% if model.station.isForecast %}and 36 hour forecast{% endif %}</h2>
 
       {# Graph #}
       <!-- { if not (model.station.latestHeight < 0 and model.station.type != 'tide') } -->
@@ -222,8 +222,8 @@
         </dl>
       </div>
     </details> -->
-    {% include "partials/social.html" %}
     {% include "partials/context-footer.html" %}
+    {% include "partials/social.html" %}
     {% include "partials/related-content.html" %}
   </div>
 </div>

@@ -97,12 +97,17 @@ module.exports = {
   },
 
   generateForecast: async (startDateTime, startValue) => {
-    let dateTime = moment(startDateTime).subtract(15, 'minutes')
-    const values = Array.from(Array(144)).map((_, i) => {
-      dateTime = dateTime.add(15, 'minutes')
+    let dateTime = moment(startDateTime).subtract(9, 'hours')
+    let value = Number(startValue)
+    const values = Array.from(Array(4)).map((_, i) => {
+      dateTime = dateTime.add(9, 'hours')
+      if (i === 2) {
+        value += 2
+      }
+      console.log(i, value)
       return {
         dateTime: moment(dateTime).format('YYYY-MM-DDTHH:mm:ssZ'),
-        value: Number(startValue)
+        value: Number(value)
       }
     })
     const highest = values.reduce((acc, i) => (i.value > acc.value ? i : acc))
