@@ -96,18 +96,18 @@ module.exports = {
     return new RainfallTelemetry(recent, range, dataStart, dataEnd, rangeStart, rangeEnd)
   },
 
-  generateForecast: async (startDateTime, startValue) => {
-    let dateTime = moment(startDateTime).subtract(9, 'hours')
-    let value = Number(startValue)
-    const values = Array.from(Array(4)).map((_, i) => {
-      dateTime = dateTime.add(9, 'hours')
-      if (i === 2) {
-        value += 2
-      }
-      console.log(i, value)
+  generateForecast: async (startDateTime, startValue, highValue) => {
+    const dateTime = moment(startDateTime)
+    const value = Number(startValue)
+    const endValue = Number(highValue * 1.1)
+    const valueIncrements = [0, 0.005, 0.1, 0.03, 0.07, 0.3, 0.6, 1] // 0 - 1
+    const timeIncrements = Math.floor(36 / (valueIncrements.length - 1))
+    const range = endValue - value
+    const scale = valueIncrements.map(x => value + (x * range))
+    const values = Array.from(Array(valueIncrements.length)).map((_, i) => {
       return {
-        dateTime: moment(dateTime).format('YYYY-MM-DDTHH:mm:ssZ'),
-        value: Number(value)
+        dateTime: moment(dateTime).add(i * timeIncrements, 'hours').format('YYYY-MM-DDTHH:mm:ssZ'),
+        value: scale[i]
       }
     })
     const highest = values.reduce((acc, i) => (i.value > acc.value ? i : acc))

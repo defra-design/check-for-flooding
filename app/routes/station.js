@@ -35,7 +35,7 @@ router.get('/station/:id', async (req, res) => {
       telemetry = telemetry.data
       // Generate dummy station forecast
       if (station.isForecast) {
-        const forecast = await telemetryServices.getStationForecastTelemetry(cookie, station.latestDatetime, station.latestHeight)
+        const forecast = await telemetryServices.getStationForecastTelemetry(cookie, station.latestDatetime, station.latestHeight, station.levelHigh)
         // Add station properties
         telemetry.forecast = forecast.data.values
         station.forecastHighest = forecast.data.highestValue

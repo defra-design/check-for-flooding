@@ -16,8 +16,8 @@ module.exports = {
     }
   },
 
-  getStationForecastTelemetry: async (cookie, startDateTime, value) => {
-    const url = `/telemetry-forecast/${startDateTime}/${value}`
+  getStationForecastTelemetry: async (cookie, startDateTime, startValue, highValue) => {
+    const url = `/telemetry-forecast/${startDateTime}/${startValue}/${highValue}`
     try {
       const response = await axios.get(url, {
         headers: { Cookie: cookie },
