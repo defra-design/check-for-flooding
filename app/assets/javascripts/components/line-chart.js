@@ -87,7 +87,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       observedArea.datum(observedPoints).attr('d', area)
       observedLine.datum(observedPoints).attr('d', line)
     }
-    if (dataCache.observed.length) {
+    if (dataCache.forecast.length) {
       forecastArea.datum(forecastPoints).attr('d', area)
       forecastLine.datum(forecastPoints).attr('d', line)
     }
@@ -262,8 +262,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     // Update locator
     const locatorX = Math.floor(xScale(new Date(dataPoint.dateTime)))
     const locatorY = Math.floor(yScale(dataCache.type === 'river' && dataPoint.value < 0 ? 0 : dataPoint.value)) // *DBL
-    const latestX = Math.floor(xScale(new Date(dataPoint.dateTime)))
-    locator.classed('locator--forecast', locatorX > latestX)
+    const isForecast = (new Date(dataPoint.dateTime)) > (new Date(dataCache.latestDateTime))
+    locator.classed('locator--forecast', isForecast)
     locator.attr('transform', 'translate(' + locatorX + ',' + 0 + ')')
     locator.select('.locator-point').attr('transform', 'translate(' + 0 + ',' + locatorY + ')')
   }
@@ -395,6 +395,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 10000000 : 1000000)
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
+    console.log(lines)
 
     // Get reference to oberved and forecast sections
     observedPoints = lines.filter(l => l.type === 'observed')
