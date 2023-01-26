@@ -106,10 +106,10 @@
     }
 }
 .defra-flood-status-item--important {
-    background-color: govuk-tint($govuk-link-colour, 90);
-    border-color:$govuk-link-colour;
+    background-color: govuk-tint(govuk-colour('blue'), 90);
+    border-color: govuk-colour('blue');
     &:after {
-        color: govuk-tint($govuk-link-colour, 90%);
+        color: govuk-tint(govuk-colour('blue'), 90%);
         border-color: currentColor;
     }
     svg {
@@ -132,6 +132,7 @@
 }
 .defra-flood-status-item--information {
     background-color: transparent;
+    border-color: govuk-colour('mid-grey');
     &:after {
         color: govuk-colour('mid-grey');
         border-color: currentColor;
