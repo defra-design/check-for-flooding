@@ -129,7 +129,7 @@
       <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height in metres over the last 5 days {% if model.station.isForecast %}and up to 36 hour forecast{% endif %}</h2>
 
       {# Forecast information #}
-      {% if model.station.isForecast and not model.station.rloiId == '2001' %}
+      {% if model.station.isForecast and model.station.rloiId != '2001' %}
       <div class="defra-flood-status defra-flood-status--full">
         <div class="defra-flood-status-item defra-flood-status-item--information govuk-!-margin-bottom-4">
           <div class="defra-flood-status-item__container">
