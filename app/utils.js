@@ -21,7 +21,7 @@ const formatTimeHour = (date) => {
 }
 
 const formatTimeDate = (date) => {
-  return `${moment(date).tz('Europe/London').format(moment(date).minutes() === 0 ? 'ha' : 'h:mma')}, ${moment(date).format('D\xa0MMMM')}`
+  return `${moment(date).tz('Europe/London').format(moment(date).minutes() === 0 ? 'ha' : 'h:mma')} on ${moment(date).format('D\xa0MMMM')}`
 }
 
 const formatTime = (date) => {

@@ -126,10 +126,10 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-line-chart govuk-!-margin-bottom-4">
-      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height in metres over the last 5 days {% if model.station.isForecast %}and 36 hour forecast{% endif %}</h2>
+      <h2 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-margin-bottom-4">Height in metres over the last 5 days {% if model.station.isForecast %}and up to 36 hour forecast{% endif %}</h2>
 
       {# Forecast information #}
-      {% if model.station.isForecast %}
+      {% if model.station.isForecast and not model.station.rloiId == '2001' %}
       <div class="defra-flood-status defra-flood-status--full">
         <div class="defra-flood-status-item defra-flood-status-item--information govuk-!-margin-bottom-4">
           <div class="defra-flood-status-item__container">
@@ -142,7 +142,7 @@
             </span>
             <div class="defra-flood-status-item__text">
               <span class="govuk-visually-hidden">Information:</span>
-              <p class="govuk-body-s govuk-!-margin-bottom-0">This station includes an automated model which should be considered alongside other factors. The highest level in our model is {{ model.station.forecastHighest | round(2) }}m at {{ model.forecastHighestTime }}.</p>
+              <p class="govuk-body-s govuk-!-margin-bottom-0">This station includes an automated model{% if model.station.rloiId == '8028' %} which you should consider alongside other factors{% endif %}. The highest level in the model is {{ model.station.forecastHighest | round(2) }}m at {{ model.forecastHighestTime }}.</p>
             </div>
           </div>
         </div>
