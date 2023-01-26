@@ -22,7 +22,7 @@
 {% include "partials/station-banner.html" %}
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
       {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
     </h1>
