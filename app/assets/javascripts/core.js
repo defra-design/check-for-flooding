@@ -124,6 +124,7 @@ window.flood.utils = {
     const result = points.map((obj, i) => ({
       dateTime: obj.dateTime,
       value: obj.value,
+      type: obj.type,
       isSignificant: !!significant.find(x => x.timestamp === obj.timestamp)
     }))
     return result

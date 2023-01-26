@@ -393,9 +393,16 @@ function LineChart (containerId, stationId, data, options = {}) {
     if (dataCache.forecast.length) {
       // Add isSignificant property to points
       dataCache.forecast = simplify(dataCache.forecast, dataCache.type === 'tide' ? 10000000 : 1000000)
+      // Set 1st forecast isSignificant to false if it is the same time and value as the latest observed
+      const latestTime = (new Date(dataCache.observed[0].dateTime).getTime())
+      const forecastStartTime = (new Date(dataCache.forecast[0].dateTime).getTime())
+      const latestValue = dataCache.observed[0].value
+      const forecastStartValue = dataCache.forecast[0].value
+      const isSame = latestTime === forecastStartTime && latestValue === forecastStartValue
+      dataCache.forecast[0].isSignificant = !isSame
+      // Merge points
       lines = lines.concat(dataCache.forecast.map(l => ({ ...l, type: 'forecast' })))
     }
-    console.log(lines)
 
     // Get reference to oberved and forecast sections
     observedPoints = lines.filter(l => l.type === 'observed')

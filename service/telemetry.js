@@ -29,7 +29,7 @@ module.exports = {
         .map(item => {
           return {
             dateTime: item.dateTime,
-            value: item.value
+            value: Math.round(item.value * 100) / 100
           }
         })
         // Public api date range doesn't include time so we need additional filtering
@@ -107,7 +107,7 @@ module.exports = {
     const values = Array.from(Array(valueIncrements.length)).map((_, i) => {
       return {
         dateTime: moment(dateTime).add(i * timeIncrements, 'hours').format('YYYY-MM-DDTHH:mm:ssZ'),
-        value: scale[i]
+        value: Math.round(scale[i] * 100) / 100
       }
     })
     const highest = values.reduce((acc, i) => (i.value > acc.value ? i : acc))
