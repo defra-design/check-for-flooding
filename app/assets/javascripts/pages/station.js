@@ -26,6 +26,15 @@ if (document.getElementById('map')) {
   })
 }
 
+// Add toggle historical impacts
+const toggleListDisplay = document.getElementById('toggle-list-display')
+if (toggleListDisplay) {
+  window.flood.createToggleListDisplay(toggleListDisplay, {
+    type: 'impact',
+    btnText: 'historical events'
+  })
+}
+
 // Add toggletips
 if (document.querySelectorAll('[data-toggletip]')) {
   window.flood.createToggletips({ type: 'i' })
@@ -43,13 +52,4 @@ if (document.getElementById('line-chart')) {
       level: Number(threshold.getAttribute('data-level'))
     })
   }
-}
-
-// Add toggle historical impacts
-const toggleListDisplay = document.getElementById('toggle-list-display')
-if (toggleListDisplay) {
-  window.flood.createToggleListDisplay(toggleListDisplay, {
-    type: 'impact',
-    btnText: 'historical events'
-  })
 }

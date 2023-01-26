@@ -1,5 +1,6 @@
 .defra-flood-impact-list {
   @include govuk-font($size: 19);
+  margin-top: 0px;
   border-bottom: 1px solid $govuk-border-colour;
   &__row {
       position: relative;
