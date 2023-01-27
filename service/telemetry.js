@@ -29,7 +29,7 @@ module.exports = {
         .map(item => {
           return {
             dateTime: item.dateTime,
-            value: item.value
+            value: Math.round(item.value * 100) / 100
           }
         })
         // Public api date range doesn't include time so we need additional filtering
@@ -94,5 +94,27 @@ module.exports = {
       return response
     }
     return new RainfallTelemetry(recent, range, dataStart, dataEnd, rangeStart, rangeEnd)
+  },
+
+  generateForecast: async (startDateTime, startValue, highValue) => {
+    const dateTime = moment(startDateTime)
+    const value = Number(startValue)
+    const endValue = Number(highValue * 1.1)
+    const valueIncrements = [0, 0.005, 0.1, 0.03, 0.07, 0.3, 0.6, 1] // 0 - 1
+    const timeIncrements = Math.floor(36 / (valueIncrements.length - 1))
+    const range = endValue - value
+    const scale = valueIncrements.map(x => value + (x * range))
+    const values = Array.from(Array(valueIncrements.length)).map((_, i) => {
+      return {
+        dateTime: moment(dateTime).add(i * timeIncrements, 'hours').format('YYYY-MM-DDTHH:mm:ssZ'),
+        value: Math.round(scale[i] * 100) / 100
+      }
+    })
+    const highest = values.reduce((acc, i) => (i.value > acc.value ? i : acc))
+    return {
+      values: values,
+      highestValue: highest.value,
+      highestValueDateTime: highest.dateTime
+    }
   }
 }

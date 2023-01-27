@@ -153,6 +153,15 @@ router.get('/service/telemetry-rainfall/:id/:start/:end/:latest?', async (req, r
   }
 })
 
+router.get('/service/telemetry-forecast/:startDateTime/:startValue/:highValue', async (req, res, next) => {
+  try {
+    res.status(200).json(await telemetryServices.generateForecast(req.params.startDateTime, req.params.startValue, req.params.highValue))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
 //
 // Outlook
 //

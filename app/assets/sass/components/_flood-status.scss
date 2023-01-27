@@ -21,7 +21,7 @@
         }
     }
     &--full &-item__container {
-        @include mq ($from: tablet) {
+        @include mq ($from: desktop) {
             width: 66.66%;
         }
     }
@@ -30,7 +30,7 @@
     @extend .govuk-inset-text;
     position: relative;
     padding: 0px;
-    background-color:govuk-colour('light-grey');
+    background-color: govuk-colour('light-grey');
     margin-top:0px;
     margin-bottom:10px;
     &:last-of-type {
@@ -39,13 +39,13 @@
     &__container {
         position:relative;
         display: table;
-        width:100%;
+        width: 100%;
         box-sizing: border-box;
     }
     &__text {
         display: table-cell;
         vertical-align: middle;
-        width:100%;
+        width: 100%;
         padding:15px 15px 15px 0px;
         @include govuk-font($size: 19);
         strong {
@@ -106,10 +106,10 @@
     }
 }
 .defra-flood-status-item--important {
-    background-color: govuk-tint($govuk-link-colour, 90);
-    border-color:$govuk-link-colour;
+    background-color: govuk-tint(govuk-colour('blue'), 90);
+    border-color: govuk-colour('blue');
     &:after {
-        color: govuk-tint($govuk-link-colour, 90%);
+        color: govuk-tint(govuk-colour('blue'), 90%);
         border-color: currentColor;
     }
     svg {
@@ -130,6 +130,25 @@
         }
     }
 }
+.defra-flood-status-item--information {
+    background-color: transparent;
+    border-color: govuk-colour('mid-grey');
+    &:after {
+        color: govuk-colour('mid-grey');
+        border-color: currentColor;
+    }
+    svg {
+        vertical-align: middle;
+        color: govuk-colour('dark-grey');
+        width: 20px;
+        height: 20px;
+        margin: 0px 5px;
+        @include mq ($from: tablet) {
+            width: 25px;
+            height: 25px;
+        }
+    }
+}
 /*
 .defra-flood-status-item--removed {
     .defra-flood-status-item__icon:after {
@@ -140,5 +159,5 @@
 .defra-flood-status__text {
     @extend .govuk-body;
     @include govuk-responsive-margin(3, 'top');
-    margin-bottom:5px;
+    margin-bottom: 5px;
 }

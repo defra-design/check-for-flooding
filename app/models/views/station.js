@@ -19,6 +19,7 @@ class ViewModel {
     this.telemetry = telemetry
     this.thresholds = thresholds
     this.time = utils.formatTimeDate(station.latestDatetime)
+    this.forecastHighestTime = utils.formatTimeDate(station.forecastHighestDateTime)
     this.timeShort = `${utils.formatTime(station.latestDatetime)} ${utils.formatDate(station.latestDatetime)}`
     this.bingApiKey = bingApiKey
     this.nearby = place?.postcode || null

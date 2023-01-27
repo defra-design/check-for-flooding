@@ -8,7 +8,6 @@ import '../components/map/styles'
 import '../components/map/layers'
 import '../components/map/container'
 import '../components/map/live'
-import '../components/tooltip'
 import '../components/toggletip'
 
 // Create LiveMap
@@ -24,12 +23,12 @@ if (document.getElementById('map')) {
   })
 }
 
-// Add toggletips
+// Create toggletips
 if (document.querySelectorAll('[data-toggletip]')) {
   window.flood.createToggletips({ type: 'i' })
 }
 
-// Line chart
+// Create line chart
 if (document.getElementById('line-chart')) {
   const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
   const thresholdId = `threshold-${window.flood.model.id}-high`
@@ -43,7 +42,7 @@ if (document.getElementById('line-chart')) {
   }
 }
 
-// Add toggle historical impacts
+// Create toggle historical impacts
 const toggleListDisplay = document.getElementById('toggle-list-display')
 if (toggleListDisplay) {
   window.flood.createToggleListDisplay(toggleListDisplay, {

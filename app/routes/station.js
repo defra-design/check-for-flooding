@@ -33,6 +33,14 @@ router.get('/station/:id', async (req, res) => {
       const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
       telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
       telemetry = telemetry.data
+      // Generate dummy station forecast
+      if (station.isForecast) {
+        const forecast = await telemetryServices.getStationForecastTelemetry(cookie, station.latestDatetime, station.latestHeight, station.levelHigh)
+        // Add station properties
+        telemetry.forecast = forecast.data.values
+        station.forecastHighest = forecast.data.highestValue
+        station.forecastHighestDateTime = forecast.data.highestValueDateTime
+      }
     } else {
       telemetry = {}
     }
