@@ -107,13 +107,13 @@
             {% if model.up %}
             <button class="defra-button-secondary defra-button-secondary--icon" data-id="s{{ model.up }}" aria-controls="viewport infoDescription">
                 <svg focusable="false" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8,6.4l0,9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"></path><path d="M8,0l4,6.4l-8,0l4,-6.4Z" style="fill:currentColor"></path></svg>
-                <span class="govuk-visually-hidden">Select next</span> Upstream  <span class="govuk-visually-hidden">measurement</span>
+                <span class="govuk-visually-hidden">Select next</span> {{ model.up }}U  <span class="govuk-visually-hidden">measurement</span>
             </button>
             {% endif %}
             {% if model.down %}
             <button class="defra-button-secondary defra-button-secondary--icon" data-id="s{{ model.down }}" aria-controls="viewport infoDescription">
                 <svg focusable="false" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8,9.6l-0,-9.6" style="fill:none;stroke:currentColor;stroke-width:2px;"/><path d="M8,16l-4,-6.4l8,0l-4,6.4Z" style="fill:currentColor"/></svg>
-                <span class="govuk-visually-hidden">Select next</span> Downstream <span class="govuk-visually-hidden">measurement</span>
+                <span class="govuk-visually-hidden">Select next</span> {{ model.down }}D <span class="govuk-visually-hidden">measurement</span>
             </button>
             {% endif %}
         </div>

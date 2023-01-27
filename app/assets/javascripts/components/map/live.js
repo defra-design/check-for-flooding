@@ -446,6 +446,11 @@ function LiveMap (mapId, options) {
       model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
       model.severityChangedDate = `${formatTime(new Date(model.severityChangedDate))}, ${formatDayMonth(new Date(model.severityChangedDate))}`
     }
+    // Add up/down id's for multistage stations
+    if (model.type === 'M') {
+      model.up = model.id.includes('-downstage') ? model.id.split('-')[0] : model.up
+      model.down = model.id.includes('-downstage') ? model.down : model.id + '-downstage'
+    }
     const env = window.nunjucks.configure('views')
     env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
     const html = env.render('info-live.html', { model: model })

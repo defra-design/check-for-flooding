@@ -137,6 +137,7 @@ module.exports = {
       latest_status,
       is_multi_stage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
+      CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage,
       is_wales,
       is_forecast,
       measure_id
