@@ -19,6 +19,7 @@ class ViewModel {
     this.telemetry = telemetry
     this.thresholds = thresholds
     this.time = utils.formatTimeDate(station.latestDatetime)
+    this.forecastHighestTime = utils.formatTimeDate(station.forecastHighestDateTime)
     this.timeShort = `${utils.formatTime(station.latestDatetime)} ${utils.formatDate(station.latestDatetime)}`
     this.bingApiKey = bingApiKey
     this.nearby = place?.postcode || null
@@ -27,27 +28,27 @@ class ViewModel {
     if (station.type === 'river') {
       this.infoHeight = (() => {
         if (station.latestStatus && station.latestHeight <= 0 && station.type === 'river') {
-          return 'The river height is 0 metres or below. This is normal because height is measured from a fixed point, which can change due to erosion or silt deposits.'
+          return 'The river height is 0 metres or below. This is normal for some stations because of natural changes to the riverbed, where height is usually measured from.'
         } else {
-          return 'We usually measure the height of rivers from a fixed point on or close to the riverbed.'
+          return `The river height is ${this.station.latestHeight} metres. We usually measure height from a fixed point on or close to the riverbed.`
         }
       })()
       this.infoTrend = (() => {
         if (station.latestTrend === 'rising') {
-          return 'The latest level is higher than the previous. Readings are taken every 15 minutes.'
+          return 'The last 2 readings indicate the trend.'
         } else if (station.latestTrend === 'falling') {
-          return 'The latest level is lower than the previous. Readings are taken every 15 minutes.'
+          return 'The last 2 readings indicate the trend.'
         } else {
-          return 'The latest 2 readings are the same. Readings are taken every 15 minutes.'
+          return 'The last 2 readings indicate the trend.'
         }
       })()
       this.infoState = (() => {
         if (station.latestState === 'high') {
-          return 'The latest level is above the normal range.'
+          return 'The latest level is above the normal range. We calculate the normal range using an average of past measurements and other local factors.'
         } else if (station.latestState === 'low') {
-          return 'The latest level is below the normal range.'
+          return 'The latest level is below the normal range. We calculate the normal range using an average of past measurements and other local factors.'
         } else {
-          return 'The latest level is within the normal range.'
+          return 'The latest level is within the normal range. We calculate the normal range using an average of past measurements and other local factors.'
         }
       })()
     }
