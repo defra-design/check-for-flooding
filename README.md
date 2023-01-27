@@ -1,4 +1,4 @@
-# check-for-flooding prototype
+# Check for flooding prototype
 
 For research and testing only
 
