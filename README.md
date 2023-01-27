@@ -2,4 +2,4 @@
 
 For research and testing only
 
-http://check-for-flooding.herokuapp.com
+https://check-for-flooding.herokuapp.com
