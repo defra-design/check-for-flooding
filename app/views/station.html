@@ -36,14 +36,14 @@
         <span id="map"></span>
         <div class="defra-navbar__group">
           <ul class="defra-navbar__list">
-            {% if model.station.upStationId %}
+            {% if model.station.upStationId or model.station.isDownstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.upStationId }}">Upstream</a>
+              <a href="/station/{% if model.station.isDownstage %}{{ model.station.rloiId | truncate(4, true, '') }}{% else %}{{ model.station.upStationId }}{% endif %}">Upstream</a>
             </li>
             {% endif %}
-            {% if model.station.downStationId %}
+            {% if model.station.downStationId or model.station.isUpstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.downStationId }}">Downstream</a>
+              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}-downstage{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
             </li>
             {% endif %}
             <li class="defra-navbar__item">
