@@ -592,7 +592,7 @@ window.flood.maps.MapContainer = function MapContainer (mapId, options) {
   // Remove map on popsate change
   const popstate = (e) => {
     // Safari fires popstate on page load
-    if (!window.history.state || window.history.state?.v === '') removeContainer()
+    removeContainer()
   }
   window.addEventListener('popstate', popstate)
 

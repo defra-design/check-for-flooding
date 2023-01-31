@@ -717,9 +717,6 @@ maps.createLiveMap = (mapId, options = {}) => {
   window.addEventListener('popstate', (e) => {
     if (e.state && e.state.v === mapId) {
       options.isBack = window.history.state.isBack
-      // Safari bfcache behaviour
-      const container = document.getElementById(mapId)
-      if (container) container.remove()
       return new LiveMap(e.state.v, options)
     }
   })
