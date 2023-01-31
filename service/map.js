@@ -56,7 +56,9 @@ module.exports = {
     WHEN type = 'rainfall' AND rainfall_24hr = 0 THEN 'norisk'
     WHEN status != 'active' THEN 'error'
     ELSE 'default' END AS state,
-    name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+    name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down,
+    CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
+    CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage
     FROM measure_with_latest
     ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
     `)
@@ -87,7 +89,8 @@ module.exports = {
           stationUp: item.station_up,
           stationDown: item.station_down,
           isMultiStage: item.is_multi_stage,
-          isDownstage: item.measure_type === 'downstage',
+          isDownstage: item.is_downstage,
+          isUpstage: item.is_upstage,
           isWales: item.is_wales
         }
       })

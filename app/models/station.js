@@ -28,7 +28,7 @@ class Station {
       this.latestStatus = data.latest_height ? data.latest_status : 'missing'
       this.upStationId = data.station_up
       this.downStationId = data.station_down
-      this.isMultiStage = data.is_multi_stage
+      this.isUpstage = data.is_upstage
       this.isDownstage = data.is_downstage
     }
     this.latestDatetime = data.latest_datetime

@@ -34,6 +34,7 @@
             {{ model.riverName }}
             {% endif %} at {{ model.name }}
             {% if model.type === 'sea' and model.riverId %} (tidal){% endif %}
+            {% if model.isUpstage %} (upstream){% elif model.isDownstage %} (downstream){% endif %}
             {% if model.isWales %}<br/><span class="defra-map-info__name-subtitle">(Natural Resources Wales)</span>{% endif %}
         </a>
     </strong>

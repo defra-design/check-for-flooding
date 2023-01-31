@@ -135,7 +135,7 @@ module.exports = {
       latest_state,
       latest_datetime AT TIME ZONE '+00' AS latest_datetime,
       latest_status,
-      is_multi_stage,
+      CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage,
       CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
       is_wales,
       is_forecast,

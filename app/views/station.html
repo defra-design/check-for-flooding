@@ -24,7 +24,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
-      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
+      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isUpstage %}(upstream){% endif %}
     </h1>
   </div>
 </div>
@@ -36,14 +36,14 @@
         <span id="map"></span>
         <div class="defra-navbar__group">
           <ul class="defra-navbar__list">
-            {% if model.station.upStationId %}
+            {% if model.station.upStationId or model.station.isDownstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.upStationId }}">Upstream</a>
+              <a href="/station/{% if model.station.isDownstage %}{{ model.station.rloiId | truncate(4, true, '') }}{% else %}{{ model.station.upStationId }}{% endif %}">Upstream</a>
             </li>
             {% endif %}
-            {% if model.station.downStationId %}
+            {% if model.station.downStationId or model.station.isUpstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{{ model.station.downStationId }}">Downstream</a>
+              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}-downstage{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
             </li>
             {% endif %}
             <li class="defra-navbar__item">
@@ -55,19 +55,6 @@
     </nav>
   </div>
 </div>
-
-{# Multi station #}
-{% if model.station.isMultiStage %}
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {% if model.station.isDownstage %}
-    <p>This measuring station takes 2 measurements. You're viewing the downstream level. <a href="/station/{{ model.station.rloiId | truncate(4, true, '') }}">View the upstream level.</a></p>
-    {% else %}
-    <p>This measuring station takes 2 measurements. You're viewing the upstream level. <a href="/station/{{ model.station.rloiId }}-downstage">View the downstream level.</a></p>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
 
 {% if model.station.status == 'active' and model.station.latestStatus == 'success' %}
 <div class="govuk-grid-row">
