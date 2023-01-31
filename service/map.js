@@ -63,7 +63,9 @@ module.exports = {
       WHEN type = 'tide' THEN 'sea'
       WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'rain'
       WHEN type = 'rainfall' THEN 'rainDry' END AS state,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down
+      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down,
+      CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
+      CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage
       FROM measure_with_latest
       WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1
       ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
@@ -96,6 +98,8 @@ module.exports = {
           percentile95: item.level_low,
           up: item.station_up,
           down: item.station_down,
+          isDownstage: item.is_downstage,
+          isUpstage: item.is_upstage,
           atrisk: item.latest_state === 'High',
           iswales: item.is_wales,
           state: item.state

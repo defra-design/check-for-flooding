@@ -24,7 +24,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-0">
-      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isMultiStage %}(upstream){% endif %}
+      {{ model.title }} {% if model.station.isDownstage %}(downstream){% elif model.station.isUpstage %}(upstream){% endif %}
     </h1>
   </div>
 </div>
@@ -36,12 +36,12 @@
         <span id="map"></span>
         <div class="defra-navbar__group">
           <ul class="defra-navbar__list">
-            {% if model.station.upStationId or model.station.isMultiStage %}
+            {% if model.station.upStationId or model.station.isDownstage %}
             <li class="defra-navbar__item">
               <a href="/station/{% if model.station.isDownstage %}{{ model.station.rloiId | truncate(4, true, '') }}{% else %}{{ model.station.upStationId }}{% endif %}">Upstream</a>
             </li>
             {% endif %}
-            {% if model.station.downStationId or model.station.isMultiStage %}
+            {% if model.station.downStationId or model.station.isUpstage %}
             <li class="defra-navbar__item">
               <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}-downstage{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
             </li>
