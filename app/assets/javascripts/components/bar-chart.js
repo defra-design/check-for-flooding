@@ -76,7 +76,7 @@ function BarChart (containerId, stationId, data) {
       .classed('bar--incomplete', (d) => { return d.isInComplete })
       .classed('bar--latest', (d) => { return d.isLatest })
     bars.filter((d) => { return d.isLatest }).append('line').attr('aria-hidden', true).attr('class', 'latest-line')
-    bars.append('rect').attr('class', 'bar__fill')
+    bars.append('rect').attr('class', 'bar__fill').attr('aria-hidden', true)
     bars.append('text').text((d) => {
       const text = getItemText(d)
       return `${text.value}, ${text.period}, ${text.monthLong} `
