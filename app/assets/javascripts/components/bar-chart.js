@@ -202,7 +202,7 @@ function BarChart (containerId, stationId, data) {
           break
         }
       }
-    } else {
+    } else if (key === 'ArrowLeft') {
       for (let i = index; i < dataPage.length - 1; i++) {
         if (dataPage[i + 1].value > 0 || dataPage[i + 1].isLatest) {
           index = i + 1
@@ -216,7 +216,7 @@ function BarChart (containerId, stationId, data) {
   const swapCell = (e) => {
     const nextIndex = getNextDataItemIndex(e.key)
     const cell = e.target
-    const nextCell = cell.parentNode.children[nextIndex]
+    const nextCell = cell.parentNode.children[dataPage.length - (nextIndex + 1)] // reverse index
     // cell.setAttribute('focusable', false)
     // nextCell.setAttribute('focusable', true)
     cell.tabIndex = -1
