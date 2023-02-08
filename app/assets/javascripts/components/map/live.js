@@ -355,6 +355,7 @@ function LiveMap (mapId, options) {
             geometry: feature.getGeometry(),
             name: feature.get('name'),
             type: feature.get('type'),
+            severity: feature.get('severity'),
             river: feature.get('riverName')
           })
           pointFeature.setId(feature.getId())
@@ -540,18 +541,16 @@ function LiveMap (mapId, options) {
   state.initialExt = window.history.state.initialExt || getLonLatFromExtent(container.map.getView().calculateExtent(container.map.getSize()))
 
   // Set layers from querystring
-  if (getParameterByName('lyr')) {
-    const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
-    toggleLayerVisibility(lyrs)
-    const checkboxes = document.querySelectorAll('.defra-map-key input[type=checkbox]')
-    forEach(checkboxes, (checkbox) => {
-      checkbox.checked = lyrs.includes(checkbox.id)
-    })
-    const radios = document.querySelectorAll('.defra-map-key input[type=radio]')
-    forEach(radios, (radio) => {
-      radio.checked = lyrs.includes(radio.id)
-    })
-  }
+  const lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : ['mv']
+  toggleLayerVisibility(lyrs)
+  const checkboxes = document.querySelectorAll('.defra-map-key input[type=checkbox]')
+  forEach(checkboxes, (checkbox) => {
+    checkbox.checked = lyrs.includes(checkbox.id)
+  })
+  const radios = document.querySelectorAll('.defra-map-key input[type=radio]')
+  forEach(radios, (radio) => {
+    radio.checked = lyrs.includes(radio.id)
+  })
 
   // Update sources at interval
   // setInterval(refreshSources, 10000)
@@ -633,7 +632,7 @@ function LiveMap (mapId, options) {
   keyElement.addEventListener('click', (e) => {
     if (e.target.nodeName === 'INPUT') {
       e.stopPropagation()
-      let lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : []
+      let lyrs = getParameterByName('lyr') ? getParameterByName('lyr').split(',') : ['mv']
       if (e.target.type === 'checkbox') {
         const checkbox = e.target
         checkbox.checked ? lyrs.push(checkbox.id) : lyrs.splice(lyrs.indexOf(checkbox.id), 1)
