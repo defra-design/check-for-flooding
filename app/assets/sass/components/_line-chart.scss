@@ -282,12 +282,13 @@
     // Significant points
     .significant .point circle {
         opacity: 0;
+        fill: govuk-colour('blue');
+    }
+    .significant .point--forecast circle {
+        fill: govuk-colour('dark-grey');
     }
     .significant--visible .point circle {
         opacity: 1;
-    }
-    .point circle {
-        fill: govuk-colour('blue');
     }
     .point text {
         font-size: 0;
