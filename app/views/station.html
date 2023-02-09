@@ -43,7 +43,7 @@
             {% endif %}
             {% if model.station.downStationId or model.station.isUpstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}-downstage{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
+              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}/downstream{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
             </li>
             {% endif %}
             <li class="defra-navbar__item">
