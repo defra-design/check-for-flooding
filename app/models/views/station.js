@@ -37,7 +37,7 @@ class ViewModel {
       })()
       this.infoState = (() => {
         const state = station.latestState === 'high' ? 'above' : station.latestState === 'low' ? 'below' : 'within'
-        return `The latest level is ${state} the normal range. We calculate the normal range using an average of past measurements and other local factors.`
+        return `There are 3 states: low, normal and high. The latest level is ${state} the normal range. We calculate the normal range using an average of past measurements and other local factors.`
       })()
     }
     this.infoTrend = 'The last 2 readings indicate the trend.'
