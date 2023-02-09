@@ -89,7 +89,7 @@
     {% if item.latestStatus == 'success' and item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-numeric">
       {% if item.latestHeight <= 0 and item.type == 'river' %}
-      ≤ 0m
+      0m
       {% else %}
       {{ item.latestHeight | toFixed(2) }}m
       {% endif %}
