@@ -35,25 +35,12 @@ class ViewModel {
           return 'This station measures height from a fixed point on or close to the riverbed.'
         }
       })()
-      this.infoTrend = (() => {
-        if (station.latestTrend === 'rising') {
-          return 'The last 2 readings indicate the trend.'
-        } else if (station.latestTrend === 'falling') {
-          return 'The last 2 readings indicate the trend.'
-        } else {
-          return 'The last 2 readings indicate the trend.'
-        }
-      })()
       this.infoState = (() => {
-        if (station.latestState === 'high') {
-          return 'The latest level is above the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        } else if (station.latestState === 'low') {
-          return 'The latest level is below the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        } else {
-          return 'The latest level is within the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        }
+        const state = station.latestState === 'high' ? 'above' : station.latestState === 'low' ? 'below' : 'within'
+        return `There are 3 states: low, normal and high. The latest level is ${state} the normal range. We calculate the normal range using an average of past measurements and other local factors.`
       })()
     }
+    this.infoTrend = 'The last 2 readings indicate the trend.'
   }
 }
 module.exports = ViewModel

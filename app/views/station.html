@@ -95,7 +95,7 @@
             Trend
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.group_type == 'river' or model.station.group_type == 'groundwater' %}data-toggletip data-toggletip-label="More information about the trend" data-toggletip-content="{{ model.infoTrend }}"{% endif %}>
+            <span data-toggletip data-toggletip-label="More information about the trend" data-toggletip-content="{{ model.infoTrend }}">
             {{ model.station.latestTrend | capitalize }}
             </span>
           </dd>
