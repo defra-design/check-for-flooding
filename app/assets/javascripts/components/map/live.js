@@ -441,6 +441,7 @@ function LiveMap (mapId, options) {
     // Format dates and id's for stations
     if (['s', 'r'].includes(feature.getId().toString().charAt(0))) {
       model.id = feature.getId().substring(1)
+      model.rloiId = model.id.replace('-downstage', '')
       model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
       model.nrwUrl = nrwUrl
     } else if (model.issuedDate) {

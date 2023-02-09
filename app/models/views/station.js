@@ -25,12 +25,14 @@ class ViewModel {
     this.nearby = place?.postcode || null
 
     // Toggletips
-    if (station.type === 'river') {
+    if (['river', 'groundwater'].includes(station.group_type)) {
       this.infoHeight = (() => {
-        if (station.latestStatus && station.latestHeight <= 0 && station.type === 'river') {
-          return 'The river height is 0 metres or below. This is normal for some stations because of natural changes to the riverbed, where height is usually measured from.'
+        if (station.isAOD) {
+          return 'This station measures height from sea level.'
+        } else if (station.latestHeight <= 0) {
+          return 'This station measures height from a fixed point on or close to the riverbed. A reading of 0 metres can be normal for some stations because of natural changes to the riverbed.'
         } else {
-          return `The river height is ${this.station.latestHeight} metres. We usually measure height from a fixed point on or close to the riverbed.`
+          return 'This station measures height from a fixed point on or close to the riverbed.'
         }
       })()
       this.infoTrend = (() => {

@@ -2,8 +2,8 @@ const axios = require('axios')
 const serviceUrl = process.env.SERVICE_URL
 
 module.exports = {
-  getStation: async (cookie, id) => {
-    const url = `/station/${id}`
+  getStation: async (cookie, id, isDownstream) => {
+    const url = `/station/${id}${isDownstream ? '/downstream' : ''}`
     try {
       const response = await axios.get(url, {
         headers: { Cookie: cookie },

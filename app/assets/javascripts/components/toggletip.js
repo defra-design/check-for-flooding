@@ -172,11 +172,11 @@ const toggletips = (options) => {
   })
 
   // Page zoom
-  window.addEventListener('resize', (e) => {
-    if (currentToggletip) {
-      openToggletip(currentToggletip)
-    }
-  })
+  // window.addEventListener('resize', (e) => {
+  //   if (currentToggletip) {
+  //     openToggletip(currentToggletip)
+  //   }
+  // })
 }
 
 window.flood.createToggletips = (options) => {

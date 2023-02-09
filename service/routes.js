@@ -79,11 +79,11 @@ router.get('/service/catchments/:query', async (req, res, next) => {
 //
 
 // Get a single station with all its details
-router.get('/service/station/:id', async (req, res, next) => {
-  const isDownstage = req.params.id.includes('-downstream')
-  const rloiId = req.params.id.replace('-downstream', '').replace('-upstream', '')
+router.get('/service/station/:id/:downstream?', async (req, res, next) => {
+  const isDownstage = req.params.downstream === 'downstream'
+  const rloiId = `${req.params.id}${isDownstage ? '-downstage' : ''}`
   try {
-    res.status(200).json(await stationServices.getStation(rloiId, isDownstage))
+    res.status(200).json(await stationServices.getStation(rloiId))
   } catch (err) {
     res.status(500)
     console.log(err)

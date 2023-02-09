@@ -4,7 +4,7 @@ const locationServices = require('../services/location')
 const levelServices = require('../services/level')
 const router = express.Router()
 const River = require('../models/river')
-const Catchment = require('../models/catchment')
+// const Catchment = require('../models/catchment')
 const Place = require('../models/place')
 const Levels = require('../models/levels')
 const ViewModel = require('../models/views/river-sea-groundwater-rainfall-levels')
@@ -46,31 +46,27 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
       }
     }
     // Check catchments
-    if (query.searchType === '' || query.searchType === 'catchment') {
-      const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
-      if (catchmentResponse.status === 200) {
-        catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
-      } else {
-        // Log 500 error
-        console.log('500 error: Rivers')
-      }
-    }
+    // if (query.searchType === '' || query.searchType === 'catchment') {
+    //   const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
+    //   if (catchmentResponse.status === 200) {
+    //     catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
+    //   } else {
+    //     // Log 500 error
+    //     console.log('500 error: Rivers')
+    //   }
+    // }
   }
   // Remove Bing broad 'admindivision2' match when we have a single river
   const isBingBroadRiverMatch = places.length === 1 && places[0].type === 'admindivision2' && rivers.length === 1
   places.length = isBingBroadRiverMatch ? 0 : places.length
 
-  if (places.length === 1 && !rivers.length && !catchments.length) {
+  if (places.length === 1 && !rivers.length) { //  && !catchments.length
     // We have a single place
     const levelResponse = await levelServices.getLevelsWithin(cookie, places[0].bboxBuffered)
     levels = new Levels(query.type, levelResponse.data)
-  } else if (rivers.length === 1 && !places.length && !catchments.length) {
+  } else if (rivers.length === 1 && !places.length) { //  && !catchments.length
     // We have a single river
     const levelResponse = await levelServices.getLevelsByRiver(cookie, rivers[0].display)
-    levels = new Levels(query.type, levelResponse.data)
-  } else if (catchments.length === 1 && !rivers.length && !places.length) {
-    // We have a single catchment
-    const levelResponse = await levelServices.getLevelsByCatchment(cookie, catchments[0].display)
     levels = new Levels(query.type, levelResponse.data)
   }
   const model = new ViewModel(query, places, rivers, catchments, levels, query.error)

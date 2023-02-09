@@ -43,7 +43,7 @@
             {% endif %}
             {% if model.station.downStationId or model.station.isUpstage %}
             <li class="defra-navbar__item">
-              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}-downstage{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
+              <a href="/station/{% if model.station.isUpstage %}{{ model.station.rloiId }}/downstream{% else %}{{ model.station.downStationId }}{% endif %}">Downstream</a>
             </li>
             {% endif %}
             <li class="defra-navbar__item">
@@ -84,7 +84,7 @@
             Height
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the height" data-toggletip-content="{{ model.infoHeight }}"{% endif %}>
+            <span {% if model.station.group_type == 'river' or model.station.group_type == 'groundwater' %}data-toggletip data-toggletip-label="More information about the height" data-toggletip-content="{{ model.infoHeight }}"{% endif %}>
             {% if model.station.latestHeight <= 0 and model.station.type != 'tide' %}0m{% else %}{{ model.station.latestHeight | round(2) }}m{% endif %}
             </span>
           </dd>
@@ -95,7 +95,7 @@
             Trend
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the trend" data-toggletip-content="{{ model.infoTrend }}"{% endif %}>
+            <span {% if model.station.group_type == 'river' or model.station.group_type == 'groundwater' %}data-toggletip data-toggletip-label="More information about the trend" data-toggletip-content="{{ model.infoTrend }}"{% endif %}>
             {{ model.station.latestTrend | capitalize }}
             </span>
           </dd>
@@ -108,7 +108,7 @@
             State
           </dt>
           <dd class="defra-flood-statistics__value">
-            <span {% if model.station.type == 'river' %}data-toggletip data-toggletip-label="More information about the state" data-toggletip-content="{{ model.infoState }}"{% endif %}>
+            <span {% if model.station.group_type == 'river' or model.station.group_type == 'groundwater' %}data-toggletip data-toggletip-label="More information about the state" data-toggletip-content="{{ model.infoState }}"{% endif %}>
             {{ model.station.latestState | capitalize }}
             </span>
           </dd>
