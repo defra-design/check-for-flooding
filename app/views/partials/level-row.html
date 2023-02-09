@@ -8,7 +8,7 @@
     {% if item.type === 'rainfall' %}
     <a href="/rainfall-station/{{ item.id | urlencode }}">Rainfall at {{ item.name }}</a>
     {% else %}
-    <a href="{% if item.isWales %}{{ model.nrwURL }}{% endif %}/station/{{ item.id | urlencode }}">
+    <a href="{% if item.isWales %}{{ model.nrwURL }}{% endif %}/station/{{ item.rloiId | urlencode }}{% if item.isDownstage %}/downstream{% endif %}">
       {% if item.group_type == 'river' %}
       {{ item.riverName }} at
       {% elif item.group_type == 'sea' %}
@@ -89,7 +89,7 @@
     {% if item.latestStatus == 'success' and item.latestHeight | isNumber %}
     <span class="defra-flood-levels-table-numeric">
       {% if item.latestHeight <= 0 and item.type == 'river' %}
-      ≤ 0m
+      0m
       {% else %}
       {{ item.latestHeight | toFixed(2) }}m
       {% endif %}

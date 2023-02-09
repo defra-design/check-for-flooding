@@ -25,33 +25,22 @@ class ViewModel {
     this.nearby = place?.postcode || null
 
     // Toggletips
-    if (station.type === 'river') {
+    if (['river', 'groundwater'].includes(station.group_type)) {
       this.infoHeight = (() => {
-        if (station.latestStatus && station.latestHeight <= 0 && station.type === 'river') {
-          return 'The river height is 0 metres or below. This is normal for some stations because of natural changes to the riverbed, where height is usually measured from.'
+        if (station.isAOD) {
+          return 'This station measures height from sea level.'
+        } else if (station.latestHeight <= 0) {
+          return 'This station measures height from a fixed point on or close to the riverbed. A reading of 0 metres can be normal for some stations because of natural changes to the riverbed.'
         } else {
-          return `The river height is ${this.station.latestHeight} metres. We usually measure height from a fixed point on or close to the riverbed.`
-        }
-      })()
-      this.infoTrend = (() => {
-        if (station.latestTrend === 'rising') {
-          return 'The last 2 readings indicate the trend.'
-        } else if (station.latestTrend === 'falling') {
-          return 'The last 2 readings indicate the trend.'
-        } else {
-          return 'The last 2 readings indicate the trend.'
+          return 'This station measures height from a fixed point on or close to the riverbed.'
         }
       })()
       this.infoState = (() => {
-        if (station.latestState === 'high') {
-          return 'The latest level is above the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        } else if (station.latestState === 'low') {
-          return 'The latest level is below the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        } else {
-          return 'The latest level is within the normal range. We calculate the normal range using an average of past measurements and other local factors.'
-        }
+        const state = station.latestState === 'high' ? 'above' : station.latestState === 'low' ? 'below' : 'within'
+        return `The latest level is ${state} the normal range. We calculate the normal range using an average of past measurements and other local factors.`
       })()
     }
+    this.infoTrend = 'The last 2 readings indicate the trend.'
   }
 }
 module.exports = ViewModel

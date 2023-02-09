@@ -28,8 +28,10 @@ class Station {
       this.latestStatus = data.latest_height ? data.latest_status : 'missing'
       this.upStationId = data.station_up
       this.downStationId = data.station_down
-      this.isUpstage = data.is_upstage
+      this.isMultiStage = data.is_multi_stage
       this.isDownstage = data.is_downstage
+      this.isUpstage = data.is_upstage
+      this.isAOD = data.is_aod
     }
     this.latestDatetime = data.latest_datetime
     this.centroid = data.centroid.split(',').map(x => Math.round(parseFloat(x) * 100000) / 100000)

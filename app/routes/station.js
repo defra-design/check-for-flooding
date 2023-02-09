@@ -16,10 +16,11 @@ router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
 })
 
-router.get('/station/:id', async (req, res) => {
+router.get('/station/:id/:downstream?', async (req, res) => {
   const cookie = req.headers.cookie || null
+  const isDownstream = req.params.downstream?.toLowerCase() === 'downstream'
   const rloiId = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStation(cookie, rloiId)
+  const stationResponse = await stationServices.getStation(cookie, rloiId, isDownstream)
   let telemetry, station, banner, thresholds, place
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
