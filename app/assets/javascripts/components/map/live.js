@@ -257,7 +257,7 @@ function LiveMap (mapId, options) {
 
   // Set target area polygon opacity
   const setFillOpacity = (layers) => {
-    const settings = ['interpolate', ['exponential', 0.5], ['zoom'], 10, 1, 16, 0.3]
+    const settings = ['interpolate', ['exponential', 0.75], ['zoom'], 10, 1, 16, 0.5]
     layers.forEach(l => { map.setPaintProperty(l, 'fill-opacity', settings) })
   }
 
@@ -367,6 +367,7 @@ function LiveMap (mapId, options) {
   const initMap = () => {
     // Get a reference to background layers
     baseLayers = map.getStyle().layers
+    console.log(baseLayers)
     map.moveLayer('buildings 2D', 'surfacewater shadow')
     map.moveLayer('buildings 3D', 'surfacewater shadow')
     // Add sources
