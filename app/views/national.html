@@ -127,6 +127,7 @@
   window.flood = {
     model: {
       hasWarnings: {{ model.hasWarnings | dump | safe }},
+      mapLayers: {{ model.mapLayers | dump | safe }},
       outlookDays: {{ model.outlook.days | dump | safe }}
     }
   }

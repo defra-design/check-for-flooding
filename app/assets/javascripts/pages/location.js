@@ -15,7 +15,7 @@ if (document.getElementById('map-live')) {
   window.flood.maps.createLiveMap('map-live', {
     btnText: window.flood.model.hasWarnings ? 'View map of flood warnings and alerts' : 'View map',
     btnClasses: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-bottom-4',
-    layers: 'mv,ts,tw,ta',
+    layers: window.flood.model.mapLayers,
     extent: window.flood.model.bbox
   })
 }
