@@ -13,6 +13,7 @@ class ViewModel {
     this.targetAreaMessageDate = isActive ? `Updated at ${date}` : isRemoved ? `Removed at ${date}` : null
     this.isActive = isActive
     this.isRemoved = isRemoved
+    this.mapLayers = `mv,ts,tw,ta${!isActive ? ',tr' : ''}`
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
     this.bingApiKey = bingApiKey
   }

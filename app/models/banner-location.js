@@ -25,6 +25,7 @@ class BannerLocation {
     this.hasAlerts = hasAlerts
     this.hasRemoved = hasRemoved
     this.hasHighLevels = levels.hasHigh
+    this.isOnlyRemoved = hasRemoved && !hasSevere && !hasWarnings && !hasAlerts
   }
 
   groupSevere (group, location) {

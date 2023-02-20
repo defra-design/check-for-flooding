@@ -214,8 +214,8 @@ function LiveMap (mapId, options) {
         (props.severity && props.severity === 2 && lyrCodes.includes('tw')) ||
         (props.severity && props.severity === 3 && lyrCodes.includes('ta')) ||
         (props.severity && props.severity === 4 && lyrCodes.includes('tr')) ||
-        // Target area provided
-        (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId())
+        // On a target area page
+        (targetArea.pointFeature && targetArea.pointFeature.getId() === feature.getId() && lyrCodes.includes('tr'))
       )
       // WebGl: Feature properties must be strings or numbers
       feature.set('isVisible', isVisible.toString())
@@ -279,7 +279,7 @@ function LiveMap (mapId, options) {
     const isBigZoom = resolution <= bigZoom
     const extent = container.map.getView().calculateExtent(container.map.getSize())
     const layers = dataLayers.filter(layer => layer !== vectorTiles && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
-    // Add target area isn't an active alert or warning
+    // Add target area if it isn't an active alert or warning
     if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
     // Add vectortile polygons to labels
     if (layers.includes(warnings) && isBigZoom) {
