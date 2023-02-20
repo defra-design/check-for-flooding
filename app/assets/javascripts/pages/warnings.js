@@ -12,7 +12,7 @@ if (document.getElementById('map-live')) {
   window.flood.maps.createLiveMap('map-live', {
     btnText: 'View map of flood warnings and alerts',
     btnClasses: 'defra-button-secondary defra-button-secondary--icon',
-    layers: 'mv,ts,tw,ta',
+    layers: window.flood.model.mapLayers,
     extent: window.flood.model.bbox
   })
 }

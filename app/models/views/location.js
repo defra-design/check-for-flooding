@@ -9,6 +9,7 @@ class ViewModel {
     this.hasBack = !!referrer
     this.warningsDate = `${moment().tz('Europe/London').format('h:mma')} on ${moment().tz('Europe/London').format('D MMMM YYYY')}`
     this.hasWarnings = banner.hasSevere || banner.hasWarnings || banner.hasAlerts
+    this.mapLayers = `mv,ts,tw,ta${banner.hasRemoved ? ',tr' : ''}`
     this.bingApiKey = bingApiKey
   }
 }
