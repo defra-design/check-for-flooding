@@ -33,7 +33,7 @@
   <div class="govuk-grid-column-full">
     <nav class="defra-navbar defra-navbar--secondary" aria-label="Related levels">
       <div class="defra-navbar__inner">
-        <span id="map"></span>
+        <span id="map-live"></span>
         <div class="defra-navbar__group">
           <ul class="defra-navbar__list">
             {% if model.station.upStationId or model.station.isDownstage %}
@@ -208,41 +208,6 @@
     <p class="govuk-text govuk-!-margin-bottom-4">
       <a href="/how-we-measure-river-sea-groundwater-rainfall-levels">How we measure river, sea and groundwater levels</a>
     </p>
-    <!-- <details class="govuk-details govuk-!-font-size-16 govuk-!-margin-bottom-4" data-module="govuk-details">
-      <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-          View station technical information
-        </span>
-      </summary>
-      <div class="govuk-details__text">
-        <dl class="govuk-summary-list govuk-summary-list--no-border govuk-summary-list--defra-flood-station govuk-!-font-size-16">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Site datum
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ model.station.stageDatum }}m (Above Ordnance Datum)
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Station name
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ model.station.name }}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Station ID
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ model.station.id }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </details> -->
     {% include "partials/context-footer.html" %}
     {% include "partials/social.html" %}
     {% include "partials/related-content.html" %}
@@ -255,13 +220,19 @@
 <script>
   window.flood = {
     model: {
+      mapButtonText: 'Map',
+      mapButtonClass: 'defra-link-icon-s',
+      mapButtonType: 'link',
+      mapLayers: 'mv,ri,se,gr,rl',
       id: {{ model.station.id | dump | safe }},
-      rloiId: {{ model.station.rloiId | dump | safe }},
-      riverId: {{ model.station.riverId | dump | safe }},
-      centroid: {{ model.station.centroid | dump | safe }},
+      centre: {{ model.centre | dump | safe }},
+      zoom: {{ model.zoom | dump | safe }},
+      selectedId: {{ model.selectedId | dump | safe }},
+      riverId: {{ model.riverId | dump | safe }},
       telemetry: {{ model.telemetry | dump | safe }}
     }
   }
 </script>
+<script src="/public/javascripts/core.js"></script>
 <script src="/public/javascripts/station.js"></script>
 {% endblock %}

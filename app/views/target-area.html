@@ -122,14 +122,14 @@
 <script>
   window.flood = {
     model: {
-      id: {{ model.targetArea.id | dump | safe }},
-      type: {{ model.targetArea.type | dump | safe }},
-      name: {{ model.targetArea.name | dump | safe }},
+      mapButtonText: {{ model.mapButtonText | dump | safe }},
+      mapButtonClass: {{ model.mapButtonClass | dump | safe }},
       mapLayers: {{ model.mapLayers | dump | safe }},
-      centroid: {{ model.targetArea.centroid | dump | safe }},
-      bbox: {{ model.targetArea.bbox | dump | safe }}
+      selectedId: {{ model.targetArea.id | dump | safe }},
+      name: {{ model.targetArea.name | dump | safe }},
+      extent: {{ model.targetArea.bbox | dump | safe }}
     }
   }
 </script>
-<script src="/public/javascripts/target-area.js"></script>
+<script src="/public/javascripts/core.js"></script>
 {% endblock %}

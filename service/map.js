@@ -25,7 +25,7 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toUpperCase(),
+        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
           name: item.name,
@@ -124,10 +124,10 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toUpperCase(),
+        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
-          fws_tacode: item.fws_tacode.toUpperCase()
+          fws_tacode: item.fws_tacode.toLowerCase()
         }
       })
     })
@@ -143,7 +143,7 @@ module.exports = {
     const response = await db.query(`
       (SELECT ST_AsMVT(q, 'targetareas', 4096, 'geom') FROM (
         (SELECT 
-          fws_tacode AS id,
+          lower(fws_tacode) AS id,
           ST_AsMVTGeom(
             ST_Force2D(geom),
             ST_MakeEnvelope(${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, 4326),
@@ -153,7 +153,7 @@ module.exports = {
           ) geom FROM flood_warning_areas)
           UNION
           (SELECT 
-            fws_tacode AS id,
+            lower(fws_tacode) AS id,
             ST_AsMVTGeom(
               ST_Force2D(geom),
               ST_MakeEnvelope(${bbox[0]}, ${bbox[1]}, ${bbox[2]}, ${bbox[3]}, 4326),

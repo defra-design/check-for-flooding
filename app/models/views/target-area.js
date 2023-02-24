@@ -13,6 +13,8 @@ class ViewModel {
     this.targetAreaMessageDate = isActive ? `Updated at ${date}` : isRemoved ? `Removed at ${date}` : null
     this.isActive = isActive
     this.isRemoved = isRemoved
+    this.mapButtonText = `View map of the flood ${targetArea.type} area`
+    this.mapButtonClass = 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-top-4'
     this.mapLayers = `mv,ts,tw,ta${!isActive ? ',tr' : ''}`
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
     this.bingApiKey = bingApiKey
