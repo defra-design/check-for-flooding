@@ -10,15 +10,15 @@
     "orientation": "any",
     "icons": [
         {
-            "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-192.jpg",
+            "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-192.png",
             "sizes": "192x192"
         },
         {
-          "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-180.jpg",
+          "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-180.png",
           "sizes": "180x180"
         },
         {
-          "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-120.jpg",
+          "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-120.png",
           "sizes": "120x120"
         }
     ]
