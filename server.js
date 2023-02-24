@@ -83,7 +83,7 @@ if (useCookieSessionStore === 'true') {
   })))
 }
 
-// PWA
+// PWA static manifest and service worker loaded before authentication middleware
 app.get('/manifest.json', function (req, res) {
   res.type('text/json')
   res.sendFile(path.join(__dirname, 'manifest.json'))
