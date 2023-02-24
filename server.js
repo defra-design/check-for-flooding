@@ -83,6 +83,16 @@ if (useCookieSessionStore === 'true') {
   })))
 }
 
+// PWA
+app.get('/manifest.json', function (req, res) {
+  res.type('text/json')
+  res.sendFile(path.join(__dirname, 'manifest.json'))
+})
+app.get('/sw.js', function (req, res) {
+  res.type('text/javascript')
+  res.sendFile(path.join(__dirname, 'sw.js'))
+})
+
 // Authentication middleware must be loaded before other middleware such as
 // static assets to prevent unauthorised access
 middleware.forEach(func => app.use(func))
@@ -136,16 +146,6 @@ app.use(function (req, res, next) {
 app.get('/robots.txt', function (req, res) {
   res.type('text/plain')
   res.send('User-agent: *\nDisallow: /')
-})
-
-// PWA
-app.get('/manifest.json', function (req, res) {
-  res.type('text/json')
-  res.sendFile(path.join(__dirname, 'manifest.json'))
-})
-app.get('/sw.js', function (req, res) {
-  res.type('text/javascript')
-  res.sendFile(path.join(__dirname, 'sw.js'))
 })
 
 // Load prototype admin routes
