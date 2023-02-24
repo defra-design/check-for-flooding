@@ -28,18 +28,21 @@ document.onreadystatechange = () => {
       new Button(button).init()
     }
 
+    const model = window.flood.model
+
     // Create LiveMap
     if (document.getElementById('map-live')) {
       window.flood.maps.createLiveMap('map-live', {
-        btnText: window.flood.model.mapButtonText,
-        btnClass: window.flood.model.mapButtonClass,
-        btnType: window.flood.model.mapButtonType || null,
-        layers: window.flood.model.mapLayers,
-        extent: window.flood.model.extent || null,
-        riverId: window.flood.model.riverId || null,
-        centre: window.flood.model.centre || null,
-        zoom: window.flood.model.zoom || null,
-        selectedId: window.flood.model.selectedId || null
+        btnText: model.mapButtonText,
+        btnClass: model.mapButtonClass,
+        btnType: model.mapButtonType || null,
+        layers: model.mapLayers,
+        extent: model.extent || null,
+        riverId: model.riverId || null,
+        centre: model.centre || null,
+        zoom: model.zoom || null,
+        selectedId: model.selectedId || null,
+        targetArea: model.targetArea || null
       })
     }
 
@@ -48,7 +51,7 @@ document.onreadystatechange = () => {
       window.flood.maps.createOutlookMap('map-outlook', {
         btnText: 'View map showing flood risk areas',
         btnClass: 'defra-button-secondary defra-button-secondary--icon',
-        days: window.flood.model.outlookDays
+        days: model.outlookDays
       })
     }
   }

@@ -126,8 +126,9 @@
       mapButtonClass: {{ model.mapButtonClass | dump | safe }},
       mapLayers: {{ model.mapLayers | dump | safe }},
       selectedId: {{ model.targetArea.id | dump | safe }},
-      name: {{ model.targetArea.name | dump | safe }},
-      extent: {{ model.targetArea.bbox | dump | safe }}
+      type: {{ model.targetArea.type | dump | safe }},
+      extent: {{ model.targetArea.bbox | dump | safe }},
+      targetArea: {{ model.mapFeature | dump | safe }}
     }
   }
 </script>

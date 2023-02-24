@@ -18,6 +18,11 @@ class ViewModel {
     this.mapLayers = `mv,ts,tw,ta${!isActive ? ',tr' : ''}`
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
     this.bingApiKey = bingApiKey
+    this.mapFeature = {
+      id: targetArea.id,
+      name: targetArea.name,
+      centre: targetArea.centroid
+    }
   }
 }
 module.exports = ViewModel
