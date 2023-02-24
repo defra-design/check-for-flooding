@@ -41,6 +41,21 @@ class ViewModel {
       })()
     }
     this.infoTrend = 'The last 2 readings indicate the trend.'
+
+    // Map
+    this.mapButtonText = 'Map'
+    this.mapButtonClass = 'defra-link-icon-s'
+    this.mapLayers = 'mv,ri,se,gr,rl'
+    this.centre = station.centroid
+    this.zoom = 14
+    this.riverId = station.riverId
+    this.selectedId = (() => {
+      if (station.type === 'rainfall') {
+        return `r${station.id}`
+      } else {
+        return `s${station.rloiId}`
+      }
+    })()
   }
 }
 module.exports = ViewModel

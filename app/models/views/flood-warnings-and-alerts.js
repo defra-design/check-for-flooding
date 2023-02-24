@@ -5,10 +5,10 @@ class ViewModel {
     this.searchType = 'placeOnly'
     this.querySearch = querySearch
     this.place = places.length ? places[0] : null
-    this.bbox = places.length ? places[0].bboxBuffered : []
+    this.extent = places.length ? places[0].bboxBuffered : null
     this.places = places
     this.warnings = warnings
-    this.mapLayers = `mv,ts,tw,ta${warnings.hasRemoved ? ',tr' : ''}`
+    this.mapLayers = `mv,ts,tw,ta${warnings.highestSeverity === 4 ? ',tr' : ''}`
     this.bingApiKey = bingApiKey
     // Results
     this.isSingleMatch = !!querySearch && places.length === 1

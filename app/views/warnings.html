@@ -127,10 +127,12 @@ Flood warnings and alerts in England - GOV.UK
 <script>
   window.flood = {
     model: {
-      bbox: {{ model.bbox | dump | safe }},
-      mapLayers: {{ model.mapLayers | dump | safe }}
+      mapButtonText: 'View map of flood warnings and alerts',
+      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon',
+      mapLayers: {{ model.mapLayers | dump | safe }},
+      extent: {{ model.extent | dump | safe }}
     }
   }
 </script>
-<script src="/public/javascripts/warnings.js"></script>
+<script src="/public/javascripts/core.js"></script>
 {% endblock %}
