@@ -126,11 +126,12 @@
 <script>
   window.flood = {
     model: {
-      hasWarnings: {{ model.hasWarnings | dump | safe }},
+      mapButtonText: {{ model.mapButtonText | dump | safe }},
+      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon',
       mapLayers: {{ model.mapLayers | dump | safe }},
       outlookDays: {{ model.outlook.days | dump | safe }}
     }
   }
 </script>
-<script src="/public/javascripts/national.js"></script>
+<script src="/public/javascripts/core.js"></script>
 {% endblock %}

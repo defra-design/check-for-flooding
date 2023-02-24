@@ -28,10 +28,10 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toUpperCase(),
+        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
-          id: item.id,
+          id: item.id.toLowerCase(),
           type: 'targetarea',
           name: item.name,
           state: item.state,
@@ -113,10 +113,10 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toUpperCase(),
+        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
-          fws_tacode: item.fws_tacode.toUpperCase()
+          fws_tacode: item.fws_tacode.toLowerCase()
         }
       })
     })

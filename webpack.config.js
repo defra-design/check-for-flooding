@@ -12,11 +12,6 @@ module.exports = (env, argv) => ({
   devtool: !inDev ? false : 'source-map',
   entry: {
     core: './app/assets/javascripts/core',
-    levels: './app/assets/javascripts/pages/levels',
-    warnings: './app/assets/javascripts/pages/warnings',
-    'target-area': './app/assets/javascripts/pages/target-area',
-    location: './app/assets/javascripts/pages/location',
-    national: './app/assets/javascripts/pages/national',
     station: './app/assets/javascripts/pages/station',
     rainfall: './app/assets/javascripts/pages/rainfall'
   },

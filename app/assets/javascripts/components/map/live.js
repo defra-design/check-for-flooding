@@ -89,7 +89,8 @@ function LiveMap (mapId, options) {
     map.setFilter('warnings', ['all', ['match', ['get', 'state'], types.length ? types : '', true, false], ['<', ['zoom'], 10]])
     map.setFilter('stations', ['match', ['get', 'type'], types.length ? types : '', true, false])
     // Filter target areas
-    const warnings = state.warnings.filter(w => state.layers.includes(layersConfig[w.properties.state])).map(f => f.properties.id)
+    const warnings = state.warnings.filter(w => state.layers.includes(layersConfig[w.properties.state])).map(f => f.properties.id.toLowerCase())
+    console.log(warnings)
     // Add target area id if not active
     if (state.targetArea && !state.warnings.find(w => w.properties.id === state.targetArea.properties.id)) {
       warnings.push(state.targetArea.properties.id)
@@ -367,7 +368,6 @@ function LiveMap (mapId, options) {
   const initMap = () => {
     // Get a reference to background layers
     baseLayers = map.getStyle().layers
-    console.log(baseLayers)
     map.moveLayer('buildings 2D', 'surfacewater shadow')
     map.moveLayer('buildings 3D', 'surfacewater shadow')
     // Add sources
@@ -448,7 +448,7 @@ function LiveMap (mapId, options) {
   const containerOptions = {
     bounds: ext,
     centre: options.centre,
-    zoom: 10,
+    zoom: options.zoom || 10,
     queryParamKeys: ['v', 'lyr', 'ext', 'fid', 'rid'],
     originalTitle: options.originalTitle,
     title: options.title,
@@ -672,7 +672,7 @@ maps.createLiveMap = (mapId, options = {}) => {
   }
   button.id = mapId + '-btn'
   button.innerHTML = `<svg width="15" height="20" viewBox="0 0 15 20" focusable="false"><path d="M15,7.5c0.009,3.778 -4.229,9.665 -7.5,12.5c-3.271,-2.835 -7.509,-8.722 -7.5,-12.5c0,-4.142 3.358,-7.5 7.5,-7.5c4.142,0 7.5,3.358 7.5,7.5Zm-7.5,5.461c3.016,0 5.461,-2.445 5.461,-5.461c0,-3.016 -2.445,-5.461 -5.461,-5.461c-3.016,0 -5.461,2.445 -5.461,5.461c0,3.016 2.445,5.461 5.461,5.461Z" fill="currentColor"/></svg><span>${options.btnText || 'View map'}</span><span class="govuk-visually-hidden">(Visual only)</span>`
-  button.className = options.btnClasses || (options.btnType === 'link' ? 'defra-link-icon-s' : 'defra-button-secondary defra-button-secondary--icon')
+  button.className = options.btnClass || (options.btnType === 'link' ? 'defra-link-icon-s' : 'defra-button-secondary defra-button-secondary--icon')
   btnContainer.parentNode.replaceChild(button, btnContainer)
 
   // Detect keyboard interaction
@@ -709,6 +709,7 @@ maps.createLiveMap = (mapId, options = {}) => {
     if (options.layers) { uri = addOrUpdateParameter(uri, 'lyr', options.layers) }
     if (options.extent) { uri = addOrUpdateParameter(uri, 'ext', options.extent) }
     if (options.selectedId) { uri = addOrUpdateParameter(uri, 'fid', options.selectedId) }
+    if (options.riverId) { uri = addOrUpdateParameter(uri, 'rid', options.riverId) }
     window.history.pushState(data, title, uri)
     options.isBack = true
     return new LiveMap(mapId, options)
