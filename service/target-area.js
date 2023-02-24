@@ -4,7 +4,7 @@ module.exports = {
   getTargetArea: async (id) => {
     const response = await db.query(`
     SELECT DISTINCT ON (id)
-    ta1.fws_tacode AS id,
+    lower(ta1.fws_tacode) AS id,
     'warning' AS type,
     ta1.ta_name AS name,
     ta1.descrip AS area,
@@ -33,7 +33,7 @@ module.exports = {
     GROUP BY tt.targetarea_id, ta1.fws_tacode, ta1.ta_name, ta1.descrip, ta1.geom, w1.severity, w1.message, w1.message_changed_date, ta1.parent, w2.severity
     UNION ALL
     (SELECT DISTINCT ON (id)
-    ta2.fws_tacode AS id,
+    lower(ta2.fws_tacode) AS id,
     'alert' AS type,
     ta2.ta_name AS name,
     ta2.descrip AS area,

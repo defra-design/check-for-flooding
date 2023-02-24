@@ -129,7 +129,7 @@ window.flood.maps.styles = {
   vectorTiles: (feature, resolution) => {
     // Use corresposnding warning feature propeties for styling
     const warningsSource = maps.liveMapWarningsSource
-    const featureId = feature.getId().toLowerCase()
+    const featureId = feature.getId()
     const featureLayer = feature.get('layer')
     if (warningsSource && featureLayer === 'targetareas') {
       const warning = warningsSource.getFeatureById(featureId)
