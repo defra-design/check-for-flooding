@@ -6,4 +6,8 @@ router.get('/start', (req, res) => {
   res.render('start')
 })
 
+router.get('/offline', (req, res) => {
+  res.render('offline')
+})
+
 module.exports = router
