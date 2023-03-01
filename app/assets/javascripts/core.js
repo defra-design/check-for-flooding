@@ -1,5 +1,6 @@
 'use strict'
 import 'elm-pep'
+import { SkipLink, ErrorSummary, Button, Tabs } from 'govuk-frontend'
 import './utils'
 import './build/templates'
 import './components/nunjucks'
@@ -9,7 +10,6 @@ import './components/map/layers'
 import './components/map/container'
 import './components/map/live'
 import './components/map/outlook'
-import { SkipLink, ErrorSummary, Button } from 'govuk-frontend'
 import WebChat from './components/webchat'
 
 document.onreadystatechange = () => {
@@ -26,6 +26,10 @@ document.onreadystatechange = () => {
     const button = document.querySelector('[data-module="govuk-button"]')
     if (button) {
       new Button(button).init()
+    }
+    const tabs = document.querySelector('[data-module="govuk-tabs"]')
+    if (tabs) {
+      new Tabs(tabs).init()
     }
 
     // Initialise webchat
