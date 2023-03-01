@@ -1,6 +1,6 @@
 'use strict'
 import 'elm-pep'
-import { SkipLink, ErrorSummary, Button } from 'govuk-frontend'
+import { SkipLink, ErrorSummary, Button, Tabs } from 'govuk-frontend'
 import './utils'
 import './build/templates'
 import './components/nunjucks'
@@ -24,6 +24,10 @@ document.onreadystatechange = () => {
     const button = document.querySelector('[data-module="govuk-button"]')
     if (button) {
       new Button(button).init()
+    }
+    const tabs = document.querySelector('[data-module="govuk-tabs"]')
+    if (tabs) {
+      new Tabs(tabs).init()
     }
 
     const model = window.flood.model
