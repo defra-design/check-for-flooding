@@ -89,10 +89,15 @@
       {% else %}
       <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
       {% endif %}
-      {% set levelsLength = model.targetArea.unmatchedLevels | length %}
+      {% set levelsLength = model.targetArea.levels | length %}
       {% if levelsLength %}
-      <p>View the latest level{% if levelsLength > 1 %}s{% endif %} at
-        {% for level in model.targetArea.unmatchedLevels %}<a href="/station/{{ level.id }}">{{ level.name }}{% if levelsLength > 1 %} ({{ level.riverName }}){% endif %}</a>{% if loop.index < levelsLength - 1 %}, {% elif loop.index > 1 and loop.index < levelsLength %} and {% endif %}{% endfor %}.</p>
+      <p>
+        {% if levelsLength === 1 %}View the latest level at <a href="/station/{{ model.targetArea.levels[1].id }}">{{ model.targetArea.levels[1] }}</a>
+        {% else %}<a href="/target-area/{{ model.targetArea.id }}/levels">View the latest levels</a>{% endif %}
+      </p>
+      <!-- <p>View the latest level{% if levelsLength > 1 %}s{% endif %} at
+        {% for level in model.targetArea.unmatchedLevels %}<a href="/station/{{ level.id }}">{{ level.name }}{% if levelsLength > 1 %} ({{ level.riverName }}){% endif %}</a>{% if loop.index < levelsLength - 1 %}, {% elif loop.index > 1 and loop.index < levelsLength %} and {% endif %}{% endfor %}.
+      </p> -->
       {% endif %}
       <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
       <p>

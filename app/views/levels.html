@@ -46,9 +46,15 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
     </div>
     {% else %}
     <h1 class="govuk-heading-xl">
+      {% if model.querySearchType == 'trigger' %}
+      Trigger levels for {{ model.querySearch }}
+      {% else %}
       Find river, sea, groundwater and rainfall levels
+      {% endif %}
     </h1>
+    {% if model.querySearchType != 'trigger' %}
     {% include "partials/list-search.html" %}
+    {% endif %}
     {% endif %}
     {% if not model.levels %}
     <span id="map-live"></span>
@@ -118,6 +124,7 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
 {% elif model.levels  %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+      {% if model.querySearchType != 'trigger' %}
       <nav class="defra-navbar defra-navbar--search-categories" aria-label="Levels by type">
         <div class="defra-navbar__inner">
           <span id="map-live"></span>
@@ -132,6 +139,7 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
           </div>
         </div>
       </nav>
+      {% endif %}
       {% if model.levels.items %}
       <table id="results" class="defra-flood-levels-table" role="table" aria-labelledby="caption">
         <caption id="caption" class="defra-flood-levels-table__caption">Results for '{{ model.querySearch }}', showing <span>{{ model.queryType }}</span> levels</caption>
@@ -161,8 +169,12 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
         {% endfor %}
         </tbody>
       </table>
-      <p class="govuk-text govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+      <p class="govuk-text govuk-!-margin-top-4 govuk-!-margin-bottom-0">
+        {% if model.querySearchType == 'trigger' %}
+        <a href="/river-sea-groundwater-rainfall-levels">Find river, sea, groundwater and rainfall levels</a>
+        {% else %}
         <a href="/how-we-measure-river-sea-groundwater-rainfall-levels">How we measure river, sea and groundwater levels</a>
+        {% endif %}
       </p>
       {% endif %}
     </div>

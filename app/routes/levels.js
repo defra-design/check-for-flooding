@@ -15,7 +15,6 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
   const query = Object.assign({}, { searchType: '', search: '', type: '', error: '' }, req.query)
   const places = []
   const rivers = []
-  const catchments = []
   let levels
 
   if (query.search !== '') {
@@ -45,31 +44,21 @@ router.get('/river-sea-groundwater-rainfall-levels', async (req, res) => {
         console.log('500 error: Rivers')
       }
     }
-    // Check catchments
-    // if (query.searchType === '' || query.searchType === 'catchment') {
-    //   const catchmentResponse = await riverServices.getCatchments(cookie, query.search)
-    //   if (catchmentResponse.status === 200) {
-    //     catchmentResponse.data.forEach(item => { catchments.push(new Catchment(item)) })
-    //   } else {
-    //     // Log 500 error
-    //     console.log('500 error: Rivers')
-    //   }
-    // }
   }
   // Remove Bing broad 'admindivision2' match when we have a single river
   const isBingBroadRiverMatch = places.length === 1 && places[0].type === 'admindivision2' && rivers.length === 1
   places.length = isBingBroadRiverMatch ? 0 : places.length
 
-  if (places.length === 1 && !rivers.length) { //  && !catchments.length
+  if (places.length === 1 && !rivers.length) {
     // We have a single place
     const levelResponse = await levelServices.getLevelsWithin(cookie, places[0].bboxBuffered)
     levels = new Levels(query.type, levelResponse.data)
-  } else if (rivers.length === 1 && !places.length) { //  && !catchments.length
+  } else if (rivers.length === 1 && !places.length) {
     // We have a single river
     const levelResponse = await levelServices.getLevelsByRiver(cookie, rivers[0].display)
     levels = new Levels(query.type, levelResponse.data)
   }
-  const model = new ViewModel(query, places, rivers, catchments, levels, query.error)
+  const model = new ViewModel(query, places, rivers, levels, query.error)
   res.render('levels', { model })
 })
 
