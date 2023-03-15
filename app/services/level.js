@@ -30,8 +30,8 @@ module.exports = {
       console.log(error)
     }
   },
-  getLevelsByCatchment: async (cookie, name) => {
-    const url = `/stations-by-catchment/${encodeURI(name)}`
+  getLevelsByTargetAreaTrigger: async (cookie, id) => {
+    const url = `/stations-by-target-area-trigger/${id}`
     try {
       const response = await axios.get(url, {
         headers: { Cookie: cookie },

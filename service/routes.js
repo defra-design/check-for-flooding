@@ -122,9 +122,9 @@ router.get('/service/stations-by-river/:name', async (req, res, next) => {
 })
 
 // Get stations by catchment name
-router.get('/service/stations-by-catchment/:name', async (req, res, next) => {
+router.get('/service/stations-by-target-area-trigger/:id', async (req, res, next) => {
   try {
-    res.status(200).json(await stationServices.getStationsByCatchment(req.params.name))
+    res.status(200).json(await stationServices.getStationsByTargetAreaTrigger(req.params.id))
   } catch (err) {
     res.status(500)
     console.log(err)

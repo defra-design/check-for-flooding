@@ -10,6 +10,7 @@ import './components/map/layers'
 import './components/map/container'
 import './components/map/live'
 import './components/map/outlook'
+import './components/levels-table'
 import WebChat from './components/webchat'
 
 document.onreadystatechange = () => {
@@ -60,6 +61,11 @@ document.onreadystatechange = () => {
         btnClass: 'defra-button-secondary defra-button-secondary--icon',
         days: model.outlookDays
       })
+    }
+
+    // Add category tabs progressive enhancement
+    if (document.getElementById('filter')) {
+      window.flood.createLevelsTable('filter')
     }
   }
 }
