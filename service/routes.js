@@ -122,9 +122,9 @@ router.get('/service/stations-by-river/:name', async (req, res, next) => {
 })
 
 // Get stations by catchment name
-router.get('/service/stations-by-catchment/:name', async (req, res, next) => {
+router.get('/service/stations-by-target-area-trigger/:id', async (req, res, next) => {
   try {
-    res.status(200).json(await stationServices.getStationsByCatchment(req.params.name))
+    res.status(200).json(await stationServices.getStationsByTargetAreaTrigger(req.params.id))
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -183,8 +183,8 @@ router.get('/service/outlook', async (req, res, next) => {
 router.get('/service/geojson/:type', async (req, res, next) => {
   const type = req.params.type
   try {
-    if (type === 'stations') {
-      res.status(200).json(await mapServices.getStationsGeoJSON())
+    if (['river', 'sea', 'groundwater', 'rainfall'].includes(type)) {
+      res.status(200).json(await mapServices.getStationsGeoJSON(type))
     } else if (type === 'warnings') {
       res.status(200).json(await mapServices.getWarningsGeoJSON())
     } else if (type === 'outlook') {
@@ -216,7 +216,7 @@ router.get('/service/geojson/:type', async (req, res, next) => {
 //   }
 // })
 
-// Vector tiles - file system
+// Vector tiles - static from file system
 router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
   const { x, y, z } = req.params
   fs.readFile(`${path.join(__dirname)}/vt/${z}/${x}/${y}.pbf`, (err, data) => {

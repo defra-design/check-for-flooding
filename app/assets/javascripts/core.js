@@ -9,6 +9,7 @@ import './components/map/symbols'
 import './components/map/style'
 import './components/map/container'
 import './components/map/live'
+import './components/levels-table'
 
 document.onreadystatechange = () => {
   if (document.readyState === 'interactive') {
@@ -46,6 +47,11 @@ document.onreadystatechange = () => {
         selectedId: model.selectedId || null,
         targetArea: model.targetArea || null
       })
+    }
+
+    // Add category tabs progressive enhancement
+    if (document.getElementById('filter')) {
+      window.flood.createLevelsTable('filter')
     }
   }
 }
