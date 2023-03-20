@@ -82,7 +82,7 @@
 
     <div class="govuk-!-padding-top-6">
       {% if model.targetArea.message %}
-      <p>{{ model.targetArea.message | safe }}. Follow <a href="">@EnvAgency[Suffix]</a> on Twitter for the latest information in your area.</p>
+      <p>{{ model.targetArea.message | safe }}. Follow <a href="">@EnvAgency[Suffix]</a> on Twitter for information for your area.</p>
       {% elif model.type == 'warning' %}
       <p>We'll update this page when there's a flood warning in the area.</p>
       <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
