@@ -82,34 +82,45 @@
 
     <div class="govuk-!-padding-top-6">
       {% if model.targetArea.message %}
-      <p>{{ model.targetArea.message | safe }}</p>
+      <p>{{ model.targetArea.message | safe }}. Follow <a href="https://twitter.com/{{ model.twitterAccount }}">@{{ model.twitterAccount }}</a> on Twitter for information for your area.</p>
       {% elif model.type == 'warning' %}
       <p>We'll update this page when there's a flood warning in the area.</p>
       <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
       {% else %}
       <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
       {% endif %}
-      <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.area }}</p>
+
+      {# -- Flood area -- #}
+      <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.geography }}</p>
+      
+      {# -- Trigger levels -- #}
       {% set levelsLength = model.targetArea.levels | length %}
       {% if levelsLength %}
-      <p>
+      <!-- <p>
         {% if levelsLength === 1 %}<a href="/station/{{ model.targetArea.levels[0].id }}">View {{ model.targetArea.levels[0].name }} measuring station</a>, which gives an indication of the latest level for this area.
         {% else %}View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.{% endif %}
-      </p>
+      </p> -->
       <!-- <p>View the latest level{% if levelsLength > 1 %}s{% endif %} at
         {% for level in model.targetArea.unmatchedLevels %}<a href="/station/{{ level.id }}">{{ level.name }}{% if levelsLength > 1 %} ({{ level.riverName }}){% endif %}</a>{% if loop.index < levelsLength - 1 %}, {% elif loop.index > 1 and loop.index < levelsLength %} and {% endif %}{% endfor %}.
       </p> -->
       {% endif %}
+
+      {# -- Nearby levels -- #}
+      <p><a href="">Find a river, sea, groundwater or rainfall level in this area</a></p>
+      
+      {# -- Get flood warnings by phone, text or email -- #}
       <p>
         <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
-          <svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg>{% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
+          <svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg>{% if model.isActive %}Get flood warnings by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
         </a>
         <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings">
           {% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
         </a> -->
       </p>
+
+      {# -- Feedback -- #}
       {% if model.isActive %}
-      <p>Could this information be better?<br/><a href="">Tell us how to improve it.</a></p>
+      <p>Could this information be better? <a href="">Tell us how to improve it.</a></p>
       {% endif %}
       
       {% include "partials/context-footer.html" %}
