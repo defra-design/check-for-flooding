@@ -1,8 +1,18 @@
 const bingApiKey = process.env.BING_API_KEY
 const moment = require('moment-timezone')
 
+const twitterAccount = {
+  EnvAgencyNW: ['Cumbria and Lancashire', 'Gtr Mancs Mersey and Ches'],
+  EnvAgencyYNE: ['Yorkshire', 'North East'],
+  EnvAgencyMids: ['Lincs and Northants', 'East Midlands', 'West Midlands'],
+  EnvAgencyAnglia: ['East Anglia', 'EnvAgencySW', 'Devon and Cornwall', 'Wessex'],
+  EnvAgencySE: ['Thames', 'Herts and North London', 'Kent S London and E Sussex', 'Solent and South Downs']
+}
+
 class ViewModel {
   constructor (targetArea) {
+    console.log(targetArea.area)
+    // console.log(Object.keys(twitterAccount).find(t => twitterAccount[t].includes(targetArea.area)))
     const titleInActive = `${targetArea.name} flood ${targetArea.type} area`
     const titleActive = `Flood ${targetArea.type} for ${targetArea.name}`
     const isActive = targetArea.severity && targetArea.severity.id !== 4
@@ -10,6 +20,7 @@ class ViewModel {
     const date = `${moment(targetArea.date).format('h:mma')} on ${moment(targetArea.date).format('D MMMM YYYY')}`
     this.title = isActive ? titleActive : titleInActive
     this.targetArea = targetArea
+    this.twitterAccount = Object.keys(twitterAccount).find(t => twitterAccount[t].includes(targetArea.area))
     this.targetAreaMessageDate = isActive ? `Updated at ${date}` : isRemoved ? `Removed at ${date}` : null
     this.isActive = isActive
     this.isRemoved = isRemoved
