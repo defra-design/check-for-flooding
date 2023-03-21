@@ -14,6 +14,7 @@ class TargetArea {
     // this.message = parseMessage(data.message, levels)
     // this.unmatchedLevels = levels.filter(level => !matchedLevels.includes(level))
     this.area = data.area
+    this.geography = data.geography
     this.date = data.date
     this.parentId = data.parent_id
     this.parentSeverity = severity.find(item => item.id === parseInt(data.parent_severity, 10))

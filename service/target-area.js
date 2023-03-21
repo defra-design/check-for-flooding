@@ -7,7 +7,8 @@ module.exports = {
     lower(ta1.fws_tacode) AS id,
     'warning' AS type,
     ta1.ta_name AS name,
-    ta1.descrip AS area,
+    ta1.area AS area,
+    ta1.descrip AS geography,
     Replace(CONCAT(to_char(ST_X(ST_Centroid(ta1.geom)), '99.000000'),',',
     to_char(ST_Y(ST_Centroid(ta1.geom)), '99.000000')), ' ', '') AS centroid,
     Replace(CONCAT(to_char(ST_XMin(ta1.geom), '99.000000'),','
@@ -30,13 +31,14 @@ module.exports = {
     LEFT JOIN warning w1 ON LOWER(ta1.fws_tacode) = LOWER(w1.id)
     LEFT JOIN warning w2 ON LOWER(ta1.parent) = LOWER(w2.id)
     WHERE LOWER(ta1.fws_tacode) = LOWER($1)
-    GROUP BY tt.targetarea_id, ta1.fws_tacode, ta1.ta_name, ta1.descrip, ta1.geom, w1.severity, w1.message, w1.message_changed_date, ta1.parent, w2.severity
+    GROUP BY tt.targetarea_id, ta1.fws_tacode, ta1.ta_name, ta1.area, ta1.descrip, ta1.geom, w1.severity, w1.message, w1.message_changed_date, ta1.parent, w2.severity
     UNION ALL
     (SELECT DISTINCT ON (id)
     lower(ta2.fws_tacode) AS id,
     'alert' AS type,
     ta2.ta_name AS name,
-    ta2.descrip AS area,
+    ta2.area AS area,
+    ta2.descrip AS geography,
     Replace(CONCAT(to_char(ST_X(ST_Centroid(ta2.geom)), '99.000000'),',',
     to_char(ST_Y(ST_Centroid(ta2.geom)), '99.000000')), ' ', '') AS centroid,
     Replace(CONCAT(to_char(ST_XMin(ta2.geom), '99.000000'),','
@@ -58,7 +60,7 @@ module.exports = {
     LEFT JOIN measure_with_latest mwl ON mwl.rloi_id = tt.trigger_id
     LEFT JOIN warning w ON LOWER(ta2.fws_tacode) = LOWER(w.id)
     WHERE LOWER(ta2.fws_tacode) = LOWER($1)
-    GROUP BY tt.targetarea_id, ta2.fws_tacode, ta2.ta_name, ta2.descrip, ta2.geom, w.severity, w.message, w.message_changed_date);
+    GROUP BY tt.targetarea_id, ta2.fws_tacode, ta2.ta_name, ta2.area, ta2.descrip, ta2.geom, w.severity, w.message, w.message_changed_date);
     `, [id])
     return response[0]
   }
