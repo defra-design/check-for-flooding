@@ -4,13 +4,13 @@ const Level = require('./level')
 class TargetArea {
   constructor (data) {
     const levels = data.trigger_levels.map(level => { return new Level(level) })
-    const message = data.message.trim()
+    const message = data.message?.trim()
     this.levels = levels
     this.id = data.id
     this.name = data.name
     this.type = data.type
     this.severity = severity.find(item => item.id === parseInt(data.severity, 10))
-    this.message = message.endsWith('.') ? message.slice(0, -1) : message
+    this.message = message?.endsWith('.') ? message.slice(0, -1) : message
     // this.message = parseMessage(data.message, levels)
     // this.unmatchedLevels = levels.filter(level => !matchedLevels.includes(level))
     this.area = data.area
