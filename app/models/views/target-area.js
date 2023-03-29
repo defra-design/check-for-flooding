@@ -11,8 +11,6 @@ const twitterAccount = {
 
 class ViewModel {
   constructor (targetArea) {
-    console.log(targetArea.area)
-    // console.log(Object.keys(twitterAccount).find(t => twitterAccount[t].includes(targetArea.area)))
     const titleInActive = `${targetArea.name} flood ${targetArea.type} area`
     const titleActive = `Flood ${targetArea.type} for ${targetArea.name}`
     const isActive = targetArea.severity && targetArea.severity.id !== 4
