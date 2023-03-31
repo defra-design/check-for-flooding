@@ -12,12 +12,6 @@ const toggletips = (options) => {
   // Referecne to timeout
   let timeout
 
-  // **Debug
-  const debug = document.createElement('div')
-  debug.className = 'debug'
-  debug.style.width = `${window.innerWidth}px`
-  document.body.appendChild(debug)
-
   // Add tooltip
   const openToggletip = (toggletip) => {
     // Outer margin
@@ -37,12 +31,8 @@ const toggletips = (options) => {
       const target = toggletip.querySelector('.defra-toggletip-target') || toggletip
       const targetWidth = target.getBoundingClientRect().width
       const targetLeft = target.getBoundingClientRect().left
-      const viewportWidth = window.innerWidth
+      const viewportWidth = document.body.clientWidth
       let infoWidth = info.getBoundingClientRect().width
-      // **Debug
-      const remaining = viewportWidth - target.getBoundingClientRect().right
-      debug.innerHTML = `documentBodyWidth: ${document.body.clientWidth}<br/>viewportWidth: ${viewportWidth}<br/>screenWidth: ${screen.width}<br/>targetLeft: ${targetLeft}<br/>targetWidth: ${targetWidth}<br/>targetRight: ${remaining}`
-      // **EndDebug
       // Limit info width when zoomed
       infoWidth = infoWidth > (viewportWidth - (viewportMargin * 2)) ? viewportWidth - (viewportMargin * 2) : infoWidth
       // Centre tip
