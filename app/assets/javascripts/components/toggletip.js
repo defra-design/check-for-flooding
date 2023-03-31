@@ -41,7 +41,7 @@ const toggletips = (options) => {
       let infoWidth = info.getBoundingClientRect().width
       // **Debug
       const remaining = viewportWidth - target.getBoundingClientRect().right
-      debug.innerHTML = `viewportWidth: ${viewportWidth}<br/>targetLeft: ${targetLeft}<br/>targetWidth: ${targetWidth}<br/>targetRight: ${remaining}`
+      debug.innerHTML = `viewportWidth: ${viewportWidth}<br/>screenWidth: ${screen.width}<br/>targetLeft: ${targetLeft}<br/>targetWidth: ${targetWidth}<br/>targetRight: ${remaining}`
       // **EndDebug
       // Limit info width when zoomed
       infoWidth = infoWidth > (viewportWidth - (viewportMargin * 2)) ? viewportWidth - (viewportMargin * 2) : infoWidth
