@@ -83,21 +83,15 @@
     margin-right: 10px;
     &:not([keyboard-focus]):focus {
       background-color: white;
-      // border-color: govuk-colour('mid-grey');
       border: 0px;
       color: govuk-colour('black');
       box-shadow: none;
       text-decoration: underline;
     }
     &:hover {
-      color: govuk-colour('black');
-      background-color: transparent;
       svg {
         color: govuk-colour('black');
       }
-    }
-    &:active {
-      color: govuk-colour('black');
     }
   }
   // Modifiers
