@@ -28,10 +28,6 @@
   &__inner {
     flex: 0 0 auto;
     padding: 3px 15px 4px 15px;
-    // @include mq ($from: tablet) {
-    //   padding-left: 0px;
-    //   padding-right: 0px;
-    // }
   }
   &__group {
     float: left;
@@ -139,9 +135,9 @@
       float: left;
       border: 0px;
       color: $govuk-link-colour;
-      margin: 0px 7.5px 4px 0px;
-      padding-top: 7.5px;
-      padding-bottom: 7.5px;
+      margin: 0px 7px 4px 0px;
+      padding-top: 7px;
+      padding-bottom: 7px;
       text-decoration: none;
       &:visited {
         color: $govuk-link-colour;
@@ -182,7 +178,7 @@
     .defra-navbar__item a {
       color: $govuk-link-colour;
       text-decoration: none;
-      padding: 7.5px;
+      padding: 7px;
     }
     .defra-navbar__item a:visited {
       color: $govuk-link-colour;
@@ -198,6 +194,12 @@
       svg {
         color: govuk-colour('black');
       }
+    }
+    .defra-navbar__item a:not([keyboard-focus]):focus {
+      background-color: white;
+      color: $govuk-link-colour;
+      border-bottom: 4px solid $govuk-link-colour;
+      box-shadow: none;
     }
     .defra-navbar__item--selected a:not(:focus) {
       background-color: transparent;
