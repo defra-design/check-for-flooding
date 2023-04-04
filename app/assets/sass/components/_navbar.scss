@@ -34,7 +34,7 @@
   }
   &__list {
     list-style: none;
-    margin: 0px 0px -1px;
+    margin: 0px;
     padding: 0px;
   }
   &__list:after {
@@ -101,6 +101,9 @@
   }
   // Modifiers
   &--search-categories {
+    a {
+      outline: 3px solid red;
+    }
     margin: 17px -15px 0px -15px;
     // @include mq ($from: tablet) {
     //   margin-left: 0px;
