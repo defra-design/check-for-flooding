@@ -135,7 +135,7 @@
       float: left;
       border: 0px;
       color: $govuk-link-colour;
-      margin: 0px 7px 4px 0px;
+      margin: 0px 7px 3px 0px;
       padding-top: 7px;
       padding-bottom: 7px;
       text-decoration: none;
@@ -178,7 +178,7 @@
     .defra-navbar__item a {
       color: $govuk-link-colour;
       text-decoration: none;
-      padding: 7px;
+      padding: 7px 6px;
     }
     .defra-navbar__item a:visited {
       color: $govuk-link-colour;
@@ -200,6 +200,9 @@
       color: $govuk-link-colour;
       border-bottom: 4px solid $govuk-link-colour;
       box-shadow: none;
+    }
+    .defra-navbar__item--selected a[keyboard-focus]:focus {
+      border-bottom: 4px solid currentColor;
     }
     .defra-navbar__item--selected a:not(:focus) {
       background-color: transparent;
