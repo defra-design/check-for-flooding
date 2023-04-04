@@ -3,7 +3,7 @@
     @extend .govuk-button;
     @extend .govuk-button--secondary;
     svg {
-        color: govuk-colour('black');
+        color: currentColor;
         display: inline-block;
         position:relative;
         margin-left:5px;
@@ -23,7 +23,7 @@ button.defra-button-secondary {
     border: 1px solid govuk-colour('mid-grey');
     box-shadow: none;
     background-color: white;
-    padding: 9px 10px 10px;
+    padding: 10px;
     cursor: pointer;
     color: $govuk-text-colour;
     text-decoration: none;
@@ -37,21 +37,22 @@ button.defra-button-secondary {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
         box-shadow: 0 2px 0 govuk-colour('black');
-        outline: 3px solid transparent;
+        outline-offset: 0;
+        outline: 2px solid transparent;
     }
     &:not([keyboard-focus]):focus {
         background-color: white;
         border: 1px solid govuk-colour('mid-grey');
         box-shadow: none;
     }
-    &--icon {
-        padding-left: 31px;
-        svg {
-            color: govuk-colour('black');
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            margin-top: -11px;
+    svg {
+        color: currentColor;
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 8px;
+        @include mq ($from: tablet) {
+            top: -1px;
         }
     }
 }
@@ -87,6 +88,7 @@ button.defra-button-secondary {
     position:relative;
     display:inline-block;
     margin-right: 5px;
+    fill: govuk-colour('black');
     @include govuk-font($size: 19);
     &:last-of-type {
         margin-right: 0px;
@@ -94,10 +96,13 @@ button.defra-button-secondary {
     @include mq ($from: tablet) {
         margin-right: 10px;
     }
+    &__icon {
+        color: govuk-colour('black');
+    }
     svg {
         position: relative;
         display: inline-block;
-        color: govuk-colour('black');
+        color: currentColor;
         vertical-align: top;
         margin-right: 7px;
         top: 1px;
@@ -109,7 +114,6 @@ button.defra-button-secondary {
     &:hover svg {
         color: $govuk-link-hover-colour;
     }
-    &:focus svg,
     &:active svg {
         color: govuk-colour('black');
     }
