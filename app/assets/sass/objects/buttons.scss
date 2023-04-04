@@ -25,10 +25,10 @@ button.defra-button-secondary {
     background-color: white;
     padding: 10px;
     cursor: pointer;
-    color: $govuk-text-colour;
+    color: govuk-colour('black');
     text-decoration: none;
     &:visited {
-        color: $govuk-text-colour;
+        color: govuk-colour('black');
     }
     &:hover {
         background-color: govuk-colour('light-grey');
@@ -44,6 +44,9 @@ button.defra-button-secondary {
         background-color: white;
         border: 1px solid govuk-colour('mid-grey');
         box-shadow: none;
+    }
+    &__icon {
+        color: govuk-colour('black');
     }
     svg {
         color: currentColor;

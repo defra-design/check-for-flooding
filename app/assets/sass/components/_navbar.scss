@@ -166,13 +166,16 @@
       svg {
         position: relative;
         display: inline-block;
-        color: govuk-colour('black');
+        color: currentColor;
         vertical-align: top;
         left: 0px;
         margin: 0px 7px -3px 1px;
         top: -1px;
       }
-      span {
+      .defra-button-secondary__icon {
+        color: govuk-colour('black');
+      }
+      .defra-button-secondary__text {
         @include defra-visually-hidden();
       }
     }
