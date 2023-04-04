@@ -101,9 +101,6 @@
   }
   // Modifiers
   &--search-categories {
-    a {
-      outline: 3px solid red;
-    }
     margin: 17px -15px 0px -15px;
     // @include mq ($from: tablet) {
     //   margin-left: 0px;
