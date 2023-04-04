@@ -67,6 +67,11 @@
     box-shadow: 0 4px 0 govuk-colour('black');
     outline: 3px solid transparent;
   }
+  a:not([keyboard-focus]):focus {
+    background-color: white;
+    box-shadow: none;
+    text-decoration: underline;
+  }
   // Overides
   .defra-link-icon-s {
     @include govuk-font($size: 19);
@@ -155,6 +160,7 @@
         color: $govuk-link-colour;
         box-shadow: none;
         border: 0px;
+        text-decoration: none;
       }
       &:after {
         content: 'Map';
@@ -189,8 +195,23 @@
         color: $govuk-link-hover-colour;
       }
     }
+    .defra-navbar__item--selected a{
+      background-color: transparent;
+      color: $govuk-link-colour;
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0px;
+        right: 0px;
+        border-bottom: 4px solid currentColor;
+      }
+    }
     .defra-navbar__item a:focus {
       color: govuk-colour('black');
+      background-color: $govuk-focus-colour;
+      text-decoration: none;
+      box-shadow: 0 4px 0 govuk-colour('black');
       svg {
         color: govuk-colour('black');
       }
@@ -198,16 +219,7 @@
     .defra-navbar__item a:not([keyboard-focus]):focus {
       background-color: white;
       color: $govuk-link-colour;
-      border-bottom: 4px solid $govuk-link-colour;
       box-shadow: none;
     }
-    .defra-navbar__item--selected a[keyboard-focus]:focus {
-      border-bottom: 4px solid currentColor;
-    }
-    .defra-navbar__item--selected a:not(:focus) {
-      background-color: transparent;
-      border-bottom: 4px solid currentColor;
-      color: $govuk-link-colour;
-    }  
   }
 }
