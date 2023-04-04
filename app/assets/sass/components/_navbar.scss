@@ -212,6 +212,8 @@
       background-color: $govuk-focus-colour;
       text-decoration: none;
       box-shadow: 0 4px 0 govuk-colour('black');
+      outline: 3px solid transparent;
+      outline-offset: 0px;
       svg {
         color: govuk-colour('black');
       }
