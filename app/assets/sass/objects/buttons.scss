@@ -114,10 +114,10 @@ button.defra-button-secondary {
             top: 4px;
         }
     }
-    &:hover svg {
+    &:hover {
         color: $govuk-link-hover-colour;
     }
-    &:active svg {
+    &:active {
         color: govuk-colour('black');
     }
 }

@@ -89,9 +89,7 @@
       text-decoration: underline;
     }
     &:hover {
-      svg {
-        color: govuk-colour('black');
-      }
+      color: govuk-colour('black');
     }
   }
   // Modifiers
