@@ -66,6 +66,7 @@
     border: 0px;
     box-shadow: 0 4px 0 govuk-colour('black');
     outline: 3px solid transparent;
+    outline-offset: 0px;
   }
   a:not([keyboard-focus]):focus {
     background-color: white;
