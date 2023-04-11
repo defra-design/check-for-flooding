@@ -164,6 +164,7 @@
     &__icon {
       position: absolute;
       border-radius: 100%;
+      color: govuk-colour('black');
       border: 1px solid govuk-colour('mid-grey');
       width: 24px;
       height: 24px;
@@ -179,7 +180,7 @@
       position: absolute;
       left: 4px;
       top: 4px;
-      color: govuk-colour('black');
+      color: currentColor;
       @include mq ($from: tablet) {
         left:6px;
         top: 6px;

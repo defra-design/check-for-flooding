@@ -14,6 +14,9 @@
     &__input::-webkit-search-decoration {
         -webkit-appearance: none;
     }
+    &__input::-webkit-search-cancel-button{
+        display: none;
+    }
     &__input:focus {
         z-index: 2;
     }
