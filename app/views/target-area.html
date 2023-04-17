@@ -96,18 +96,18 @@
       {# -- Trigger levels -- #}
       {% set levelsLength = model.targetArea.levels | length %}
       {% if levelsLength %}
-      <!-- <p>
-        {% if levelsLength === 1 %}<a href="/station/{{ model.targetArea.levels[0].id }}">View {{ model.targetArea.levels[0].name }} measuring station</a>, which gives an indication of the latest level for this area.
-        {% else %}View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.{% endif %}
-      </p> -->
-      <!-- <p>View the latest level{% if levelsLength > 1 %}s{% endif %} at
-        {% for level in model.targetArea.unmatchedLevels %}<a href="/station/{{ level.id }}">{{ level.name }}{% if levelsLength > 1 %} ({{ level.riverName }}){% endif %}</a>{% if loop.index < levelsLength - 1 %}, {% elif loop.index > 1 and loop.index < levelsLength %} and {% endif %}{% endfor %}.
-      </p> -->
+      <p>
+        {% if levelsLength == 1 %}
+        <a href="/station/{{ model.targetArea.levels[0].id }}">View {{ model.targetArea.levels[0].name }} measuring station</a>, which gives an indication of the latest level for this area.
+        {% elif levelsLength > 1 %}
+        <a href="/target-area/{{ model.targetArea.id }}/levels">These measuring stations give an indication of the latest levels for this area.</a>
+        <!-- <a href="/target-area/{{ model.targetArea.id }}/levels">Get an indication of the latest levels for this area.</a> -->
+        {% else %}
+        <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
+        {% endif %}
+      </p>
       {% endif %}
 
-      {# -- Nearby levels -- #}
-      <p><a href="">Find a river, sea, groundwater or rainfall level in this area</a></p>
-      
       {# -- Get flood warnings by phone, text or email -- #}
       <p>
         <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">

@@ -9,7 +9,7 @@ class TargetArea {
     this.name = data.name
     this.type = data.type
     this.severity = severity.find(item => item.id === parseInt(data.severity, 10))
-    this.message = data.message.trim()
+    this.message = data.message?.trim()
     // this.message = parseMessage(data.message, levels)
     // this.unmatchedLevels = levels.filter(level => !matchedLevels.includes(level))
     this.area = data.area
