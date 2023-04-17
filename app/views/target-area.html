@@ -95,7 +95,6 @@
       
       {# -- Trigger levels -- #}
       {% set levelsLength = model.targetArea.levels | length %}
-      {% if levelsLength %}
       <p>
         {% if levelsLength == 1 %}
         <a href="/station/{{ model.targetArea.levels[0].id }}">View {{ model.targetArea.levels[0].name }} measuring station</a>, which gives an indication of the latest level for this area.
@@ -106,7 +105,6 @@
         <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
         {% endif %}
       </p>
-      {% endif %}
 
       {# -- Get flood warnings by phone, text or email -- #}
       <p>
