@@ -208,4 +208,18 @@
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
 }
+.defra-webchat-open {
+  @extend .govuk-button;
+  @extend .govuk-button--secondary;
+  svg {
+    color: currentColor;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    @include mq ($from: tablet) {
+        top: -1px;
+    }
+  }
+}
 
