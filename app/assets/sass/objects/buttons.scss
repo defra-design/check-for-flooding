@@ -10,6 +10,9 @@
         vertical-align: middle;
         top:-1px;
     }
+    &:focus {
+        outline-offset: 0;
+    }
 }
 
 // Secondoary button
