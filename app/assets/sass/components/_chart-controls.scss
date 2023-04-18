@@ -38,6 +38,7 @@
     top: 1px;
     margin-left: 5px;
     color: govuk-colour('black');
+    forced-color-adjust: auto;
   }
   &--back {
     padding-left: 0px;
@@ -64,9 +65,9 @@
   }
   @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
     &[aria-disabled="true"] {
-      color: GrayText;
+      color: GrayText !important;
       svg {
-        color: GrayText;
+        color: GrayText !important;
       }
     }
   }

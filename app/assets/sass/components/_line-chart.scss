@@ -17,6 +17,7 @@
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
+    forced-color-adjust: auto;
     cursor: default;
     @include mq($from: desktop) {
         height: 450px;
@@ -35,7 +36,7 @@
     .axis path,
     .axis line {
         fill: none;
-        color: $govuk-border-colour;;
+        color: $govuk-border-colour;
         stroke: currentColor;
         stroke-width: 1;
         shape-rendering: crispEdges;
@@ -77,6 +78,9 @@
     }
     .observed-area {
         fill: rgba($govuk-link-colour, 0.1);
+        @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+            fill: none;
+        }
     }
     // Forecast
     .forecast-line {
@@ -88,6 +92,9 @@
     }
     .forecast-area {
         fill: rgba($govuk-border-colour, 0.1);
+        @media screen and (-ms-high-contrast: active), screen and (forced-colors: active) {
+            fill: none;
+        }
     }
     // Locator
     .locator {
@@ -165,8 +172,9 @@
         shape-rendering: geometricPrecision;
     }
     .threshold__bg {
-        stroke: transparent;
-        fill: transparent;
+        stroke: none;
+        fill: none;
+        pointer-events: bounding-box;
     }
     .threshold__remove {
         opacity: 0;
@@ -184,8 +192,9 @@
     }
     .threshold__remove-bg {
         stroke-width: 0;
-        stroke: transparent;
-        fill: transparent;
+        stroke: none;
+        fill: none;
+        pointer-events: bounding-box;
     }
     .threshold__remove:focus {
         .threshold__remove-button {
@@ -227,7 +236,8 @@
             fill: window;
         }
         .threshold__remove-bg {
-            fill: transparent !important;
+            fill: none !important;
+            pointer-events: bounding-box;
         }
     }
     .threshold.threshold--selected {
