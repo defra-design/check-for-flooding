@@ -147,6 +147,9 @@ function LiveMap (mapId, options) {
     })
     road.setVisible(lyrCodes.includes('mv'))
     satellite.setVisible(lyrCodes.includes('sv'))
+    if (!['mv', 'sv'].some(l => lyrCodes.includes(l))) {
+      road.setVisible(true)
+    }
     osLogoImage.style.display = lyrCodes.includes('mv') ? 'block' : 'none'
   }
 
