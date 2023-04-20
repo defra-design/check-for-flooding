@@ -97,7 +97,7 @@
       {% set levelsLength = model.targetArea.levels | length %}
       <p>
         {% if levelsLength == 1 %}
-        <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].name }}</a>, which gives an indication of the latest level for this area.
+        <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].riverName }} level at {{ model.targetArea.levels[0].name }}</a>, which gives an indication of the latest level for this area.
         {% elif levelsLength > 1 %}
         <a href="/target-area/{{ model.targetArea.id }}/levels">View the latest indicator levels for this area</a>
         <!-- <a href="/target-area/{{ model.targetArea.id }}/levels">Get an indication of the latest levels for this area.</a> -->
