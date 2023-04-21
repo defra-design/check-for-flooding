@@ -97,10 +97,17 @@
       {% set levelsLength = model.targetArea.levels | length %}
       <p>
         {% if levelsLength == 1 %}
-        <a href="/station/{{ model.targetArea.levels[0].id }}">View {{ model.targetArea.levels[0].name }} measuring station</a>, which gives an indication of the latest level for this area.
+        {% if model.ab == 'a' %}
+        <a href="/station/{{ model.targetArea.levels[0].id }}">View the latest indicator level for this area</a>
+        {% else %}
+        <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].riverName }} level at {{ model.targetArea.levels[0].name }}</a> which gives an indication of the latest level for this area.
+        {% endif %}
         {% elif levelsLength > 1 %}
-        <a href="/target-area/{{ model.targetArea.id }}/levels">These measuring stations give an indication of the latest levels for this area.</a>
-        <!-- <a href="/target-area/{{ model.targetArea.id }}/levels">Get an indication of the latest levels for this area.</a> -->
+        {% if model.ab == 'a' %}
+        <a href="/target-area/{{ model.targetArea.id }}/levels">View the latest indicator levels for this area
+        {% else %}
+        View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.
+        {% endif %}
         {% else %}
         <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
         {% endif %}
