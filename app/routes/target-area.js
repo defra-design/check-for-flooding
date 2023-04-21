@@ -14,6 +14,7 @@ router.get('/target-area', (req, res) => {
 router.get('/target-area/:id', async (req, res) => {
   const cookie = req.headers.cookie || null
   const id = req.params.id.toLowerCase()
+  const ab = req.query.t || 'a'
   const targetAreaResponse = await targetAreaServices.getTargetArea(cookie, id)
   if (targetAreaResponse.status === 200) {
     if (!targetAreaResponse.data) {
@@ -21,6 +22,7 @@ router.get('/target-area/:id', async (req, res) => {
     }
     const targetArea = new TargetArea(targetAreaResponse.data)
     const model = new TargetAreaViewModel(targetArea)
+    model.ab = ab
     return res.render('target-area', { model })
   } else {
     // Return 500 error
