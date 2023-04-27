@@ -11,7 +11,7 @@ import './components/map/container'
 import './components/map/live'
 import './components/map/outlook'
 import './components/levels-table'
-import WebChat from './components/webchat'
+import WebChat from './components/webchat/webchat'
 
 document.onreadystatechange = () => {
   if (document.readyState === 'interactive') {

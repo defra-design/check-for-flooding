@@ -51,6 +51,14 @@
 
 {% set mainClasses = mainClasses | default("govuk-main-wrapper--auto-spacing") %}
 
+{% block bodyStart %}
+<script>
+  if ((window.location.hash === '#webchat' || localStorage.getItem('THREAD_ID')) && window.matchMedia('(max-width: 640px)').matches) {
+    document.body.classList.add('webchat-hidden')
+  }
+</script>
+{% endblock %}
+
 {% block beforeContent %}
 <div class="govuk-phase-banner">
   <p class="govuk-phase-banner__content">

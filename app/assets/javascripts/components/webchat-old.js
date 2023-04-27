@@ -40,7 +40,7 @@ class WebChat {
   }
 
   async getThread () {
-    const thread = await this.sdk.getThread('thread')
+    const thread = await this.sdk.getThread('thread2')
     // Start chat if not previously started
     const isOpen = window.location.hash === '#webchat'
     if (!localStorage.getItem('IS_THREAD_STARTED') && isOpen) {
@@ -103,7 +103,7 @@ class WebChat {
     container.className = 'defra-webchat'
     container.setAttribute('role', 'dialog')
     container.setAttribute('aria-label', 'Webchat')
-    container.setAttribute('aria-modal', true)
+    container.setAttribute('aria-modal', false)
     container.setAttribute('open', true)
     container.innerHTML = env.render('webchat-modal.html')
     const inner = container.querySelector('.defra-webchat__inner')

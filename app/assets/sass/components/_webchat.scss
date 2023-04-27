@@ -1,78 +1,9 @@
-.defra-webchat {
-  position: fixed;
-  display: flex;
-  flex-wrap: nowrap;
-  z-index: 999;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 0px;
-  @include mq ($from: tablet) {
-    top: auto;
-    left: auto;
-    width: 360px;
-    height: 450px;
-    padding: 10px;
-  }
-  max-height: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  &__inner {
-    position: relative;
-    flex: 0 0 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-    background-color: white;
-    border: 0px;
-    outline: 0px;
-    @include mq ($from: tablet) {
-      border: 1px solid govuk-colour('black');
-    }
-    box-sizing: border-box;
-    &:focus {
-      outline: none;
-    }
-    &:focus[keyboard-focus]:after {
-      @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
-      left: 4px;
-      right: 4px;
-      top: 4px;
-      bottom: 4px;
-    }
-  }
-  &__header {
-    flex: 0 0 0;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: center;
-    background-color: govuk-colour('black');
-    padding: 4px 4px 5px 10px;
-    h2 {
-      @include govuk-font($size: 19, $weight: bold);
-      line-height: 1em;
-      position: relative;
-      margin: -1px 0 0;
-      color: white;
-    }
-  }
-  &__content {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  &__footer {
-    flex: 0 0 0;
-  }
-}
-.defra-webchat-html {
+.webchat-html {
   @include mq ($until: tablet) {
     height: 100vh;
   }
 }
-.defra-webchat-body {
+.webchat-body {
   @include mq ($until: tablet) {
     position: fixed;
     overflow: hidden;
@@ -80,14 +11,96 @@
     right:0px;
     bottom:0px;
     left:0px;
+    min-height: 100vh;
   }
 }
-.defra-webchat-visibility-hidden {
+.webchat-hidden {
+  visibility: hidden;
+}
+.webchat {
+  display: none;
+  position: fixed;
+  flex-wrap: nowrap;
+  z-index: 999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+  @include mq ($from: tablet) {
+    top: auto;
+    left: auto;
+    width: 360px;
+    height: 450px;
+    padding: 10px;
+  }
+}
+.webchat--visible {
+  display: flex;
+}
+.webchat__inner {
+  position: relative;
+  flex: 0 0 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  background-color: white;
+  border: 0px;
+  outline: 0px;
+  @include mq ($from: tablet) {
+    border: 1px solid govuk-colour('black');
+  }
+  box-sizing: border-box;
+  &:focus {
+    outline: none;
+  }
+  &:focus[keyboard-focus]:after {
+    @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
+    left: 4px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+  }
+}
+.webchat__header {
+  flex: 0 0 0;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  background-color: govuk-colour('black');
+  padding: 5px;
+}
+.webchat__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.webchat__footer {
+  flex: 0 0 0;
+}
+.webchat-visibility-hidden {
   @include mq ($until: tablet) {
     visibility: hidden;
   }
 }
-.defra-webchat-list {
+// Pre chat
+.webchat-prechat {
+  padding: 15px;
+  .govuk-form-group {
+    margin-bottom: 15px;
+  }
+  .govuk-form-group:last-of-type {
+    margin-bottom: 20px;
+  }
+}
+// Message list
+.webchat-list {
   @extend .govuk-list;
   display: flex;
   flex-wrap: nowrap;
@@ -119,15 +132,27 @@
     align-self: flex-start;
   }
 }
-.defra-webchat-close {
-  display: inline-block;
+.webchat-title {
+  @include govuk-font($size: 19, $weight: bold);
+  margin: 0 0 0 10px;
+  font-size: 19px;
+  flex: 1 1 auto;
+  position: relative;
+  color: white;
+}
+.webchat-back-btn,
+.webchat-close-btn {
+  display: block;
   flex: 0 0 auto;
-  align-self: flex-end;
+  // align-self: flex-end;
   font-size: 16px;
   color: white;
   background-color: transparent;;
   border: 0px solid transparent;
-  padding: 5px;
+  padding: 10px;
+  @include mq ($from: tablet) {
+    padding: 5px;
+  }
   margin: 0px 0px 0px auto;
   cursor: pointer;
   &:focus {
@@ -143,7 +168,17 @@
     pointer-events: none;
   }
 }
-.defra-webchat-message {
+.webchat-back-btn {
+  @include mq ($from: 'tablet') {
+    display: none;
+  }
+}
+.webchat-close-btn[data-webchat-back-btn] {
+  @include mq ($until: 'tablet') {
+    display: none;
+  }
+}
+.webchat-message {
   display: flex;
   flex-wrap: nowrap;
   align-items: baseline;
@@ -201,14 +236,14 @@
     }
   }
 }
-.defra-webchat-credit {
+.webchat-credit {
   // display: block;
   display: none;
   @include govuk-font($size: 14);
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
 }
-.defra-webchat-open {
+.webchat-open-btn {
   @extend .govuk-button;
   @extend .govuk-button--secondary;
   svg {
