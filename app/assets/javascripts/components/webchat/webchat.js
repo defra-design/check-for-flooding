@@ -9,7 +9,9 @@ import Utils from './utils'
 const env = window.nunjucks.configure('views')
 
 class WebChat {
-  constructor () {
+  constructor (id) {
+    this.id = id
+
     const state = new State(
       this._openChat.bind(this),
       this._closeChat.bind(this)
@@ -19,22 +21,15 @@ class WebChat {
     this._init()
 
     const body = document.body
-    if (body.classList.contains('webchat-hidden')) {
-      body.classList.remove('webchat-hidden')
-      body.classList.add('webchat-body')
+    if (body.classList.contains('wc-hidden')) {
+      body.classList.remove('wc-hidden')
+      body.classList.add('wc-body')
     }
   }
 
-  async _init () {
-    // Conditionally dialog
-    const state = this.state
-
-    if (state.isOpen) {
-      this._createDialog()
-    }
-
+  async _authorise () {
     // New SDK instance
-    this.sdk = new ChatSdk({
+    const sdk = new ChatSdk({
       brandId: process.env.WEBCHAT_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
       channelId: process.env.WEBCHAT_CHANNELID, // Your channel ID, found in the script on the "Initialization & Test" page for the chat channel.
       customerId: localStorage.getItem('CUSTOMER_ID') || '', // This must be generated on every page visit and should be unique to each contact.
@@ -42,27 +37,64 @@ class WebChat {
       isLivechat: true
     })
 
+    // Event listeners
+    sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleAuthorisedEvent.bind(this))
+
     // Authorise
-    await this.sdk.authorize().then(response => {
-      const customerId = response?.consumerIdentity.idOnExternalPlatform
-      localStorage.setItem('CUSTOMER_ID', customerId || '')
-      this.customerId = customerId
+    const authResponse = await sdk.authorize()
+    const customerId = authResponse?.consumerIdentity.idOnExternalPlatform
+    localStorage.setItem('CUSTOMER_ID', customerId || '')
+    this.customerId = customerId
+    this.sdk = sdk
 
-      // Add availability
-      const isAvailable = response?.channel.availability.status === 'online'
-      const availability = new Availability(isAvailable, this._openChat.bind(this))
-      state.isAvailable = isAvailable
+    // Conditionally get thread
+    const state = this.state
+    if (state.status === 'CHATTING') {
+      await this._getThread()
+      const thread = this.thread
+      await thread.startChat().then(() => {
+        console.log(thread)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  }
 
-      // Start chat if we already have a thread
-      if (state.isOpen) {
-        this._addContent()
-      }
+  async _init () {
+    const state = this.state
 
-      if (state.status === 'STARTED') {
-        this._startChat()
-      }
-    }).catch(err => {
-      console.log(err)
+    this._createAvailability()
+
+    if (state.view === 'OPEN' || state.view === 'MIN') {
+      this._createDialog()
+    }
+
+    this._authorise()
+  }
+
+  async _getThread () {
+    const sdk = this.sdk
+    // Get thread
+    let threadId = localStorage.getItem('THREAD_ID')
+    if (!threadId) {
+      threadId = Math.floor(Math.random() * 1000).toString()
+      localStorage.setItem('THREAD_ID', threadId)
+    }
+    const thread = await sdk.getThread(threadId)
+    this.thread = thread
+
+    // Add event listeners
+    thread.onThreadEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
+    thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
+  }
+
+  _createAvailability () {
+    const state = this.state
+
+    // Availability control
+    const availability = document.getElementById(this.id)
+    availability.innerHTML = env.render('webchat-availability.html', {
+      model: { status: state.status }
     })
   }
 
@@ -70,38 +102,71 @@ class WebChat {
     const state = this.state
 
     const model = {
+      status: state.status,
+      view: state.view,
       isBack: state.isBack
     }
 
+    console.log(JSON.stringify(model))
+
     document.body.insertAdjacentHTML('beforeend', env.render('webchat.html', { model }))
-    const container = document.getElementById('webchat')
+    const container = document.getElementById('wc')
     this.container = container
+
+    const content = container.querySelector('[data-wc-content]')
+    content.innerHTML = env.render('webchat-content.html', { model })
 
     Utils.listenForDevice('mobile', this._setAttributes.bind(this))
 
+    // Event listeners
     container.addEventListener('click', e => {
-      if (e.target.hasAttribute('data-webchat-back-btn')) {
+      if (e.target.hasAttribute('data-wc-back-btn')) {
         state.back()
       }
-      if (e.target.hasAttribute('data-webchat-close-btn')) {
+      if (e.target.hasAttribute('data-wc-close-btn')) {
+        this._closeChat()
+      }
+      if (e.target.hasAttribute('data-wc-end-btn')) {
         this._endChat()
       }
     })
   }
 
-  _addContent () {
+  _updateContent () {
     const state = this.state
-    const container = this.container
-    const loading = container.querySelector('[data-webchat-loading]')
-    loading.remove()
 
-    const model = {
-      status: state.status,
-      isAvailable: state.isAvailable
+    // Update header
+
+    // Update content
+    const container = document.getElementById('wc')
+    if (!container) {
+      return
+    }
+    const content = container.querySelector('[data-wc-content]')
+    content.innerHTML = env.render('webchat-content.html', {
+      model: { status: state.status }
+    })
+
+    // Events
+    const prechatBtn = content.querySelector('[data-wc-prechat-btn]')
+    if (prechatBtn) {
+      prechatBtn.addEventListener('click', e => {
+        this._validatePrechat(this._startChat.bind(this))
+      })
+    }
+  }
+
+  _validatePrechat (successCb) {
+    const userName = document.getElementById('name').value
+    const message = document.getElementById('message').value
+
+    if (!(userName.length && message.length)) {
+      // Validation error
+      console.log('Enter a name and/or message')
+      return
     }
 
-    const target = container.querySelector('[data-webchat-inner]')
-    target.insertAdjacentHTML('beforeend', env.render('webchat-content.html', { model }))
+    successCb(userName, message)
   }
 
   _setAttributes () {
@@ -111,39 +176,35 @@ class WebChat {
     }
 
     const state = this.state
-    const isFullscreen = state.isMobile && state.isOpen
+    const isFullscreen = state.isMobile && state.view === 'OPEN'
     const root = document.getElementsByTagName('html')[0]
-    root.classList.toggle('webchat-html', isFullscreen)
+    root.classList.toggle('wc-html', isFullscreen)
     const body = document.body
-    body.classList.toggle('webchat-body', isFullscreen)
-    const closeBtn = container.querySelector('[data-webchat-back-btn], [data-webchat-close-btn]')
-    closeBtn.toggleAttribute('data-webchat-back-btn', state.status === 'PRECHAT')
-    closeBtn.toggleAttribute('data-webchat-close-btn', state.status === 'STARTED')
+    body.classList.toggle('wc-body', isFullscreen)
   }
 
   _toggleDialog (isVisible) {
-    this.container.classList.toggle('webchat--visible', isVisible)
+    this.container.classList.toggle('wc--visible', isVisible)
   }
 
   _openChat (e) {
     const state = this.state
-    state.isOpen = true
+    state.view = 'OPEN'
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
-    if (isBtn) {
-      state.pushView()
-    }
 
-    this._createDialog()
+    if (!this.container) {
+      this._createDialog()
 
-    if (localStorage.getItem('CUSTOMER_ID')) {
-      this._addContent()
+      if (isBtn) {
+        state.pushView()
+      }
     }
   }
 
   _closeChat (e) {
     const state = this.state
-    state.isOpen = false
+    state.view = 'CLOSED'
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     const container = this.container
@@ -160,41 +221,33 @@ class WebChat {
     }
   }
 
-  async _startChat () {
-    let threadId = localStorage.getItem('THREAD_ID')
-    if (!threadId) {
-      threadId = Math.floor(Math.random() * 1000).toString()
-      localStorage.setItem('THREAD_ID', threadId)
-    }
-    const thread = this.sdk.getThread(threadId)
+  async _startChat (userName, message) {
+    const sdk = this.sdk
 
-    thread.onThreadEvent(ChatEvent.THREAD_METADATA_LOADED, e => {
-      console.log('Thread metadata loaded')
-      console.log(e)
-    })
+    // Set userName
+    sdk.getCustomer().setName(userName)
 
-    // thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this._messageCreatedEvent)
+    await this._getThread()
 
-    // if (!thread._isInitialized) { /* is there a public property to detemine this? */
-    await thread.startChat().then(() => {
-      console.log('Start chat')
-      const state = this.state
-      state.status = 'STARTED'
-      thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, e => {
-        console.log('Message created')
-        console.log(e)
-      })
-    }).catch(err => {
-      console.log(err)
-    })
-    // }
+    const thread = this.thread
 
-    this.thread = thread
+    // Start chat
+    thread.startChat(message)
+
+    // await thread.startChat().then(() => {
+    //   console.log('Start chat')
+    // }).catch(err => {
+    //   console.log(err)
+    // })
 
     this._setAttributes()
   }
 
-  async _endChat (e) {
+  async _recoverChat () {
+
+  }
+
+  async _endChat () {
     if (!this.thread) {
       return
     }
@@ -202,6 +255,8 @@ class WebChat {
     console.log('End chat')
 
     const thread = this.thread
+
+    console.log(thread)
 
     thread.endChat().then(() => {
       console.log('End chat')
@@ -232,25 +287,64 @@ class WebChat {
   _addMessage (message) {
     const item = document.createElement('li')
     item.innerText = message.text
-    item.className = `webchat-list__item webchat-list__item--${message.direction}`
-    const list = this.content.querySelector('[data-message-list]')
+    item.className = `wc-list__item wc-list__item--${message.direction}`
+    const list = this.content.querySelector('[data-wc-list]')
     list.appendChild(item)
     // Scroll content to bottom
     this.content.scrollTop = this.content.scrollHeight
   }
 
   //
-  // Events
+  // Event handlers
   //
 
+  async _handleAuthorisedEvent (e) {
+    // Set availability
+    const state = this.state
+
+    let authStatus = e.detail.data.channel.availability.status
+    authStatus = authStatus === 'online' ? 'ONLINE' : 'OFFLINE'
+    state.status = state.status === 'UNAUTHORISED' ? authStatus : state.status
+
+    // Availability control
+    const availability = document.getElementById(this.id)
+    availability.innerHTML = env.render('webchat-availability.html', {
+      model: { status: state.status }
+    })
+
+    const btn = availability.querySelector('[data-wc-open-btn]')
+    if (btn) {
+      btn.addEventListener('click', this._openChat.bind(this))
+    }
+
+    this._updateContent()
+  }
+
+  _handleChatEvent (e) {
+    console.log('Chat event: ', e)
+  }
+
+  _handleCaseCreatedEvent (e) {
+    console.log('handleCaseCreatedEvent')
+    console.log(e)
+
+    const state = this.state
+    state.status = 'CHATTING'
+  }
+
   // This fires when both user and agent send a message
-  _messageCreatedEvent (e) {
+  _handleMessageCreatedEvent (e) {
+    console.log('handleMessageCreatedEvent')
+    console.log(e)
+
+    const state = this.state
+    state.status = 'CHATTING'
+
     // Add message to modal
     const message = {
       text: e.detail.data.message.messageContent.text,
       direction: e.detail.data.message.direction.toLowerCase()
     }
-    console.log(e)
     // this._addMessage(message)
   }
 }

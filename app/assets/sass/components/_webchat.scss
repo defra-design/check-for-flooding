@@ -1,9 +1,9 @@
-.webchat-html {
+.wc-html {
   @include mq ($until: tablet) {
     height: 100vh;
   }
 }
-.webchat-body {
+.wc-body {
   @include mq ($until: tablet) {
     position: fixed;
     overflow: hidden;
@@ -14,10 +14,10 @@
     min-height: 100vh;
   }
 }
-.webchat-hidden {
+.wc-hidden {
   visibility: hidden;
 }
-.webchat {
+.wc {
   display: none;
   position: fixed;
   flex-wrap: nowrap;
@@ -29,7 +29,7 @@
   padding: 0px;
   height: 100%;
   box-sizing: border-box;
-  overflow: auto;
+  // overflow: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y;
   @include mq ($from: tablet) {
@@ -40,10 +40,20 @@
     padding: 10px;
   }
 }
-.webchat--visible {
+.wc--open {
   display: flex;
 }
-.webchat__inner {
+.wc--min {
+  display: block;
+  top: auto;
+  left: auto;
+  height: 62px;
+  width: 200px;
+  .wc__content {
+    display: none;
+  }
+}
+.wc__inner {
   position: relative;
   flex: 0 0 100%;
   display: flex;
@@ -67,7 +77,7 @@
     bottom: 4px;
   }
 }
-.webchat__header {
+.wc__header {
   flex: 0 0 0;
   display: flex;
   flex-wrap: nowrap;
@@ -76,31 +86,37 @@
   background-color: govuk-colour('black');
   padding: 5px;
 }
-.webchat__content {
+.wc__content {
+  flex: 1 1 100%;
+}
+.wc__body {
   flex: 1 1 auto;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.webchat__footer {
+.wc__footer {
   flex: 0 0 0;
 }
-.webchat-visibility-hidden {
+.wc-visibility-hidden {
   @include mq ($until: tablet) {
     visibility: hidden;
   }
 }
+
 // Pre chat
-.webchat-prechat {
+.wc__prechat {
   padding: 15px;
+  overflow: auto;
   .govuk-form-group {
     margin-bottom: 15px;
   }
-  .govuk-form-group:last-of-type {
-    margin-bottom: 20px;
+  textarea {
+    margin-bottom: 20px !important;
   }
 }
+
 // Message list
-.webchat-list {
+.wc-list {
   @extend .govuk-list;
   display: flex;
   flex-wrap: nowrap;
@@ -132,7 +148,7 @@
     align-self: flex-start;
   }
 }
-.webchat-title {
+.wc-title {
   @include govuk-font($size: 19, $weight: bold);
   margin: 0 0 0 10px;
   font-size: 19px;
@@ -140,8 +156,9 @@
   position: relative;
   color: white;
 }
-.webchat-back-btn,
-.webchat-close-btn {
+.wc-back-btn,
+.wc-close-btn,
+.wc-hide-btn {
   display: block;
   flex: 0 0 auto;
   // align-self: flex-end;
@@ -168,17 +185,17 @@
     pointer-events: none;
   }
 }
-.webchat-back-btn {
+.wc-back-btn {
   @include mq ($from: 'tablet') {
     display: none;
   }
 }
-.webchat-close-btn[data-webchat-back-btn] {
+.wc-close-btn[data-webchat-back-btn] {
   @include mq ($until: 'tablet') {
     display: none;
   }
 }
-.webchat-message {
+.wc-message {
   display: flex;
   flex-wrap: nowrap;
   align-items: baseline;
@@ -236,14 +253,14 @@
     }
   }
 }
-.webchat-credit {
+.wc-credit {
   // display: block;
   display: none;
   @include govuk-font($size: 14);
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
 }
-.webchat-open-btn {
+.wc-open-btn {
   @extend .govuk-button;
   @extend .govuk-button--secondary;
   svg {

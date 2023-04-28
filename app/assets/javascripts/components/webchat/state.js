@@ -4,15 +4,12 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
+    this._status = localStorage.getItem('THREAD_ID') ? 'CHATTING' : 'UNAUTHORISED'
     this._isMobile = true
-    this._isAvailable = sessionStorage.getItem('IS_ONLINE') === 'true'
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
-    this._status = localStorage.getItem('THREAD_ID') ? 'STARTED' : 'PRECHAT'
-    this._isOpen = window.location.hash === '#webchat' || this.status === 'STARTED'
+    this._view = window.location.hash === '#webchat' ? 'OPEN' : this._status === 'CHATTING' ? 'MIN' : 'CLOSED'
     this._openChat = openChat
     this._closeChat = closeChat
-
-    console.log(this._isOpen, window.location.hash)
 
     if (history.length <= 1) {
       this._isBack = false
@@ -38,14 +35,14 @@ class State {
   }
 
   pushView () {
-    this._isOpen = true
+    this._view = 'OPEN'
     this._isBack = true
     window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
     sessionStorage.setItem('IS_BACK', true)
   }
 
   removeView () {
-    this.isOpen = false
+    this.view = this.status === 'CHATTING' ? 'MIN' : 'CLOSED'
     const url = window.location.href.substring(0, window.location.href.indexOf('#webchat'))
     window.history.replaceState({ path: null, isBack: false }, '', url)
   }
@@ -54,28 +51,20 @@ class State {
     history.back()
   }
 
-  set isAvailable (isAvailable) {
-    this._isAvailable = isAvailable
-  }
-
-  get isAvailable () {
-    return this._isAvailable
-  }
-
-  get isOpen () {
-    return this._isOpen
-  }
-
-  set isOpen (isOpen) {
-    this._isOpen = isOpen
-  }
-
   get status () {
     return this._status
   }
 
   set status (status) {
     this._status = status
+  }
+
+  get view () {
+    return this._view
+  }
+
+  set view (view) {
+    this._view = view
   }
 
   get isMobile () {
