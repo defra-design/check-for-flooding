@@ -4,10 +4,10 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    this._status = localStorage.getItem('THREAD_ID') ? 'CHATTING' : 'UNAUTHORISED'
+    this._status = 'UNAUTHORISED'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
-    this._view = window.location.hash === '#webchat' ? 'OPEN' : this._status === 'CHATTING' ? 'MIN' : 'CLOSED'
+    this._view = window.location.hash === '#webchat' ? 'OPEN' : this._status === 'OPEN' ? 'MIN' : 'CLOSED'
     this._openChat = openChat
     this._closeChat = closeChat
 
@@ -42,7 +42,7 @@ class State {
   }
 
   removeView () {
-    this.view = this.status === 'CHATTING' ? 'MIN' : 'CLOSED'
+    this.view = this.status === 'OPEN' ? 'MIN' : 'CLOSED'
     const url = window.location.href.substring(0, window.location.href.indexOf('#webchat'))
     window.history.replaceState({ path: null, isBack: false }, '', url)
   }
