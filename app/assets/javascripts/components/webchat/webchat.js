@@ -137,7 +137,7 @@ class WebChat {
         state.back()
       }
       if (e.target.hasAttribute('data-wc-close-btn')) {
-        this._closeChat()
+        this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-end-btn')) {
         await this._endChat()
@@ -160,6 +160,8 @@ class WebChat {
     content.innerHTML = env.render('webchat-content.html', {
       model: {
         status: state.status,
+        view: state.view,
+        isBack: state.isBack,
         messages: this.messages
       }
     })
@@ -230,16 +232,19 @@ class WebChat {
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     const container = this.container
-    if (isBtn && state.isBack) {
-      state.back()
-      return
+
+    if (isBtn) {
+      if (state.isBack) {
+        state.back()
+        return
+      } else if (container) {
+        state.removeView()
+      }
     }
+
     if (container) {
       this._setAttributes()
       this.container = container.remove()
-    }
-    if (isBtn && container) {
-      state.removeView()
     }
   }
 

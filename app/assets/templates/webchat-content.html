@@ -10,9 +10,11 @@
   <h2 class="wc-title">Webchat</h2>
   <button class="wc-hide-btn" aria-label="Hide chat" {% if model.view == 'OPEN' %}data-wc-min-btn{% elif model.view == 'MIN' %}data-wc-max-btn{% endif %}>
     {% if model.view == 'OPEN' %}
-    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 12h12v4H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <!-- <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 12h12v4H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg> -->
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/></svg>
     {% else %}
-    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 4h12v12H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <!-- <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 4h12v12H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg> -->
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10 6l-7 7 1.4 1.4L10 8.8l5.6 5.6L17 13l-7-7z" fill="currentColor"/></svg>
     {% endif %}
   </button>
   <button class="wc-close-btn" aria-label="Close chat" {% if model.status == 'OPEN' %}data-wc-end-btn{% elif model.isBack %}data-wc-back-btn{% else %}data-wc-close-btn{% endif %}>
