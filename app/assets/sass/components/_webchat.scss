@@ -49,7 +49,11 @@
   left: auto;
   height: 62px;
   width: 200px;
-  .wc__content {
+  .wc__body,
+  .wv__footer,
+  .wc__prechat,
+  .wc__postchat,
+  .wc-close-btn {
     display: none;
   }
 }
@@ -84,6 +88,7 @@
   flex-direction: row;
   align-items: center;
   background-color: govuk-colour('black');
+  border-bottom: 1px solid govuk-colour('black');
   padding: 5px;
 }
 .wc__body {
@@ -184,7 +189,20 @@
   }
 }
 .wc-back-btn {
+  margin-right: -10px;
   @include mq ($from: 'tablet') {
+    display: none;
+  }
+  &[data-wc-close-btn] svg path:first-child {
+    display: none;
+  }
+  &[data-wc-back-btn] svg path:last-child {
+    display: none;
+  }
+}
+.wc-hide-btn {
+  margin-right: -10px;
+  @include mq ($until: 'tablet') {
     display: none;
   }
 }
@@ -258,9 +276,29 @@
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
 }
+.wc-start__inner {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.wc-start--disabled .wc-open-btn {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.wc-start--fixed:not(.wc-start--disabled) {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-color: govuk-colour('light-grey');
+}
 .wc-open-btn {
   @extend .govuk-button;
   @extend .govuk-button--secondary;
+  margin-top: 10px;
+  margin-bottom: 10px;
   svg {
     color: currentColor;
     position: relative;
@@ -270,6 +308,15 @@
     @include mq ($from: tablet) {
         top: -1px;
     }
+  }
+}
+.wc-start--fixed:not(.wc-start--disabled) .wc-open-btn {
+  background-color: transparent;
+  box-shadow: none;
+  border: 2px solid transparent;
+  text-decoration: underline;
+  &:active {
+    top: 0px;
   }
 }
 

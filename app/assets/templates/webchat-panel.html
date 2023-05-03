@@ -1,22 +1,17 @@
 <div class="wc__header">
-  {% if model.isBack %}
-  <button class="wc-back-btn" aria-label="Back" data-wc-back-btn>
+  <button class="wc-back-btn" aria-label="{% if model.isBack %}Back{% else %}Hide chat{% endif %}" {% if model.isBack %}data-wc-back-btn{% else %}data-wc-close-btn{% endif %}>
     <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
       <path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px"/>
+      <path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/>
       <!-- <path d="M10,8.6L15.6,3L17,4.4L11.4,10L17,15.6L15.6,17L10,11.4L4.4,17L3,15.6L8.6,10L3,4.4L4.4,3L10,8.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px;"/> -->
     </svg>
   </button>
+  {% if model.status == 'OPEN' %}
+  <button class="wc-hide-btn" aria-label="Hide chat" {% if model.isBack %}data-wc-back-btn{% else %}data-wc-close-btn{% endif %}>
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/></svg>
+  </button>
   {% endif %}
   <h2 class="wc-title">Webchat</h2>
-  <button class="wc-hide-btn" aria-label="Hide chat" {% if model.view == 'OPEN' %}data-wc-min-btn{% elif model.view == 'MIN' %}data-wc-max-btn{% endif %}>
-    {% if model.view == 'OPEN' %}
-    <!-- <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 12h12v4H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg> -->
-    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/></svg>
-    {% else %}
-    <!-- <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" stroke-linecap="square"><path d="M4 4h12v12H4z" fill="none" stroke="currentColor" stroke-width="2"/></svg> -->
-    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10 6l-7 7 1.4 1.4L10 8.8l5.6 5.6L17 13l-7-7z" fill="currentColor"/></svg>
-    {% endif %}
-  </button>
   <button class="wc-close-btn" aria-label="Close chat" {% if model.status == 'OPEN' %}data-wc-end-btn{% elif model.isBack %}data-wc-back-btn{% else %}data-wc-close-btn{% endif %}>
     <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20"><path d="M10,8.6L15.6,3L17,4.4L11.4,10L17,15.6L15.6,17L10,11.4L4.4,17L3,15.6L8.6,10L3,4.4L4.4,3L10,8.6Z" style="fill:currentColor;stroke:currentColor;stroke-width:0.1px;"></path></svg>
   </button>

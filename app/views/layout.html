@@ -53,7 +53,7 @@
 
 {% block bodyStart %}
 <script>
-  if ((window.location.hash === '#webchat' || localStorage.getItem('THREAD_ID')) && window.matchMedia('(max-width: 640px)').matches) {
+  if (window.location.hash === '#webchat' && window.matchMedia('(max-width: 640px)').matches) {
     document.body.classList.add('wc-hidden')
   }
 </script>

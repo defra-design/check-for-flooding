@@ -7,7 +7,7 @@ class State {
     this._status = 'UNAUTHORISED'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
-    this._view = window.location.hash === '#webchat' ? 'OPEN' : this._status === 'OPEN' ? 'MIN' : 'CLOSED'
+    this._view = window.location.hash === '#webchat' ? 'OPEN' : 'CLOSED'
     this._openChat = openChat
     this._closeChat = closeChat
 
@@ -20,6 +20,7 @@ class State {
 
     // Events
     window.addEventListener('popstate', this._popstate.bind(this))
+    window.addEventListener('hashchange', this._hashchange.bind(this))
   }
 
   _setMobile (isMobile) {
@@ -27,24 +28,44 @@ class State {
   }
 
   _popstate (e) {
-    if (e.state && e.state.path === '#webchat') {
+    if (e.state && e.state.fragment === '#webchat') {
       this._openChat(e)
     } else {
       this._closeChat(e)
     }
   }
 
+  _hashchange (e) {
+    const newHash = e.newURL.split('#')[1]
+    const isSamePage = e.oldURL === e.newURL.split('#')[0]
+
+    if (newHash === 'webchat' && isSamePage) {
+      // this.replaceView(true)
+      this._openChat(e)
+    } else {
+      // this.replaceView(false)
+      this._closeChat(e)
+    }
+  }
+
+  // replaceView (isBack) {
+  //   this._view = isBack ? 'OPEN' : 'CLOSED'
+  //   this._isBack = isBack
+  //   window.history.replaceState({ fragment: '#webchat', isBack: isBack }, '')
+  //   sessionStorage.setItem('IS_BACK', true)
+  // }
+
   pushView () {
     this._view = 'OPEN'
     this._isBack = true
-    window.history.pushState({ path: '#webchat', isBack: true }, '', '#webchat')
+    window.history.pushState({ fragment: '#webchat', isBack: true }, '', '#webchat')
     sessionStorage.setItem('IS_BACK', true)
   }
 
   removeView () {
-    this.view = this.status === 'OPEN' ? 'MIN' : 'CLOSED'
+    this.view = 'CLOSED'
     const url = window.location.href.substring(0, window.location.href.indexOf('#webchat'))
-    window.history.replaceState({ path: null, isBack: false }, '', url)
+    window.history.replaceState({ fragment: null, isBack: false }, '', url)
   }
 
   back () {
