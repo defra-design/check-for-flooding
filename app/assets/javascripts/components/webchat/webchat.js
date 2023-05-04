@@ -116,7 +116,10 @@ class WebChat {
 
     const availability = document.getElementById(this.id)
     availability.innerHTML = env.render('webchat-availability.html', {
-      model: { availability: state.availability }
+      model: {
+        availability: state.availability,
+        status: state.status
+      }
     })
     this.availability = availability
 
@@ -188,6 +191,7 @@ class WebChat {
         status: state.status,
         view: state.view,
         isBack: state.isBack,
+        isMobile: state.isMobile,
         messages: this.messages
       }
     })
@@ -232,8 +236,6 @@ class WebChat {
       start.classList.add('wc-start--disabled')
     }
 
-    console.log('Create panel: ', this.container)
-
     if (!this.container) {
       this._createPanel()
       this._updatePanel()
@@ -276,8 +278,6 @@ class WebChat {
 
   _endChat () {
     const thread = this.thread
-
-    console.log(thread)
     thread.endChat()
   }
 
@@ -300,7 +300,10 @@ class WebChat {
     // Availability control
     const availability = this.availability
     availability.innerHTML = env.render('webchat-availability.html', {
-      model: { availability: state.availability }
+      model: {
+        availability: state.availability,
+        status: state.status
+      }
     })
 
     this._handleScroll()
@@ -315,6 +318,7 @@ class WebChat {
       state.status = 'CLOSED'
       localStorage.removeItem('THREAD_ID')
       this._updatePanel()
+      state.status = 'NEW'
     }
   }
 

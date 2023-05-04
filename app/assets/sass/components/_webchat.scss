@@ -130,9 +130,11 @@
   &__item {
     display: block;
     flex: 0 0 auto;
-    width: 75%;
+    max-width: 75%;
     margin: 5px 10px;
-    padding: 12.5px;
+  }
+  &__item-inner {
+    padding: 10px 12.5px;
     background-color: govuk-colour('light-grey');
     border-radius: 10px;
   }
@@ -144,11 +146,17 @@
   }
   &__item--inbound {
     align-self: flex-end;
-    background-color: govuk-colour('blue');
-    color: white;
   }
   &__item--outbound {
     align-self: flex-start;
+  }
+  &__item--inbound &__item-inner {
+    background-color: govuk-colour('blue');
+    color: white;
+    border-bottom-right-radius: 0;
+  }
+  &__item--outbound &__item-inner {
+    border-top-left-radius: 0;
   }
 }
 .wc-title {
@@ -197,6 +205,11 @@
     display: none;
   }
   &[data-wc-back-btn] svg path:last-child {
+    display: none;
+  }
+}
+.wc-close-btn[data-wc-back-btn] {
+  @include mq ($until: 'tablet') {
     display: none;
   }
 }
