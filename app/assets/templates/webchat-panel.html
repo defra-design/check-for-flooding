@@ -45,38 +45,48 @@
   </span>
 </div>
 {% elif model.status == 'CLOSED' %}
-<div class="wc__postchat">
-  <p>Feedback</p>
-  <button class="govuk-button govuk-button--secondary" data-module="govuk-button" data-wc-close-btn>
-    Close window
-  </button>
-  <a href="" role="button" draggable="false" data-module="govuk-button" data-wc-resume-btn>Resume chat</a>
+<div class="wc__body">
+  <div class="wc-postchat">
+    <p>Feedback</p>
+  </div>
+</div>
+<div class="wc__footer">
+  <div class="wc-postchat-buttons">
+    <button class="govuk-button" data-module="govuk-button" data-wc-close-btn>Close window</button>
+    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" data-wc-resume-btn>Resume chat</button>
+  </div>
 </div>
 {% elif model.status == 'NEW' %}
-<div class="wc__prechat">
-  <div class="govuk-form-group">
-    <label class="govuk-label" for="name">
-      Name
-    </label>
-    <input class="govuk-input" id="name" name="name" type="text">
+<div class="wc__body">
+  <div class="wc-prechat">
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="name">
+        Name
+      </label>
+      <input class="govuk-input" id="name" name="name" type="text">
+    </div>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="message">
+        Your question
+      </label>
+      <textarea class="govuk-textarea" id="message" name="message" rows="5"></textarea>
+    </div>
+    <button class="govuk-button" data-module="govuk-button" data-wc-prechat-btn>
+      Submit
+    </button>
   </div>
-  <div class="govuk-form-group">
-    <label class="govuk-label" for="message">
-      Your question
-    </label>
-    <textarea class="govuk-textarea" id="message" name="message" rows="5"></textarea>
-  </div>
-  <button class="govuk-button" data-module="govuk-button" data-wc-prechat-btn>
-    Submit
-  </button>
 </div>
 {% endif %}
 {% elif model.availability == 'OFFLINE' %}
-<div class="wc__prechat">
-  <p>Web chat currently offline</p>
+<div class="wc__body">
+  <div class="wc-prechat">
+    <p>Web chat currently offline</p>
+  </div>
 </div>
 {% else %}
-<div class="wc__prechat">
-  <p>Checking webchat availability...</p>
+<div class="wc__body">
+  <div class="wc-prechat">
+    <p>Checking webchat availability...</p>
+  </div>
 </div>
 {% endif %}

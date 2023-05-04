@@ -43,20 +43,6 @@
 .wc--open {
   display: flex;
 }
-.wc--min {
-  display: block;
-  top: auto;
-  left: auto;
-  height: 62px;
-  width: 200px;
-  .wc__body,
-  .wv__footer,
-  .wc__prechat,
-  .wc__postchat,
-  .wc-close-btn {
-    display: none;
-  }
-}
 .wc__inner {
   position: relative;
   flex: 0 0 100%;
@@ -105,16 +91,25 @@
   }
 }
 
-// Pre chat
-.wc__prechat,
-.wc__postchat {
+// Pre and post chat
+.wc-prechat,
+.wc-postchat {
   padding: 15px;
-  overflow: auto;
   .govuk-form-group {
     margin-bottom: 15px;
   }
   textarea {
     margin-bottom: 20px !important;
+  }
+}
+.wc-postchat-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  padding: 10px;
+  .govuk-button {
+    flex: 1 1 50%;
+    margin: 5px;
   }
 }
 

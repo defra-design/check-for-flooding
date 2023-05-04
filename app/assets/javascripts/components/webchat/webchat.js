@@ -317,6 +317,7 @@ class WebChat {
     if (isClosed) {
       state.status = 'CLOSED'
       localStorage.removeItem('THREAD_ID')
+      this.messages = []
       this._updatePanel()
       state.status = 'NEW'
     }
