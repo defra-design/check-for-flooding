@@ -309,6 +309,11 @@
         top: -1px;
     }
   }
+  &:focus:not(:active):not(:hover) {
+    border-color: govuk-colour('light-grey');
+    background-color: govuk-colour('light-grey');
+    box-shadow: 0 2px 0 #929191;
+  }
 }
 .wc-start--fixed:not(.wc-start--disabled) .wc-open-btn {
   background-color: transparent;

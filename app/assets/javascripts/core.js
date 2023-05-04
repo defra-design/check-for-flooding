@@ -34,7 +34,7 @@ document.onreadystatechange = () => {
     }
 
     // Initialise webchat
-    const webchat = new WebChat('webchat')
+    const webchat = new WebChat('wc-availability')
 
     const model = window.flood.model
 

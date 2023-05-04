@@ -4,7 +4,8 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    this._status = 'UNAUTHORISED'
+    this._availability = null // ONLINE | OFFLINE
+    this._status = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'NEW' // NEW | OPEN | CLOSED
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
     this._view = window.location.hash === '#webchat' ? 'OPEN' : 'CLOSED'
@@ -19,7 +20,6 @@ class State {
     Utils.listenForDevice('mobile', this._setMobile.bind(this))
 
     // Events
-    window.addEventListener('popstate', this._popstate.bind(this))
     window.addEventListener('hashchange', this._hashchange.bind(this))
   }
 
@@ -27,49 +27,46 @@ class State {
     this._isMobile = isMobile
   }
 
-  _popstate (e) {
-    if (e.state && e.state.fragment === '#webchat') {
-      this._openChat(e)
-    } else {
-      this._closeChat(e)
-    }
-  }
-
   _hashchange (e) {
+    e.preventDefault()
     const newHash = e.newURL.split('#')[1]
     const isSamePage = e.oldURL === e.newURL.split('#')[0]
 
     if (newHash === 'webchat' && isSamePage) {
-      // this.replaceView(true)
+      this._view = 'OPEN'
+      this._isBack = true
+      sessionStorage.setItem('IS_BACK', true)
       this._openChat(e)
     } else {
-      // this.replaceView(false)
+      this._view = 'CLOSED'
+      this._isBack = false
+      sessionStorage.setItem('IS_BACK', false)
       this._closeChat(e)
     }
   }
 
-  // replaceView (isBack) {
-  //   this._view = isBack ? 'OPEN' : 'CLOSED'
-  //   this._isBack = isBack
-  //   window.history.replaceState({ fragment: '#webchat', isBack: isBack }, '')
-  //   sessionStorage.setItem('IS_BACK', true)
-  // }
-
-  pushView () {
-    this._view = 'OPEN'
-    this._isBack = true
-    window.history.pushState({ fragment: '#webchat', isBack: true }, '', '#webchat')
-    sessionStorage.setItem('IS_BACK', true)
-  }
-
-  removeView () {
-    this.view = 'CLOSED'
-    const url = window.location.href.substring(0, window.location.href.indexOf('#webchat'))
-    window.history.replaceState({ fragment: null, isBack: false }, '', url)
+  replaceView () {
+    this._view = 'CLOSED'
+    const url = window.location.href.split('#')[0]
+    window.history.replaceState(null, null, url)
   }
 
   back () {
+    const offsetY = window.scrollY
     history.back()
+    if (!this._isMobile) {
+      window.addEventListener('scroll', e => {
+        window.scrollTo(0, offsetY)
+      }, { once: true })
+    }
+  }
+
+  get availability () {
+    return this._availability
+  }
+
+  set availability (availability) {
+    this._availability = availability
   }
 
   get status () {
