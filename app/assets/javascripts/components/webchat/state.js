@@ -29,6 +29,7 @@ class State {
 
   _hashchange (e) {
     e.preventDefault()
+
     const newHash = e.newURL.split('#')[1]
     const isSamePage = e.oldURL === e.newURL.split('#')[0]
 
@@ -36,6 +37,7 @@ class State {
       this._view = 'OPEN'
       this._isBack = true
       sessionStorage.setItem('IS_BACK', true)
+      this.offsetY = window.scrollY
       this._openChat(e)
     } else {
       this._view = 'CLOSED'
@@ -49,12 +51,17 @@ class State {
     this._view = 'CLOSED'
     const url = window.location.href.split('#')[0]
     window.history.replaceState(null, null, url)
+    if (this._isMobile) {
+      window.scrollTo(0, this.offsetY)
+    }
   }
 
   back () {
     const offsetY = window.scrollY
     history.back()
-    if (!this._isMobile) {
+    if (this._isMobile) {
+      window.scrollTo(0, this.offsetY)
+    } else {
       window.addEventListener('scroll', e => {
         window.scrollTo(0, offsetY)
       }, { once: true })

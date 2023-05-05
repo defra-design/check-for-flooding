@@ -156,7 +156,8 @@ class WebChat {
     // Event listeners
     container.addEventListener('click', async e => {
       if (e.target.hasAttribute('data-wc-back-btn')) {
-        state.back()
+        // state.back()
+        this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-close-btn')) {
         this._closeChat(e)
@@ -254,9 +255,9 @@ class WebChat {
     if (state.isBack) {
       state.back()
     } else if (this.container) {
-      state.replaceView()
       this._setAttributes()
       this.container = this.container.remove()
+      state.replaceView()
       this._handleScroll(e)
     }
 

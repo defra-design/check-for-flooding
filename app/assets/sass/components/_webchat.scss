@@ -155,7 +155,8 @@
   }
 }
 .wc-title {
-  @include govuk-font($size: 19, $weight: bold);
+  @extend .govuk-heading-s;
+  font-size: 19px;
   margin: 0 0 0 10px;
   font-size: 19px;
   flex: 1 1 auto;
@@ -163,8 +164,8 @@
   color: white;
 }
 .wc-back-btn,
-.wc-close-btn,
-.wc-hide-btn {
+.wc-hide-btn,
+.wc-close-btn {
   display: block;
   flex: 0 0 auto;
   // align-self: flex-end;
@@ -173,9 +174,6 @@
   background-color: transparent;;
   border: 0px solid transparent;
   padding: 10px;
-  @include mq ($from: tablet) {
-    padding: 5px;
-  }
   margin: 0px 0px 0px auto;
   cursor: pointer;
   &:focus {
@@ -191,89 +189,86 @@
     pointer-events: none;
   }
 }
-.wc-back-btn {
+.wc-back-btn,
+.wc-hide-btn {
   margin-right: -10px;
+}
+.wc-back-btn {
   @include mq ($from: 'tablet') {
     display: none;
   }
-  &[data-wc-close-btn] svg path:first-child {
-    display: none;
-  }
-  &[data-wc-back-btn] svg path:last-child {
-    display: none;
-  }
 }
-.wc-close-btn[data-wc-back-btn] {
+.wc-close-btn {
   @include mq ($until: 'tablet') {
     display: none;
   }
 }
-.wc-hide-btn {
-  margin-right: -10px;
-  @include mq ($until: 'tablet') {
-    display: none;
-  }
-}
-.wc-close-btn[data-webchat-back-btn] {
-  @include mq ($until: 'tablet') {
-    display: none;
-  }
+.wc-end-btn {
+  @extend .govuk-button;
+  @extend .govuk-button--secondary;
+  font-size: 16px;
+  margin: 0px 5px 0px auto;
+  padding: 5px 8px 4px;
+  width: auto;
 }
 .wc-message {
   display: flex;
   flex-wrap: nowrap;
   align-items: baseline;
-  padding: 10px;
+  margin: 10px;
+  padding: 0px;
+  border: 2px solid govuk-colour('black');
   &__textarea {
     @extend .govuk-textarea;
-    font-family: $govuk-font-family-gds-transport;
+    // font-family: $govuk-font-family-gds-transport;
     font-size: 16px;
     line-height: 20px;
     flex: 1 1 auto;
     align-self: flex-end;
-    margin: 0px;
-    padding: 7.5px 10px;
+    margin: 3px 3px 4px 3px;
+    padding: 7.5px;
+    border: 2px solid transparent;
     height: 40px;
     resize: none;
+    box-sizing: border-box;
     &:focus {
       outline: none;
       box-shadow: none;
+      z-index: 2;
     }
     &:focus[keyboard-focus] {
       outline: 3px solid $govuk-focus-colour;
       outline-offset: 0;
       box-shadow: inset 0 0 0 2px;
+      border-color:#0b0c0c;
     }
   }
   &__send {
+    @extend .govuk-button;
+    margin: 5px 5px 7px 5px;
+    font-size: 16px;
     position: relative;
-    flex: 0 0 40px;
+    flex: 0 0 auto;
     align-self: flex-end;
-    background-color: govuk-colour('blue');
-    border: 1px solid govuk-colour('blue');
-    padding: 0px;
-    margin: auto 0px 0px 3px;
-    box-shadow: none;
-    text-indent: -5000px;
-    width: 40px;
-    height: 40px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: auto;
     cursor: pointer;
-    &:focus {
-      outline: none;
-    }
-    &:focus[keyboard-focus] {
-      outline: 3px solid $govuk-focus-colour;
-      box-shadow: inset 0 0 0 3px govuk-colour('black');
-      border-color: govuk-colour('black');
-    }
+    // &:focus {
+    //   outline: none;
+    // }
+    // &:focus[keyboard-focus] {
+    //   outline: 3px solid $govuk-focus-colour;
+    //   box-shadow: inset 0 0 0 3px govuk-colour('black');
+    //   border-color: govuk-colour('black');
+    // }
     svg {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-left: -10px;
-      margin-top: -10px;
+      display: block;
       color: white;
       pointer-events: none;
+      margin-left: 5px;
     }
   }
 }
