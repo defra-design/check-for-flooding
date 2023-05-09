@@ -33,7 +33,11 @@
   {% if model.status == 'OPEN' and model.availability == 'ONLINE' %}
   <div class="wc-status">
     <p class="wc-status__content">
-      Waiting for agent<span class="wc-status__meta">Queue position 3</span>
+      {% if model.assignee %}
+      {{ model.assignee }}<span class="wc-status__meta">Floodline support</span>
+      {% else %}
+      Waiting for agent<span class="wc-status__meta">Queue position {{ model.queue }}</span>
+      {% endif %}
     </p>
     <div class="wc-status__button">
       <button class="wc-end-btn" aria-label="End chat" data-wc-end-btn>

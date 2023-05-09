@@ -10,6 +10,8 @@ const env = window.nunjucks.configure('views')
 class WebChat {
   constructor (id) {
     this.id = id
+    this.queue = null
+    this.assignee = null
     this.messages = []
 
     const state = new State(
@@ -64,8 +66,16 @@ class WebChat {
     })
 
     // Event listeners
+    // sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
+
+    sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_CREATED, this._handleRoutingQueueCreatedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_UPDATED, this._handleRoutingQueueUpdatedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.USER_ASSIGNED_TO_ROUTING_QUEUE, this._handleUserAssignedToRoutingQueue.bind(this))
+    sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueue.bind(this))
+    sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, this._handleSetPositionInQueueEvent.bind(this))
 
     this.sdk = sdk
 
@@ -195,7 +205,9 @@ class WebChat {
         view: state.view,
         isBack: state.isBack,
         isMobile: state.isMobile,
-        messages: this.messages
+        messages: this.messages,
+        assignee: this.assignee,
+        queue: this.queue
       }
     })
   }
@@ -297,6 +309,11 @@ class WebChat {
   // Event handlers
   //
 
+  // _handleConsumerAuthorizedEvent (e) {
+  //   console.log('_handleConsumerAuthorizedEvent')
+  //   console.log(e)
+  // }
+
   _handleAuthoriseEvent (e) {
     const state = this.state
 
@@ -326,7 +343,42 @@ class WebChat {
     }
   }
 
+  _handleAssignedAgentChangedEvent (e) {
+    const assignee = e.detail.data.inboxAssignee
+    this.assignee = assignee ? assignee.firstName : null
+    this._updatePanel()
+  }
+
+  _handleRoutingQueueCreatedEvent (e) {
+    console.log('_handleRoutingQueueCreatedEvent')
+    console.log(e)
+  }
+
+  _handleRoutingQueueUpdatedEvent (e) {
+    console.log('_handleRoutingQueueUpdatedEvent')
+    console.log(e)
+  }
+
+  _handleUserAssignedToRoutingQueue (e) {
+    console.log('_handleUserAssignedToRoutingQueue')
+    console.log(e)
+  }
+
+  _handleUserUnassignedFromRoutingQueue (e) {
+    console.log('_handleUserUnassignedFromRoutingQueue')
+    console.log(e)
+  }
+
+  _handleSetPositionInQueueEvent (e) {
+    const queue = e.detail.data.positionInQueue
+    this.queue = queue || null
+    this._updatePanel()
+  }
+
   _handleLivechatRecoveredEvent (e) {
+    const assignee = e.detail.data.inboxAssignee
+    this.assignee = assignee ? assignee.firstName : null
+
     const messages = e.detail.data.messages
     for (let i = 0; i < messages.length; i++) {
       this.messages.push({
@@ -340,6 +392,8 @@ class WebChat {
   }
 
   _handleCaseCreatedEvent (e) {
+    console.log('_handleCaseCreatedEvent')
+    console.log(e)
     const state = this.state
     state.status = 'OPEN'
   }
