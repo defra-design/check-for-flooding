@@ -3,8 +3,54 @@
 class Keyboard {
   static _isKeyboard = false
 
-  static init () {
+  static init (state) {
+    this._state = state
+    this._detectFocus()
+  }
 
+  static _detectFocus () {
+    document.addEventListener('keydown', (e) => {
+        this._isKeyboard = true
+        // if (e.key === 'Tab' || e.key === 'Escape' || e.key === 'Esc') {
+        //     this._constrainFocus(e)
+        // }
+    }, true)
+
+    document.addEventListener('keyup', (e) => {
+        this._isKeyboard = true
+        // if (e.key === 'Tab') {
+        //     const obscure = document.querySelector('[data-am-obscure]')
+        //     const isWithinObscure = document.activeElement.closest('[data-am-obscure]')
+        //     if (obscure && !isWithinObscure) {
+        //         obscure.focus()
+        //     }
+        //     const el = this._getFocusParent()
+        //     if (el) {
+        //         this._toggleInert(el)
+        //     }
+        // }
+    }, true)
+
+    document.addEventListener('pointerdown', (e) => {
+        this._isKeyboard = false
+        // e.target.classList.remove('am-u-focus-visible')
+    })
+
+    document.addEventListener('focus', (e) => {
+        const isScope = !!e.target.closest('[data-wc]')
+        if (!isScope) {
+            return
+        }
+        const target = e.target.hasAttribute('data-wc-focus-parent') ? e.target.parentNode : e.target
+        target.toggleAttribute('keyboard-focus', this._isKeyboard)
+        // target.classList.toggle('am-wc-focus-visible', this._isKeyboard)
+    }, true)
+
+    document.addEventListener('blur',(e) => {
+        const target = e.target.hasAttribute('data-wc-focus-parent') ? e.target.parentNode : e.target
+        target.removeAttribute('keyboard-focus')
+        target.classList.remove('am-wc-focus-visible')
+    }, true)
   }
 
   static hideSiblings () {

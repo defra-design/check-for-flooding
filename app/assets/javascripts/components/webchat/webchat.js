@@ -3,7 +3,6 @@
 import { ChatSdk, EnvironmentName, Thread, LivechatThread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
 import Keyboard from './keyboard'
 import State from './state'
-import Availability from './availability'
 import Utils from './utils'
 
 const env = window.nunjucks.configure('views')
@@ -18,6 +17,8 @@ class WebChat {
       this._closeChat.bind(this)
     )
     this.state = state
+
+    Keyboard.init(state)
 
     // Custom events
     this.livechatAuthReady = new CustomEvent('livechatAuthReady', {})
@@ -144,6 +145,7 @@ class WebChat {
     container.setAttribute('aria-modal', false)
     container.setAttribute('role', 'dialog')
     container.setAttribute('open', '')
+    container.setAttribute('data-wc', '')
     container.innerHTML = '<div class="wc__inner" tabindex="-1" data-wc-inner></div>'
     document.body.appendChild(container)
     this.container = container
