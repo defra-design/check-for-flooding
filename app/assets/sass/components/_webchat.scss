@@ -191,6 +191,13 @@
   &__item--outbound &__item-inner {
     border-top-left-radius: 0;
   }
+  &__item-assignee {
+    display: block;
+    @include govuk-font($size: 14);
+    color: $govuk-secondary-text-colour;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
 }
 .wc-title {
   @extend .govuk-heading-s;

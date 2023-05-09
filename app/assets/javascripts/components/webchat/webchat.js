@@ -380,9 +380,12 @@ class WebChat {
     this.assignee = assignee ? assignee.firstName : null
 
     const messages = e.detail.data.messages
+
     for (let i = 0; i < messages.length; i++) {
       this.messages.push({
         text: messages[i].messageContent.text,
+        assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
+        date: messages[i].createdAt,
         direction: messages[i].direction
       })
     }
@@ -402,10 +405,14 @@ class WebChat {
     const state = this.state
     state.status = 'OPEN'
 
+    const response = e.detail.data.message
+
     // Add message
     const message = {
-      text: e.detail.data.message.messageContent.text,
-      direction: e.detail.data.message.direction.toLowerCase()
+      text: response.messageContent.text,
+      assignee: response.authorUser ? response.authorUser.firstName : null,
+      date: response.createdAt,
+      direction: response.direction.toLowerCase()
     }
     const messages = this.messages
     messages.push(message)

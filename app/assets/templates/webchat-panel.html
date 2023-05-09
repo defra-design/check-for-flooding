@@ -53,6 +53,9 @@
   <ul class="wc-list" data-message-list>
     {% for message in model.messages %}
     <li class="wc-list__item wc-list__item--{{ message.direction | lower }}">
+      {% if message.direction == 'outbound' %}
+      <span class="wc-list__item-assignee">{{ message.assignee}}</span>
+      {% endif %}
       <div class="wc-list__item-inner">
       {{ message.text }}
       </div>
