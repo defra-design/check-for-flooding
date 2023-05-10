@@ -66,7 +66,7 @@ class WebChat {
     })
 
     // Event listeners
-    // sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
@@ -330,10 +330,10 @@ class WebChat {
   // Event handlers
   //
 
-  // _handleConsumerAuthorizedEvent (e) {
-  //   console.log('_handleConsumerAuthorizedEvent')
-  //   console.log(e)
-  // }
+  _handleConsumerAuthorizedEvent (e) {
+    console.log('_handleConsumerAuthorizedEvent')
+    console.log(e)
+  }
 
   _handleAuthoriseEvent (e) {
     const state = this.state

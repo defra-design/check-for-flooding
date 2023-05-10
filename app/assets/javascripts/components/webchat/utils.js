@@ -42,7 +42,13 @@ class Utils {
     const now = new Date().getTime()
     const startOfDay = now - (now % 86400000)
     const isToday = value.getTime() >= startOfDay
-    const time = value.toLocaleString('en-GB', { hour: 'numeric', minute: 'numeric', hour12: true, hourCycle: 'h12' }).replace(' ', '')
+    let hours = value.getHours()
+    let minutes = value.getMinutes()
+    minutes = `${minutes < 10 ? '0' : ''}${minutes}`
+    const ampm = hours >= 12 ? 'pm' : 'am'
+    hours %= 12
+    hours = hours || 12
+    const time = `${hours}:${minutes}${ampm}`
     const date = value.toLocaleString('en-GB', { day: 'numeric', month: 'short' })
     console.log(isToday ? time : `${time}, ${date}`)
     return isToday ? time : `${time}, ${date}`
