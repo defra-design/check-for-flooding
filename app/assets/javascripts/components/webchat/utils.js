@@ -37,6 +37,16 @@ class Utils {
     }
     callback(mQ.matches)
   }
+
+  static formatDate (value) {
+    const now = new Date().getTime()
+    const startOfDay = now - (now % 86400000)
+    const isToday = value.getTime() >= startOfDay
+    const time = value.toLocaleString('en-GB', { hour: 'numeric', minute: 'numeric', hour12: true, hourCycle: 'h12' }).replace(' ', '')
+    const date = value.toLocaleString('en-GB', { day: 'numeric', month: 'short' })
+    console.log(isToday ? time : `${time}, ${date}`)
+    return isToday ? time : `${time}, ${date}`
+  }
 }
 
 export default Utils

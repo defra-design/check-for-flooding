@@ -137,16 +137,16 @@
     margin-bottom: 20px !important;
   }
 }
-.wc-postchat-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  padding: 10px;
-  .govuk-button {
-    flex: 1 1 50%;
-    margin: 5px;
-  }
-}
+// .wc-postchat-buttons {
+//   display: flex;
+//   flex-direction: row;
+//   align-items: baseline;
+//   padding: 10px;
+//   .govuk-button {
+//     flex: 1 1 50%;
+//     margin: 5px;
+//   }
+// }
 
 // Message list
 .wc-list {
@@ -191,12 +191,15 @@
   &__item--outbound &__item-inner {
     border-top-left-radius: 0;
   }
-  &__item-assignee {
+  &__item-meta {
     display: block;
     @include govuk-font($size: 14);
     color: $govuk-secondary-text-colour;
     font-size: 14px;
     margin-bottom: 2px;
+  }
+  &__item--inbound &__item-meta {
+    text-align: right;
   }
 }
 .wc-title {
@@ -235,7 +238,7 @@
   }
 }
 .wc-back-btn {
-  margin-right: -10px;
+  margin-right: -7px;
   @include mq ($from: 'tablet') {
     display: none;
   }
@@ -251,6 +254,10 @@
   font-size: 16px;
   margin: 0px;
   width: auto;
+}
+.wc-confirm-end-btn {
+  @extend .govuk-button;
+  font-size: 16px;
 }
 .wc-message {
   position: relative;
@@ -273,7 +280,7 @@
     flex: 1 1 auto;
     align-self: flex-end;
     margin: 2px;
-    padding: 15px 8px 16px;
+    padding: 15px 8px;
     border: 0px;
     height: 51px;
     resize: none;

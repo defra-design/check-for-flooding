@@ -175,7 +175,13 @@ class WebChat {
         this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-end-btn')) {
-        await this._endChat()
+        this._endChat()
+      }
+      if (e.target.hasAttribute('data-wc-resume-btn')) {
+        this._resumeChat(e)
+      }
+      if (e.target.hasAttribute('data-wc-confirm-end-btn')) {
+        await this._confirmEndChat()
       }
       if (e.target.hasAttribute('data-wc-prechat-btn')) {
         this._validatePrechat(this._startChat.bind(this))
@@ -292,6 +298,21 @@ class WebChat {
   }
 
   _endChat () {
+    const state = this.state
+    state.status = 'END'
+    console.log('_endChat')
+    this._updatePanel()
+  }
+
+  _resumeChat (e) {
+    e.preventDefault()
+    const state = this.state
+    state.status = 'OPEN'
+    console.log('_resumeChat')
+    this._updatePanel()
+  }
+
+  _confirmEndChat () {
     const thread = this.thread
     thread.endChat()
   }
@@ -385,7 +406,7 @@ class WebChat {
       this.messages.push({
         text: messages[i].messageContent.text,
         assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
-        date: messages[i].createdAt,
+        date: Utils.formatDate(new Date(messages[i].createdAt)),
         direction: messages[i].direction
       })
     }
@@ -411,7 +432,7 @@ class WebChat {
     const message = {
       text: response.messageContent.text,
       assignee: response.authorUser ? response.authorUser.firstName : null,
-      date: response.createdAt,
+      date: Utils.formatDate(new Date(response.createdAt)),
       direction: response.direction.toLowerCase()
     }
     const messages = this.messages
