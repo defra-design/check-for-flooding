@@ -53,7 +53,7 @@
   <ul class="wc-list" data-message-list>
     {% for message in model.messages %}
     <li class="wc-list__item wc-list__item--{{ message.direction | lower }}">
-      <span class="wc-list__item-meta">{% if message.direction == 'outbound' %}{{ message.assignee}}{% else %}You{% endif %} at {{ message.date }}</span>
+      <span class="wc-list__item-meta">{% if message.direction == 'outbound' %}{{ message.assignee}} at{% else %}<span class="govuk-visually-hidden">You  at</span>{% endif %} {{ message.date }}</span>
       <div class="wc-list__item-inner">
       {{ message.text }}
       </div>
@@ -91,7 +91,7 @@
   <div class="wc-postchat">
     <p>Give feedback</p>
     <div class="govuk-button-group">
-      <button class="govuk-button" data-module="govuk-button" data-wc-feedback-btn>Submit</button>
+      <button class="wc-feedback-btn" data-module="govuk-button" data-wc-feedback-btn>Submit</button>
       <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-close-btn>Cancel</button>
     </div>
   </div>

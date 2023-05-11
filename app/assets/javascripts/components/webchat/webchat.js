@@ -439,6 +439,10 @@ class WebChat {
     messages.push(message)
 
     this._updatePanel()
+
+    // Scroll messages
+    const lastItem = document.querySelector('[data-message-list] li:last-child')
+    lastItem.scrollIntoView()
   }
 
   _handleScroll (e) {

@@ -50,7 +50,6 @@ class Utils {
     hours = hours || 12
     const time = `${hours}:${minutes}${ampm}`
     const date = value.toLocaleString('en-GB', { day: 'numeric', month: 'short' })
-    console.log(isToday ? time : `${time}, ${date}`)
     return isToday ? time : `${time}, ${date}`
   }
 }

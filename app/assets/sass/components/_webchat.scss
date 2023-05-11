@@ -160,11 +160,15 @@
   margin: 0px;
   padding: 0px;
   height: 100%;
+  > li {
+    margin-bottom: 0;
+  }
   &__item {
     display: block;
     flex: 0 0 auto;
     max-width: 75%;
-    margin: 5px 10px;
+    margin: 0px 10px;
+    padding: 5px 0px;
   }
   &__item-inner {
     padding: 10px 12.5px;
@@ -172,10 +176,10 @@
     border-radius: 10px;
   }
   &__item:first-child {
-    margin-top: 15px;
+    padding-top: 15px;
   }
   &__item:last-child {
-    margin-bottom: 10px;
+    padding-bottom: 15px;
   }
   &__item--inbound {
     align-self: flex-end;
@@ -255,7 +259,8 @@
   margin: 0px;
   width: auto;
 }
-.wc-confirm-end-btn {
+.wc-confirm-end-btn,
+.wc-feedback-btn {
   @extend .govuk-button;
   font-size: 16px;
 }
