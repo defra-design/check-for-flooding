@@ -52,6 +52,12 @@ class Utils {
     const date = value.toLocaleString('en-GB', { day: 'numeric', month: 'short' })
     return isToday ? time : `${time}, ${date}`
   }
+
+  static parseMessage (input) {
+    // Parse URLs in the messages to make them hyperlinks
+    const output = input
+    return output
+  }
 }
 
 export default Utils

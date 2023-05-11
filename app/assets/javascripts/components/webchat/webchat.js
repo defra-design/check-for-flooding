@@ -183,7 +183,10 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-confirm-end-btn')) {
         await this._confirmEndChat()
       }
-      if (e.target.hasAttribute('data-wc-prechat-btn')) {
+      if (e.target.hasAttribute('data-wc-continue-btn')) {
+        this._continue()
+      }
+      if (e.target.hasAttribute('data-wc-submit-btn')) {
         this._validatePrechat(this._startChat.bind(this))
       }
       if (e.target.hasAttribute('data-wc-send-btn')) {
@@ -216,6 +219,12 @@ class WebChat {
         queue: this.queue
       }
     })
+
+    // Scroll messages
+    const body = container.querySelector('[data-wc-body]')
+    if (body) {
+      body.scrollTop = body.scrollHeight
+    }
   }
 
   _validatePrechat (successCb) {
@@ -297,6 +306,13 @@ class WebChat {
     this._setAttributes()
   }
 
+  _continue () {
+    const state = this.state
+    state.status = 'START'
+    console.log('_continue')
+    this._updatePanel()
+  }
+
   _endChat () {
     const state = this.state
     state.status = 'END'
@@ -336,6 +352,8 @@ class WebChat {
   }
 
   _handleAuthoriseEvent (e) {
+    console.log('_handleAuthoriseEvent')
+    console.log(e)
     const state = this.state
 
     // Availability control
@@ -352,19 +370,24 @@ class WebChat {
   }
 
   _handleCaseStatusChangedEvent (e) {
+    console.log('_handleCaseStatusChangedEvent')
+    console.log(e)
     const state = this.state
-    const isClosed = e.detail.data.case.status === 'closed'
+    const status = e.detail.data.case.status
+    const isClosed = status === 'closed'
 
     if (isClosed) {
       state.status = 'CLOSED'
       localStorage.removeItem('THREAD_ID')
       this.messages = []
       this._updatePanel()
-      state.status = 'NEW'
+      state.status = 'PRECHAT'
     }
   }
 
   _handleAssignedAgentChangedEvent (e) {
+    console.log('_handleAssignedAgentChangedEvent')
+    console.log(e)
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
     this._updatePanel()
@@ -391,12 +414,16 @@ class WebChat {
   }
 
   _handleSetPositionInQueueEvent (e) {
+    console.log('_handleSetPositionInQueueEvent')
+    console.log(e)
     const queue = e.detail.data.positionInQueue
     this.queue = queue || null
     this._updatePanel()
   }
 
   _handleLivechatRecoveredEvent (e) {
+    console.log('_handleLivechatRecoveredEvent')
+    console.log(e)
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
 
@@ -404,7 +431,7 @@ class WebChat {
 
     for (let i = 0; i < messages.length; i++) {
       this.messages.push({
-        text: messages[i].messageContent.text,
+        text: Utils.parseMessage(messages[i].messageContent.text),
         assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
         date: Utils.formatDate(new Date(messages[i].createdAt)),
         direction: messages[i].direction
@@ -430,7 +457,7 @@ class WebChat {
 
     // Add message
     const message = {
-      text: response.messageContent.text,
+      text: Utils.parseMessage(response.messageContent.text),
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
       direction: response.direction.toLowerCase()
@@ -439,10 +466,6 @@ class WebChat {
     messages.push(message)
 
     this._updatePanel()
-
-    // Scroll messages
-    const lastItem = document.querySelector('[data-message-list] li:last-child')
-    lastItem.scrollIntoView()
   }
 
   _handleScroll (e) {

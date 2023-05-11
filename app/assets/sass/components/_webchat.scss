@@ -174,6 +174,7 @@
     padding: 10px 12.5px;
     background-color: govuk-colour('light-grey');
     border-radius: 10px;
+    word-break: break-all;
   }
   &__item:first-child {
     padding-top: 15px;
@@ -259,6 +260,8 @@
   margin: 0px;
   width: auto;
 }
+.wc-continue-btn,
+.wc-submit-btn,
 .wc-confirm-end-btn,
 .wc-feedback-btn {
   @extend .govuk-button;
@@ -270,6 +273,7 @@
   flex-wrap: nowrap;
   align-items: baseline;
   border-top: 1px solid govuk-colour('black');
+  border-bottom: 1px solid govuk-colour('black');
   &[keyboard-focus]:after {
     @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
     left: 4px;
@@ -331,6 +335,16 @@
   @include govuk-font($size: 14);
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
+}
+.wc-transcript-btn,
+.wc-audio-btn {
+  display: inline-block;
+  color: $govuk-secondary-text-colour;
+  // text-decoration: none;
+  margin: 10px;
+  &:visited {
+    color: $govuk-secondary-text-colour;
+  }
 }
 .wc-start__inner {
   max-width: 960px;

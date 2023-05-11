@@ -5,7 +5,7 @@ import Utils from './utils'
 class State {
   constructor (openChat, closeChat) {
     this._availability = null // ONLINE | OFFLINE
-    this._status = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'NEW' // NEW | OPEN | CLOSED
+    this._status = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'PRECHAT'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
     this._view = window.location.hash === '#webchat' ? 'OPEN' : 'CLOSED'
