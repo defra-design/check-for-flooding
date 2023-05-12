@@ -8,7 +8,7 @@ class State {
     this._status = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'PRECHAT'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
-    this._view = window.location.hash === '#webchat' ? 'OPEN' : 'CLOSED'
+    this._isOpen = window.location.hash === '#webchat'
     this._openChat = openChat
     this._closeChat = closeChat
 
@@ -20,48 +20,42 @@ class State {
     Utils.listenForDevice('mobile', this._setMobile.bind(this))
 
     // Events
-    window.addEventListener('hashchange', this._hashchange.bind(this))
+    window.addEventListener('popstate', this._popstate.bind(this))
   }
 
   _setMobile (isMobile) {
     this._isMobile = isMobile
   }
 
-  _hashchange (e) {
-    e.preventDefault()
-
-    const newHash = e.newURL.split('#')[1]
-    const isSamePage = e.oldURL === e.newURL.split('#')[0]
-
-    if (newHash === 'webchat' && isSamePage) {
-      this._view = 'OPEN'
-      this._isBack = true
-      sessionStorage.setItem('IS_BACK', true)
-      this.offsetY = window.scrollY
+  _popstate (e) {
+    console.log(e)
+    console.log(e.state)
+    console.log(window.location.hash === '#webchat')
+    if (window.location.hash === '#webchat') {
       this._openChat(e)
     } else {
-      this._view = 'CLOSED'
-      this._isBack = false
-      sessionStorage.setItem('IS_BACK', false)
       this._closeChat(e)
     }
   }
 
-  replaceView () {
-    this._view = 'CLOSED'
+  replaceState () {
+    this.isOpen = false
     const url = window.location.href.split('#')[0]
-    window.history.replaceState(null, null, url)
-    if (this._isMobile) {
-      window.scrollTo(0, this.offsetY)
-    }
+    history.replaceState(null, null, url)
+  }
+
+  pushState (view) {
+    this._isOpen = true
+    this._isBack = true
+    const url = `${window.location.href.split('#')[0]}#webchat`
+    history.pushState({ view: view, isBack: true }, '', url)
+    sessionStorage.setItem('IS_BACK', true)
   }
 
   back () {
     const offsetY = window.scrollY
     history.back()
-    if (this._isMobile) {
-      window.scrollTo(0, this.offsetY)
-    } else {
+    if (!this._isMobile) {
       window.addEventListener('scroll', e => {
         window.scrollTo(0, offsetY)
       }, { once: true })
@@ -84,12 +78,12 @@ class State {
     this._status = status
   }
 
-  get view () {
-    return this._view
+  get isOpen () {
+    return this._isOpen
   }
 
-  set view (view) {
-    this._view = view
+  set isOpen (isOpen) {
+    this._isOpen = isOpen
   }
 
   get isMobile () {

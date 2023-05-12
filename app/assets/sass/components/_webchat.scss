@@ -248,7 +248,12 @@
     display: none;
   }
 }
-.wc-close-btn {
+.wc-hide-btn {
+  @include mq ($until: 'tablet') {
+    display: none;
+  }
+}
+.wc-close-btn[data-wc-back-btn] {
   @include mq ($until: 'tablet') {
     display: none;
   }
@@ -360,38 +365,37 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  @include mq ($from: 'tablet') {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
   background-color: govuk-colour('light-grey');
+  .wc-open-btn {
+    margin-top: 10px;
+  }
 }
 .wc-open-btn {
-  @extend .govuk-button;
-  @extend .govuk-button--secondary;
-  margin-top: 10px;
+  @extend .defra-link-icon;
   margin-bottom: 10px;
+  &:visited {
+    color: $govuk-link-colour;
+  }
   svg {
-    color: currentColor;
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 8px;
-    @include mq ($from: tablet) {
-        top: -1px;
+    @include mq ($from: 'tablet') {
+      top: 3px;
     }
+    color: govuk-colour('black');
   }
-  &:focus:not(:active):not(:hover) {
-    border-color: govuk-colour('light-grey');
-    background-color: govuk-colour('light-grey');
-    box-shadow: 0 2px 0 #929191;
+  &:focus {
+    color: govuk-colour('black');
   }
-}
-.wc-start--fixed:not(.wc-start--disabled) .wc-open-btn {
-  background-color: transparent;
-  box-shadow: none;
-  border: 2px solid transparent;
-  text-decoration: underline;
-  &:active {
-    top: 0px;
+  &:hover {
+    color: $govuk-link-hover-colour;
+    svg {
+      color: govuk-colour('dark-blue');
+    }
   }
 }
 

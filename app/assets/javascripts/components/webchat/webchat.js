@@ -49,7 +49,7 @@ class WebChat {
     })
     document.addEventListener('scroll', this._handleScroll.bind(this))
 
-    if (state.view === 'OPEN') {
+    if (state.isOpen) {
       this._createPanel()
     }
 
@@ -91,14 +91,18 @@ class WebChat {
     const state = this.state
     const isOnline = response?.channel.availability.status === 'online'
     state.availability = isOnline ? 'ONLINE' : 'OFFLINE'
-    if (isOnline && localStorage.getItem('THREAD_ID')) {
-      state.status = 'OPEN'
-    }
 
-    // Conditionally get thread
-    if (state.status === 'OPEN') {
-      await this._getThread()
-      await this.thread.recover()
+    // Recover thread
+    if (isOnline && localStorage.getItem('THREAD_ID')) {
+      try { // Address issue with no thread but we still have the session id
+        await this._getThread()
+        await this.thread.recover()
+        state.status = 'OPEN'
+      } catch (err) {
+        console.log(err)
+        localStorage.removeItem('THREAD_ID')
+        state.status = 'PRECHAT'
+      }
     }
 
     // Auth ready
@@ -138,19 +142,21 @@ class WebChat {
   }
 
   _createPanel () {
+    console.log('_createPanel')
+
     const state = this.state
 
     const model = {
       availability: state.availability,
       status: state.status,
-      view: state.view,
+      isOpen: state.isOpen,
       isBack: state.isBack,
       isMobile: state.isMobile
     }
 
     const container = document.createElement('div')
     container.id = 'wc-panel'
-    container.setAttribute('class', `wc wc--${state.view.toLowerCase()}`)
+    container.setAttribute('class', `wc${state.isOpen ? ' wc--open' : ''}`)
     container.setAttribute('aria-label', 'webchat')
     container.setAttribute('aria-modal', false)
     container.setAttribute('role', 'dialog')
@@ -168,7 +174,6 @@ class WebChat {
     // Event listeners
     container.addEventListener('click', async e => {
       if (e.target.hasAttribute('data-wc-back-btn')) {
-        // state.back()
         this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-close-btn')) {
@@ -184,7 +189,7 @@ class WebChat {
         await this._confirmEndChat()
       }
       if (e.target.hasAttribute('data-wc-continue-btn')) {
-        this._continue()
+        this._continue(e)
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         this._validatePrechat(this._startChat.bind(this))
@@ -195,7 +200,7 @@ class WebChat {
     })
   }
 
-  _updatePanel () {
+  _updateChat () {
     const state = this.state
 
     // Update header
@@ -211,7 +216,7 @@ class WebChat {
       model: {
         availability: state.availability,
         status: state.status,
-        view: state.view,
+        view: state.isOpen,
         isBack: state.isBack,
         isMobile: state.isMobile,
         messages: this.messages,
@@ -247,7 +252,7 @@ class WebChat {
     }
 
     const state = this.state
-    const isFullscreen = state.isMobile && state.view === 'OPEN'
+    const isFullscreen = state.isMobile && state.isOpen
     const root = document.getElementsByTagName('html')[0]
     root.classList.toggle('wc-html', isFullscreen)
     const body = document.body
@@ -256,24 +261,26 @@ class WebChat {
   }
 
   _openChat (e) {
-    if (e.type !== 'hashchange') {
-      return
-    }
+    const state = this.state
+    state.isOpen = true
 
-    const availability = this.availability
-    const start = availability.querySelector('[data-wc-start]')
-    if (start) {
-      start.classList.add('wc-start--disabled')
+    const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
+    if (isBtn) {
+      e.preventDefault()
+      state.pushState('PRECHAT')
     }
 
     if (!this.container) {
       this._createPanel()
-      this._updatePanel()
+      this._updateChat()
     }
+
+    this._handleScroll()
   }
 
   _closeChat (e) {
     const state = this.state
+    state.isOpen = false
 
     const availability = this.availability
     const start = availability.querySelector('[data-wc-start]')
@@ -281,12 +288,14 @@ class WebChat {
       start.classList.remove('wc-start--disabled')
     }
 
-    if (state.isBack) {
+    const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
+
+    if (isBtn && state.isBack) {
       state.back()
     } else if (this.container) {
       this._setAttributes()
       this.container = this.container.remove()
-      state.replaceView()
+      state.replaceState()
       this._handleScroll(e)
     }
 
@@ -310,14 +319,14 @@ class WebChat {
     const state = this.state
     state.status = 'START'
     console.log('_continue')
-    this._updatePanel()
+    this._updateChat()
   }
 
   _endChat () {
     const state = this.state
     state.status = 'END'
     console.log('_endChat')
-    this._updatePanel()
+    this._updateChat()
   }
 
   _resumeChat (e) {
@@ -325,7 +334,7 @@ class WebChat {
     const state = this.state
     state.status = 'OPEN'
     console.log('_resumeChat')
-    this._updatePanel()
+    this._updateChat()
   }
 
   _confirmEndChat () {
@@ -366,7 +375,7 @@ class WebChat {
     })
 
     this._handleScroll()
-    this._updatePanel()
+    this._updateChat()
   }
 
   _handleCaseStatusChangedEvent (e) {
@@ -380,7 +389,7 @@ class WebChat {
       state.status = 'CLOSED'
       localStorage.removeItem('THREAD_ID')
       this.messages = []
-      this._updatePanel()
+      this._updateChat()
       state.status = 'PRECHAT'
     }
   }
@@ -390,7 +399,7 @@ class WebChat {
     console.log(e)
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
-    this._updatePanel()
+    this._updateChat()
   }
 
   _handleRoutingQueueCreatedEvent (e) {
@@ -418,7 +427,7 @@ class WebChat {
     console.log(e)
     const queue = e.detail.data.positionInQueue
     this.queue = queue || null
-    this._updatePanel()
+    this._updateChat()
   }
 
   _handleLivechatRecoveredEvent (e) {
@@ -439,7 +448,7 @@ class WebChat {
     }
     this.messages.reverse()
 
-    this._updatePanel()
+    this._updateChat()
   }
 
   _handleCaseCreatedEvent (e) {
@@ -465,7 +474,7 @@ class WebChat {
     const messages = this.messages
     messages.push(message)
 
-    this._updatePanel()
+    this._updateChat()
   }
 
   _handleScroll (e) {
@@ -478,9 +487,9 @@ class WebChat {
     }
 
     const rect = availability.getBoundingClientRect()
-    const isBelowFold = rect.top + 61 > (window.innerHeight || document.documentElement.clientHeight)
+    const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
-    start.classList.toggle('wc-start--fixed', state.status === 'OPEN' && state.view === 'CLOSED' && isBelowFold)
+    start.classList.toggle('wc-start--fixed', (state.status === 'OPEN' || state.status === 'END') && !state.isOpen && isBelowFold)
   }
 
   _handleChatEvent (e) {
