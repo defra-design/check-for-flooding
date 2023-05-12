@@ -391,7 +391,7 @@
   &:focus {
     color: govuk-colour('black');
   }
-  &:hover {
+  &:hover:not(:focus):not(:active) {
     color: $govuk-link-hover-colour;
     svg {
       color: govuk-colour('dark-blue');
