@@ -1,4 +1,5 @@
 'use strict'
+import '../utils'
 import '../components/bar-chart'
 import '../components/toggletip'
 

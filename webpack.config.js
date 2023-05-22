@@ -12,6 +12,7 @@ module.exports = (env, argv) => ({
   devtool: !inDev ? false : 'source-map',
   entry: {
     core: './app/assets/javascripts/core',
+    webchat: './app/assets/javascripts/webchat',
     station: './app/assets/javascripts/pages/station',
     rainfall: './app/assets/javascripts/pages/rainfall'
   },
@@ -22,7 +23,10 @@ module.exports = (env, argv) => ({
     rules: [
       {
         // Default exclude removes all node_modules but d3 is now distributed es6 so include d3 (& our own src) in transpile
-        include: mPath => mPath.indexOf('app/assets') > -1 || mPath.indexOf('node_modules/d3') > -1 || mPath.indexOf('node_modules/internmap') > -1 || mPath.indexOf('node_modules/ol') > -1,
+        include: mPath => mPath.indexOf('app/assets') > -1 ||
+          mPath.indexOf('node_modules/d3') > -1 ||
+          mPath.indexOf('node_modules/internmap') > -1 ||
+          mPath.indexOf('node_modules/ol') > -1,
         use: {
           loader: 'babel-loader',
           options: {

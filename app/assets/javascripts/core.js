@@ -11,10 +11,10 @@ import './components/map/container'
 import './components/map/live'
 import './components/map/outlook'
 import './components/levels-table'
-import WebChat from './components/webchat/webchat'
 
-document.onreadystatechange = () => {
+document.addEventListener('readystatechange', () => {
   if (document.readyState === 'interactive') {
+
     // Initialise govuk components
     const skipLink = document.querySelector('[data-module="govuk-skip-link"]')
     if (skipLink) {
@@ -32,9 +32,6 @@ document.onreadystatechange = () => {
     if (tabs) {
       new Tabs(tabs).init()
     }
-
-    // Initialise webchat
-    const webchat = new WebChat('wc-availability')
 
     const model = window.flood.model
 
@@ -62,10 +59,10 @@ document.onreadystatechange = () => {
         days: model.outlookDays
       })
     }
-
+ 
     // Add category tabs progressive enhancement
     if (document.getElementById('filter')) {
       window.flood.createLevelsTable('filter')
     }
   }
-}
+})

@@ -7,6 +7,8 @@ const outlookServices = require('./outlook')
 const targetAreaServices = require('./target-area')
 const telemetryServices = require('./telemetry')
 const mapServices = require('./map')
+const webchatServices = require('./webchat')
+
 const fs = require('fs')
 const path = require('path')
 
@@ -230,6 +232,19 @@ router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
     }
     res.end(null, 'binary')
   })
+})
+
+//
+// Webchat
+//
+
+router.get('/service/webchat/status', async (req, res, next) => {
+  try {
+    res.status(200).json(await webchatServices.getStatus())
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
 })
 
 //

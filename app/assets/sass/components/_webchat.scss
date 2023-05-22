@@ -1,3 +1,7 @@
+.js-enabled .wc-availability {
+  @extend .govuk-body;
+  display: block;
+}
 .wc-html {
   @include mq ($until: tablet) {
     height: 100vh;

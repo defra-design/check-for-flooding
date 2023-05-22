@@ -74,8 +74,9 @@
 
 {% block bodyEnd %}
   {% block scripts %}
-    <!-- <script src="/public/all.js"></script> -->
     {% block pageScripts %}{% endblock %}
+    <script src="/public/javascripts/core.js"></script>
+    <script type="module" src="/public/javascripts/webchat.js"></script>
   {% endblock %}
   <!-- GOV.UK Prototype Kit {{releaseVersion}} -->
 {% endblock %}

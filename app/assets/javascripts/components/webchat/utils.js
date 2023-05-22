@@ -58,6 +58,18 @@ class Utils {
     const output = input
     return output
   }
+
+  static isClientSupported () {
+    'use strict'
+    if (typeof Symbol == 'undefined') return false
+    try {
+        eval('class Foo {}');
+        eval('const bar = (x) => x + 1')
+    } catch (e) {
+      return false
+    }
+    return true
+  }
 }
 
 export default Utils

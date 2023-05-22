@@ -1,6 +1,6 @@
 'use strict'
 
-import { ChatSdk, EnvironmentName, Thread, LivechatThread, ChatEvent, ChatEventData } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
 import Keyboard from './keyboard'
 import State from './state'
 import Utils from './utils'
@@ -9,6 +9,12 @@ const env = window.nunjucks.configure('views')
 
 class WebChat {
   constructor (id) {
+
+    if (!Utils.isClientSupported()) {
+      console.log('Browser not supported')
+      return
+    }
+  
     this.id = id
     this.queue = null
     this.assignee = null
