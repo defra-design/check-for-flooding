@@ -1,5 +1,6 @@
 'use strict'
 
+import { LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
 import Config from './config'
 
 class Utils {
@@ -69,6 +70,21 @@ class Utils {
       return false
     }
     return true
+  }
+
+  static autosize (textarea, maxHeight) {
+    const el = textarea
+    el.style.cssText = 'overflow: hidden !important'
+    if (el.scrollHeight >= maxHeight) {
+        el.style.cssText = 'overflow: scroll !important'
+        el.style.cssText = `height: ${maxHeight}px`
+        el.removeEventListener('keydown', this)
+    } else {
+      setTimeout(() => {
+        el.style.cssText = 'height:auto'
+        el.style.cssText = 'height:' + el.scrollHeight + 'px'
+      }, 0)
+    }
   }
 }
 

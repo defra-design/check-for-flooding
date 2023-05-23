@@ -130,6 +130,8 @@ class WebChat {
     // Add event listeners
     thread.onThreadEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
     thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
+    thread.onThreadEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
+    thread.onThreadEvent(ChatEvent.AGENT_TYPING_ENDED, this._handleAgentTypingEvent.bind(this))
   }
 
   _setAvailability () {
@@ -197,6 +199,10 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-continue-btn')) {
         this._continue(e)
       }
+      if (e.target.hasAttribute('data-wc-back-prechat')) {
+        e.preventDefault()
+        this._prechat(e)
+      }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         this._validatePrechat(this._startChat.bind(this))
       }
@@ -208,8 +214,6 @@ class WebChat {
 
   _updateChat () {
     const state = this.state
-
-    // Update header
 
     // Update content
     const container = document.getElementById('wc-panel')
@@ -235,6 +239,20 @@ class WebChat {
     const body = container.querySelector('[data-wc-body]')
     if (body) {
       body.scrollTop = body.scrollHeight
+    }
+
+    // Textarea events
+    const textarea = container.querySelector('[data-wc-message]')
+    if (textarea) {
+      // Autosize
+      textarea.addEventListener('keydown', e => Utils.autosize(e.target, 120))
+      // User start stop typing
+      textarea.addEventListener('keydown', () => {
+        this.thread.keystroke(1000)
+        setTimeout(() => {
+          this.thread.stopTyping()
+        }, 1000)
+      })
     }
   }
 
@@ -321,6 +339,13 @@ class WebChat {
     this._setAttributes()
   }
 
+  _prechat () {
+    const state = this.state
+    state.status = 'PRECHAT'
+    console.log('_prechat')
+    this._updateChat()
+  }
+
   _continue () {
     const state = this.state
     state.status = 'START'
@@ -346,6 +371,10 @@ class WebChat {
   _confirmEndChat () {
     const thread = this.thread
     thread.endChat()
+  }
+
+  _toggleAgentTyping (isTyping) {
+
   }
 
   _sendMessage (e) {
@@ -481,6 +510,28 @@ class WebChat {
     messages.push(message)
 
     this._updateChat()
+  }
+
+  _handleAgentTypingEvent (e) {
+    console.log('_handleAgentTypingEvent')
+    console.log(e)
+
+    const isTyping = e.type === 'AgentTypingStarted'
+    const list = document.querySelector('[data-wc-message-list]')
+    const el = list && list.querySelector('[data-wc-agent-typing]')
+    
+    if (isTyping) {
+      list.insertAdjacentHTML('beforeend', `
+        <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
+          <span class="wc-list__item-meta">Dan is typing</span>
+          <div class="wc-list__item-inner">
+            ...
+          </div>
+        </li>
+      `)
+    } else if (el) {
+      el.remove()
+    }
   }
 
   _handleScroll (e) {
