@@ -74,16 +74,16 @@ class Utils {
 
   static autosize (textarea, maxHeight) {
     const el = textarea
-    el.style.cssText = 'overflow: hidden !important'
+    el.style.cssText = 'height:auto'
     if (el.scrollHeight >= maxHeight) {
-        el.style.cssText = 'overflow: scroll !important'
-        el.style.cssText = `height: ${maxHeight}px`
-        el.removeEventListener('keydown', this)
+      el.style.cssText = `overflow: auto; height: ${maxHeight}px`
+      el.removeEventListener('keyup', this)
     } else {
-      setTimeout(() => {
-        el.style.cssText = 'height:auto'
-        el.style.cssText = 'height:' + el.scrollHeight + 'px'
-      }, 0)
+      el.style.cssText = `height:${el.scrollHeight}px`
+      // setTimeout(() => {
+      //   el.style.cssText = 'height:auto'
+      //   el.style.cssText = 'height:' + el.scrollHeight + 'px'
+      // }, 0)
     }
   }
 }

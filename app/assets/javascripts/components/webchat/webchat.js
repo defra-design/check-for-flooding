@@ -245,7 +245,7 @@ class WebChat {
     const textarea = container.querySelector('[data-wc-message]')
     if (textarea) {
       // Autosize
-      textarea.addEventListener('keydown', e => Utils.autosize(e.target, 120))
+      textarea.addEventListener('keyup', e => Utils.autosize(e.target, 120))
       // User start stop typing
       textarea.addEventListener('keydown', () => {
         this.thread.keystroke(1000)
@@ -513,19 +513,34 @@ class WebChat {
   }
 
   _handleAgentTypingEvent (e) {
-    console.log('_handleAgentTypingEvent')
+    console.log('_handleAgentTypingStartedEvent')
     console.log(e)
 
     const isTyping = e.type === 'AgentTypingStarted'
     const list = document.querySelector('[data-wc-message-list]')
-    const el = list && list.querySelector('[data-wc-agent-typing]')
+
+    if (!list) {
+      return
+    }
+
+    const el = list.querySelector('[data-wc-agent-typing]')
     
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', `
         <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
           <span class="wc-list__item-meta">Dan is typing</span>
           <div class="wc-list__item-inner">
-            ...
+            <svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16">
+              <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor">
+                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.1"/>
+              </circle>
+              <circle stroke="none" cx="14" cy="8" r="3" fill="currentColor">
+                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.3"/>
+              </circle>
+              <circle stroke="none" cx="25" cy="8" r="3" fill="currentColor">
+                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.5"/>
+              </circle>
+            </svg>
           </div>
         </li>
       `)

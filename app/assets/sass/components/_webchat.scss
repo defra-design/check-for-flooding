@@ -173,6 +173,11 @@
     background-color: govuk-colour('light-grey');
     border-radius: 10px;
     word-break: break-word;
+    -webkit-backface-visibility: hidden;
+  }
+  &__item-inner svg {
+    display: block;
+    color: govuk-colour('dark-grey');
   }
   &__item:first-child {
     padding-top: 15px;
@@ -300,6 +305,7 @@
     border: 0px;
     height: 20px;
     resize: none;
+    overflow: hidden;
     &:focus {
       outline: none;
       box-shadow: none;
