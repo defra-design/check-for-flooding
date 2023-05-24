@@ -74,6 +74,7 @@ class WebChat {
     // Event listeners
     sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.MORE_MESSAGES_LOADED, this._handleMoreMessagesLoadedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
 
@@ -213,6 +214,7 @@ class WebChat {
   }
 
   _updateChat () {
+    console.log('_updateChat: ', this.messages.length)
     const state = this.state
 
     // Update content
@@ -373,8 +375,18 @@ class WebChat {
     thread.endChat()
   }
 
-  _toggleAgentTyping (isTyping) {
-
+  _mergeMessages (messages) {
+    const batch = []
+    for (let i = 0; i < messages.length; i++) {
+      batch.push({
+        text: Utils.parseMessage(messages[i].messageContent.text),
+        assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
+        date: Utils.formatDate(new Date(messages[i].createdAt)),
+        direction: messages[i].direction
+      })
+    }
+    batch.reverse()
+    this.messages = batch.concat(this.messages)
   }
 
   _sendMessage (e) {
@@ -410,7 +422,8 @@ class WebChat {
     })
 
     this._handleScroll()
-    this._updateChat()
+    console.log('Calling _updateChat')
+    // this._updateChat()
   }
 
   _handleCaseStatusChangedEvent (e) {
@@ -465,25 +478,37 @@ class WebChat {
     this._updateChat()
   }
 
-  _handleLivechatRecoveredEvent (e) {
+  async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
     console.log(e)
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
 
+    // Merge messages
+    const messages = e.detail.data.messages
+    this._mergeMessages(messages)
+
+    // Recursively merge previous messages
+    let response = []
+    while (response) {
+      response = await this.thread.loadMoreMessages()
+      console.log('loading more messages')
+    }
+
+    console.log('all loaded')
+    // Update html
+    this._updateChat()
+  }
+
+  _handleMoreMessagesLoadedEvent (e) {
+    console.log('_handleMoreMessagesLoadedEvent')
+    console.log(e)
+
     const messages = e.detail.data.messages
 
-    for (let i = 0; i < messages.length; i++) {
-      this.messages.push({
-        text: Utils.parseMessage(messages[i].messageContent.text),
-        assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
-        date: Utils.formatDate(new Date(messages[i].createdAt)),
-        direction: messages[i].direction
-      })
+    if (messages.length) {
+      this._mergeMessages(messages)
     }
-    this.messages.reverse()
-
-    this._updateChat()
   }
 
   _handleCaseCreatedEvent (e) {
