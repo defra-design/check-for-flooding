@@ -1,6 +1,5 @@
 'use strict'
 
-import { LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
 import Config from './config'
 
 class Utils {
