@@ -375,7 +375,7 @@ class WebChat {
   _confirmEndChat () {
     const state = this.state
     const thread = this.thread
-    console.log('View: ', state.view, ' Status: ', state.status)
+    // *** need to check status and deal with an already closed chat seperatly
     thread.endChat()
   }
 
@@ -399,6 +399,7 @@ class WebChat {
     if (!(value && value.length)) {
       return
     }
+    // *** Some times this results in onconsitent data error?
     try {
       thread.sendTextMessage(value)
     } catch (err) {
@@ -431,7 +432,7 @@ class WebChat {
     })
 
     this._handleScroll()
-    console.log('Calling _updateChat')
+    // *** Calling -updateChat here can append new messages to old threads?
     // this._updateChat()
   }
 
