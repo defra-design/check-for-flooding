@@ -1,6 +1,6 @@
 'use strict'
 
-import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
 import Keyboard from './keyboard'
 import State from './state'
 import Utils from './utils'
@@ -106,11 +106,11 @@ class WebChat {
       try { // Address issue with no thread but we still have the session id
         await this._getThread()
         await this.thread.recover()
-        state.status = 'OPEN'
+        state.view = 'OPEN'
       } catch (err) {
         console.log(err)
         localStorage.removeItem('THREAD_ID')
-        state.status = 'PRECHAT'
+        state.view = 'PRECHAT'
       }
     }
 
@@ -145,7 +145,7 @@ class WebChat {
     availability.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
-        status: state.status
+        view: state.view
       }
     })
     this.availability = availability
@@ -160,8 +160,7 @@ class WebChat {
 
     const model = {
       availability: state.availability,
-      status: state.status,
-      isOpen: state.isOpen,
+      view: state.view,
       isBack: state.isBack,
       isMobile: state.isMobile
     }
@@ -230,8 +229,8 @@ class WebChat {
     content.innerHTML = env.render('webchat-panel.html', {
       model: {
         availability: state.availability,
-        status: state.status,
-        view: state.isOpen,
+        view: state.view,
+        isOpen: state.isOpen,
         isBack: state.isBack,
         isMobile: state.isMobile,
         messages: this.messages,
@@ -346,21 +345,21 @@ class WebChat {
 
   _prechat () {
     const state = this.state
-    state.status = 'PRECHAT'
+    state.view = 'PRECHAT'
     console.log('_prechat')
     this._updateChat()
   }
 
   _continue () {
     const state = this.state
-    state.status = 'START'
+    state.view = 'START'
     console.log('_continue')
     this._updateChat()
   }
 
   _endChat () {
     const state = this.state
-    state.status = 'END'
+    state.view = 'END'
     console.log('_endChat')
     this._updateChat()
   }
@@ -368,13 +367,15 @@ class WebChat {
   _resumeChat (e) {
     e.preventDefault()
     const state = this.state
-    state.status = 'OPEN'
+    state.view = 'OPEN'
     console.log('_resumeChat')
     this._updateChat()
   }
 
   _confirmEndChat () {
+    const state = this.state
     const thread = this.thread
+    console.log('View: ', state.view, ' Status: ', state.status)
     thread.endChat()
   }
 
@@ -398,7 +399,12 @@ class WebChat {
     if (!(value && value.length)) {
       return
     }
-    thread.sendTextMessage(value)
+    try {
+      thread.sendTextMessage(value)
+    } catch (err) {
+      console.log(thread instanceof LivechatThread)
+      console.log(err)
+    }
   }
 
   //
@@ -420,7 +426,7 @@ class WebChat {
     availability.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
-        status: state.status
+        view: state.view
       }
     })
 
@@ -437,11 +443,11 @@ class WebChat {
     const isClosed = status === 'closed'
 
     if (isClosed) {
-      state.status = 'CLOSED'
+      state.view = 'CLOSED'
       localStorage.removeItem('THREAD_ID')
       this.messages = []
       this._updateChat()
-      state.status = 'PRECHAT'
+      state.view = 'PRECHAT'
     }
   }
 
@@ -492,6 +498,10 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
 
+    const state = this.state
+    const status = e.detail.data.consumerContact.status
+    state.status = status
+ 
     // Merge messages
     const messages = e.detail.data.messages
     this._mergeMessages(messages)
@@ -523,12 +533,12 @@ class WebChat {
     console.log('_handleCaseCreatedEvent')
     console.log(e)
     const state = this.state
-    state.status = 'OPEN'
+    state.view = 'OPEN'
   }
 
   _handleMessageCreatedEvent (e) {
     const state = this.state
-    state.status = 'OPEN'
+    state.view = 'OPEN'
 
     const response = e.detail.data.message
 
@@ -595,7 +605,7 @@ class WebChat {
     const rect = availability.getBoundingClientRect()
     const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
-    start.classList.toggle('wc-start--fixed', (state.status === 'OPEN' || state.status === 'END') && !state.isOpen && isBelowFold)
+    start.classList.toggle('wc-start--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
   }
 
   _handleChatEvent (e) {
