@@ -39,7 +39,7 @@ module.exports = {
     })
 
     try {
-      // Cache authentication and re-authenticate when needed
+      // Cache authentication and re-authenticate when needed (lasts 1 hour?)
       const auth = await axios.post(uri, body, config)
       let token = auth.data.id_token
       const tenantId = extractTenantId(token)
@@ -47,10 +47,11 @@ module.exports = {
       // API discovery
       uri = `${issuer}/.well-known/cxone-configuration?tenantId=${tenantId}`
       const api = await axios.get(uri)
-      const host = 'api-eu1.niceincontact.com' // 'api-e32.niceincontact.com'
+      const host = `api-${api.data.area}.niceincontact.com` // 'api-e32.niceincontact.com'
+      const service = '/incontactapi/services/v26.0/skills/18524648/activity'
 
       // Skills/activity
-      uri = `https://${host}/incontactapi/services/v26.0/skills/18524648/activity`
+      uri = `https://${host}${service}`
 
       token = auth.data.access_token
       const tokenType = auth.data.token_type
