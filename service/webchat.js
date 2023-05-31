@@ -47,28 +47,23 @@ module.exports = {
       // API discovery
       uri = `${issuer}/.well-known/cxone-configuration?tenantId=${tenantId}`
       const api = await axios.get(uri)
-      const host = api.data.api_endpoint // `${api.data.area}.${api.data.uhDomain}`
+      const host = 'api-eu1.niceincontact.com' // 'api-e32.niceincontact.com'
 
-      console.log(api.data)
-      
       // Skills/activity
-      uri = `${host}/skills/activity`
-
-      console.log(uri)
+      uri = `https://${host}/incontactapi/services/v26.0/skills/18524648/activity`
 
       token = auth.data.access_token
       const tokenType = auth.data.token_type
       config = {
         'headers': {
-          // 'Host': `${api.data.area}.${api.data.uhDomain}`,
+          'Host': host,
           'Authorization': `${tokenType} ${token}`,
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       }
-      // const status = await axios.get(uri)
-      // console.log(status)
+      const status = await axios.get(uri, config)
 
-      return 'Status'
+      return status.data
     } catch (err) {
       console.log(err)
       return 'Error'

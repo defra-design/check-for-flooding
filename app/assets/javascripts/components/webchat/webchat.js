@@ -135,6 +135,7 @@ class WebChat {
     thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     thread.onThreadEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
     thread.onThreadEvent(ChatEvent.AGENT_TYPING_ENDED, this._handleAgentTypingEvent.bind(this))
+    thread.onThreadEvent(ChatEvent.AGENT_CONTACT_ENDED, this._handleAgentContactEndedEvent.bind(this))
   }
 
   _setAvailability () {
@@ -444,6 +445,11 @@ class WebChat {
     }
   }
 
+  _handleAgentContactEndedEvent (e) {
+    console.log('_handleAgentContactEndedEvent')
+    console.log(e)
+  }
+
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
     console.log(e)
@@ -544,6 +550,7 @@ class WebChat {
     console.log(e)
 
     const isTyping = e.type === 'AgentTypingStarted'
+    const agentName = e.data.user.firstName
     const list = document.querySelector('[data-wc-message-list]')
 
     if (!list) {
@@ -555,7 +562,7 @@ class WebChat {
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', `
         <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
-          <span class="wc-list__item-meta">Dan is typing</span>
+          <span class="wc-list__item-meta">${agentName} is typing</span>
           <div class="wc-list__item-inner">
             <svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16">
               <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor">
