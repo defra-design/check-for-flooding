@@ -8,14 +8,8 @@ import Utils from './utils'
 const env = window.nunjucks.configure('views')
 
 class WebChat {
-  constructor (id) {
-
-    if (!Utils.isClientSupported()) {
-      console.log('Browser not supported')
-      return
-    }
-  
-    this.id = id
+  constructor () {  
+    this.id = 'wc-availability'
     this.queue = null
     this.assignee = null
     this.messages = []
