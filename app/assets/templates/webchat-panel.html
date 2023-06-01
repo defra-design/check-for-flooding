@@ -22,24 +22,23 @@
     </button>
     {% endif %}
   </div>
-  {% if model.view == 'OPEN' and model.availability == 'ONLINE' %}
+  {% if model.view == 'OPEN' and model.availability == 'AVAILABLE' %}
   <div class="wc-status">
     <p class="wc-status__content">
       {% if model.assignee %}
-      {{ model.assignee }}<span class="wc-status__meta">Floodline adviser</span>
+      Speaking with {{ model.assignee }}
+      <!--<span class="wc-status__meta">Floodline adviser</span>-->
       {% else %}
       Connecting you to an adviser
       {% endif %}
     </p>
     <div class="wc-status__button">
-      <button class="wc-end-btn" aria-label="End chat" data-wc-end-btn>
-        End chat
-      </button>
+      <a href="" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
     </div>
   </div>
   {% endif %}
 </div>
-{% if model.availability == 'ONLINE' %}
+{% if model.availability == 'AVAILABLE' %}
 {% if model.view == 'PRECHAT' %}
 <div class="wc__body">
   <div class="wc-prechat">
@@ -135,16 +134,16 @@
   </div>
 </div>
 {% endif %}
-{% elif model.availability == 'OFFLINE' %}
-<div class="wc__body">
-  <div class="wc-prechat">
-    <p>Web chat currently offline</p>
-  </div>
-</div>
 {% else %}
 <div class="wc__body">
   <div class="wc-prechat">
-    <p>Checking webchat availability...</p>
+  {% if model.availability == 'BUSY' %}
+  <p>All our advisers are currently busy</p>
+  {% elif model.availability == 'OFFLINE' %}
+  <p>Web chat currently offline</p>
+  {% else %}
+  <p>Checking availability</p>
+  {% endif %}
   </div>
 </div>
 {% endif %}

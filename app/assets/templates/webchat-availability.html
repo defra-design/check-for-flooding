@@ -1,6 +1,4 @@
-{% if model.availability == 'OFFLINE' %}
-<p class="govuk-body">Web chat currently offline</p>
-{% elif model.availability == 'ONLINE' %}
+{% if model.availability == 'AVAILABLE' %}
 <div class="wc-start" data-wc-start>
   <div class="wc-start__inner">
     <a href="#webchat" role="button" draggable="false" data-module="govuk-button" class="wc-open-btn" data-wc-open-btn>
@@ -8,6 +6,10 @@
     </a>
   </div>
 </div>
+{% elif model.availability == 'BUSY' %}
+<p class="govuk-body">All our advisers are busy. A link will be shown when an adviser is available. You do not need to refresh this page.</p>
+{% elif model.availability == 'OFFLINE' %}
+<p class="govuk-body">Webchat currently offline</p>
 {% else %}
-<p>Checking webchat availability...</p>
+<p class="govuk-body">Checking availability</p>
 {% endif %}

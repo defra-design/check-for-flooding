@@ -238,9 +238,9 @@ router.get('/service/vector-tiles/:z/:x/:y.pbf', async (req, res, next) => {
 // Webchat
 //
 
-router.get('/service/webchat/status', async (req, res, next) => {
+router.get('/service/webchat/availability', async (req, res, next) => {
   try {
-    res.status(200).json(await webchatServices.getStatus())
+    res.status(200).json(await webchatServices.getAvailability())
   } catch (err) {
     res.status(500)
     console.log(err)

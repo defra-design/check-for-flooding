@@ -4,7 +4,7 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    this._availability = null // ONLINE | OFFLINE
+    this._availability
     this._view = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'PRECHAT'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'

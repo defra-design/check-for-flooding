@@ -102,7 +102,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 10px 10px 11px 10px;
+  padding: 10px;
   align-items: center;
   &:after {
     position: absolute;
@@ -117,7 +117,7 @@
 .wc-status__content {
   flex: 1 1 auto;
   margin: 0px;
-  font-size: 19px;
+  font-size: 16px;
   line-height: 1.31579;
 }
 .wc-status__button {
@@ -132,7 +132,7 @@
 // Pre and post chat
 .wc-prechat,
 .wc-postchat {
-  padding: 15px;
+  padding: 10px;
   .govuk-form-group {
     margin-bottom: 15px;
   }
@@ -265,13 +265,6 @@
     display: none;
   }
 }
-.wc-end-btn {
-  @extend .govuk-button;
-  @extend .govuk-button--secondary;
-  font-size: 16px;
-  margin: 0px;
-  width: auto;
-}
 .wc-continue-btn,
 .wc-submit-btn,
 .wc-confirm-end-btn,
@@ -348,18 +341,24 @@
   color: $govuk-secondary-text-colour;
   padding: 0px 10px 5px;
 }
+.wc-end-btn,
 .wc-transcript-btn,
 .wc-audio-btn {
   display: inline-block;
-  color: $govuk-secondary-text-colour;
+  color: $govuk-text-colour;
   // text-decoration: none;
   margin: 10px;
   &:visited {
-    color: $govuk-secondary-text-colour;
+    color: $govuk-text-colour;
   }
   &:focus {
     color: $govuk-text-colour;
   }
+}
+.wc-end-btn {
+  font-size: 16px;
+  margin: 0px;
+  width: auto;
 }
 .wc-start__inner {
   max-width: 960px;

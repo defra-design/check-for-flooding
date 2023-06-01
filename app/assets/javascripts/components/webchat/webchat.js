@@ -42,12 +42,8 @@ class WebChat {
   }
 
   async _init () {
-    const isOpen = this.state.isOpen
-
-    this._setAvailability()
-
     // Event listeners
-    const availability = this.availability
+    const availability = document.getElementById(this.id)
     availability.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-open-btn')) {
         this._openChat(e)
@@ -55,10 +51,17 @@ class WebChat {
     })
     document.addEventListener('scroll', this._handleScroll.bind(this))
 
+    // Set initial availability
+    this.availability = availability    
+    this._setAvailability()
+
+    // Open panel if fragment exists
+    const isOpen = this.state.isOpen
     if (isOpen) {
       this._createPanel()
     }
 
+    // Authorise user
     this._authorise()
   }
 
@@ -94,10 +97,12 @@ class WebChat {
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
 
-    // Set status
+    // Set availability
     const state = this.state
     const isOnline = response?.channel.availability.status === 'online'
-    state.availability = isOnline ? 'ONLINE' : 'OFFLINE'
+    const availability = await fetch('/service/webchat/availability')
+    const isAvailable = await availability.json()
+    state.availability = isOnline ? isAvailable ? 'AVAILABLE' : 'BUSY' : 'OFFLINE'
 
     // Recover thread
     if (isOnline && localStorage.getItem('THREAD_ID')) {
@@ -142,14 +147,12 @@ class WebChat {
   _setAvailability () {
     const state = this.state
 
-    const availability = document.getElementById(this.id)
-    availability.innerHTML = env.render('webchat-availability.html', {
+    this.availability.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
         view: state.view
       }
     })
-    this.availability = availability
 
     this._handleScroll()
   }
@@ -192,6 +195,7 @@ class WebChat {
         this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-end-btn')) {
+        e.preventDefault()
         this._endChat()
       }
       if (e.target.hasAttribute('data-wc-resume-btn')) {

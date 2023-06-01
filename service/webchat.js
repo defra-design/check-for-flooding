@@ -12,7 +12,7 @@ const extractTenantId = (token) => {
 }
 
 module.exports = {
-  getStatus: async () => {
+  getAvailability: async () => {
     const clientId = process.env.CXONE_CLIENT_ID
     const clientSecret = process.env.CXONE_CLIENT_SECRET
     const accessKey = process.env.CXONE_ACCESS_KEY
@@ -62,9 +62,11 @@ module.exports = {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       }
-      const status = await axios.get(uri, config)
+      const skill = await axios.get(uri, config)
+      const advisersAvailable = skill.data.skillActivity[0].agentsAvailable >= 1
 
-      return status.data
+      console.log(skill.data)
+      return advisersAvailable
     } catch (err) {
       console.log(err)
       return 'Error'
