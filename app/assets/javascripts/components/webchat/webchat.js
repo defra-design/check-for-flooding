@@ -29,8 +29,8 @@ class WebChat {
     Keyboard.init(state)
 
     // Custom events
-    this.livechatAuthReady = new CustomEvent('livechatAuthReady', {})
-    document.addEventListener('livechatAuthReady', this._handleAuthoriseEvent.bind(this))
+    this.livechatReady = new CustomEvent('livechatReady', {})
+    document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
 
     this._init()
 
@@ -42,7 +42,7 @@ class WebChat {
   }
 
   async _init () {
-    const state = this.state
+    const isOpen = this.state.isOpen
 
     this._setAvailability()
 
@@ -55,7 +55,7 @@ class WebChat {
     })
     document.addEventListener('scroll', this._handleScroll.bind(this))
 
-    if (state.isOpen) {
+    if (isOpen) {
       this._createPanel()
     }
 
@@ -86,8 +86,6 @@ class WebChat {
 
     this.sdk = sdk
 
-    console.log(sdk.getCustomer())
-
     // Authorise
     const response = await sdk.authorize()
 
@@ -107,6 +105,7 @@ class WebChat {
         await this._getThread()
         await this.thread.recover()
         state.view = 'OPEN'
+        return
       } catch (err) {
         console.log(err)
         localStorage.removeItem('THREAD_ID')
@@ -114,8 +113,10 @@ class WebChat {
       }
     }
 
+    console.log('Dispatching event from authorise')
+
     // Auth ready
-    document.dispatchEvent(this.livechatAuthReady)
+    document.dispatchEvent(this.livechatReady)  
   }
 
   async _getThread () {
@@ -251,12 +252,7 @@ class WebChat {
       // Autosize
       textarea.addEventListener('keyup', e => Utils.autosize(e.target, 120))
       // User start stop typing
-      textarea.addEventListener('keydown', () => {
-        this.thread.keystroke(1000)
-        setTimeout(() => {
-          this.thread.stopTyping()
-        }, 1000)
-      })
+      textarea.addEventListener('keydown', this._handleSendKeystroke.bind(this))
     }
   }
 
@@ -373,10 +369,23 @@ class WebChat {
   }
 
   _confirmEndChat () {
-    const state = this.state
+    const status = this.state.status
     const thread = this.thread
     // *** need to check status and deal with an already closed chat seperatly
-    thread.endChat()
+    if (status === 'closed') {
+      this._giveFeedback()
+    } else {
+      thread.endChat()
+    }
+  }
+
+  _giveFeedback() {
+    const state = this.state
+    state.view = 'FEEDBACK'
+    localStorage.removeItem('THREAD_ID')
+    this.messages = []
+    this._updateChat()
+    state.view = 'PRECHAT'
   }
 
   _mergeMessages (messages) {
@@ -417,8 +426,8 @@ class WebChat {
     console.log(e)
   }
 
-  _handleAuthoriseEvent (e) {
-    console.log('_handleAuthoriseEvent')
+  _handleReadyEvent (e) {
+    console.log('_handleReadyEvent')
     console.log(e)
     const state = this.state
 
@@ -432,23 +441,17 @@ class WebChat {
     })
 
     this._handleScroll()
-    // *** Calling -updateChat here can append new messages to old threads?
-    // this._updateChat()
+    this._updateChat()
   }
 
   _handleCaseStatusChangedEvent (e) {
     console.log('_handleCaseStatusChangedEvent')
     console.log(e)
-    const state = this.state
     const status = e.detail.data.case.status
     const isClosed = status === 'closed'
 
     if (isClosed) {
-      state.view = 'CLOSED'
-      localStorage.removeItem('THREAD_ID')
-      this.messages = []
-      this._updateChat()
-      state.view = 'PRECHAT'
+      this._giveFeedback()
     }
   }
 
@@ -513,10 +516,10 @@ class WebChat {
       response = await this.thread.loadMoreMessages()
       console.log('loading more messages')
     }
-
     console.log('all loaded')
-    // Update html
-    this._updateChat()
+    
+    // Ready
+    document.dispatchEvent(this.livechatReady)
   }
 
   _handleMoreMessagesLoadedEvent (e) {
@@ -561,7 +564,7 @@ class WebChat {
     console.log(e)
 
     const isTyping = e.type === 'AgentTypingStarted'
-    const agentName = e.data.user.firstName
+    const agentName = e.detail.data.user.firstName
     const list = document.querySelector('[data-wc-message-list]')
 
     if (!list) {
@@ -607,6 +610,13 @@ class WebChat {
     const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
     start.classList.toggle('wc-start--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
+  }
+
+  _handleSendKeystroke () {
+    this.thread.keystroke(1000)
+    setTimeout(() => {
+      this.thread.stopTyping()
+    }, 1000)
   }
 
   _handleChatEvent (e) {

@@ -28,7 +28,7 @@
       {% if model.assignee %}
       {{ model.assignee }}<span class="wc-status__meta">Floodline adviser</span>
       {% else %}
-      Waiting for agent<span class="wc-status__meta">You're {{ model.queue }} in the queue</span>
+      Connecting you to an adviser
       {% endif %}
     </p>
     <div class="wc-status__button">
@@ -124,7 +124,7 @@
     </div>
   </div>
 </div>
-{% elif model.view == 'CLOSED' %}
+{% elif model.view == 'FEEDBACK' %}
 <div class="wc__body">
   <div class="wc-postchat">
     <p>Give feedback</p>
