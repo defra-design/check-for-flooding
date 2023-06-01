@@ -125,7 +125,7 @@ class WebChat {
     // Get thread
     let threadId = localStorage.getItem('THREAD_ID')
     if (!threadId) {
-      threadId = Math.floor(Math.random() * 1000).toString()
+      threadId = Utils.generateUUID()
       localStorage.setItem('THREAD_ID', threadId)
     }
     const thread = await sdk.getThread(threadId)
@@ -332,9 +332,18 @@ class WebChat {
     // Set userName
     sdk.getCustomer().setName(userName)
 
+    console.log('_startChat')
+
     // Start chat
     await this._getThread()
-    this.thread.startChat(message)
+
+    console.log(this.thread instanceof LivechatThread)
+
+    try {
+      this.thread.startChat(message)
+    } catch (err) {
+      console.log()
+    }
 
     this._setAttributes()
   }
@@ -372,18 +381,17 @@ class WebChat {
     const status = this.state.status
     const thread = this.thread
     // *** need to check status and deal with an already closed chat seperatly
-    if (status === 'closed') {
-      this._giveFeedback()
-    } else {
+    this._giveFeedback()
+    if (status !== 'closed') {
       thread.endChat()
     }
   }
 
   _giveFeedback() {
-    const state = this.state
-    state.view = 'FEEDBACK'
     localStorage.removeItem('THREAD_ID')
     this.messages = []
+    const state = this.state
+    state.view = 'FEEDBACK'
     this._updateChat()
     state.view = 'PRECHAT'
   }
@@ -395,11 +403,15 @@ class WebChat {
         text: Utils.parseMessage(messages[i].messageContent.text),
         assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
         date: Utils.formatDate(new Date(messages[i].createdAt)),
+        createdAt: new Date(messages[i].createdAt),
         direction: messages[i].direction
       })
     }
     batch.reverse()
     this.messages = batch.concat(this.messages)
+
+    // Sort on date to be doubly sure
+    this.messages = Utils.sortMessages(this.messages)
   }
 
   _sendMessage (e) {
@@ -412,7 +424,6 @@ class WebChat {
     try {
       thread.sendTextMessage(value)
     } catch (err) {
-      console.log(thread instanceof LivechatThread)
       console.log(err)
     }
   }
@@ -551,6 +562,7 @@ class WebChat {
       text: Utils.parseMessage(response.messageContent.text),
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
+      createdAt: new Date(response.createdAt),
       direction: response.direction.toLowerCase()
     }
     const messages = this.messages

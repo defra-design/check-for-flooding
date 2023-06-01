@@ -59,6 +59,22 @@ class Utils {
     return output
   }
 
+  static sortMessages (messages) {
+    return messages.sort((a, b) => {
+      return a.createdAt - b.createdAt
+    })
+  }
+
+  static generateUUID () {
+    let uuid
+    if (crypto.randomUUID) {
+      uuid = crypto.randomUUID()
+    } else {
+      uuid = Math.floor(Math.random() * 100000000).toString()
+    }
+    return uuid
+  }
+
   static isClientSupported () {
     'use strict'
     if (typeof Symbol == 'undefined') return false
