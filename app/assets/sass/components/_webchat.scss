@@ -137,7 +137,10 @@
     margin-bottom: 15px;
   }
   textarea {
-    margin-bottom: 20px !important;
+    margin-bottom: 5px !important;
+  }
+  .wc-hint {
+    font-size: 16px;
   }
   h3, p, ul {
     font-size: 16px;
@@ -390,7 +393,7 @@
 }
 .wc-open-btn {
   @extend .defra-link-icon;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   &:visited {
     color: $govuk-link-colour;
   }

@@ -32,7 +32,6 @@ document.addEventListener('readystatechange', () => {
     if (tabs) {
       new Tabs(tabs).init()
     }
-
     const model = window.flood.model
 
     // Initialise live map

@@ -33,7 +33,7 @@
       {% endif %}
     </p>
     <div class="wc-status__button">
-      <a href="" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
+      <a href="#" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
     </div>
   </div>
   {% endif %}
@@ -70,11 +70,16 @@
       </label>
       <input class="govuk-input" id="name" name="name" type="text">
     </div>
-    <div class="govuk-form-group">
-      <label class="govuk-label" for="message">
-        Your question
-      </label>
-      <textarea class="govuk-textarea" id="message" name="message" rows="5"></textarea>
+    <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="500">
+      <div class="govuk-form-group">
+        <label class="govuk-label" for="message">
+          Your question
+        </label>
+        <textarea class="govuk-textarea govuk-js-character-count" id="message" name="message" rows="5" aria-describedby="message-info"></textarea>
+      </div>
+      <div id="message-info" class="wc-hint govuk-hint govuk-character-count__message">
+        You can enter up to 500 characters
+      </div>
     </div>
     <button class="wc-submit-btn" data-module="govuk-button" data-wc-submit-btn>
       Request chat

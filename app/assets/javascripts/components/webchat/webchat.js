@@ -1,6 +1,7 @@
 'use strict'
 
 import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { Button, CharacterCount } from 'govuk-frontend'
 import Keyboard from './keyboard'
 import State from './state'
 import Utils from './utils'
@@ -241,6 +242,16 @@ class WebChat {
       }
     })
 
+    // Initialise GOV.UK components
+    const buttons = content.querySelectorAll('[data-module="govuk-button"]')
+    for (let i = 0; i <= buttons.length; i++) {
+      new Button(buttons[i]).init()
+    }
+    const characterCounts = content.querySelectorAll('[data-module="govuk-character-count"]')
+    for (let i = 0; i <= characterCounts.length; i++) {
+      new CharacterCount(characterCounts[i]).init()
+    }
+
     // Scroll messages
     const body = container.querySelector('[data-wc-body]')
     if (body) {
@@ -261,9 +272,9 @@ class WebChat {
     const userName = document.getElementById('name').value
     const message = document.getElementById('message').value
 
-    if (!(userName.length && message.length)) {
+    if (!(userName.length && message.length >= 2 && message.length <= 500)) {
       // Validation error
-      console.log('Enter a name and/or message')
+      console.log(`Enter a name and/or message, message length ${message.length}`)
       return
     }
 
