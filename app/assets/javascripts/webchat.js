@@ -4,5 +4,5 @@ import WebChat from './components/webchat/webchat'
 
 // Initialise webchat
 if (document.getElementById('wc-availability')) {
-  new WebChat()
+  new WebChat('wc-availability')
 }

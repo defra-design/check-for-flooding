@@ -360,16 +360,16 @@
   margin: 0px;
   width: auto;
 }
-.wc-start__inner {
+.wc-link__inner {
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
 }
-.wc-start--disabled .wc-open-btn {
+.wc-link--disabled .wc-open-btn {
   pointer-events: none;
   opacity: 0.5;
 }
-.wc-start--fixed:not(.wc-start--disabled) {
+.wc-link--fixed:not(.wc-link--disabled) {
   position: fixed;
   bottom: 0px;
   left: 0px;
@@ -384,6 +384,9 @@
   .wc-open-btn {
     margin-top: 10px;
   }
+}
+.wc-link--hidden {
+  display:none;
 }
 .wc-open-btn {
   @extend .defra-link-icon;

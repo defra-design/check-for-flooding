@@ -8,8 +8,8 @@ import Utils from './utils'
 const env = window.nunjucks.configure('views')
 
 class WebChat {
-  constructor () {  
-    this.id = 'wc-availability'
+  constructor (id) {  
+    this.id = id
     this.queue = null
     this.assignee = null
     this.messages = []
@@ -140,10 +140,13 @@ class WebChat {
 
   _setAvailability () {
     const state = this.state
+    const availability = this.availability
+    const isStart = !availability.hasAttribute('data-wc-no-start')
 
-    this.availability.innerHTML = env.render('webchat-availability.html', {
+    availability.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
+        isStart: isStart,
         view: state.view
       }
     })
@@ -304,10 +307,12 @@ class WebChat {
     const state = this.state
     state.isOpen = false
 
+    // Reinstate link
     const availability = this.availability
-    const start = availability.querySelector('[data-wc-start]')
-    if (start) {
-      start.classList.remove('wc-start--disabled')
+    const link = availability.querySelector('[data-wc-link]')
+    if (link) {
+      link.classList.remove('wc-link--disabled')
+      link.classList.remove('wc-link--hidden')
     }
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
@@ -438,18 +443,8 @@ class WebChat {
   _handleReadyEvent (e) {
     console.log('_handleReadyEvent')
     console.log(e)
-    const state = this.state
 
-    // Availability control
-    const availability = this.availability
-    availability.innerHTML = env.render('webchat-availability.html', {
-      model: {
-        availability: state.availability,
-        view: state.view
-      }
-    })
-
-    this._handleScroll()
+    this._setAvailability()
     this._updateChat()
   }
 
@@ -610,16 +605,16 @@ class WebChat {
   _handleScroll (e) {
     const state = this.state
     const availability = this.availability
-    const start = availability.querySelector('[data-wc-start]')
+    const link = availability.querySelector('[data-wc-link]')
 
-    if (!start) {
+    if (!link) {
       return
     }
 
     const rect = availability.getBoundingClientRect()
     const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
-    start.classList.toggle('wc-start--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
+    link.classList.toggle('wc-link--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
   }
 
   _handleSendKeystroke () {
