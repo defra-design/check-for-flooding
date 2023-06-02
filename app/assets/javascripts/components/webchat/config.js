@@ -6,6 +6,8 @@ class Config {
     tablet: '834px'
   }
 
+  static timeout = 5 // Seconds
+
   static getBreakpoint (device) {
     return this._breakpoints[device]
   }

@@ -5,6 +5,7 @@ import { Button, CharacterCount } from 'govuk-frontend'
 import Keyboard from './keyboard'
 import State from './state'
 import Utils from './utils'
+import Config from './config'
 
 const env = window.nunjucks.configure('views')
 
@@ -265,6 +266,18 @@ class WebChat {
       textarea.addEventListener('keyup', e => Utils.autosize(e.target, 120))
       // User start stop typing
       textarea.addEventListener('keydown', this._handleSendKeystroke.bind(this))
+      // Clear timeout
+      textarea.addEventListener('keyup', () => {
+        if (this.timeout) {
+          clearTimeout(this.timeout)
+          console.log('Clear timeout')
+        }
+      })
+    }
+
+    // Start timeout
+    if (state.status !== 'closed') {
+      this.timeout = setTimeout(this._handleTimeout, Config.timeout * 1000)
     }
   }
 
@@ -611,6 +624,10 @@ class WebChat {
     } else if (el) {
       el.remove()
     }
+  }
+
+  _handleTimeout (e) {
+    console.log('Timeout starting...')
   }
 
   _handleScroll (e) {
