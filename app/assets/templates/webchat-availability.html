@@ -1,5 +1,4 @@
-{% if model.availability == 'AVAILABLE' %}
-{% if model.isStart or (not model.isStart and model.view == 'OPEN' or model.view == 'END') %}
+{% if model.availability == 'AVAILABLE' or model.view == 'OPEN' or model.view == 'END' %}
 <div class="wc-link" data-wc-link>
   <div class="wc-link__inner">
     <a href="#webchat" role="button" draggable="false" data-module="govuk-button" class="wc-open-btn" data-wc-open-btn>
@@ -7,7 +6,6 @@
     </a>
   </div>
 </div>
-{% endif %}
 {% elif model.isStart %}
 {% if model.availability == 'BUSY' %}
 <p class="govuk-body">All our advisers are busy. A link will be shown when an adviser is available. You do not need to refresh this page.</p>

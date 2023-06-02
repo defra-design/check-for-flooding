@@ -348,15 +348,8 @@
 .wc-transcript-btn,
 .wc-audio-btn {
   display: inline-block;
-  color: $govuk-text-colour;
-  // text-decoration: none;
+  color: $govuk-text-colour !important;
   margin: 10px;
-  &:visited {
-    color: $govuk-text-colour;
-  }
-  &:focus {
-    color: $govuk-text-colour;
-  }
 }
 .wc-end-btn {
   font-size: 16px;
