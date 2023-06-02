@@ -1,4 +1,4 @@
-{% if model.availability == 'AVAILABLE' or model.view == 'OPEN' or model.view == 'END' %}
+{% if (model.isStart and model.availability == 'AVAILABLE') or model.view == 'OPEN' or model.view == 'END' %}
 <div class="wc-link" data-wc-link>
   <div class="wc-link__inner">
     <a href="#webchat" role="button" draggable="false" data-module="govuk-button" class="wc-open-btn" data-wc-open-btn>
