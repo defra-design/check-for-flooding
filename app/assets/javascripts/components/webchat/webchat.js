@@ -254,10 +254,7 @@ class WebChat {
     }
 
     // Scroll messages
-    const body = container.querySelector('[data-wc-body]')
-    if (body) {
-      body.scrollTop = body.scrollHeight
-    }
+    this._scrollToLatest()
 
     // Textarea events
     const textarea = container.querySelector('[data-wc-message]')
@@ -425,6 +422,8 @@ class WebChat {
 
   _mergeMessages (messages) {
     const batch = []
+
+    // Add message to batch
     for (let i = 0; i < messages.length; i++) {
       batch.push({
         text: Utils.parseMessage(messages[i].messageContent.text),
@@ -452,6 +451,13 @@ class WebChat {
       thread.sendTextMessage(value)
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  _scrollToLatest () {
+    const body = this.container.querySelector('[data-wc-body]')
+    if (body) {
+      body.scrollTop = body.scrollHeight
     }
   }
 
@@ -545,6 +551,9 @@ class WebChat {
       console.log('loading more messages')
     }
     console.log('all loaded')
+
+    // Add group end property
+    this.messages = Utils.addGroupMeta(this.messages)
     
     // Ready
     document.dispatchEvent(this.livechatReady)
@@ -608,19 +617,14 @@ class WebChat {
           <span class="wc-list__item-meta">${agentName} is typing</span>
           <div class="wc-list__item-inner">
             <svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16">
-              <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor">
-                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.1"/>
-              </circle>
-              <circle stroke="none" cx="14" cy="8" r="3" fill="currentColor">
-                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.3"/>
-              </circle>
-              <circle stroke="none" cx="25" cy="8" r="3" fill="currentColor">
-                <animate attributeName="cy" dur="1s" values="12;4;12" repeatCount="indefinite" begin="0.5"/>
-              </circle>
+              <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle>
+              <circle stroke="none" cx="14" cy="8" r="3" fill="currentColor"></circle>
+              <circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle>
             </svg>
           </div>
         </li>
       `)
+      this._scrollToLatest()
     } else if (el) {
       el.remove()
     }

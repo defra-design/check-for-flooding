@@ -91,10 +91,10 @@
   <ul class="wc-list" data-wc-message-list>
     {% for message in model.messages %}
     <li class="wc-list__item wc-list__item--{{ message.direction | lower }}">
-      <span class="wc-list__item-meta">{% if message.direction == 'outbound' %}{{ message.assignee}} at{% else %}<span class="govuk-visually-hidden">You  at</span>{% endif %} {{ message.date }}</span>
       <div class="wc-list__item-inner">
       {{ message.text | safe }}
       </div>
+      <span class="{% if message.isGroup %}wc-list__item-meta{% else %}govuk-visually-hidden{% endif %}">{% if message.direction == 'outbound' %}{{ message.assignee}}{% else %}You{% endif %}</span>
     </li>
     {% endfor %}
   </ul>
@@ -121,7 +121,7 @@
 {% elif model.view == 'END' %}
 <div class="wc__body">
   <div class="wc-postchat">
-    <p>Confirm end chat</p>
+    <h3 class="govuk-heading-s">Are you sure you want to end the chat?</h3>
     <div class="govuk-button-group">
       <button class="wc-confirm-end-btn" data-module="govuk-button" data-wc-confirm-end-btn>End chat</button>
       <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-resume-btn>Resume chat</button>
@@ -131,7 +131,8 @@
 {% elif model.view == 'FEEDBACK' %}
 <div class="wc__body">
   <div class="wc-postchat">
-    <p>Give feedback</p>
+    <h3 class="govuk-heading-s">Give feedback</h3>
+    <p>Floodline webchat is in public beta</p>
     <div class="govuk-button-group">
       <button class="wc-feedback-btn" data-module="govuk-button" data-wc-feedback-btn>Submit</button>
       <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-close-btn>Cancel</button>
