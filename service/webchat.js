@@ -65,7 +65,6 @@ module.exports = {
       const skill = await axios.get(uri, config)
       const advisersAvailable = skill.data.skillActivity[0].agentsAvailable >= 1
 
-      console.log(skill.data)
       return advisersAvailable
     } catch (err) {
       console.log(err)

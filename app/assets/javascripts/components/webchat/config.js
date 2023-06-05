@@ -8,6 +8,8 @@ class Config {
 
   static timeout = 5 // Seconds
 
+  static countdown = 10 // Seconds
+
   static getBreakpoint (device) {
     return this._breakpoints[device]
   }

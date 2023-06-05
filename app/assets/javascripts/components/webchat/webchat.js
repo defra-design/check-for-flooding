@@ -266,15 +266,15 @@ class WebChat {
       // Clear timeout
       textarea.addEventListener('keyup', () => {
         if (this.timeout) {
-          clearTimeout(this.timeout)
-          console.log('Clear timeout')
+          console.log('Reset timeout')
+          this._resetTimeout()
         }
       })
     }
 
     // Start timeout
     if (state.status !== 'closed') {
-      this.timeout = setTimeout(this._handleTimeout, Config.timeout * 1000)
+      this._startTimeout()
     }
   }
 
@@ -310,6 +310,9 @@ class WebChat {
     const state = this.state
     state.isOpen = true
 
+    // Reset timeout
+    this._resetTimeout()
+
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     if (isBtn) {
       e.preventDefault()
@@ -327,6 +330,9 @@ class WebChat {
   _closeChat (e) {
     const state = this.state
     state.isOpen = false
+
+    // Reset timeout
+    this._resetTimeout()
 
     // Reinstate link
     const availability = this.availability
@@ -459,6 +465,28 @@ class WebChat {
     if (body) {
       body.scrollTop = body.scrollHeight
     }
+  }
+
+  _startTimeout () {
+    this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
+  }
+
+  _resetTimeout () {
+    // Clear interval and timeout
+    clearTimeout(this.timeout)
+    clearInterval(this.countdown)
+    const container = this.container
+
+    // Remove html if it exists
+    if (container) {
+      const timeout = container.querySelector('[data-wc-timeout]')
+      if (timeout) {
+        timeout.remove()
+      }
+    }
+
+    // Restart timeout
+    this._startTimeout()
   }
 
   //
@@ -612,12 +640,14 @@ class WebChat {
       return
     }
 
+    // Reset timeout
+    this._resetTimeout()
+
     const el = list.querySelector('[data-wc-agent-typing]')
     
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', `
         <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
-          <span class="wc-list__item-meta">${agentName} is typing</span>
           <div class="wc-list__item-inner">
             <svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16">
               <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle>
@@ -625,6 +655,7 @@ class WebChat {
               <circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle>
             </svg>
           </div>
+          <span class="wc-list__item-meta">${agentName} is typing</span>
         </li>
       `)
       this._scrollToLatest()
@@ -635,6 +666,46 @@ class WebChat {
 
   _handleTimeout (e) {
     console.log('Timeout starting...')
+    const container = this.container
+    const seconds = Config.countdown
+    let element
+
+    const hasTimeout = container && container.querySelector('[data-wc-timeout]')
+
+    if (container && !hasTimeout) {
+      const list = container.querySelector('[data-wc-message-list]')
+      list.insertAdjacentHTML('afterend', `
+        <div class="wc-timeout" data-wc-timeout>
+          <div class="wc-timeout__inner">
+            <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
+          </div>
+          <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
+        </div>
+      `)
+      this._scrollToLatest()
+
+      element = container.querySelector('[data-wc-countdown]')
+
+      // Clear timeout
+      const clearBtn = container.querySelector('[data-wc-cancel-timeout]')
+      clearBtn.addEventListener('click', e => {
+        e.preventDefault()
+        this._handleCancelTimeout()
+      })
+    }
+
+    // Set countdown
+    this.countdown = Utils.setCountdown(element, () => {
+      console.log('Count down ended')
+      // this._confirmEndChat()
+    })
+  }
+
+  _handleCancelTimeout () {
+    console.log('Reset timeout')
+
+    // Reset timeout
+    this._resetTimeout()
   }
 
   _handleScroll (e) {

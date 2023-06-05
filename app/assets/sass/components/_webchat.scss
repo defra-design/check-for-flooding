@@ -165,7 +165,7 @@
   line-height: 20px;
   margin: 0px;
   padding: 0px;
-  height: 100%;
+  // height: 100%;
   > li {
     margin-bottom: 0;
   }
@@ -343,14 +343,6 @@
     align-items: center;
     width: auto;
     cursor: pointer;
-    // &:focus {
-    //   outline: none;
-    // }
-    // &:focus[keyboard-focus] {
-    //   outline: 3px solid $govuk-focus-colour;
-    //   box-shadow: inset 0 0 0 3px govuk-colour('black');
-    //   border-color: govuk-colour('black');
-    // }
     svg {
       display: block;
       color: white;
@@ -360,7 +352,6 @@
   }
 }
 .wc-credit {
-  // display: block;
   display: none;
   @include govuk-font($size: 14);
   color: $govuk-secondary-text-colour;
@@ -428,5 +419,27 @@
       color: govuk-colour('dark-blue');
     }
   }
+}
+.wc-timeout {
+  text-align: center;
+  padding-bottom: 20px;
+  &__inner {
+    margin: 5px 10px;
+    border-top: 1px solid govuk-colour('mid-grey');
+  }
+  &__message {
+    position: relative;
+    display: inline-block;
+    margin: auto;
+    background-color: white;
+    padding: 0px 5px;
+    top: -11px;
+    @include govuk-font($size: 14);
+    color: $govuk-secondary-text-colour;
+    font-size: 14px;
+  }
+}
+.wc-cancel-timeout-btn {
+  @extend .defra-button-secondary;
 }
 

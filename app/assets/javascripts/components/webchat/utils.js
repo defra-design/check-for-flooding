@@ -74,6 +74,21 @@ class Utils {
     return m
   }
 
+  static setCountdown (element, callback) {
+    let second = Config.countdown
+    const interval = setInterval(() => {
+      second --
+      if (element) {
+        element.innerHTML = `${second} seconds`
+      }
+      if (second <= 0) {
+          clearInterval(interval)
+          callback()
+      }
+    }, 1000)
+    return interval
+  }
+
   static generateUUID () {
     let uuid
     if (crypto.randomUUID) {
