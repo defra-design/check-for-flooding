@@ -594,6 +594,9 @@ class WebChat {
     const messages = this.messages
     messages.push(message)
 
+    // Add group end property
+    this.messages = Utils.addGroupMeta(messages)
+
     this._updateChat()
   }
 

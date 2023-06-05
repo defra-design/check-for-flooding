@@ -71,7 +71,6 @@ class Utils {
       const isGroup = (i === m.length - 1) || (i < (m.length - 2) && m[i].direction !== m[i + 1].direction)
       m[i].isGroup = isGroup
     }
-    console.log(m)
     return m
   }
 
