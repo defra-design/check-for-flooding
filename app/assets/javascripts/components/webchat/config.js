@@ -6,9 +6,9 @@ class Config {
     tablet: '834px'
   }
 
-  static timeout = 5 // Seconds
+  static timeout = 1200 // 20 minutes
 
-  static countdown = 10 // Seconds
+  static countdown = 60 // Seconds
 
   static getBreakpoint (device) {
     return this._breakpoints[device]

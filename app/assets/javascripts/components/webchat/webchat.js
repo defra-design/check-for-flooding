@@ -49,7 +49,7 @@ class WebChat {
 
     // Set initial availability
     this.availability = availability    
-    this._setAvailability()
+    this._updateAvailability()
 
     // Open panel if fragment exists
     const isOpen = this.state.isOpen
@@ -140,7 +140,29 @@ class WebChat {
     thread.onThreadEvent(ChatEvent.AGENT_CONTACT_ENDED, this._handleAgentContactEndedEvent.bind(this))
   }
 
-  _setAvailability () {
+  async _startChat (userName, message) {
+    const sdk = this.sdk
+
+    // Set userName
+    sdk.getCustomer().setName(userName)
+
+    console.log('_startChat')
+
+    // Start chat
+    await this._getThread()
+
+    console.log(this.thread instanceof LivechatThread)
+
+    try {
+      this.thread.startChat(message)
+    } catch (err) {
+      console.log()
+    }
+
+    this._setAttributes()
+  }
+
+  _updateAvailability () {
     const state = this.state
     const availability = this.availability
     const isStart = !availability.hasAttribute('data-wc-no-start')
@@ -193,6 +215,10 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-close-btn')) {
         this._closeChat(e)
       }
+      if (e.target.hasAttribute('data-wc-give-feedback-btn')) {
+        e.preventDefault()
+        this._giveFeedback()
+      }
       if (e.target.hasAttribute('data-wc-end-btn')) {
         e.preventDefault()
         this._endChat()
@@ -219,10 +245,15 @@ class WebChat {
     })
   }
 
-  _updateChat () {
-    console.log('_updateChat: ', this.messages.length)
+  _updatePanel () {
+    console.log('_updatePanel: ', this.messages.length)
     const state = this.state
 
+    // Reset timeout
+    if (this.timeout) {
+      this._startTimeout()
+    }
+    
     // Update content
     const container = document.getElementById('wc-panel')
     if (!container) {
@@ -259,22 +290,16 @@ class WebChat {
     // Textarea events
     const textarea = container.querySelector('[data-wc-message]')
     if (textarea) {
-      // Autosize
-      textarea.addEventListener('keyup', e => Utils.autosize(e.target, 120))
-      // User start stop typing
-      textarea.addEventListener('keydown', this._handleSendKeystroke.bind(this))
-      // Clear timeout
-      textarea.addEventListener('keyup', () => {
+      textarea.addEventListener('keyup', e => {
+        // Autosize height
+        Utils.autosize(e.target, 120)
+        // Start timeout
         if (this.timeout) {
-          console.log('Reset timeout')
-          this._resetTimeout()
+          this._startTimeout()
         }
       })
-    }
-
-    // Start timeout
-    if (state.status !== 'closed') {
-      this._startTimeout()
+      // User start stop typing
+      textarea.addEventListener('keydown', this._handleSendKeystroke.bind(this))
     }
   }
 
@@ -311,7 +336,9 @@ class WebChat {
     state.isOpen = true
 
     // Reset timeout
-    this._resetTimeout()
+    if (this.timeout) {
+      this._startTimeout()
+    }
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     if (isBtn) {
@@ -321,7 +348,7 @@ class WebChat {
 
     if (!this.container) {
       this._createPanel()
-      this._updateChat()
+      this._updatePanel()
     }
 
     this._handleScroll()
@@ -332,8 +359,10 @@ class WebChat {
     state.isOpen = false
 
     // Reset timeout
-    this._resetTimeout()
-
+    if (this.timeout) {
+      this._startTimeout()
+    }
+    
     // Reinstate link
     const availability = this.availability
     const link = availability.querySelector('[data-wc-link]')
@@ -353,50 +382,38 @@ class WebChat {
       this._handleScroll(e)
     }
 
-    this._setAvailability()
-  }
-
-  async _startChat (userName, message) {
-    const sdk = this.sdk
-
-    // Set userName
-    sdk.getCustomer().setName(userName)
-
-    console.log('_startChat')
-
-    // Start chat
-    await this._getThread()
-
-    console.log(this.thread instanceof LivechatThread)
-
-    try {
-      this.thread.startChat(message)
-    } catch (err) {
-      console.log()
-    }
-
-    this._setAttributes()
+    this._updateAvailability()
   }
 
   _prechat () {
     const state = this.state
     state.view = 'PRECHAT'
     console.log('_prechat')
-    this._updateChat()
+    this._updatePanel()
   }
 
   _continue () {
     const state = this.state
     state.view = 'START'
     console.log('_continue')
-    this._updateChat()
+    this._updatePanel()
+  }
+
+  _timeoutChat() {
+    // localStorage.removeItem('THREAD_ID')
+    // this.messages = []
+    const state = this.state
+    state.view = 'TIMEOUT'
+    this._updatePanel()
+    state.view = 'OPEN'
+    // state.view = 'PRECHAT'
   }
 
   _endChat () {
     const state = this.state
     state.view = 'END'
     console.log('_endChat')
-    this._updateChat()
+    this._updatePanel()
   }
 
   _resumeChat (e) {
@@ -404,7 +421,7 @@ class WebChat {
     const state = this.state
     state.view = 'OPEN'
     console.log('_resumeChat')
-    this._updateChat()
+    this._updatePanel()
   }
 
   _confirmEndChat () {
@@ -412,7 +429,7 @@ class WebChat {
     const thread = this.thread
     // *** need to check status and deal with an already closed chat seperatly
     this._giveFeedback()
-    if (status !== 'closed') {
+    if (status && status !== 'closed') {
       thread.endChat()
     }
   }
@@ -422,7 +439,7 @@ class WebChat {
     this.messages = []
     const state = this.state
     state.view = 'FEEDBACK'
-    this._updateChat()
+    this._updatePanel()
     state.view = 'PRECHAT'
   }
 
@@ -468,25 +485,23 @@ class WebChat {
   }
 
   _startTimeout () {
-    this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
-  }
-
-  _resetTimeout () {
-    // Clear interval and timeout
+    // Clear existing timeout
     clearTimeout(this.timeout)
     clearInterval(this.countdown)
-    const container = this.container
-
-    // Remove html if it exists
-    if (container) {
-      const timeout = container.querySelector('[data-wc-timeout]')
-      if (timeout) {
-        timeout.remove()
+  
+    const status = this.state.status
+    if (status && status !== 'closed') {
+      // We have a thread and its not closed
+      const container = this.container
+      if (container) {
+        const timeout = container.querySelector('[data-wc-timeout]')
+        if (timeout) {
+          timeout.remove()
+        }
       }
+      console.log('Timeout started...')
+      this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
     }
-
-    // Restart timeout
-    this._startTimeout()
   }
 
   //
@@ -502,8 +517,11 @@ class WebChat {
     console.log('_handleReadyEvent')
     console.log(e)
 
-    this._setAvailability()
-    this._updateChat()
+    this._updateAvailability()
+    this._updatePanel()
+
+    // Start timeout
+    this._startTimeout()
   }
 
   _handleCaseStatusChangedEvent (e) {
@@ -527,7 +545,7 @@ class WebChat {
     console.log(e)
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
-    this._updateChat()
+    this._updatePanel()
   }
 
   _handleRoutingQueueCreatedEvent (e) {
@@ -555,7 +573,7 @@ class WebChat {
     console.log(e)
     const queue = e.detail.data.positionInQueue
     this.queue = queue || null
-    this._updateChat()
+    this._updatePanel()
   }
 
   async _handleLivechatRecoveredEvent (e) {
@@ -625,7 +643,7 @@ class WebChat {
     // Add group end property
     this.messages = Utils.addGroupMeta(messages)
 
-    this._updateChat()
+    this._updatePanel()
   }
 
   _handleAgentTypingEvent (e) {
@@ -641,7 +659,7 @@ class WebChat {
     }
 
     // Reset timeout
-    this._resetTimeout()
+    this._startTimeout()
 
     const el = list.querySelector('[data-wc-agent-typing]')
     
@@ -665,47 +683,47 @@ class WebChat {
   }
 
   _handleTimeout (e) {
-    console.log('Timeout starting...')
+    console.log('Countdown starting...')
     const container = this.container
     const seconds = Config.countdown
     let element
 
-    const hasTimeout = container && container.querySelector('[data-wc-timeout]')
-
-    if (container && !hasTimeout) {
+    if (container) {
+      // *** If we have the list but dont already have the timeout markup
       const list = container.querySelector('[data-wc-message-list]')
-      list.insertAdjacentHTML('afterend', `
-        <div class="wc-timeout" data-wc-timeout>
-          <div class="wc-timeout__inner">
-            <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
+      const timeout = container.querySelector('[data-wc-timeout]')
+      if (list && !timeout) {
+        list.insertAdjacentHTML('afterend', `
+          <div class="wc-timeout" data-wc-timeout>
+            <div class="wc-timeout__inner">
+              <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
+            </div>
+            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
           </div>
-          <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
-        </div>
-      `)
-      this._scrollToLatest()
+        `)
+        this._scrollToLatest()
 
-      element = container.querySelector('[data-wc-countdown]')
+        // Reference to the countdown element
+        element = container.querySelector('[data-wc-countdown]')
 
-      // Clear timeout
-      const clearBtn = container.querySelector('[data-wc-cancel-timeout]')
-      clearBtn.addEventListener('click', e => {
-        e.preventDefault()
-        this._handleCancelTimeout()
-      })
+        // Clear timeout
+        const clearBtn = container.querySelector('[data-wc-cancel-timeout]')
+        clearBtn.addEventListener('click', e => {
+          e.preventDefault()
+          this._startTimeout()
+        })
+      }
     }
 
     // Set countdown
     this.countdown = Utils.setCountdown(element, () => {
       console.log('Count down ended')
-      // this._confirmEndChat()
+      if (container) {
+        this._timeoutChat()
+      } else {
+        console.log('Chat has timedout')
+      }
     })
-  }
-
-  _handleCancelTimeout () {
-    console.log('Reset timeout')
-
-    // Reset timeout
-    this._resetTimeout()
   }
 
   _handleScroll (e) {

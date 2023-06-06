@@ -68,7 +68,7 @@ class Utils {
   static addGroupMeta (messages) {
     const m = messages
     for (let i = 0; i < m.length; i++) {
-      const isGroup = (i === m.length - 1) || (i < (m.length - 2) && m[i].direction !== m[i + 1].direction)
+      const isGroup = (i === m.length - 1) || (i < (m.length - 1) && m[i].direction !== m[i + 1].direction)
       m[i].isGroup = isGroup
     }
     return m
