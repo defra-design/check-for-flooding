@@ -449,7 +449,7 @@ class WebChat {
     // Add message to batch
     for (let i = 0; i < messages.length; i++) {
       batch.push({
-        text: Utils.parseMessage(messages[i].messageContent.text),
+        text: Utils.convertLinks(messages[i].messageContent.text),
         assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
         date: Utils.formatDate(new Date(messages[i].createdAt)),
         createdAt: new Date(messages[i].createdAt),

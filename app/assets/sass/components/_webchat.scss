@@ -219,6 +219,9 @@
     background-color: govuk-colour('blue');
     color: white;
     border-bottom-right-radius: 0;
+    a:not(:focus), a:visited:not(:focus) {
+      color: white;
+    }
   }
   &__item--outbound &__item-inner {
     border-bottom-left-radius: 0;
