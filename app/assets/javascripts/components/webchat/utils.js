@@ -54,37 +54,14 @@ class Utils {
   }
 
   static convertLinks (input) {
-    // const isValidHttpUrl = s => {
-    //   let u
-    //   try {u = new URL(s)}
-    //   catch (_) {return false}
-    //   return u.protocol.startsWith("http")
-    // }
-    // const m = t.match(/(?<=\s|^)[a-zA-Z0-9-:/]+\.[a-zA-Z0-9-].+?(?=[.,;:?!-]?(?:\s|$))/g)
-    // if (!m) return t
-    // const a = []
-    // m.forEach(x => {
-    //   const [t1, ...t2] = t.split(x)
-    //   a.push(t1)
-    //   t = t2.join(x)
-    //   const y = (!(x.match(/:\/\//)) ? 'https://' : '') + x
-    //   if (isNaN(x) && isValidHttpUrl(y)) 
-    //     a.push('<a href="' + y + '" target="_blank">' + y.split('/')[2] + '</a>')
-    //   else
-    //     a.push(x)
-    // })
-    // a.push(t)
-    // return a.join('')
     let text = input
     const linksFound = text.match(/(?:www|https?)[^\s]+/g)
     const aLink = []
     if (linksFound != null) {
       for (let i = 0; i < linksFound.length; i++) {
-        let replace = linksFound[i]
-        if (!(linksFound[i].match(/(http(s?)):\/\//))) {
-          replace = `http://${linksFound[i]}`
-        }
-        aLink.push(`<a href="${replace}">${replace}</a>`)
+        const href = linksFound[i]
+        const anchor = linksFound[i].replace(/#webchat|https?:\/\//gi, '')
+        aLink.push(`<a href="${href}">${anchor}</a>`)
         text = text.split(linksFound[i]).join(aLink[i])
       }
       return text

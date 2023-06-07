@@ -12,7 +12,6 @@ const env = window.nunjucks.configure('views')
 class WebChat {
   constructor (id) {  
     this.id = id
-    this.queue = null
     this.assignee = null
     this.messages = []
 
@@ -81,7 +80,7 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_UPDATED, this._handleRoutingQueueUpdatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.USER_ASSIGNED_TO_ROUTING_QUEUE, this._handleUserAssignedToRoutingQueue.bind(this))
     sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueue.bind(this))
-    sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, this._handleSetPositionInQueueEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, this._handleSetPositionInQueueEvent.bind(this))
 
     this.sdk = sdk
 
@@ -269,8 +268,7 @@ class WebChat {
         isBack: state.isBack,
         isMobile: state.isMobile,
         messages: this.messages,
-        assignee: this.assignee,
-        queue: this.queue
+        assignee: this.assignee
       }
     })
 
@@ -400,13 +398,17 @@ class WebChat {
   }
 
   _timeoutChat() {
-    // localStorage.removeItem('THREAD_ID')
-    // this.messages = []
     const state = this.state
-    state.view = 'TIMEOUT'
-    this._updatePanel()
-    state.view = 'OPEN'
-    // state.view = 'PRECHAT'
+    const status = state.status
+    const thread = this.thread
+
+    // Close thread
+    localStorage.removeItem('THREAD_ID')
+    this.messages = []
+    if (status && status !== 'closed') {
+      state.view = 'TIMEOUT'
+      thread.endChat()
+    }
   }
 
   _endChat () {
@@ -425,41 +427,47 @@ class WebChat {
   }
 
   _confirmEndChat () {
-    const status = this.state.status
+    const state = this.state
+    const status = state.status
     const thread = this.thread
-    // *** need to check status and deal with an already closed chat seperatly
-    this._giveFeedback()
+
+    // Close thread
+    localStorage.removeItem('THREAD_ID')
+    this.messages = []
     if (status && status !== 'closed') {
+      state.view = 'FEEDBACK'
       thread.endChat()
     }
   }
 
   _giveFeedback() {
-    localStorage.removeItem('THREAD_ID')
-    this.messages = []
     const state = this.state
     state.view = 'FEEDBACK'
     this._updatePanel()
     state.view = 'PRECHAT'
   }
 
-  _mergeMessages (messages) {
-    const batch = []
+  _mergeMessages (batch) {
+    const messages = []
 
-    // Add message to batch
-    for (let i = 0; i < messages.length; i++) {
-      batch.push({
-        text: Utils.convertLinks(messages[i].messageContent.text),
-        assignee: messages[i].authorUser ? messages[i].authorUser.firstName : null,
-        date: Utils.formatDate(new Date(messages[i].createdAt)),
-        createdAt: new Date(messages[i].createdAt),
-        direction: messages[i].direction
+    // Create message model
+    for (let i = 0; i < batch.length; i++) {
+      messages.push({
+        id: batch[i].messageContent.id,
+        text: Utils.convertLinks(batch[i].messageContent.text),
+        assignee: batch[i].authorUser ? batch[i].authorUser.firstName : null,
+        date: Utils.formatDate(new Date(batch[i].createdAt)),
+        createdAt: new Date(batch[i].createdAt),
+        direction: batch[i].direction
       })
     }
-    batch.reverse()
-    this.messages = batch.concat(this.messages)
+    // messages.reverse()
+    this.messages = messages.concat(this.messages)
 
-    // Sort on date to be doubly sure
+    // Remove duplicates
+    this.messages = Array.from(new Set(this.messages))
+
+    // Sort on date
     this.messages = Utils.sortMessages(this.messages)
   }
 
@@ -485,23 +493,32 @@ class WebChat {
   }
 
   _startTimeout () {
+    if (!Config.timeout > 0) {
+      return
+    }
+
     // Clear existing timeout
     clearTimeout(this.timeout)
     clearInterval(this.countdown)
-  
+
+    // We dont have an open thread
     const status = this.state.status
-    if (status && status !== 'closed') {
-      // We have a thread and its not closed
-      const container = this.container
-      if (container) {
-        const timeout = container.querySelector('[data-wc-timeout]')
-        if (timeout) {
-          timeout.remove()
-        }
-      }
-      console.log('Timeout started...')
-      this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
+    console.log(status, (!status || status === 'closed'))
+
+    if (!status || status === 'closed') {
+      console.log('Timeout stopped...')
+      return
     }
+    
+    const container = this.container
+    if (container) {
+      const timeout = container.querySelector('[data-wc-timeout]')
+      if (timeout) {
+        timeout.remove()
+      }
+    }
+    console.log('Timeout started...')
+    this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
   }
 
   //
@@ -510,12 +527,10 @@ class WebChat {
 
   _handleConsumerAuthorizedEvent (e) {
     console.log('_handleConsumerAuthorizedEvent')
-    console.log(e)
   }
 
   _handleReadyEvent (e) {
     console.log('_handleReadyEvent')
-    console.log(e)
 
     this._updateAvailability()
     this._updatePanel()
@@ -526,23 +541,27 @@ class WebChat {
 
   _handleCaseStatusChangedEvent (e) {
     console.log('_handleCaseStatusChangedEvent')
-    console.log(e)
-    const status = e.detail.data.case.status
-    const isClosed = status === 'closed'
 
-    if (isClosed) {
-      this._giveFeedback()
+    const state = this.state
+    state.status = e.detail.data.case.status
+
+    // Currently only responding to a closed case
+    if (state.status === 'closed') {
+      this._updatePanel()
+      state.view = 'PRECHAT'
+
+      // Start timeout
+      this._startTimeout()
     }
   }
 
   _handleAgentContactEndedEvent (e) {
     console.log('_handleAgentContactEndedEvent')
-    console.log(e)
   }
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
-    console.log(e)
+
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
     this._updatePanel()
@@ -550,35 +569,32 @@ class WebChat {
 
   _handleRoutingQueueCreatedEvent (e) {
     console.log('_handleRoutingQueueCreatedEvent')
-    console.log(e)
   }
 
   _handleRoutingQueueUpdatedEvent (e) {
     console.log('_handleRoutingQueueUpdatedEvent')
-    console.log(e)
   }
 
   _handleUserAssignedToRoutingQueue (e) {
     console.log('_handleUserAssignedToRoutingQueue')
-    console.log(e)
   }
 
   _handleUserUnassignedFromRoutingQueue (e) {
     console.log('_handleUserUnassignedFromRoutingQueue')
-    console.log(e)
   }
 
-  _handleSetPositionInQueueEvent (e) {
-    console.log('_handleSetPositionInQueueEvent')
-    console.log(e)
-    const queue = e.detail.data.positionInQueue
-    this.queue = queue || null
-    this._updatePanel()
-  }
+  // _handleSetPositionInQueueEvent (e) {
+  //   console.log('_handleSetPositionInQueueEvent')
+  //
+  //   const queue = e.detail.data.positionInQueue
+  //   this.queue = queue || null
+  //   this._updatePanel()
+  // }
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
     console.log(e)
+
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
 
@@ -587,6 +603,7 @@ class WebChat {
     state.status = status
  
     // Merge messages
+    this.messages = []
     const messages = e.detail.data.messages
     this._mergeMessages(messages)
 
@@ -607,7 +624,6 @@ class WebChat {
 
   _handleMoreMessagesLoadedEvent (e) {
     console.log('_handleMoreMessagesLoadedEvent')
-    console.log(e)
 
     const messages = e.detail.data.messages
 
@@ -618,20 +634,24 @@ class WebChat {
 
   _handleCaseCreatedEvent (e) {
     console.log('_handleCaseCreatedEvent')
-    console.log(e)
+
     const state = this.state
     state.view = 'OPEN'
   }
 
   _handleMessageCreatedEvent (e) {
+    console.log('_handleMessageCreatedEvent')
+
     const state = this.state
     state.view = 'OPEN'
 
     const response = e.detail.data.message
+    state.status = e.detail.data.case.status
 
     // Add message
     const message = {
-      text: Utils.parseMessage(response.messageContent.text),
+      id: response.messageContent.id,
+      text: Utils.convertLinks(response.messageContent.text),
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
       createdAt: new Date(response.createdAt),
@@ -643,12 +663,14 @@ class WebChat {
     // Add group end property
     this.messages = Utils.addGroupMeta(messages)
 
+    // Start timeout
+    this._startTimeout()
+
     this._updatePanel()
   }
 
   _handleAgentTypingEvent (e) {
     console.log('_handleAgentTypingStartedEvent')
-    console.log(e)
 
     const isTyping = e.type === 'AgentTypingStarted'
     const agentName = e.detail.data.user.firstName
