@@ -461,14 +461,8 @@ class WebChat {
         direction: batch[i].direction
       })
     }
-    // messages.reverse()
+    messages.reverse()
     this.messages = messages.concat(this.messages)
-
-    // Remove duplicates
-    this.messages = Array.from(new Set(this.messages))
-
-    // Sort on date
-    this.messages = Utils.sortMessages(this.messages)
   }
 
   _sendMessage (e) {
@@ -614,6 +608,12 @@ class WebChat {
       console.log('loading more messages')
     }
     console.log('all loaded')
+
+    // Remove duplicates
+    this.messages = Array.from(new Set(this.messages))
+
+    // Sort on date
+    this.messages = Utils.sortMessages(this.messages)
 
     // Add group end property
     this.messages = Utils.addGroupMeta(this.messages)
