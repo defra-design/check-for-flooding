@@ -559,7 +559,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     }, 'json')
   }
 
-  renderChart()
+  // renderChart()
 
   //
   // Public methods

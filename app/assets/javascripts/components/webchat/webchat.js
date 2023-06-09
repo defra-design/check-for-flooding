@@ -125,7 +125,7 @@ class WebChat {
     // Get thread
     let threadId = localStorage.getItem('THREAD_ID')
     if (!threadId) {
-      threadId = Utils.generateUUID()
+      threadId = Utils.generateThreadId()
       localStorage.setItem('THREAD_ID', threadId)
     }
     const thread = await sdk.getThread(threadId)
@@ -238,10 +238,55 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         this._validatePrechat(this._startChat.bind(this))
       }
-      if (e.target.hasAttribute('data-wc-send-btn')) {
-        this._sendMessage()
+    })
+
+    // Message events
+    container.addEventListener('keyup', async e => {
+      if (e.target.hasAttribute('data-wc-textbox')) {
+        const textbox = e.target
+        const label = textbox.previousElementSibling
+        const form = e.target.closest('form')
+        // Conditionally show label
+        if (Utils.isInputKeypress(e.key)) {
+          this.textboxValue = textbox.textContent
+          label.classList.toggle('wc-message__label--hidden', this.textboxValue.length > 0)
+        }
+        // Autosize height
+        Utils.autosize(e.target, 120)
+        // Conditionally submit form
+        const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
+        if (e.key === 'Enter' && !isMultiline && !e.altKey && !e.shiftKey) {
+          form.dispatchEvent(new Event('submit'))
+        }
+        // Start timeout
+        if (this.timeout) {
+          this._startTimeout()
+        }
       }
     })
+    container.addEventListener('keydown', async e => {
+      if (e.target.hasAttribute('data-wc-textbox')) {
+        const textbox = e.target
+        const label = textbox.previousElementSibling
+        // Conditionally hide label
+        if (Utils.isInputKeypress(e.key)) {
+          label.classList.add('wc-message__label--hidden')
+        }
+        // Conditionally suppress enter
+        const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
+        if (e.key === 'Enter' && !isMultiline && !e.altKey && !e.shiftKey) {
+          e.preventDefault()
+        }
+        // Send keystroke event
+        this._handleSendKeystroke.bind(this)
+      }
+    })
+    container.addEventListener('submit', async e => {
+      if (e.target.hasAttribute('data-wc-message')) {
+        e.preventDefault()
+      this._sendMessage()
+      }
+    }, true)
   }
 
   _updatePanel () {
@@ -258,8 +303,8 @@ class WebChat {
     if (!container) {
       return
     }
-    const content = container.querySelector('[data-wc-inner]')
 
+    const content = container.querySelector('[data-wc-inner]')
     content.innerHTML = env.render('webchat-panel.html', {
       model: {
         availability: state.availability,
@@ -268,7 +313,8 @@ class WebChat {
         isBack: state.isBack,
         isMobile: state.isMobile,
         messages: this.messages,
-        assignee: this.assignee
+        assignee: this.assignee,
+        texboxValue: this.texboxValue
       }
     })
 
@@ -284,21 +330,6 @@ class WebChat {
 
     // Scroll messages
     this._scrollToLatest()
-
-    // Textarea events
-    const textarea = container.querySelector('[data-wc-message]')
-    if (textarea) {
-      textarea.addEventListener('keyup', e => {
-        // Autosize height
-        Utils.autosize(e.target, 120)
-        // Start timeout
-        if (this.timeout) {
-          this._startTimeout()
-        }
-      })
-      // User start stop typing
-      textarea.addEventListener('keydown', this._handleSendKeystroke.bind(this))
-    }
   }
 
   _validatePrechat (successCb) {
@@ -327,6 +358,11 @@ class WebChat {
     const body = document.body
     body.classList.toggle('wc-body', isFullscreen)
     container.setAttribute('aria-modal', isFullscreen)
+
+    const textbox = container.querySelector('[data-wc-textbox]')
+    if (textbox) {
+      textbox.setAttribute('aria-multiline', state.isMobile)
+    }
   }
 
   _openChat (e) {
@@ -466,17 +502,19 @@ class WebChat {
   }
 
   _sendMessage (e) {
-    const thread = this.thread
-    const value = document.getElementById('message').value
-    if (!(value && value.length)) {
-      return
-    }
-    // *** Some times this results in onconsitent data error?
-    try {
-      thread.sendTextMessage(value)
-    } catch (err) {
-      console.log(err)
-    }
+    console.log('_sendMessage')
+
+    // const thread = this.thread
+    // const value = document.getElementById('message').value
+    // if (!(value && value.length)) {
+    //   return
+    // }
+    // // *** Some times this results in onconsitent data error?
+    // try {
+    //   thread.sendTextMessage(value)
+    // } catch (err) {
+    //   console.log(err)
+    // }
   }
 
   _scrollToLatest () {
@@ -609,7 +647,7 @@ class WebChat {
     }
     console.log('all loaded')
 
-    // Remove duplicates
+    // Remove duplicates?? Attempt to fix bug
     this.messages = Array.from(new Set(this.messages))
 
     // Sort on date

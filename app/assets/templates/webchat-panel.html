@@ -100,16 +100,13 @@
   </ul>
 </div>
 <div class="wc__footer">
-  <div class="wc-message">
-    <label class="govuk-visually-hidden" for="message">
-      Message
+  <form class="wc-message" data-wc-message>
+    <label class="wc-message__label{% if model.textboxValue | length %} wc-message__label--hidden{% endif %}" for="message">
+      {% if model.textboxValue %}{{ model.textboxValue }}{% else %}Your message{% endif %}
     </label>
-    <textarea class="wc-message__textarea" id="message" name="message" type="text" rows="1" data-wc-focus-parent data-wc-message placeholder="Your message"></textarea>
-    <button class="wc-message__send" data-wc-send-btn>
-      Send
-      <!-- <svg width="20" height="20" viewBox="0 0 20 20"><path d="M19.688 9.493a.57.57 0 0 1 0 1.016L.821 19.939a.56.56 0 0 1-.599-.058.56.56 0 0 1-.209-.566l1.512-7.223 9.952-2.092-9.952-2.094L.013.683C-.033.471.05.251.222.117S.628-.037.821.06l18.866 9.433z" fill="currentColor"/></svg> -->
-    </button>
-  </div>
+    <div role="textbox" contenteditable="true" aria-multiline="{{ model.isMobile }}" aria-required="true" class="wc-message__textbox" id="message" name="message" data-wc-focus-parent data-wc-textbox></div>
+    <input type="submit" class="wc-message__send" value="Send" data-wc-send-btn />
+  </form>
   <div class="wc-settings">
     <a href="" class="wc-transcript-btn" data-wc-transcript-btn>Save chat</a>
     <!-- <a href="" class="wc-audio-btn" data-wc-audio-btn>Turn sounds off</a> -->

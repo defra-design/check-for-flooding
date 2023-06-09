@@ -136,7 +136,7 @@
   .govuk-form-group {
     margin-bottom: 15px;
   }
-  textarea {
+  .wc-message__textbox {
     margin-bottom: 5px !important;
   }
   .wc-hint {
@@ -315,7 +315,21 @@
     top: 4px;
     bottom: 4px;
   }
-  &__textarea {
+  &__label {
+    position: absolute;
+    pointer-events: none;
+    @extend .govuk-body;
+    font-size: 16px;
+    line-height: 20px;
+    margin: 18px 18px 19px 18px;
+    left: 0px;
+    bottom: 0px;
+    color: govuk-colour('dark-grey');
+  }
+  &__label--hidden {
+    @extend .govuk-visually-hidden;
+  }
+  &__textbox {
     @extend .govuk-textarea;
     min-height: auto;
     font-size: 16px;

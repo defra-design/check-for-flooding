@@ -101,18 +101,26 @@ class Utils {
     return interval
   }
 
-  static generateUUID () {
-    let uuid
-    if (crypto.randomUUID) {
-      uuid = crypto.randomUUID()
-    } else {
-      uuid = Math.floor(Math.random() * 100000000).toString()
-    }
-    return uuid
+  static generateThreadId () {
+    // let id
+    // if (crypto.randomUUID) {
+    //   id = crypto.randomUUID()
+    // } else {
+    //   id = Math.floor(Math.random() * 100000000).toString()
+    // }
+    const random =  Math.floor(Math.random() * 1000).toString()
+    const time = (new Date()).getTime()
+    return `${time}${random}`
   }
 
-  static autosize (textarea, maxHeight) {
-    const el = textarea
+  static isInputKeypress (key) {
+    const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
+    const keys = ['Backspace', 'Delete']
+    return (key.length === 1 && chars.test(key)) || keys.includes(key) 
+  }
+
+  static autosize (textbox, maxHeight) {
+    const el = textbox
     el.style.cssText = 'height:auto'
     if (el.scrollHeight >= maxHeight) {
       el.style.cssText = `overflow: auto; height: ${maxHeight}px`
