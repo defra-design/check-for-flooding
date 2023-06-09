@@ -53,8 +53,13 @@ class Utils {
     return isToday ? time : `${time}, ${date}`
   }
 
-  static convertLinks (input) {
+  static parseMessage (input) {
     let text = input
+
+    // Convert line breaks
+    text = text.trim().replace(/(\r\n|\r|\n){2,}/g, '$1\n').replace(/\r\n|\r|\n/g, '<br>')
+
+    // Convert links
     const linksFound = text.match(/(?:www|https?)[^\s]+/g)
     const aLink = []
     if (linksFound != null) {
@@ -64,11 +69,9 @@ class Utils {
         aLink.push(`<a href="${href}">${anchor}</a>`)
         text = text.split(linksFound[i]).join(aLink[i])
       }
-      return text
     }
-    else {
-      return input
-    }
+
+    return text
   }
 
   static sortMessages (messages) {

@@ -7,8 +7,10 @@ class Config {
   }
 
   static timeout = 600 // 10 minutes
-
   static countdown = 60 // Seconds
+  static isAudioNotifications = true
+  static isMobileSendOnEnter = false
+  static isDesktopSendOnEnter = true
 
   static getBreakpoint (device) {
     return this._breakpoints[device]

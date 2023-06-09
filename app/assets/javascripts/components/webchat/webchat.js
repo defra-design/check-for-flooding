@@ -72,7 +72,6 @@ class WebChat {
     // Event listeners
     sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.MORE_MESSAGES_LOADED, this._handleMoreMessagesLoadedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
 
@@ -489,8 +488,8 @@ class WebChat {
     // Create message model
     for (let i = 0; i < batch.length; i++) {
       messages.push({
-        id: batch[i].messageContent.id,
-        text: Utils.convertLinks(batch[i].messageContent.text),
+        id: batch[i].id,
+        text: Utils.parseMessage(batch[i].messageContent.text),
         assignee: batch[i].authorUser ? batch[i].authorUser.firstName : null,
         date: Utils.formatDate(new Date(batch[i].createdAt)),
         createdAt: new Date(batch[i].createdAt),
@@ -504,17 +503,18 @@ class WebChat {
   _sendMessage (e) {
     console.log('_sendMessage')
 
-    // const thread = this.thread
-    // const value = document.getElementById('message').value
-    // if (!(value && value.length)) {
-    //   return
-    // }
-    // // *** Some times this results in onconsitent data error?
-    // try {
-    //   thread.sendTextMessage(value)
-    // } catch (err) {
-    //   console.log(err)
-    // }
+    const thread = this.thread
+    const message = document.getElementById('message')
+    
+    if (!(message && message.textContent.length)) {
+      return
+    }
+    // *** Some times this results in onconsitent data error?
+    try {
+      thread.sendTextMessage(message.innerText.trim())
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   _scrollToLatest () {
@@ -535,8 +535,6 @@ class WebChat {
 
     // We dont have an open thread
     const status = this.state.status
-    console.log(status, (!status || status === 'closed'))
-
     if (!status || status === 'closed') {
       console.log('Timeout stopped...')
       return
@@ -634,21 +632,25 @@ class WebChat {
     const status = e.detail.data.consumerContact.status
     state.status = status
  
-    // Merge messages
     this.messages = []
-    const messages = e.detail.data.messages
-    this._mergeMessages(messages)
+    let messages = e.detail.data.messages
 
-    // Recursively merge previous messages
-    let response = []
-    while (response) {
-      response = await this.thread.loadMoreMessages()
-      console.log('loading more messages')
+    // Recursively merge messages with previous messages
+    while (messages.length) {
+      this._mergeMessages(messages)
+      console.log('Merging messages: ', messages.length)
+      try {
+        const response = await this.thread.loadMoreMessages()
+        messages = response.data.messages
+      } catch (err) {
+        console.log(err)
+        messages = []
+      }
     }
-    console.log('all loaded')
+    console.log('All messages loaded')
 
-    // Remove duplicates?? Attempt to fix bug
-    this.messages = Array.from(new Set(this.messages))
+    // Remove duplicates?? LoadMoreMessages doesnt always get a unique set?
+    this.messages = [...new Map(this.messages.map(m => [m.id, m])).values()]
 
     // Sort on date
     this.messages = Utils.sortMessages(this.messages)
@@ -658,16 +660,6 @@ class WebChat {
     
     // Ready
     document.dispatchEvent(this.livechatReady)
-  }
-
-  _handleMoreMessagesLoadedEvent (e) {
-    console.log('_handleMoreMessagesLoadedEvent')
-
-    const messages = e.detail.data.messages
-
-    if (messages.length) {
-      this._mergeMessages(messages)
-    }
   }
 
   _handleCaseCreatedEvent (e) {
@@ -688,8 +680,8 @@ class WebChat {
 
     // Add message
     const message = {
-      id: response.messageContent.id,
-      text: Utils.convertLinks(response.messageContent.text),
+      id: response.id,
+      text: Utils.parseMessage(response.messageContent.text),
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
       createdAt: new Date(response.createdAt),

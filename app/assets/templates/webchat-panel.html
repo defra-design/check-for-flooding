@@ -91,9 +91,7 @@
   <ul class="wc-list" data-wc-message-list>
     {% for message in model.messages %}
     <li class="wc-list__item wc-list__item--{{ message.direction | lower }}">
-      <div class="wc-list__item-inner">
-      {{ message.text | safe }}
-      </div>
+      <div class="wc-list__item-inner">{{ message.text | safe }}</div>
       <span class="{% if message.isGroup %}wc-list__item-meta{% else %}govuk-visually-hidden{% endif %}">{% if message.direction == 'outbound' %}{{ message.assignee}}{% else %}You{% endif %}</span>
     </li>
     {% endfor %}
