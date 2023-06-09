@@ -116,10 +116,12 @@ class Utils {
     return `${time}${random}`
   }
 
-  static isInputKeypress (key) {
+  static isFilterKeypress (key, hasValue) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
     const keys = ['Backspace', 'Delete']
-    return (key.length === 1 && chars.test(key)) || keys.includes(key) 
+    const isModifyEmpty = !hasValue && keys.includes(key)
+    console.log(!isModifyEmpty || (key.length === 1 && chars.test(key)) || keys.includes(key))
+    return (isModifyEmpty || (key.length === 1 && chars.test(key)) || keys.includes(key)) 
   }
 
   static autosize (textbox, maxHeight) {

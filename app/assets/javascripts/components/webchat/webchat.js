@@ -237,6 +237,14 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         this._validatePrechat(this._startChat.bind(this))
       }
+      if (e.target.hasAttribute('data-wc-settings-btn')) {
+        e.preventDefault()
+        console.log('Settings')
+      }
+      if (e.target.hasAttribute('data-wc-transcript-btn')) {
+        e.preventDefault()
+        console.log('Transcript')
+      }
     })
 
     // Message events
@@ -246,9 +254,10 @@ class WebChat {
         const label = textbox.previousElementSibling
         const form = e.target.closest('form')
         // Conditionally show label
-        if (Utils.isInputKeypress(e.key)) {
+        if (Utils.isFilterKeypress(e.key)) {
           this.textboxValue = textbox.textContent
-          label.classList.toggle('wc-message__label--hidden', this.textboxValue.length > 0)
+          const hasValue = textbox.textContent.length > 0
+          label.classList.toggle('wc-message__label--hidden', hasValue)
         }
         // Autosize height
         Utils.autosize(e.target, 120)
@@ -266,14 +275,15 @@ class WebChat {
     container.addEventListener('keydown', async e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
         const textbox = e.target
+        const hasValue = textbox.textContent.length > 0
         const label = textbox.previousElementSibling
         // Conditionally hide label
-        if (Utils.isInputKeypress(e.key)) {
+        if (Utils.isFilterKeypress(e.key, hasValue)) {
           label.classList.add('wc-message__label--hidden')
         }
         // Conditionally suppress enter
         const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-        if (e.key === 'Enter' && !isMultiline && !e.altKey && !e.shiftKey) {
+        if (e.key === 'Enter' && (!isMultiline && !e.altKey && !e.shiftKey || !hasValue)) {
           e.preventDefault()
         }
         // Send keystroke event
