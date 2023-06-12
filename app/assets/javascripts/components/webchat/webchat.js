@@ -249,6 +249,10 @@ class WebChat {
         e.preventDefault()
         this._saveSettings(e.target)
       }
+      if (e.target.hasAttribute('data-wc-audio-btn')) {
+        e.preventDefault()
+        this._toggleAudio(e.target)
+      }
     })
 
     // Message events
@@ -495,6 +499,12 @@ class WebChat {
     const isSave = target.hasAttribute('data-wc-save-settings')
     console.log('_saveSettings: ', isSave)
     this._updatePanel()
+  }
+
+  _toggleAudio (target) {
+    const state = this.state
+    state.isAudio = !state.isAudio
+    console.log('_toggleAudio: ', state.isAudio)
   }
 
   _mergeMessages (batch) {

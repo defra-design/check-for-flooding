@@ -127,7 +127,6 @@ class Utils {
   static submit (e, textbox) {
     const form = textbox.closest('form')
     const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-    console.log(e.key, e.key !== 'Enter', isMultiline, e.altKey, e.shiftKey)
     if (e.key !== 'Enter' || isMultiline || e.altKey || e.shiftKey) {
       return
     }
