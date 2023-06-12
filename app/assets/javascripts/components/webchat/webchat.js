@@ -252,20 +252,12 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-textbox')) {
         const textbox = e.target
         const label = textbox.previousElementSibling
-        const form = e.target.closest('form')
         // Conditionally show label
-        if (Utils.isFilterKeypress(e.key)) {
-          this.textboxValue = textbox.textContent
-          const hasValue = textbox.textContent.length > 0
-          label.classList.toggle('wc-message__label--hidden', hasValue)
-        }
+        Utils.toggleLabel(label, e.key, textbox)
         // Autosize height
         Utils.autosize(e.target, 120)
         // Conditionally submit form
-        const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-        if (e.key === 'Enter' && !isMultiline && !e.altKey && !e.shiftKey) {
-          form.dispatchEvent(new Event('submit'))
-        }
+        Utils.submit(e, textbox)
         // Start timeout
         if (this.timeout) {
           this._startTimeout()
@@ -275,17 +267,12 @@ class WebChat {
     container.addEventListener('keydown', async e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
         const textbox = e.target
-        const hasValue = textbox.textContent.length > 0
+        // const hasValue = textbox.textContent.length > 0
         const label = textbox.previousElementSibling
         // Conditionally hide label
-        if (Utils.isFilterKeypress(e.key, hasValue)) {
-          label.classList.add('wc-message__label--hidden')
-        }
+        Utils.toggleLabel(label, e.key, textbox)
         // Conditionally suppress enter
-        const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-        if (e.key === 'Enter' && (!isMultiline && !e.altKey && !e.shiftKey || !hasValue)) {
-          e.preventDefault()
-        }
+        Utils.suppressEnter(e, textbox)
         // Send keystroke event
         this._handleSendKeystroke.bind(this)
       }
@@ -293,7 +280,7 @@ class WebChat {
     container.addEventListener('submit', async e => {
       if (e.target.hasAttribute('data-wc-message')) {
         e.preventDefault()
-      this._sendMessage()
+        this._sendMessage()
       }
     }, true)
   }

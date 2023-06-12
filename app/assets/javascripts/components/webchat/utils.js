@@ -116,12 +116,30 @@ class Utils {
     return `${time}${random}`
   }
 
-  static isFilterKeypress (key, hasValue) {
+  static toggleLabel (label, key, textbox) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
-    const keys = ['Backspace', 'Delete']
-    const isModifyEmpty = !hasValue && keys.includes(key)
-    console.log(!isModifyEmpty || (key.length === 1 && chars.test(key)) || keys.includes(key))
-    return (isModifyEmpty || (key.length === 1 && chars.test(key)) || keys.includes(key)) 
+    const hasValue = textbox.textContent.length > 0
+    const isValidChar = key.length === 1 && chars.test(key)
+    const isHidden = hasValue || (!hasValue && isValidChar)
+    label.classList.toggle('wc-message__label--hidden', isHidden)
+  }
+
+  static submit (e, textbox) {
+    const form = textbox.closest('form')
+    const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
+    console.log(e.key, e.key !== 'Enter', isMultiline, e.altKey, e.shiftKey)
+    if (e.key !== 'Enter' || isMultiline || e.altKey || e.shiftKey) {
+      return
+    }
+    form.dispatchEvent(new Event('submit'))
+  }
+
+  static suppressEnter (e, textbox) {
+    const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
+    const hasValue = textbox.textContent.length > 0
+    if (e.key === 'Enter' && (!isMultiline && !e.altKey && !e.shiftKey || !hasValue)) {
+      e.preventDefault()
+    }
   }
 
   static autosize (textbox, maxHeight) {
