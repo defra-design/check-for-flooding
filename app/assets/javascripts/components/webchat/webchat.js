@@ -239,11 +239,15 @@ class WebChat {
       }
       if (e.target.hasAttribute('data-wc-settings-btn')) {
         e.preventDefault()
-        console.log('Settings')
+        this._settings()
       }
       if (e.target.hasAttribute('data-wc-transcript-btn')) {
         e.preventDefault()
         console.log('Transcript')
+      }
+      if (e.target.hasAttribute('data-wc-save-settings-btn')) {
+        e.preventDefault()
+        this._saveSettings(e.target)
       }
     })
 
@@ -472,11 +476,25 @@ class WebChat {
     }
   }
 
-  _giveFeedback() {
+  _giveFeedback () {
     const state = this.state
     state.view = 'FEEDBACK'
     this._updatePanel()
     state.view = 'PRECHAT'
+  }
+
+  _settings () {
+    const state = this.state
+    state.view = 'SETTINGS'
+    console.log('_settings')
+    this._updatePanel()
+    state.view = 'OPEN'
+  }
+
+  _saveSettings (target) {
+    const isSave = target.hasAttribute('data-wc-save-settings')
+    console.log('_saveSettings: ', isSave)
+    this._updatePanel()
   }
 
   _mergeMessages (batch) {
