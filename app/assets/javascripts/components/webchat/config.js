@@ -6,7 +6,7 @@ class Config {
     tablet: '834px'
   }
 
-  static timeout = 600 // 10 minutes
+  static timeout = 1200 // 20 minutes
   static countdown = 60 // Seconds
   static isAudioNotifications = true
   static isMobileSendOnEnter = false
