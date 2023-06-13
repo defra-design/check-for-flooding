@@ -3,7 +3,7 @@
   <div class="wc-link__inner">
     <a href="#webchat" role="button" draggable="false" data-module="govuk-button" class="wc-open-btn" data-wc-open-btn>
       <!-- <svg focusable="false" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="currentColor"><path d="M3.294 15.93C1.274 14.465.004 12.35.004 10c0-4.415 4.481-8 10-8s10 3.585 10 8-4.481 8-10 8c-1.141 0-2.237-.153-3.259-.435L2 19.965l1.294-4.035zM5.5 8.5h.01a1.5 1.5 0 1 1 0 3H5.5a1.5 1.5 0 1 1 0-3zm4.5 0h.01a1.5 1.5 0 1 1 0 3H10a1.5 1.5 0 1 1 0-3zm4.5 0h.01a1.5 1.5 0 1 1 0 3h-.01a1.5 1.5 0 1 1 0-3z"/></svg> -->
-      {% if model.view == 'OPEN' or model.view == 'END' %}Show chat{% else %}Start chat{% endif %}
+      {% if model.view == 'OPEN' or model.view == 'END' %}Show chat{% if model.unseen > 0 %}<span class="wc-open-btn__unseen">{{ model.unseen }}</span> <span class="govuk-visually-hidden">new message</span>{% endif %}{% else %}Start chat{% endif %}
     </a>
   </div>
 </div>

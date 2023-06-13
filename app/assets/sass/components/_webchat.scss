@@ -393,6 +393,9 @@
   color: $govuk-text-colour !important;
   margin: 10px 5px;
 }
+.wc-audio-btn span {
+  pointer-events: none;
+}
 .wc-end-btn {
   font-size: 16px;
   margin: 0px;
@@ -446,6 +449,25 @@
     color: $govuk-link-hover-colour;
     svg {
       color: govuk-colour('dark-blue');
+    }
+    .wc-open-btn__unseen {
+      background-color: govuk-colour('dark-blue');
+    }
+  }
+  &__unseen {
+    display: inline-block;
+    position: relative;
+    border-radius: 10px;
+    background-color: govuk-colour('black');
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0px 6px;
+    margin-left: 5px;
+    @include mq ($from: tablet) {
+      top: -1px;
+      padding-left: 7px;
+      padding-right: 7px;
     }
   }
 }

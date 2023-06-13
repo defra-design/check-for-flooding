@@ -13,6 +13,7 @@ class WebChat {
   constructor (id) {  
     this.id = id
     this.assignee = null
+    this.unseen = 0
     this.messages = []
 
     const state = new State(
@@ -44,7 +45,7 @@ class WebChat {
         this._openChat(e)
       }
     })
-    document.addEventListener('scroll', this._handleScroll.bind(this))
+    document.addEventListener('scroll', this._handleScrollEvent.bind(this))
 
     // Set initial availability
     this.availability = availability    
@@ -77,9 +78,10 @@ class WebChat {
 
     sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_CREATED, this._handleRoutingQueueCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_UPDATED, this._handleRoutingQueueUpdatedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.USER_ASSIGNED_TO_ROUTING_QUEUE, this._handleUserAssignedToRoutingQueue.bind(this))
-    sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueue.bind(this))
+    sdk.onChatEvent(ChatEvent.USER_ASSIGNED_TO_ROUTING_QUEUE, this._handleUserAssignedToRoutingQueueEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueueEvent.bind(this))
     // sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, this._handleSetPositionInQueueEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.MESSAGE_SEEN_BY_END_USER, this._handleMessageSeenByEndUserEvent.bind(this))
 
     this.sdk = sdk
 
@@ -169,11 +171,12 @@ class WebChat {
       model: {
         availability: state.availability,
         isStart: isStart,
-        view: state.view
+        view: state.view,
+        unseen: this.unseen
       }
     })
 
-    this._handleScroll()
+    this._handleScrollEvent()
   }
 
   _createPanel () {
@@ -282,7 +285,7 @@ class WebChat {
         // Conditionally suppress enter
         Utils.suppressEnter(e, textbox)
         // Send keystroke event
-        this._handleSendKeystroke.bind(this)
+        this._handleSendKeystrokeEvent.bind(this)
       }
     })
     container.addEventListener('submit', async e => {
@@ -294,7 +297,7 @@ class WebChat {
   }
 
   _updatePanel () {
-    console.log('_updatePanel: ', this.messages.length)
+    console.log('_updatePanel')
     const state = this.state
 
     // Reset timeout
@@ -316,6 +319,7 @@ class WebChat {
         isOpen: state.isOpen,
         isBack: state.isBack,
         isMobile: state.isMobile,
+        isAudio: state.isAudio,
         messages: this.messages,
         assignee: this.assignee,
         texboxValue: this.texboxValue
@@ -389,7 +393,7 @@ class WebChat {
       this._updatePanel()
     }
 
-    this._handleScroll()
+    this._handleScrollEvent()
   }
 
   _closeChat (e) {
@@ -417,7 +421,7 @@ class WebChat {
       this._setAttributes()
       this.container = this.container.remove()
       state.replaceState()
-      this._handleScroll(e)
+      this._handleScrollEvent(e)
     }
 
     this._updateAvailability()
@@ -504,7 +508,14 @@ class WebChat {
   _toggleAudio (target) {
     const state = this.state
     state.isAudio = !state.isAudio
+    if (state.isAudio) {
+      localStorage.removeItem('AUDIO_OFF')
+    } else {
+      localStorage.setItem('AUDIO_OFF', true)
+    }
     console.log('_toggleAudio: ', state.isAudio)
+    const text = target.querySelector('span')
+    text.innerText = state.isAudio ? 'off' : 'on'
   }
 
   _mergeMessages (batch) {
@@ -543,9 +554,15 @@ class WebChat {
   }
 
   _scrollToLatest () {
+    // Scroll to latest
     const body = this.container.querySelector('[data-wc-body]')
     if (body) {
       body.scrollTop = body.scrollHeight
+    }
+    // Mark as seen
+    const state = this.state
+    if (body && state.isOpen) {
+      this.thread.lastMessageSeen()
     }
   }
 
@@ -630,11 +647,11 @@ class WebChat {
     console.log('_handleRoutingQueueUpdatedEvent')
   }
 
-  _handleUserAssignedToRoutingQueue (e) {
+  _handleUserAssignedToRoutingQueueEvent (e) {
     console.log('_handleUserAssignedToRoutingQueue')
   }
 
-  _handleUserUnassignedFromRoutingQueue (e) {
+  _handleUserUnassignedFromRoutingQueueEvent (e) {
     console.log('_handleUserUnassignedFromRoutingQueue')
   }
 
@@ -648,7 +665,7 @@ class WebChat {
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
-    console.log(e)
+    console.log(e.detail.data)
 
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
@@ -660,10 +677,13 @@ class WebChat {
     this.messages = []
     let messages = e.detail.data.messages
 
+    // Get unseen messages
+    const unseen = e.detail.data.thread.unseenMessagesCount
+    this.unseen = unseen
+
     // Recursively merge messages with previous messages
     while (messages.length) {
       this._mergeMessages(messages)
-      console.log('Merging messages: ', messages.length)
       try {
         const response = await this.thread.loadMoreMessages()
         messages = response.data.messages
@@ -702,6 +722,7 @@ class WebChat {
 
     const response = e.detail.data.message
     state.status = e.detail.data.case.status
+    const direction = response.direction.toLowerCase()
 
     // Add message
     const message = {
@@ -710,13 +731,19 @@ class WebChat {
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
       createdAt: new Date(response.createdAt),
-      direction: response.direction.toLowerCase()
+      direction: direction
     }
     const messages = this.messages
     messages.push(message)
 
     // Add group end property
     this.messages = Utils.addGroupMeta(messages)
+
+    // Update unseen count
+    if (direction === 'outbound' && !state.isOpen) {
+      this.unseen += 1
+      this._updateAvailability()
+    }
 
     // Start timeout
     this._startTimeout()
@@ -725,7 +752,7 @@ class WebChat {
   }
 
   _handleAgentTypingEvent (e) {
-    console.log('_handleAgentTypingStartedEvent')
+    console.log('_handleAgentTypingEvent')
 
     const isTyping = e.type === 'AgentTypingStarted'
     const agentName = e.detail.data.user.firstName
@@ -743,13 +770,7 @@ class WebChat {
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', `
         <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
-          <div class="wc-list__item-inner">
-            <svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16">
-              <circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle>
-              <circle stroke="none" cx="14" cy="8" r="3" fill="currentColor"></circle>
-              <circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle>
-            </svg>
-          </div>
+          <div class="wc-list__item-inner"><svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16"><circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="14" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle></svg></div>
           <span class="wc-list__item-meta">${agentName} is typing</span>
         </li>
       `)
@@ -757,6 +778,13 @@ class WebChat {
     } else if (el) {
       el.remove()
     }
+  }
+
+  _handleMessageSeenByEndUserEvent (e) {
+    console.log('_handleMessageSeenByEndUserEvent')
+
+    this.unseen = 0
+    this._updateAvailability()
   }
 
   _handleTimeout (e) {
@@ -803,7 +831,7 @@ class WebChat {
     })
   }
 
-  _handleScroll (e) {
+  _handleScrollEvent (e) {
     const state = this.state
     const availability = this.availability
     const link = availability.querySelector('[data-wc-link]')
@@ -818,7 +846,7 @@ class WebChat {
     link.classList.toggle('wc-link--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
   }
 
-  _handleSendKeystroke () {
+  _handleSendKeystrokeEvent () {
     this.thread.keystroke(1000)
     setTimeout(() => {
       this.thread.stopTyping()
