@@ -665,7 +665,6 @@ class WebChat {
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
-    console.log(e.detail.data)
 
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
