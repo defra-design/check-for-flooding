@@ -155,7 +155,6 @@ class Utils {
       // }, 0)
     }
   }
-
   // static iosSoftKeyboardOffset (state, container) {
   //   const acceptsKeyboardInput = (el) => { 
   //     return (

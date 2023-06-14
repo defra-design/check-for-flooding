@@ -268,7 +268,7 @@ class WebChat {
     })
 
     // Message events
-    container.addEventListener('keyup', async e => {
+    container.addEventListener('keyup', e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
         const textbox = e.target
         const label = textbox.previousElementSibling
@@ -284,10 +284,9 @@ class WebChat {
         }
       }
     })
-    container.addEventListener('keydown', async e => {
+    container.addEventListener('keydown', e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
         const textbox = e.target
-        // const hasValue = textbox.textContent.length > 0
         const label = textbox.previousElementSibling
         // Conditionally hide label
         Utils.toggleLabel(label, e.key, textbox)
@@ -297,10 +296,20 @@ class WebChat {
         this._handleSendKeystrokeEvent.bind(this)
       }
     })
-    container.addEventListener('submit', async e => {
+    container.addEventListener('submit', e => {
       if (e.target.hasAttribute('data-wc-message')) {
         e.preventDefault()
         this._sendMessage()
+      }
+    }, true)
+    container.addEventListener('paste', e => {
+      console.log('Paste')
+      if (e.target.hasAttribute('data-wc-message')) {
+        const data = (e.clipboardData || window.clipboardData).getData('text')
+        console.log('Paste: ', data)
+        const textbox = e.target
+        const label = textbox.previousElementSibling
+        Utils.toggleLabel(label, 'v', textbox)
       }
     }, true)
   }
