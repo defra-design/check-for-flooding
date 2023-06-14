@@ -155,6 +155,30 @@ class Utils {
       // }, 0)
     }
   }
+
+  // static iosSoftKeyboardOffset (state, container) {
+  //   const acceptsKeyboardInput = (el) => { 
+  //     return (
+  //       el.tagName === 'INPUT' ||
+  //       el.tagName === 'TEXTAREA' ||
+  //       el.isContentEditable
+  //     )
+  //   }
+  //   container.addEventListener('focus', e => {
+  //     const isMobile = state.isMobile
+  //     if (!isMobile || !acceptsKeyboardInput(e.target)) {
+  //       return
+  //     }
+  //     document.body.setAttribute('data-keyboard-open', '')
+  //     console.log('Keyboard showing: ', document.body.clientHeight, window.innerHeight, window.outerHeight)
+  //   }, true)
+  //   container.addEventListener('blur', e => {
+  //     if (!document.body.hasAttribute('data-keyboard-open')) {
+  //       return
+  //     }
+  //     document.body.removeAttribute('data-keyboard-open')
+  //   }, true)
+  // }
 }
 
 export default Utils

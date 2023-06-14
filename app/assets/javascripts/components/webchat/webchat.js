@@ -16,12 +16,18 @@ class WebChat {
     this.unseen = 0
     this.messages = []
 
+    // Update meta viewport
+    // const metaViewport = document.querySelector('meta[name="viewport"]')
+    // metaViewport.content += ', interactive-widget=resizes-content'
+
+    // Instantiate state
     const state = new State(
       this._openChat.bind(this),
       this._closeChat.bind(this)
     )
     this.state = state
 
+    // Initialise keyboard interface
     Keyboard.init(state)
 
     // Custom events
@@ -208,6 +214,9 @@ class WebChat {
 
     Utils.listenForDevice('mobile', this._setAttributes.bind(this))
 
+    // iOS Soft keyboard scrolling past document height bug
+    // Utils.iosSoftKeyboardOffset(state, container)
+
     // Event listeners
     container.addEventListener('click', async e => {
       if (e.target.hasAttribute('data-wc-back-btn')) {
@@ -360,6 +369,7 @@ class WebChat {
     }
 
     const state = this.state
+
     const isFullscreen = state.isMobile && state.isOpen
     const root = document.getElementsByTagName('html')[0]
     root.classList.toggle('wc-html', isFullscreen)
@@ -404,7 +414,7 @@ class WebChat {
     if (this.timeout) {
       this._startTimeout()
     }
-    
+
     // Reinstate link
     const availability = this.availability
     const link = availability.querySelector('[data-wc-link]')

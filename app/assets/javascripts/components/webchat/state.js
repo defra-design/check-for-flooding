@@ -13,11 +13,13 @@ class State {
     this._openChat = openChat
     this._closeChat = closeChat
 
+    // Help with browser back behaviour
     if (history.length <= 1) {
       this._isBack = false
       sessionStorage.removeItem('IS_BACK')
     }
 
+    // We need to toggle some attributes depending on screen size
     Utils.listenForDevice('mobile', this._setMobile.bind(this))
 
     // Events
