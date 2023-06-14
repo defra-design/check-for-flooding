@@ -4,6 +4,7 @@
 .wc-html {
   @include mq ($until: tablet) {
     height: 100vh;
+    overflow: hidden;
   }
 }
 .wc-body {
