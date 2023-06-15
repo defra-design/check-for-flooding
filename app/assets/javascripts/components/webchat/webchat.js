@@ -296,20 +296,21 @@ class WebChat {
         this._handleSendKeystrokeEvent.bind(this)
       }
     })
+    container.addEventListener('paste', e => {
+      console.log('paste: ', e)
+      if (e.target.closest('#message')) {
+        e.preventDefault()
+        const text = (e.clipboardData || window.clipboardData).getData('text')
+        const textbox = document.getElementById('message')
+        const label = textbox.previousElementSibling
+        textbox.innerText = text
+        Utils.toggleLabel(label, 'v', textbox)
+      }
+    }, true)
     container.addEventListener('submit', e => {
       if (e.target.hasAttribute('data-wc-message')) {
         e.preventDefault()
         this._sendMessage()
-      }
-    }, true)
-    container.addEventListener('paste', e => {
-      console.log('Paste')
-      if (e.target.hasAttribute('data-wc-message')) {
-        const data = (e.clipboardData || window.clipboardData).getData('text')
-        console.log('Paste: ', data)
-        const textbox = e.target
-        const label = textbox.previousElementSibling
-        Utils.toggleLabel(label, 'v', textbox)
       }
     }, true)
   }

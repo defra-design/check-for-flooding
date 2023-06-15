@@ -101,16 +101,23 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 10px;
+  padding: 15px;
   align-items: center;
   &:after {
     position: absolute;
     content: '';
     bottom: 0px;
-    left: 10px;
-    right: 10px;
+    left: 15px;
+    right: 15px;
     height: 0px;
     border-bottom: 1px solid govuk-colour('mid-grey');
+  }
+  @include mq ($from: tablet) {
+    padding: 10px;
+    &:after {
+      left: 10px;
+      right: 10px;
+    }
   }
 }
 .wc-status__content {
@@ -177,8 +184,12 @@
     display: block;
     flex: 0 0 auto;
     max-width: 75%;
-    margin: 0px 10px;
+    margin: 0px 15px;
     padding: 5px 0px;
+    @include mq ($from: 'tablet') {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
   }
   &__item-inner {
     display: inline-block;
@@ -327,7 +338,10 @@
     @extend .govuk-body;
     font-size: 16px;
     line-height: 20px;
-    margin: 18px 18px 19px 18px;
+    margin: 20px;
+    @include mq ($from: 'tablet') {
+      margin: 18px 18px 19px 18px;
+    }
     left: 0px;
     bottom: 0px;
     color: govuk-colour('dark-grey');
@@ -342,7 +356,10 @@
     line-height: 20px;
     flex: 1 1 auto;
     align-self: flex-end;
-    margin: 18px 18px 19px 18px;
+    margin: 20px;
+    @include mq ($from: 'tablet') {
+      margin: 18px 18px 19px 18px;
+    }
     padding: 0px;
     border: 0px;
     height: 20px;
@@ -356,7 +373,10 @@
   }
   &__send {
     @extend .govuk-button;
-    margin: 10px 10px 12px 0px;
+    margin: 10px 15px 12px 0px;
+    @include mq ($from: 'tablet') {
+      margin-right: 10px;
+    }
     font-size: 16px;
     position: relative;
     flex: 0 0 auto;
@@ -376,7 +396,11 @@
   }
 }
 .wc-settings {
-  padding: 0px 5px;
+  padding: 0px 10px;
+  @include mq ($from: 'tablet') {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 }
 .wc-credit {
   display: none;
