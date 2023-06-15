@@ -5,6 +5,7 @@ import { Button, CharacterCount } from 'govuk-frontend'
 import Keyboard from './keyboard'
 import State from './state'
 import Utils from './utils'
+import Transcript from './transcript'
 import Config from './config'
 
 const env = window.nunjucks.configure('views')
@@ -253,7 +254,7 @@ class WebChat {
       }
       if (e.target.hasAttribute('data-wc-transcript-btn')) {
         e.preventDefault()
-        console.log('Transcript')
+        this._download()
       }
       if (e.target.hasAttribute('data-wc-save-settings-btn')) {
         e.preventDefault()
@@ -623,6 +624,19 @@ class WebChat {
     }
     console.log('Timeout started...')
     this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
+  }
+
+  _download () {
+    console.log('download')
+    const transcript = new Transcript(this.messages)
+    const data = transcript.data
+    const anchor = document.createElement('a')
+    anchor.className = 'govuk-visually-hidden'
+    anchor.setAttribute('href', data)
+    anchor.setAttribute('download', 'transcript.txt')
+    document.body.appendChild(anchor)
+    anchor.click()
+    document.body.removeChild(anchor)
   }
 
   _debug (text) {
