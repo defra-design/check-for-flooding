@@ -613,6 +613,31 @@ class WebChat {
     this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
   }
 
+  _debug (text) {
+    if (!Utils.getParameterByName('debug')) {
+      return
+    }
+    if (!this.debug) {
+      const debug = document.createElement('div')
+      debug.id = 'debug'
+      debug.className = 'wc-debug'
+      debug.setAttribute('style', `
+        position: absolute;
+        font-size: 12px;
+        top: 50%;
+        border: 1px solid red;
+        padding: 5px;
+        width: 200px;
+        height: 100px;
+        margin-top: -50px;
+        overflow: auto;
+      `)
+      this.container.appendChild(debug)
+      this.debug = document.getElementById('debug')
+    }
+    this.debug.innerHTML += `${text}<br/>`
+  }
+
   //
   // Event handlers
   //
@@ -653,9 +678,13 @@ class WebChat {
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
+    this._debug('_handleAssignedAgentChangedEvent')
 
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
+
+    this._debug(this.assignee)
+
     this._updatePanel()
   }
 
