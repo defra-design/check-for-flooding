@@ -559,6 +559,7 @@ class WebChat {
       messages.push({
         id: batch[i].id,
         text: Utils.parseMessage(batch[i].messageContent.text),
+        user: batch[i].authorEndUserIdentity ? batch[i].authorEndUserIdentity.fullName.trim() : null,
         assignee: batch[i].authorUser ? batch[i].authorUser.firstName : null,
         date: Utils.formatDate(new Date(batch[i].createdAt)),
         createdAt: new Date(batch[i].createdAt),
@@ -635,7 +636,7 @@ class WebChat {
     anchor.setAttribute('href', data)
     anchor.setAttribute('download', 'transcript.txt')
     document.body.appendChild(anchor)
-    anchor.click()
+    // anchor.click()
     document.body.removeChild(anchor)
   }
 
@@ -685,7 +686,6 @@ class WebChat {
 
   _handleCaseStatusChangedEvent (e) {
     console.log('_handleCaseStatusChangedEvent')
-    console.log(e.detail.data)
 
     const state = this.state
     state.status = e.detail.data.case.status
@@ -802,6 +802,7 @@ class WebChat {
     const message = {
       id: response.id,
       text: Utils.parseMessage(response.messageContent.text),
+      user: response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null,
       assignee: response.authorUser ? response.authorUser.firstName : null,
       date: Utils.formatDate(new Date(response.createdAt)),
       createdAt: new Date(response.createdAt),
