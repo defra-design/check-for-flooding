@@ -298,7 +298,7 @@ class WebChat {
     })
     container.addEventListener('paste', e => {
       console.log('paste: ', e)
-      if (e.target.closest('#message')) {
+      if (e.target.closest('div#message')) {
         e.preventDefault()
         const text = (e.clipboardData || window.clipboardData).getData('text')
         const textbox = document.getElementById('message')
