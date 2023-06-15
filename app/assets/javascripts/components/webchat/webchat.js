@@ -107,7 +107,7 @@ class WebChat {
     state.availability = isOnline ? isAvailable ? 'AVAILABLE' : 'BUSY' : 'OFFLINE'
 
     // Recover thread
-    if (isOnline && localStorage.getItem('THREAD_ID')) {
+    if (localStorage.getItem('THREAD_ID')) {
       try { // Address issue with no thread but we still have the session id
         await this._getThread()
         await this.thread.recover()
@@ -119,8 +119,6 @@ class WebChat {
         state.view = 'PRECHAT'
       }
     }
-
-    console.log('Dispatching event from authorise')
 
     // Auth ready
     document.dispatchEvent(this.livechatReady)  
@@ -225,9 +223,9 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-close-btn')) {
         this._closeChat(e)
       }
-      if (e.target.hasAttribute('data-wc-give-feedback-btn')) {
+      if (e.target.hasAttribute('data-wc-submit-feedback-btn')) {
         e.preventDefault()
-        this._giveFeedback()
+        this._submitFeedback()
       }
       if (e.target.hasAttribute('data-wc-end-btn')) {
         e.preventDefault()
@@ -330,11 +328,11 @@ class WebChat {
       return
     }
 
-    const content = container.querySelector('[data-wc-inner]')
-    content.innerHTML = env.render('webchat-panel.html', {
+    const model = {
       model: {
         availability: state.availability,
         view: state.view,
+        status: state.status,
         isOpen: state.isOpen,
         isBack: state.isBack,
         isMobile: state.isMobile,
@@ -343,7 +341,10 @@ class WebChat {
         assignee: this.assignee,
         texboxValue: this.texboxValue
       }
-    })
+    }
+
+    const content = container.querySelector('[data-wc-inner]')
+    content.innerHTML = env.render('webchat-panel.html', model)
 
     // Initialise GOV.UK components
     const buttons = content.querySelectorAll('[data-module="govuk-button"]')
@@ -498,21 +499,26 @@ class WebChat {
     // Close thread
     localStorage.removeItem('THREAD_ID')
     this.messages = []
+
+    // Move to next view
     state.view = 'FEEDBACK'
+
     if (status && status !== 'closed') {
+      // This method has no promise to listen for...
       thread.endChat()
     } else {
       this._updatePanel()
+      // Don't need to persist feedback view
       state.view = 'PRECHAT'
-      
+      console.log('Done: ', state.view)
       // Start timeout
       this._resetTimeout()
     }
   }
 
-  _giveFeedback () {
+  _submitFeedback () {
     const state = this.state
-    state.view = 'FEEDBACK'
+    state.view = 'FEEDBACK-CONFIRM'
     this._updatePanel()
     state.view = 'PRECHAT'
   }
@@ -665,15 +671,17 @@ class WebChat {
 
   _handleCaseStatusChangedEvent (e) {
     console.log('_handleCaseStatusChangedEvent')
+    console.log(e.detail.data)
 
     const state = this.state
     state.status = e.detail.data.case.status
+    const view = state.view
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
       this._updatePanel()
-      state.view = 'PRECHAT'
-
+      // If intigated by user view will have been set to FEEDBACK
+      state.view = view === 'FEEDBACK' ? 'PRECHAT' : view
       // Start timeout
       this._resetTimeout()
     }
