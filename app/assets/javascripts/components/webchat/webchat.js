@@ -595,7 +595,7 @@ class WebChat {
     }
     // Mark as seen
     const state = this.state
-    if (body && state.isOpen) {
+    if (body && state.isOpen && this.thread) {
       this.thread.lastMessageSeen()
     }
   }
@@ -636,7 +636,7 @@ class WebChat {
     anchor.setAttribute('href', data)
     anchor.setAttribute('download', 'transcript.txt')
     document.body.appendChild(anchor)
-    // anchor.click()
+    anchor.click()
     document.body.removeChild(anchor)
   }
 

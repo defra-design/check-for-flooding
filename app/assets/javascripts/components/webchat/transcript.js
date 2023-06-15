@@ -2,9 +2,7 @@
 
 class Transcript {
   constructor (messages) {
-    console.log(messages)
     const text = this._buildString(messages)
-    console.log(text)
     this.data = `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`
   }
 
