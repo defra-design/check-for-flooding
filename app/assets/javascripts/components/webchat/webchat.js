@@ -631,8 +631,9 @@ class WebChat {
         height: 100px;
         margin-top: -50px;
         overflow: auto;
+        z-index: 1000;
       `)
-      this.container.appendChild(debug)
+      document.body.appendChild(debug)
       this.debug = document.getElementById('debug')
     }
     this.debug.innerHTML += `${text}<br/>`
