@@ -280,7 +280,7 @@ class WebChat {
         Utils.submit(e, textbox)
         // Start timeout
         if (this.timeout) {
-          this._startTimeout()
+          this._resetTimeout()
         }
       }
     })
@@ -321,7 +321,7 @@ class WebChat {
 
     // Reset timeout
     if (this.timeout) {
-      this._startTimeout()
+      this._resetTimeout()
     }
     
     // Update content
@@ -399,7 +399,7 @@ class WebChat {
 
     // Reset timeout
     if (this.timeout) {
-      this._startTimeout()
+      this._resetTimeout()
     }
 
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
@@ -422,7 +422,7 @@ class WebChat {
 
     // Reset timeout
     if (this.timeout) {
-      this._startTimeout()
+      this._resetTimeout()
     }
 
     // Reinstate link
@@ -498,9 +498,15 @@ class WebChat {
     // Close thread
     localStorage.removeItem('THREAD_ID')
     this.messages = []
+    state.view = 'FEEDBACK'
     if (status && status !== 'closed') {
-      state.view = 'FEEDBACK'
       thread.endChat()
+    } else {
+      this._updatePanel()
+      state.view = 'PRECHAT'
+      
+      // Start timeout
+      this._resetTimeout()
     }
   }
 
@@ -586,7 +592,7 @@ class WebChat {
     }
   }
 
-  _startTimeout () {
+  _resetTimeout () {
     if (!Config.timeout > 0) {
       return
     }
@@ -654,7 +660,7 @@ class WebChat {
     this._updatePanel()
 
     // Start timeout
-    this._startTimeout()
+    this._resetTimeout()
   }
 
   _handleCaseStatusChangedEvent (e) {
@@ -669,7 +675,7 @@ class WebChat {
       state.view = 'PRECHAT'
 
       // Start timeout
-      this._startTimeout()
+      this._resetTimeout()
     }
   }
 
@@ -679,12 +685,9 @@ class WebChat {
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
-    this._debug('_handleAssignedAgentChangedEvent')
 
     const assignee = e.detail.data.inboxAssignee
     this.assignee = assignee ? assignee.firstName : null
-
-    this._debug(this.assignee)
 
     this._updatePanel()
   }
@@ -795,7 +798,7 @@ class WebChat {
     }
 
     // Start timeout
-    this._startTimeout()
+    this._resetTimeout()
 
     this._updatePanel()
   }
@@ -812,7 +815,7 @@ class WebChat {
     }
 
     // Reset timeout
-    this._startTimeout()
+    this._resetTimeout()
 
     const el = list.querySelector('[data-wc-agent-typing]')
     
@@ -864,7 +867,7 @@ class WebChat {
         const clearBtn = container.querySelector('[data-wc-cancel-timeout]')
         clearBtn.addEventListener('click', e => {
           e.preventDefault()
-          this._startTimeout()
+          this._resetTimeout()
         })
       }
     }
