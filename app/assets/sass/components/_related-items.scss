@@ -1,10 +1,19 @@
 .defra-related-items {
   border-top: 2px solid govuk-colour("blue");
   padding-top: govuk-spacing(2);
-  margin-top: 0px;
+  margin-top: 20px;
+  @include mq ($from: tablet) {
+    margin-top: 0px;
+  }
 }
 
 // Overides
+.govuk-grid-column-full .defra-related-items {
+  @include mq ($from: tablet) {
+    margin-top: 30px;
+  }
+}
+
 .defra-related-items .govuk-list {
   margin-bottom: 0px;
 }
@@ -13,10 +22,6 @@
   margin-bottom: govuk-spacing(2);
 }
 
-.govuk-grid-column-full .defra-related-items {
-  margin-top: 30px;
-  @include mq ($from: tablet) {
-    margin-top: 40px;
-  }
+.defra-related-items .govuk-list > li:last-child {
+  margin-bottom: 0px;
 }
-  
