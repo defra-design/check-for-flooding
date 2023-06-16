@@ -3,6 +3,7 @@
 import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
 import { Button, CharacterCount } from 'govuk-frontend'
 import Keyboard from './keyboard'
+import Notification from './notification'
 import State from './state'
 import Utils from './utils'
 import Transcript from './transcript'
@@ -30,6 +31,9 @@ class WebChat {
 
     // Initialise keyboard interface
     Keyboard.init(state)
+
+    // Initialise notification sounds
+    this.notification = new Notification()
 
     // Custom events
     this.livechatReady = new CustomEvent('livechatReady', {})
@@ -147,6 +151,7 @@ class WebChat {
 
   async _startChat (userName, message) {
     const sdk = this.sdk
+    const state = this.state
 
     // Set userName
     sdk.getCustomer().setName(userName)
@@ -160,6 +165,12 @@ class WebChat {
 
     try {
       this.thread.startChat(message)
+
+      // Unlock audio
+      if (state.isAudio) {
+        this.notification.playSound(1)
+        console.log('Unlocking audio')
+      }
     } catch (err) {
       console.log()
     }
@@ -541,14 +552,22 @@ class WebChat {
   _toggleAudio (target) {
     const state = this.state
     state.isAudio = !state.isAudio
-    if (state.isAudio) {
+    const isAudio = state.isAudio
+
+    if (isAudio) {
       localStorage.removeItem('AUDIO_OFF')
     } else {
       localStorage.setItem('AUDIO_OFF', true)
     }
-    console.log('_toggleAudio: ', state.isAudio)
+    console.log('_toggleAudio: ', isAudio)
     const text = target.querySelector('span')
-    text.innerText = state.isAudio ? 'off' : 'on'
+    text.innerText = isAudio ? 'off' : 'on'
+
+    // Unlock audio
+    if (isAudio) {
+      console.log('Unlocking audio')
+      this.notification.playSound(1)
+    }
   }
 
   _mergeMessages (batch) {
@@ -824,6 +843,11 @@ class WebChat {
     this._resetTimeout()
 
     this._updatePanel()
+
+    // Play notification sound
+    if (state.isAudio && direction === 'outbound') {
+      this.notification.playSound(1)
+    }
   }
 
   _handleAgentTypingEvent (e) {
