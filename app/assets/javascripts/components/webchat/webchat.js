@@ -168,7 +168,7 @@ class WebChat {
 
       // Unlock audio
       if (state.isAudio) {
-        this.notification.playSound(1)
+        this.notification.playSound()
         console.log('Unlocking audio')
       }
     } catch (err) {
@@ -566,7 +566,7 @@ class WebChat {
     // Unlock audio
     if (isAudio) {
       console.log('Unlocking audio')
-      this.notification.playSound(1)
+      this.notification.playSound()
     }
   }
 
@@ -846,7 +846,7 @@ class WebChat {
 
     // Play notification sound
     if (state.isAudio && direction === 'outbound') {
-      this.notification.playSound(1)
+      this.notification.playSound()
     }
   }
 
