@@ -28,6 +28,7 @@
 }
 .defra-flood-status-item {
     @extend .govuk-inset-text;
+    border-left-width: 4px;
     position: relative;
     padding: 0px;
     background-color: govuk-colour('light-grey');

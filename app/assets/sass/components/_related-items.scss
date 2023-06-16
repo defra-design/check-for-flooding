@@ -5,7 +5,18 @@
 }
 
 // Overides
+.defra-related-items .govuk-list {
+  margin-bottom: 0px;
+}
+
 .defra-related-items .govuk-list > li {
   margin-bottom: govuk-spacing(2);
+}
+
+.govuk-grid-column-full .defra-related-items {
+  margin-top: 30px;
+  @include mq ($from: tablet) {
+    margin-top: 40px;
+  }
 }
   
