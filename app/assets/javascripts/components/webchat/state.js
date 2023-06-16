@@ -9,7 +9,7 @@ class State {
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
     this._isOpen = window.location.hash === '#webchat'
-    this._isAudio = !localStorage.getItem('AUDIO_OFF')
+    this._isAudio = localStorage.getItem('AUDIO_ON')
     this._openChat = openChat
     this._closeChat = closeChat
 

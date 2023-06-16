@@ -555,9 +555,9 @@ class WebChat {
     const isAudio = state.isAudio
 
     if (isAudio) {
-      localStorage.removeItem('AUDIO_OFF')
+      localStorage.setItem('AUDIO_ON', true)
     } else {
-      localStorage.setItem('AUDIO_OFF', true)
+      localStorage.removeItem('AUDIO_ON')
     }
     console.log('_toggleAudio: ', isAudio)
     const text = target.querySelector('span')
