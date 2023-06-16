@@ -28,7 +28,7 @@
 }
 .defra-flood-status-item {
     @extend .govuk-inset-text;
-    @include mq ($from: tablet) {
+    @include mq ($until: tablet) {
         border-left-width: 5px;
     }
     position: relative;
