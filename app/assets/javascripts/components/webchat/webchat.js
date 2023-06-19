@@ -22,7 +22,7 @@ class WebChat {
     // const metaViewport = document.querySelector('meta[name="viewport"]')
     // metaViewport.content += ', interactive-widget=resizes-content'
 
-    // Instantiate state
+    // Initialise state
     const state = new State(
       this._openChat.bind(this),
       this._closeChat.bind(this)
@@ -39,8 +39,25 @@ class WebChat {
     this.livechatReady = new CustomEvent('livechatReady', {})
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
 
+    // Poll availability
+    Utils.poll({
+      fn: () => {
+        fetch('/service/webchat/availability', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(json => {
+          console.log('Availability: ', json)
+        })
+      },
+      interval: Config.poll * 1000
+    })
+
+    // Init
     this._init()
 
+    // Reinstate html visiblity
     const body = document.body
     if (body.classList.contains('wc-hidden')) {
       body.classList.remove('wc-hidden')

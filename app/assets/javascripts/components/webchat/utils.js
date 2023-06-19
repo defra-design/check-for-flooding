@@ -155,6 +155,30 @@ class Utils {
       // }, 0)
     }
   }
+
+  static async poll ({ fn, validate, interval, maxAttempts }) {
+    let attempts = 0
+
+    const executePoll = async (resolve, reject) => {
+      const result = await fn()
+      attempts++
+
+      if (interval <= 0) {
+        return
+      }
+  
+      if (validate && validate(result)) {
+        return resolve(result)
+      } else if (maxAttempts && attempts === maxAttempts) {
+        return reject(new Error('Exceeded max attempts'))
+      } else {
+        setTimeout(executePoll, interval, resolve, reject)
+      }
+    }
+  
+    return new Promise(executePoll)
+  }
+
   // static iosSoftKeyboardOffset (state, container) {
   //   const acceptsKeyboardInput = (el) => { 
   //     return (
