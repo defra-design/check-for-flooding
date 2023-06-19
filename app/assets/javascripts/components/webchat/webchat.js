@@ -165,12 +165,6 @@ class WebChat {
 
     try {
       this.thread.startChat(message)
-
-      // Unlock audio
-      if (state.isAudio) {
-        this.notification.playSound()
-        console.log('Unlocking audio')
-      }
     } catch (err) {
       console.log()
     }
@@ -555,19 +549,13 @@ class WebChat {
     const isAudio = state.isAudio
 
     if (isAudio) {
-      localStorage.setItem('AUDIO_ON', true)
+      localStorage.removeItem('AUDIO_OFF')
     } else {
-      localStorage.removeItem('AUDIO_ON')
+      localStorage.setItem('AUDIO_OFF', true)
     }
     console.log('_toggleAudio: ', isAudio)
     const text = target.querySelector('span')
     text.innerText = isAudio ? 'off' : 'on'
-
-    // Unlock audio
-    if (isAudio) {
-      console.log('Unlocking audio')
-      this.notification.playSound()
-    }
   }
 
   _mergeMessages (batch) {
@@ -845,6 +833,7 @@ class WebChat {
     this._updatePanel()
 
     // Play notification sound
+    console.log(state.isAudio, direction)
     if (state.isAudio && direction === 'outbound') {
       this.notification.playSound()
     }
