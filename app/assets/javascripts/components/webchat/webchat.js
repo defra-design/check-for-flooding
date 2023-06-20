@@ -396,7 +396,7 @@ class WebChat {
   }
 
   _updateStatus () {
-    console.log('_udateStatus')
+    console.log('_udateStatus: ', this.assignee)
     const state = this.state
 
     // Update status
@@ -409,7 +409,7 @@ class WebChat {
       model: {
         availability: state.availability,
         assignee: this.assignee,
-        status: this.status
+        status: state.status
       }
     })
 
@@ -797,9 +797,9 @@ class WebChat {
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
-      this._updatePanel()
+      this._updateStatus()
       // If intigated by user view will have been set to FEEDBACK
-      state.view = view === 'FEEDBACK' ? 'PRECHAT' : view
+      // state.view = view === 'FEEDBACK' ? 'PRECHAT' : view
       // Start timeout
       this._resetTimeout()
     }
@@ -886,6 +886,7 @@ class WebChat {
 
   _handleMessageCreatedEvent (e) {
     console.log('_handleMessageCreatedEvent')
+    console.log(e.detail.data)
 
     const state = this.state
     state.view = 'OPEN'
@@ -895,7 +896,7 @@ class WebChat {
     const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
     const direction = response.direction.toLowerCase()
     state.status = e.detail.data.case.status
-    state.assignee = assignee
+    this.assignee = assignee
 
     // Update messages array
     const message = {
