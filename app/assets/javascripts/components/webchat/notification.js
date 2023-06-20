@@ -43,7 +43,7 @@ class Notification {
   _unlockAudioContext() {
     const context = this._context
     if (context.state === 'suspended') {
-      const events = ['touchstart', 'touchend', 'mousedown', 'keydown', 'click']
+      const events = ['touchstart', 'touchend', 'mousedown', 'wheel', 'keydown', 'click']
       const unlock = e => {
         events.forEach(event => {
           document.body.removeEventListener(event, unlock)

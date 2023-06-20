@@ -317,8 +317,8 @@ class WebChat {
       }
     })
     container.addEventListener('change', e => {
-      console.log('change', e.target)
       if (e.target.hasAttribute('data-wc-textbox')) {
+        console.log('change', e.target)
         const textbox = e.target
         const label = textbox.previousElementSibling
         Utils.toggleLabel(label, null, textbox)
@@ -405,27 +405,27 @@ class WebChat {
       return
     }
 
-    let html = env.render('webchat-status.html', {
+    status.innerHTML = env.render('webchat-status.html', {
       model: {
         availability: state.availability,
         assignee: this.assignee,
         status: state.status
       }
     })
-
-    status.innerHTML = html
   }
 
   _updateMessages () {
     console.log('_updateMessages')
 
-    const container = this.container
     const messages = this.messages
     const len = messages.length
     const message = messages[len - 1]
     const isAddition = len > 1 && messages[len - 2].direction === message.direction
     
-    const list = container.querySelector('[data-wc-message-list]')
+    const list = document.querySelector('[data-wc-message-list]')
+    if (!list) {
+      return
+    }
 
     // Remove group meta
     if (isAddition) {
@@ -571,6 +571,8 @@ class WebChat {
   }
 
   _confirmEndChat () {
+    console.log('_confirmEndChat')
+
     const state = this.state
     const status = state.status
     const thread = this.thread
@@ -581,6 +583,8 @@ class WebChat {
 
     // Move to next view
     state.view = 'FEEDBACK'
+
+    console.log(status)
 
     if (status && status !== 'closed') {
       // This method has no promise to listen for...
@@ -793,13 +797,17 @@ class WebChat {
 
     const state = this.state
     state.status = e.detail.data.case.status
-    const view = state.view
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
-      this._updateStatus()
-      // If intigated by user view will have been set to FEEDBACK
-      // state.view = view === 'FEEDBACK' ? 'PRECHAT' : view
+      if (state.view === 'FEEDBACK') {
+        // Intigated by user
+        this._updatePanel()
+        state.view = 'PRECHAT'
+      } else {
+        // Instigated by adviser
+        this._updateStatus()
+      }
       // Start timeout
       this._resetTimeout()
     }
@@ -888,8 +896,7 @@ class WebChat {
     console.log('_handleMessageCreatedEvent')
     console.log(e.detail.data)
 
-    const state = this.state
-    state.view = 'OPEN'
+    const state = this.state  
 
     const response = e.detail.data.message
     const assignee = response.authorUser ? response.authorUser.firstName : null
@@ -920,18 +927,23 @@ class WebChat {
     }
 
     // Clear input
-    if (direction === 'inbound') {
-      const textbox = this.container.querySelector('[data-wc-textbox]')
+    const textbox = document.querySelector('[data-wc-textbox]')
+    if (textbox && direction === 'inbound') {
       textbox.innerHTML = ''
       const event = new Event('change')
       textbox.dispatchEvent(event)
     }
 
+    // Update panel
+    if (state.view === 'START') {
+      state.view = 'OPEN'
+      this._updatePanel()
+    } else {
+      this._updateMessages()
+    }
+
     // Start timeout
     this._resetTimeout()
-
-    // Add message to view
-    this._updateMessages()
 
     // Play notification sound
     console.log(state.isAudio, direction)

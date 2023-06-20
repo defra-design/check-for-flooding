@@ -8,7 +8,7 @@ class Config {
 
   static timeout = 1200 // 20 minutes
   static countdown = 60 // Seconds
-  static poll = 20 // Seconds
+  static poll = 10 // Seconds
   static isAudioNotifications = true
   static isMobileSendOnEnter = false
   static isDesktopSendOnEnter = true
