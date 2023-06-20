@@ -69,17 +69,17 @@ class WebChat {
     // Open panel if #webchat exists
     if (state.isOpen) {
       this._createPanel()
-      this._updateStatus()
+      this._updatePanel()
     }
 
     // Conditionally authorise user and recover thread
     if (state.hasThread) {
       await this._authorise()
       await this._recoverThread()
+    } else {
+      // Ready
+      document.dispatchEvent(this.livechatReady) 
     }
-
-    // Ready
-    document.dispatchEvent(this.livechatReady) 
   }
 
   async _authorise () {
