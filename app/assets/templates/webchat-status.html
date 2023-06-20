@@ -1,0 +1,13 @@
+{% if model.availability == 'AVAILABLE' %}
+{% if model.status == 'closed' %}
+Session ended by adviser
+{% elif model.assignee %}
+Speaking with {{ model.assignee }}
+{% else %}
+Connecting you to an adviser
+{% endif %}
+{% elif model.availability == 'OFFLINE' %}
+No advisers currently available
+{% else %}
+Checking availability
+{% endif %}

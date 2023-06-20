@@ -4,13 +4,17 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
+    const isAuthorised = !!localStorage.getItem('CUSTOMER_ID')
+    const hasThread = !!localStorage.getItem('THREAD_ID')
+
     this._availability
-    this._view = localStorage.getItem('THREAD_ID') ? 'OPEN' : 'PRECHAT'
+    this._isAuthorised = isAuthorised
+    this._hasThread = hasThread
+    this._view = hasThread ? 'OPEN' : 'PRECHAT'
     this._isMobile = true
     this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
     this._isOpen = window.location.hash === '#webchat'
     this._isAudio = !localStorage.getItem('AUDIO_OFF')
-    console.log('isAudio: ', this._isAudio)
     this._openChat = openChat
     this._closeChat = closeChat
 
@@ -80,6 +84,22 @@ class State {
 
   set view (view) {
     this._view = view
+  }
+
+  get isAuthorised () {
+    return this._isAuthorised
+  }
+
+  set isAuthorised (isAuthorised) {
+    this._isAuthorised = isAuthorised
+  }
+
+  get hasThread () {
+    return this._hasThread
+  }
+
+  set hasThread (hasThread) {
+    this._hasThread = hasThread
   }
 
   get isOpen () {

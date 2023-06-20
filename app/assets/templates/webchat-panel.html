@@ -24,20 +24,8 @@
   </div>
   {% if model.view == 'OPEN' %}
   <div class="wc-status">
-    <p class="wc-status__content">
-      {% if model.availability == 'AVAILABLE' %}
-      {% if model.status == 'closed' %}
-      Session ended by adviser
-      {% elif model.assignee %}
-      Speaking with {{ model.assignee }}
-      {% else %}
-      Connecting you to an adviser
-      {% endif %}
-      {% elif model.availability == 'OFFLINE' %}
-      Webchat is currently offline
-      {% else %}
-      Checking availability
-      {% endif %}
+    <p class="wc-status__content" data-wc-status>
+      {{ model.status | safe }}
     </p>
     <div class="wc-status__button">
       <a href="#" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
@@ -96,10 +84,7 @@
 <div class="wc__body" data-wc-body>
   <ul class="wc-list" data-wc-message-list>
     {% for message in model.messages %}
-    <li class="wc-list__item wc-list__item--{{ message.direction | lower }}">
-      <div class="wc-list__item-inner">{{ message.text | safe }}</div>
-      <span class="{% if message.isGroup %}wc-list__item-meta{% else %}govuk-visually-hidden{% endif %}">{% if message.direction == 'outbound' %}{{ message.assignee}}{% else %}You{% endif %}</span>
-    </li>
+    {{ message.html | safe }}
     {% endfor %}
   </ul>
 </div>
@@ -199,10 +184,8 @@
 {% else %}
 <div class="wc__body">
   <div class="wc-prechat">
-  {% if model.availability == 'BUSY' %}
-  <p>All our advisers are currently busy</p>
-  {% elif model.availability == 'OFFLINE' %}
-  <p>Web chat is currently offline</p>
+  {% if model.availability == 'OFFLINE' %}
+  <p>No advisers currently available</p>
   {% else %}
   <p>Checking adviser availability</p>
   {% endif %}

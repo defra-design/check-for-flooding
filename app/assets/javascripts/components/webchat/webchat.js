@@ -39,33 +39,20 @@ class WebChat {
     this.livechatReady = new CustomEvent('livechatReady', {})
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
 
-    // Poll availability
-    Utils.poll({
-      fn: () => {
-        fetch('/service/webchat/availability', {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        })
-        .then(response => response.json())
-        .then(json => {
-          console.log('Availability: ', json)
-        })
-      },
-      interval: Config.poll * 1000
-    })
-
-    // Init
-    this._init()
-
     // Reinstate html visiblity
     const body = document.body
     if (body.classList.contains('wc-hidden')) {
       body.classList.remove('wc-hidden')
       body.classList.add('wc-body')
     }
+
+    // Init
+    this._init()
   }
 
   async _init () {
+    const state = this.state
+
     // Event listeners
     const availability = document.getElementById(this.id)
     availability.addEventListener('click', e => {
@@ -74,22 +61,30 @@ class WebChat {
       }
     })
     document.addEventListener('scroll', this._handleScrollEvent.bind(this))
+    this.availability = availability   
 
-    // Set initial availability
-    this.availability = availability    
+    // Render availability
     this._updateAvailability()
-
-    // Open panel if fragment exists
-    const isOpen = this.state.isOpen
-    if (isOpen) {
+    
+    // Open panel if #webchat exists
+    if (state.isOpen) {
       this._createPanel()
+      this._updateStatus()
     }
 
-    // Authorise user
-    this._authorise()
+    // Conditionally authorise user and recover thread
+    if (state.hasThread) {
+      await this._authorise()
+      await this._recoverThread()
+    }
+
+    // Ready
+    document.dispatchEvent(this.livechatReady) 
   }
 
   async _authorise () {
+    const state = this.state
+
     // New SDK instance
     const sdk = new ChatSdk({
       brandId: process.env.CXONE_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
@@ -121,32 +116,32 @@ class WebChat {
     localStorage.setItem('CUSTOMER_ID', customerId || '')
     this.customerId = customerId
 
-    // Set availability
-    const state = this.state
+    // How do we know they have been authorised?
+    state.isAuthorised = true
+
+    // Confirm availability from SDK
     const isOnline = response?.channel.availability.status === 'online'
-    const availability = await fetch('/service/webchat/availability')
-    const isAvailable = await availability.json()
-    state.availability = isOnline ? isAvailable ? 'AVAILABLE' : 'BUSY' : 'OFFLINE'
+    state.availability = isOnline ? 'AVAILABLE' : 'OFFLINE' 
+  }
+
+  async _recoverThread () {
+    const state = this.state
 
     // Recover thread
-    if (localStorage.getItem('THREAD_ID')) {
-      try { // Address issue with no thread but we still have the session id
-        await this._getThread()
-        await this.thread.recover()
-        state.view = 'OPEN'
-        return
-      } catch (err) {
-        console.log(err)
-        localStorage.removeItem('THREAD_ID')
-        state.view = 'PRECHAT'
-      }
+    try { // Address issue with no thread but we still have the session id
+      await this._getThread()
+      await this.thread.recover()
+      state.view = 'OPEN'
+      return
+    } catch (err) {
+      console.log(err)
+      localStorage.removeItem('THREAD_ID')
+      state.view = 'PRECHAT'
     }
-
-    // Auth ready
-    document.dispatchEvent(this.livechatReady)  
   }
 
   async _getThread () {
+    const state = this.state
     const sdk = this.sdk
 
     // Get thread
@@ -157,6 +152,7 @@ class WebChat {
     }
     const thread = await sdk.getThread(threadId)
     this.thread = thread
+    state.hasThread = true
 
     // Add event listeners
     thread.onThreadEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
@@ -167,18 +163,21 @@ class WebChat {
   }
 
   async _startChat (userName, message) {
-    const sdk = this.sdk
     const state = this.state
+
+    // Authorise user
+    await this._authorise()
+    const sdk = this.sdk
+
+    // Can we send messages when offline?
+    console.log('_startChat')
+    console.log('isAuthorised: ', state.isAuthorised, ' availability: ', state.availability)
 
     // Set userName
     sdk.getCustomer().setName(userName)
 
-    console.log('_startChat')
-
     // Start chat
     await this._getThread()
-
-    console.log(this.thread instanceof LivechatThread)
 
     try {
       this.thread.startChat(message)
@@ -317,6 +316,14 @@ class WebChat {
         this._handleSendKeystrokeEvent.bind(this)
       }
     })
+    container.addEventListener('change', e => {
+      console.log('change', e.target)
+      if (e.target.hasAttribute('data-wc-textbox')) {
+        const textbox = e.target
+        const label = textbox.previousElementSibling
+        Utils.toggleLabel(label, null, textbox)
+      }
+    }, true)
     container.addEventListener('paste', e => {
       console.log('paste: ', e)
       if (e.target.closest('div#message')) {
@@ -351,6 +358,7 @@ class WebChat {
       return
     }
 
+    // Model
     const model = {
       model: {
         availability: state.availability,
@@ -366,8 +374,12 @@ class WebChat {
       }
     }
 
+    // Update panel
     const content = container.querySelector('[data-wc-inner]')
     content.innerHTML = env.render('webchat-panel.html', model)
+
+    // Udate status
+    this._updateStatus()
 
     // Initialise GOV.UK components
     const buttons = content.querySelectorAll('[data-module="govuk-button"]')
@@ -378,6 +390,50 @@ class WebChat {
     for (let i = 0; i <= characterCounts.length; i++) {
       new CharacterCount(characterCounts[i]).init()
     }
+
+    // Scroll messages
+    this._scrollToLatest()
+  }
+
+  _updateStatus () {
+    console.log('_udateStatus')
+    const state = this.state
+
+    // Update status
+    const status = document.querySelector('[data-wc-status]')
+    if (!status) {
+      return
+    }
+
+    let html = env.render('webchat-status.html', {
+      model: {
+        availability: state.availability,
+        assignee: this.assignee,
+        status: this.status
+      }
+    })
+
+    status.innerHTML = html
+  }
+
+  _updateMessages () {
+    console.log('_updateMessages')
+
+    const container = this.container
+    const messages = this.messages
+    const len = messages.length
+    const message = messages[len - 1]
+    const isAddition = len > 1 && messages[len - 2].direction === message.direction
+    
+    const list = container.querySelector('[data-wc-message-list]')
+
+    // Remove group meta
+    if (isAddition) {
+      list.querySelector('li:last-child [data-wc-item-meta]').remove()
+    }
+
+    // Add new item
+    list.insertAdjacentHTML('beforeend', message.html)
 
     // Scroll messages
     this._scrollToLatest()
@@ -612,6 +668,8 @@ class WebChat {
   }
 
   _scrollToLatest () {
+    const thread = this.thread
+
     // Scroll to latest
     const body = this.container.querySelector('[data-wc-body]')
     if (body) {
@@ -619,8 +677,8 @@ class WebChat {
     }
     // Mark as seen
     const state = this.state
-    if (body && state.isOpen && this.thread) {
-      this.thread.lastMessageSeen()
+    if (body && state.isOpen && thread) {
+      thread.lastMessageSeen()
     }
   }
 
@@ -700,12 +758,34 @@ class WebChat {
 
   _handleReadyEvent (e) {
     console.log('_handleReadyEvent')
-
-    this._updateAvailability()
-    this._updatePanel()
+    const state = this.state
 
     // Start timeout
     this._resetTimeout()
+
+    // Poll availability
+    let isPageLoad = true
+    Utils.poll({
+      fn: () => {
+        fetch('/service/webchat/availability', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(isAvailable => {
+          console.log('Polling availability')
+          state.availability = isAvailable ? 'AVAILABLE' : 'OFFLINE'
+          this._updateAvailability()
+          if (isPageLoad) {
+            this._updatePanel()
+          } else {
+            this._updateStatus()
+          }
+          isPageLoad = false
+        })
+      },
+      interval: Config.poll * 1000
+    }) 
   }
 
   _handleCaseStatusChangedEvent (e) {
@@ -754,14 +834,6 @@ class WebChat {
     console.log('_handleUserUnassignedFromRoutingQueue')
   }
 
-  // _handleSetPositionInQueueEvent (e) {
-  //   console.log('_handleSetPositionInQueueEvent')
-  //
-  //   const queue = e.detail.data.positionInQueue
-  //   this.queue = queue || null
-  //   this._updatePanel()
-  // }
-
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
 
@@ -798,8 +870,8 @@ class WebChat {
     // Sort on date
     this.messages = Utils.sortMessages(this.messages)
 
-    // Add group end property
-    this.messages = Utils.addGroupMeta(this.messages)
+    // Add html
+    this.messages = Utils.addMessagesHtml(env, this.messages)
     
     // Ready
     document.dispatchEvent(this.livechatReady)
@@ -819,24 +891,26 @@ class WebChat {
     state.view = 'OPEN'
 
     const response = e.detail.data.message
-    state.status = e.detail.data.case.status
+    const assignee = response.authorUser ? response.authorUser.firstName : null
+    const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
     const direction = response.direction.toLowerCase()
+    state.status = e.detail.data.case.status
+    state.assignee = assignee
 
-    // Add message
+    // Update messages array
     const message = {
       id: response.id,
       text: Utils.parseMessage(response.messageContent.text),
-      user: response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null,
-      assignee: response.authorUser ? response.authorUser.firstName : null,
+      user: user,
+      assignee: assignee,
       date: Utils.formatDate(new Date(response.createdAt)),
       createdAt: new Date(response.createdAt),
       direction: direction
     }
-    const messages = this.messages
-    messages.push(message)
+    this.messages.push(message)
 
-    // Add group end property
-    this.messages = Utils.addGroupMeta(messages)
+    // Add html to messages
+    this.messages = Utils.addMessagesHtml(env, this.messages)
 
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
@@ -844,10 +918,19 @@ class WebChat {
       this._updateAvailability()
     }
 
+    // Clear input
+    if (direction === 'inbound') {
+      const textbox = this.container.querySelector('[data-wc-textbox]')
+      textbox.innerHTML = ''
+      const event = new Event('change')
+      textbox.dispatchEvent(event)
+    }
+
     // Start timeout
     this._resetTimeout()
 
-    this._updatePanel()
+    // Add message to view
+    this._updateMessages()
 
     // Play notification sound
     console.log(state.isAudio, direction)

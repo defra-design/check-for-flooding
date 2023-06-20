@@ -8,10 +8,8 @@
   </div>
 </div>
 {% elif model.isStart %}
-{% if model.availability == 'BUSY' %}
-<p class="govuk-body">All our advisers are busy. A link will be shown when an adviser is available. You do not need to refresh this page.</p>
-{% elif model.availability == 'OFFLINE' %}
-<p class="govuk-body">Webchat currently offline</p>
+{% if model.availability == 'OFFLINE' %}
+<p class="govuk-body">A link will be shown when an adviser is available.<br/>You do not need to refresh this page.</p>
 {% else %}
 <p class="govuk-body">Checking availability</p>
 {% endif %}

@@ -80,11 +80,13 @@ class Utils {
     })
   }
 
-  static addGroupMeta (messages) {
+  static addMessagesHtml (env, messages) { 
     const m = messages
-    for (let i = 0; i < m.length; i++) {
+    for (let i = 0; i < m.length; i++) {  
       const isGroup = (i === m.length - 1) || (i < (m.length - 1) && m[i].direction !== m[i + 1].direction)
       m[i].isGroup = isGroup
+      const html = env.render('webchat-message.html', { model: m[i] })
+      m[i].html = html
     }
     return m
   }
@@ -119,7 +121,7 @@ class Utils {
   static toggleLabel (label, key, textbox) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
     const hasValue = textbox.textContent.length > 0
-    const isValidChar = key.length === 1 && chars.test(key)
+    const isValidChar = key && key.length === 1 && chars.test(key)
     const isHidden = hasValue || (!hasValue && isValidChar)
     label.classList.toggle('wc-message__label--hidden', isHidden)
   }
