@@ -396,7 +396,7 @@ class WebChat {
   }
 
   _updateStatus () {
-    console.log('_udateStatus: ', this.assignee)
+    console.log('_udateStatus')
     const state = this.state
 
     // Update status
@@ -894,10 +894,8 @@ class WebChat {
 
   _handleMessageCreatedEvent (e) {
     console.log('_handleMessageCreatedEvent')
-    console.log(e.detail.data)
 
     const state = this.state  
-
     const response = e.detail.data.message
     const assignee = response.authorUser ? response.authorUser.firstName : null
     const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
