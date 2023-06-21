@@ -1,0 +1,9 @@
+{% if model.availability == 'AVAILABLE' %}
+<button class="wc-continue-btn govuk-!-margin-top-2" data-module="govuk-button" data-wc-continue-btn>
+  Continue
+</button>
+{% else %}
+<div class="wc-inset-text">
+  A 'Continue' link will be shown when an adviser is available. You don't need to refresh this page.
+</div>
+{% endif %}

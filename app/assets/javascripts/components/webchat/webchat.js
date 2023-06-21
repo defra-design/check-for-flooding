@@ -399,19 +399,31 @@ class WebChat {
     console.log('_udateStatus')
     const state = this.state
 
+    // Update continue
+    const continueChat = document.querySelector('[data-wc-continue-chat]')
+    if (continueChat) {
+      continueChat.innerHTML = env.render('webchat-continue.html', {
+        model: { availability: state.availability }
+      })
+    }
+    // Update request
+    const requestChat = document.querySelector('[data-wc-request-chat]')
+    if (requestChat) {
+      requestChat.innerHTML = env.render('webchat-request.html', {
+        model: { availability: state.availability }
+      })
+    }
     // Update status
     const status = document.querySelector('[data-wc-status]')
-    if (!status) {
-      return
+    if (status) {
+      status.innerHTML = env.render('webchat-status.html', {
+        model: {
+          availability: state.availability,
+          assignee: this.assignee,
+          status: state.status
+        }
+      })
     }
-
-    status.innerHTML = env.render('webchat-status.html', {
-      model: {
-        availability: state.availability,
-        assignee: this.assignee,
-        status: state.status
-      }
-    })
   }
 
   _updateMessages () {
