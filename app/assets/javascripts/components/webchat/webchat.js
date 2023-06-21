@@ -709,6 +709,7 @@ class WebChat {
 
     // We dont have an open thread
     const status = this.state.status
+    console.log(this.state)
     if (!status || status === 'closed') {
       console.log('Timeout stopped...')
       return
@@ -809,6 +810,8 @@ class WebChat {
 
     const state = this.state
     state.status = e.detail.data.case.status
+
+    // *** Detect timeout and uopdate view
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
