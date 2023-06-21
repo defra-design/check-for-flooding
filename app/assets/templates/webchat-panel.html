@@ -33,7 +33,7 @@
   </div>
   {% endif %}
 </div>
-{% if model.view == 'PRECHAT' and model.availability == 'AVAILABLE' %}
+{% if model.view == 'PRECHAT' %}
 <div class="wc__body">
   <div class="wc-prechat">
     <h3 class="govuk-heading-m">What you can use webchat for</h3>
@@ -46,9 +46,15 @@
     </ul>
     <p>There are other ways to <a href="https://www.gov.uk/sign-up-for-flood-warnings">sign up for flood warnings</a> and <a href="https://defragroup.eu.qualtrics.com/jfe/form/SV_8uMAuaH3kbJl965?Source=https://check-for-flooding.service.gov.uk">manage your flood warnings account</a>.</p>
     <p>Do not use webchat to <a href="https://www.gov.uk/report-flood-cause">report a flood</a>.</p>
+    {% if model.availability == 'AVAILABLE' %}
     <button class="wc-continue-btn govuk-!-margin-top-2" data-module="govuk-button" data-wc-continue-btn>
       Continue
     </button>
+    {% else %}
+    <div class="wc-inset-text">
+      A 'Continue' link will be shown when an adviser is available. You don't need to refresh this page.
+    </div>
+    {% endif %}
     <h3 class="govuk-heading-m">Other flood information</h3>
     <p>Call Floodline for all other flood and flood warning information.</p>
     <p><strong>Floodline helpline</strong><br/>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out more about call charges</a></p>
@@ -75,9 +81,15 @@
         You can enter up to 500 characters
       </div>
     </div>
+    {% if model.availability == 'AVAILABLE' %}
     <button class="wc-submit-btn" data-module="govuk-button" data-wc-submit-btn>
       Request chat
     </button>
+    {% else %}
+    <div class="wc-inset-text">
+      A 'Request chat' link will be shown when an adviser is available. You don't need to refresh this page.
+    </div>
+    {% endif %}
   </div>
 </div>
 {% elif model.view == 'OPEN' %}
@@ -186,11 +198,7 @@
 {% else %}
 <div class="wc__body">
   <div class="wc-prechat">
-  {% if model.availability == 'OFFLINE' %}
-  <p>No advisers currently available</p>
-  {% else %}
-  <p>Checking adviser availability</p>
-  {% endif %}
+    <p>Connecting</p>
   </div>
 </div>
 {% endif %}

@@ -36,9 +36,6 @@ class State {
   }
 
   _popstate (e) {
-    console.log(e)
-    console.log(e.state)
-    console.log(window.location.hash === '#webchat')
     if (window.location.hash === '#webchat') {
       this._openChat(e)
     } else {

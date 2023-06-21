@@ -266,6 +266,14 @@
   @extend .govuk-back-link;
   margin: 0 0 30px 0;
 }
+.wc-inset-text {
+  @extend .govuk-inset-text;
+  font-size: 16px;
+  border-left-width: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 20px;
+}
 .wc-back-btn,
 .wc-hide-btn,
 .wc-close-btn {
