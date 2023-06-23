@@ -1,21 +1,20 @@
 'use strict'
 
-import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
-import { Button, CharacterCount } from 'govuk-frontend'
-import Keyboard from './keyboard'
-import Notification from './notification'
+import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
 import State from './state'
+import Panel from './panel'
+import Notification from './notification'
+import Keyboard from './keyboard'
 import Utils from './utils'
 import Transcript from './transcript'
 import Config from './config'
+import { countBy } from 'lodash'
 
 const env = window.nunjucks.configure('views')
 
 class WebChat {
   constructor (id) {  
     this.id = id
-    this.assignee = null
-    this.unseen = 0
     this.messages = []
 
     // Update meta viewport
@@ -23,17 +22,16 @@ class WebChat {
     // metaViewport.content += ', interactive-widget=resizes-content'
 
     // Initialise state
-    const state = new State(
-      this._openChat.bind(this),
-      this._closeChat.bind(this)
-    )
-    this.state = state
+    this.state = new State(this._openChat.bind(this), this._closeChat.bind(this))
+
+    // Intialise panel
+    this.panel = new Panel()
+
+    // Initialise notification
+    this.notification = new Notification()
 
     // Initialise keyboard interface
-    Keyboard.init(state)
-
-    // Initialise notification sounds
-    this.notification = new Notification()
+    Keyboard.init(this.state)
 
     // Custom events
     this.livechatReady = new CustomEvent('livechatReady', {})
@@ -51,9 +49,7 @@ class WebChat {
   }
 
   async _init () {
-    const state = this.state
-
-    // Event listeners
+    // Event
     const availability = document.getElementById(this.id)
     availability.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-open-btn')) {
@@ -67,9 +63,11 @@ class WebChat {
     this._updateAvailability()
     
     // Open panel if #webchat exists
+    const state = this.state
     if (state.isOpen) {
-      this._createPanel()
-      this._updatePanel()
+      const panel = this.panel
+      panel.create(state, this._addEvents.bind(this))
+      panel.update(state, this.messages)
     }
 
     // Conditionally authorise user and recover thread
@@ -164,7 +162,7 @@ class WebChat {
 
   async _startChat (userName, message) {
     const state = this.state
-
+  
     // Authorise user
     await this._authorise()
     const sdk = this.sdk
@@ -185,64 +183,20 @@ class WebChat {
       console.log()
     }
 
-    this._setAttributes()
+    this.panel.setAttributes(state)
   }
 
-  _updateAvailability () {
-    const state = this.state
-    const availability = this.availability
-    const isStart = !availability.hasAttribute('data-wc-no-start')
+  _addEvents () {
+    const container = this.panel.container
 
-    availability.innerHTML = env.render('webchat-availability.html', {
-      model: {
-        availability: state.availability,
-        isStart: isStart,
-        view: state.view,
-        unseen: this.unseen
-      }
-    })
-
-    this._handleScrollEvent()
-  }
-
-  _createPanel () {
-    console.log('_createPanel')
-
-    const state = this.state
-
-    const model = {
-      availability: state.availability,
-      view: state.view,
-      isBack: state.isBack,
-      isMobile: state.isMobile
-    }
-
-    const container = document.createElement('div')
-    container.id = 'wc-panel'
-    container.setAttribute('class', `wc${state.isOpen ? ' wc--open' : ''}`)
-    container.setAttribute('aria-label', 'webchat')
-    container.setAttribute('aria-modal', false)
-    container.setAttribute('role', 'dialog')
-    container.setAttribute('open', '')
-    container.setAttribute('data-wc', '')
-    container.innerHTML = '<div class="wc__inner" tabindex="-1" data-wc-inner></div>'
-    document.body.appendChild(container)
-    this.container = container
-
-    const content = container.querySelector('[data-wc-inner]')
-    content.innerHTML = env.render('webchat-panel.html', { model })
-
-    Utils.listenForDevice('mobile', this._setAttributes.bind(this))
-
-    // iOS Soft keyboard scrolling past document height bug
-    // Utils.iosSoftKeyboardOffset(state, container)
-
-    // Event listeners
-    container.addEventListener('click', async e => {
+    // Button events
+    container.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-back-btn')) {
+        e.preventDefault()
         this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-close-btn')) {
+        e.preventDefault()
         this._closeChat(e)
       }
       if (e.target.hasAttribute('data-wc-submit-feedback-btn')) {
@@ -254,12 +208,15 @@ class WebChat {
         this._endChat()
       }
       if (e.target.hasAttribute('data-wc-resume-btn')) {
+        e.preventDefault()
         this._resumeChat(e)
       }
       if (e.target.hasAttribute('data-wc-confirm-end-btn')) {
-        await this._confirmEndChat()
+        e.preventDefault()
+        this._confirmEndChat()
       }
       if (e.target.hasAttribute('data-wc-continue-btn')) {
+        e.preventDefault()
         this._continue(e)
       }
       if (e.target.hasAttribute('data-wc-back-prechat')) {
@@ -267,6 +224,7 @@ class WebChat {
         this._prechat(e)
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
+        e.preventDefault()
         this._validatePrechat(this._startChat.bind(this))
       }
       if (e.target.hasAttribute('data-wc-settings-btn')) {
@@ -286,55 +244,19 @@ class WebChat {
         this._toggleAudio(e.target)
       }
     })
-
-    // Message events
-    container.addEventListener('keyup', e => {
-      if (e.target.hasAttribute('data-wc-textbox')) {
-        const textbox = e.target
-        const label = textbox.previousElementSibling
-        // Conditionally show label
-        Utils.toggleLabel(label, e.key, textbox)
-        // Autosize height
-        Utils.autosize(e.target, 120)
-        // Conditionally submit form
-        Utils.submit(e, textbox)
-        // Start timeout
-        if (this.timeout) {
-          this._resetTimeout()
-        }
-      }
-    })
+    // Send keystroke event
     container.addEventListener('keydown', e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
-        const textbox = e.target
-        const label = textbox.previousElementSibling
-        // Conditionally hide label
-        Utils.toggleLabel(label, e.key, textbox)
-        // Conditionally suppress enter
-        Utils.suppressEnter(e, textbox)
-        // Send keystroke event
-        this._handleSendKeystrokeEvent.bind(this)
+        this._handleSendKeystrokeEvent()
       }
     })
-    container.addEventListener('change', e => {
-      if (e.target.hasAttribute('data-wc-textbox')) {
-        console.log('change', e.target)
-        const textbox = e.target
-        const label = textbox.previousElementSibling
-        Utils.toggleLabel(label, null, textbox)
+    // Reset timeout event
+    container.addEventListener('keyup', e => {
+      if (e.target.hasAttribute('data-wc-textbox') && this.timeout) {
+        this._resetTimeout()
       }
-    }, true)
-    container.addEventListener('paste', e => {
-      console.log('paste: ', e)
-      if (e.target.closest('div#message')) {
-        e.preventDefault()
-        const text = (e.clipboardData || window.clipboardData).getData('text')
-        const textbox = document.getElementById('message')
-        const label = textbox.previousElementSibling
-        textbox.innerText = text
-        Utils.toggleLabel(label, 'v', textbox)
-      }
-    }, true)
+    })
+    // Send message
     container.addEventListener('submit', e => {
       if (e.target.hasAttribute('data-wc-message')) {
         e.preventDefault()
@@ -343,87 +265,21 @@ class WebChat {
     }, true)
   }
 
-  _updatePanel () {
-    console.log('_updatePanel')
+  _updateAvailability () {
     const state = this.state
+    const availability = this.availability
+    const isStart = !availability.hasAttribute('data-wc-no-start')
 
-    // Reset timeout
-    if (this.timeout) {
-      this._resetTimeout()
-    }
-    
-    // Update content
-    const container = document.getElementById('wc-panel')
-    if (!container) {
-      return
-    }
-
-    // Model
-    const model = {
+    availability.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
+        isStart: isStart,
         view: state.view,
-        status: state.status,
-        isOpen: state.isOpen,
-        isBack: state.isBack,
-        isMobile: state.isMobile,
-        isAudio: state.isAudio,
-        messages: this.messages,
-        assignee: this.assignee,
-        texboxValue: this.texboxValue
+        unseen: state.unseen
       }
-    }
+    })
 
-    // Update panel
-    const content = container.querySelector('[data-wc-inner]')
-    content.innerHTML = env.render('webchat-panel.html', model)
-
-    // Udate status
-    this._updateStatus()
-
-    // Initialise GOV.UK components
-    const buttons = content.querySelectorAll('[data-module="govuk-button"]')
-    for (let i = 0; i <= buttons.length; i++) {
-      new Button(buttons[i]).init()
-    }
-    const characterCounts = content.querySelectorAll('[data-module="govuk-character-count"]')
-    for (let i = 0; i <= characterCounts.length; i++) {
-      new CharacterCount(characterCounts[i]).init()
-    }
-
-    // Scroll messages
-    this._scrollToLatest()
-  }
-
-  _updateStatus () {
-    console.log('_udateStatus')
-    const state = this.state
-
-    // Update continue
-    const continueChat = document.querySelector('[data-wc-continue-chat]')
-    if (continueChat) {
-      continueChat.innerHTML = env.render('webchat-continue.html', {
-        model: { availability: state.availability }
-      })
-    }
-    // Update request
-    const requestChat = document.querySelector('[data-wc-request-chat]')
-    if (requestChat) {
-      requestChat.innerHTML = env.render('webchat-request.html', {
-        model: { availability: state.availability }
-      })
-    }
-    // Update status
-    const status = document.querySelector('[data-wc-status]')
-    if (status) {
-      status.innerHTML = env.render('webchat-status.html', {
-        model: {
-          availability: state.availability,
-          assignee: this.assignee,
-          status: state.status
-        }
-      })
-    }
+    this._handleScrollEvent()
   }
 
   _updateMessages () {
@@ -448,7 +304,14 @@ class WebChat {
     list.insertAdjacentHTML('beforeend', message.html)
 
     // Scroll messages
-    this._scrollToLatest()
+    const panel = this.panel
+    panel.scrollToLatest()
+
+    // Mark as seen
+    const thread = this.thread
+    if (thread) {
+      thread.lastMessageSeen()
+    }
   }
 
   _validatePrechat (successCb) {
@@ -464,28 +327,9 @@ class WebChat {
     successCb(userName, message)
   }
 
-  _setAttributes () {
-    const container = this.container
-    if (!container) {
-      return
-    }
-
-    const state = this.state
-
-    const isFullscreen = state.isMobile && state.isOpen
-    const root = document.getElementsByTagName('html')[0]
-    root.classList.toggle('wc-html', isFullscreen)
-    const body = document.body
-    body.classList.toggle('wc-body', isFullscreen)
-    container.setAttribute('aria-modal', isFullscreen)
-
-    const textbox = container.querySelector('[data-wc-textbox]')
-    if (textbox) {
-      textbox.setAttribute('aria-multiline', state.isMobile)
-    }
-  }
-
   _openChat (e) {
+    console.log('_openChat')
+
     const state = this.state
     state.isOpen = true
 
@@ -494,21 +338,33 @@ class WebChat {
       this._resetTimeout()
     }
 
+    // Conditionally push new state to history
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     if (isBtn) {
       e.preventDefault()
       state.pushState('PRECHAT')
     }
 
-    if (!this.container) {
-      this._createPanel()
-      this._updatePanel()
+    const panel = this.panel
+    if (!panel.container) {
+      // Create panel
+      panel.create(state, this._addEvents.bind(this))
+      panel.update(state, this.messages)
+
+      // Mark messages as seen
+      const thread = this.thread
+      if (thread && state.view === 'OPEN') {
+        thread.lastMessageSeen()
+      }
     }
 
+    // Hide sticky availability
     this._handleScrollEvent()
   }
 
   _closeChat (e) {
+    console.log('_closeChat')
+
     const state = this.state
     state.isOpen = false
 
@@ -517,40 +373,19 @@ class WebChat {
       this._resetTimeout()
     }
 
-    // Reinstate link
-    const availability = this.availability
-    const link = availability.querySelector('[data-wc-link]')
-    if (link) {
-      link.classList.remove('wc-link--disabled')
-      link.classList.remove('wc-link--hidden')
-    }
-
     const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
+    const panel = this.panel
 
     if (isBtn && state.isBack) {
       state.back()
-    } else if (this.container) {
-      this._setAttributes()
-      this.container = this.container.remove()
+    } else if (panel.container) {
+      panel.setAttributes(state)
+      panel.container = panel.container.remove()
       state.replaceState()
       this._handleScrollEvent(e)
     }
 
     this._updateAvailability()
-  }
-
-  _prechat () {
-    const state = this.state
-    state.view = 'PRECHAT'
-    console.log('_prechat')
-    this._updatePanel()
-  }
-
-  _continue () {
-    const state = this.state
-    state.view = 'START'
-    console.log('_continue')
-    this._updatePanel()
   }
 
   _timeoutChat() {
@@ -567,84 +402,79 @@ class WebChat {
     }
   }
 
-  _endChat () {
-    const state = this.state
-    state.view = 'END'
-    console.log('_endChat')
-    this._updatePanel()
-  }
-
-  _resumeChat (e) {
-    e.preventDefault()
-    const state = this.state
-    state.view = 'OPEN'
-    console.log('_resumeChat')
-    this._updatePanel()
-  }
-
   _confirmEndChat () {
     console.log('_confirmEndChat')
-
-    const state = this.state
-    const status = state.status
-    const thread = this.thread
-
+  
     // Close thread
     localStorage.removeItem('THREAD_ID')
     this.messages = []
 
     // Move to next view
+    const state = this.state
     state.view = 'FEEDBACK'
 
-    console.log(status)
-
+    const status = state.status
     if (status && status !== 'closed') {
       // This method has no promise to listen for...
-      thread.endChat()
+      this.thread.endChat()
     } else {
-      this._updatePanel()
-      // Don't need to persist feedback view
+      // Show feedback view
+      this.panel.update(state)
       state.view = 'PRECHAT'
-      console.log('Done: ', state.view)
       // Start timeout
       this._resetTimeout()
     }
   }
 
+  _prechat () {
+    const state = this.state
+    state.view = 'PRECHAT'
+    console.log('_prechat')
+    this.panel.update(state)
+  }
+
+  _continue () {
+    const state = this.state
+    state.view = 'START'
+    console.log('_continue')
+    this.panel.update(state, this.messages)
+  }
+
+  _endChat () {
+    const state = this.state
+    state.view = 'END'
+    console.log('_endChat')
+    this.panel.update(state, this.messages)
+  }
+
+  _resumeChat () {
+    const state = this.state
+    state.view = 'OPEN'
+    console.log('_resumeChat')
+    this.panel.update(state, this.messages)
+  }
+
   _submitFeedback () {
     const state = this.state
     state.view = 'FEEDBACK-CONFIRM'
-    this._updatePanel()
+    this.panel.update(state)
+    // Don't need to persist view
     state.view = 'PRECHAT'
-  }
-
-  _settings () {
-    const state = this.state
-    state.view = 'SETTINGS'
-    console.log('_settings')
-    this._updatePanel()
-    state.view = 'OPEN'
-  }
-
-  _saveSettings (target) {
-    const isSave = target.hasAttribute('data-wc-save-settings')
-    console.log('_saveSettings: ', isSave)
-    this._updatePanel()
   }
 
   _toggleAudio (target) {
     const state = this.state
-    state.isAudio = !state.isAudio
-    const isAudio = state.isAudio
+    state.hasAudio = !state.hasAudio
+    const hasAudio = state.hasAudio
 
-    if (isAudio) {
+    if (hasAudio) {
       localStorage.removeItem('AUDIO_OFF')
     } else {
       localStorage.setItem('AUDIO_OFF', true)
     }
-    console.log('_toggleAudio: ', isAudio)
+    console.log('_toggleAudio: ', hasAudio)
     const text = target.querySelector('span')
-    text.innerText = isAudio ? 'off' : 'on'
+    text.innerText = hasAudio ? 'off' : 'on'
   }
 
   _mergeMessages (batch) {
@@ -683,21 +513,6 @@ class WebChat {
     }
   }
 
-  _scrollToLatest () {
-    const thread = this.thread
-
-    // Scroll to latest
-    const body = this.container.querySelector('[data-wc-body]')
-    if (body) {
-      body.scrollTop = body.scrollHeight
-    }
-    // Mark as seen
-    const state = this.state
-    if (body && state.isOpen && thread) {
-      thread.lastMessageSeen()
-    }
-  }
-
   _resetTimeout () {
     if (!Config.timeout > 0) {
       return
@@ -709,13 +524,12 @@ class WebChat {
 
     // We dont have an open thread
     const status = this.state.status
-    console.log(this.state)
     if (!status || status === 'closed') {
       console.log('Timeout stopped...')
       return
     }
     
-    const container = this.container
+    const container = this.panel.container
     if (container) {
       const timeout = container.querySelector('[data-wc-timeout]')
       if (timeout) {
@@ -737,32 +551,6 @@ class WebChat {
     document.body.appendChild(anchor)
     anchor.click()
     document.body.removeChild(anchor)
-  }
-
-  _debug (text) {
-    if (!Utils.getParameterByName('debug')) {
-      return
-    }
-    if (!this.debug) {
-      const debug = document.createElement('div')
-      debug.id = 'debug'
-      debug.className = 'wc-debug'
-      debug.setAttribute('style', `
-        position: absolute;
-        font-size: 12px;
-        top: 50%;
-        border: 1px solid red;
-        padding: 5px;
-        width: 200px;
-        height: 100px;
-        margin-top: -50px;
-        overflow: auto;
-        z-index: 1000;
-      `)
-      document.body.appendChild(debug)
-      this.debug = document.getElementById('debug')
-    }
-    this.debug.innerHTML += `${text}<br/>`
   }
 
   //
@@ -793,10 +581,11 @@ class WebChat {
           console.log('Polling availability')
           state.availability = isAvailable ? 'AVAILABLE' : 'OFFLINE'
           this._updateAvailability()
+          const panel = this.panel
           if (isPageLoad) {
-            this._updatePanel()
+            panel.update(state, this.messages)
           } else {
-            this._updateStatus()
+            panel.setStatus(state)
           }
           isPageLoad = false
         })
@@ -815,13 +604,18 @@ class WebChat {
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
+      const panel = this.panel
       if (state.view === 'FEEDBACK') {
         // Intigated by user
-        this._updatePanel()
+        panel.update(state, this.messages)
+        state.view = 'PRECHAT'
+      } else if (state.view === 'TIMEOUT') {
+        // Instigated by timeout countdown
+        panel.update(state, this.messages)
         state.view = 'PRECHAT'
       } else {
         // Instigated by adviser
-        this._updateStatus()
+        panel.setStatus(state)
       }
       // Start timeout
       this._resetTimeout()
@@ -834,11 +628,12 @@ class WebChat {
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
+    const state = this.state
 
     const assignee = e.detail.data.inboxAssignee
-    this.assignee = assignee ? assignee.firstName : null
+    state.assignee = assignee ? assignee.firstName : null
 
-    this._updatePanel()
+    this.panel.update(state, this.messages)
   }
 
   _handleRoutingQueueCreatedEvent (e) {
@@ -859,20 +654,18 @@ class WebChat {
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
+    const state = this.state
 
     const assignee = e.detail.data.inboxAssignee
-    this.assignee = assignee ? assignee.firstName : null
-
-    const state = this.state
+    state.assignee = assignee ? assignee.firstName : null
     const status = e.detail.data.consumerContact.status
     state.status = status
  
-    this.messages = []
     let messages = e.detail.data.messages
 
     // Get unseen messages
     const unseen = e.detail.data.thread.unseenMessagesCount
-    this.unseen = unseen
+    state.unseen = unseen
 
     // Recursively merge messages with previous messages
     while (messages.length) {
@@ -916,7 +709,7 @@ class WebChat {
     const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
     const direction = response.direction.toLowerCase()
     state.status = e.detail.data.case.status
-    this.assignee = assignee
+    state.assignee = assignee
 
     // Update messages array
     const message = {
@@ -935,7 +728,7 @@ class WebChat {
 
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
-      this.unseen += 1
+      state.unseen += 1
       this._updateAvailability()
     }
 
@@ -950,7 +743,7 @@ class WebChat {
     // Update panel
     if (state.view === 'START') {
       state.view = 'OPEN'
-      this._updatePanel()
+      this.panel.update(state, this.messages)
     } else {
       this._updateMessages()
     }
@@ -959,9 +752,9 @@ class WebChat {
     this._resetTimeout()
 
     // Play notification sound
-    console.log(state.isAudio, direction)
-    if (state.isAudio && direction === 'outbound') {
-      this.notification.playSound()
+    if (state.hasAudio && direction === 'outbound') {
+      const notification = this.notification
+      notification.playSound()
     }
   }
 
@@ -988,7 +781,8 @@ class WebChat {
           <span class="wc-list__item-meta">${agentName} is typing</span>
         </li>
       `)
-      this._scrollToLatest()
+      const panel = this.panel
+      panel.scrollToLatest()
     } else if (el) {
       el.remove()
     }
@@ -996,14 +790,15 @@ class WebChat {
 
   _handleMessageSeenByEndUserEvent (e) {
     console.log('_handleMessageSeenByEndUserEvent')
+    const state = this.state
 
-    this.unseen = 0
+    state.unseen = 0
     this._updateAvailability()
   }
 
   _handleTimeout (e) {
     console.log('Countdown starting...')
-    const container = this.container
+    const container = this.panel.container
     const seconds = Config.countdown
     let element
 
@@ -1020,7 +815,7 @@ class WebChat {
             <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
           </div>
         `)
-        this._scrollToLatest()
+        this.panel.scrollToLatest()
 
         // Reference to the countdown element
         element = container.querySelector('[data-wc-countdown]')
@@ -1061,6 +856,8 @@ class WebChat {
   }
 
   _handleSendKeystrokeEvent () {
+    console.log('_handleSendKeystrokeEvent')
+
     this.thread.keystroke(1000)
     setTimeout(() => {
       this.thread.stopTyping()

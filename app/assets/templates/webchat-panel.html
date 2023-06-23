@@ -96,7 +96,7 @@
   </form>
   <div class="wc-settings">
     <!-- <a href="#" class="wc-settings-btn" role="button" data-module="govuk-button" data-wc-settings-btn>Settings</a> -->
-    <a href="#" class="wc-audio-btn" role="button" data-module="govuk-button" data-wc-audio-btn>Turn audio <span>{% if model.isAudio %}off{% else %}on{% endif %}</span></a>
+    <a href="#" class="wc-audio-btn" role="button" data-module="govuk-button" data-wc-audio-btn>Turn audio <span>{% if model.hasAudio %}off{% else %}on{% endif %}</span></a>
     {% if model.messages | length %}
     <a href="#" class="wc-transcript-btn" download="transcript.txt" data-wc-transcript-btn>Save chat</a>
     {% endif %}
@@ -109,7 +109,7 @@
 <div class="wc__body">
   <div class="wc-postchat">
     <h3 class="govuk-heading-m">Your session has timed out</h3>
-    <p>You did not do anything for 20 minutes.</p>
+    <p>You did not do anything for {{ model.timeout }}.</p>
     <div class="govuk-button-group">
       <button class="wc-submit-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Give feedback</button>
       <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-close-btn>Cancel</button>

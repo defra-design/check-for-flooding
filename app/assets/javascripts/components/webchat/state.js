@@ -6,15 +6,20 @@ class State {
   constructor (openChat, closeChat) {
     const isAuthorised = !!localStorage.getItem('CUSTOMER_ID')
     const hasThread = !!localStorage.getItem('THREAD_ID')
+    const hasAudio = !localStorage.getItem('AUDIO_OFF')
+    const isBack = sessionStorage.getItem('IS_BACK') === 'true'
+    const isOpen = window.location.hash === '#webchat'
 
-    this._availability
+    this._availability = null
+    this._assignee = null
+    this._view = hasThread ? 'OPEN' : 'PRECHAT'
+    this._unseen = 0
     this._isAuthorised = isAuthorised
     this._hasThread = hasThread
-    this._view = hasThread ? 'OPEN' : 'PRECHAT'
+    this._hasAudio = hasAudio
     this._isMobile = true
-    this._isBack = sessionStorage.getItem('IS_BACK') === 'true'
-    this._isOpen = window.location.hash === '#webchat'
-    this._isAudio = !localStorage.getItem('AUDIO_OFF')
+    this._isBack = isBack
+    this._isOpen = isOpen
     this._openChat = openChat
     this._closeChat = closeChat
 
@@ -49,11 +54,11 @@ class State {
     history.replaceState(null, null, url)
   }
 
-  pushState (view) {
+  pushState () {
     this._isOpen = true
     this._isBack = true
     const url = `${window.location.href.split('#')[0]}#webchat`
-    history.pushState({ view: view, isBack: true }, '', url)
+    history.pushState({ view: 'webchat', isBack: true }, '', url)
     sessionStorage.setItem('IS_BACK', true)
   }
 
@@ -73,6 +78,22 @@ class State {
 
   set availability (availability) {
     this._availability = availability
+  }
+
+  get assignee () {
+    return this._assignee
+  }
+
+  set assignee (assignee) {
+    this._assignee = assignee
+  }
+
+  get unseen () {
+    return this._unseen
+  }
+
+  set unseen (unseen) {
+    this._unseen = unseen
   }
 
   get view () {
@@ -99,20 +120,20 @@ class State {
     this._hasThread = hasThread
   }
 
+  get hasAudio () {
+    return this._hasAudio
+  }
+
+  set hasAudio (hasAudio) {
+    this._hasAudio = hasAudio
+  }
+
   get isOpen () {
     return this._isOpen
   }
 
   set isOpen (isOpen) {
     this._isOpen = isOpen
-  }
-
-  get isAudio () {
-    return this._isAudio
-  }
-
-  set isAudio (isAudio) {
-    this._isAudio = isAudio
   }
 
   get isMobile () {

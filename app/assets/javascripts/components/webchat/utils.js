@@ -181,6 +181,16 @@ class Utils {
     return new Promise(executePoll)
   }
 
+  static getDuration (seconds) {
+    let duration = seconds
+    if (seconds <= 60) {
+      duration = `${seconds} seconds`
+    } else {
+      duration = `${Math.floor(seconds / 60)} minutes`
+    }
+    return duration
+  }
+
   // static iosSoftKeyboardOffset (state, container) {
   //   const acceptsKeyboardInput = (el) => { 
   //     return (

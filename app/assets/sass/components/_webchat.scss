@@ -436,11 +436,7 @@
   margin-left: auto;
   margin-right: auto;
 }
-.wc-link--disabled .wc-open-btn {
-  pointer-events: none;
-  opacity: 0.5;
-}
-.wc-link--fixed:not(.wc-link--disabled) {
+.wc-link--fixed {
   position: fixed;
   bottom: 0px;
   left: 0px;
@@ -524,3 +520,7 @@
   @extend .defra-button-secondary;
 }
 
+// Overides
+.wc .govuk-character-count {
+  margin-bottom: 0px;
+}
