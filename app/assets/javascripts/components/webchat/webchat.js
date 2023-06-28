@@ -694,11 +694,12 @@ class WebChat {
   }
 
   _handleCaseCreatedEvent (e) {
+    // Fires on local but no on Heroku?
     console.log('_handleCaseCreatedEvent')
 
-    const state = this.state
-    state.view = 'OPEN'
-    this.panel.update(state)
+    // const state = this.state
+    // state.view = 'OPEN'
+    // this.panel.update(state)
   }
 
   _handleMessageCreatedEvent (e) {
@@ -742,7 +743,10 @@ class WebChat {
     }
 
     // Update panel
-    if (state.view === 'OPEN') {
+    if (state.view === 'START') {
+      state.view = 'OPEN'
+      this.panel.update(state, this.messages)
+    } else if (state.view === 'OPEN') {
       this._updateMessages()
     }
 
