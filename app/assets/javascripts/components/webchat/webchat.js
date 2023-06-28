@@ -630,7 +630,7 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     state.assignee = assignee ? assignee.firstName : null
 
-    this.panel.update(state, this.messages)
+    this.panel.setStatus(state)
   }
 
   _handleRoutingQueueCreatedEvent (e) {
