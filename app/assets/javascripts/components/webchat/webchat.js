@@ -119,8 +119,7 @@ class WebChat {
     try { // Address issue with no thread but we still have the session id
       await this._authorise()
       await this._getThread()
-      await this.thread.recover()
-      state.view = 'OPEN'
+      this.thread.recover()
       return
     } catch (err) {
       console.log(err)
@@ -431,7 +430,7 @@ class WebChat {
 
   _submitFeedback () {
     const state = this.state
-    state.view = 'FEEDBACK-CONFIRM'
+    state.view = 'FINISH'
     this.panel.update(state)
     // Don't need to persist view
     state.view = 'PRECHAT'
@@ -539,6 +538,7 @@ class WebChat {
   _handleReadyEvent (e) {
     console.log('_handleReadyEvent')
     const state = this.state
+    console.log('state.view: ', state.view)
 
     // Start timeout
     this._resetTimeout()
@@ -627,17 +627,33 @@ class WebChat {
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
     const state = this.state
+    const status = e.detail.data.consumerContact.status
+    state.status = status
+
+    // Latest datetime
+    let messages = e.detail.data.messages
+    const latestDatetime = new Date(messages[0].createdAt)
+    const elapsed = Math.abs((new Date()) - latestDatetime) / 1000
+    const timeout = Config.timeout
+    const countdown = Config.countdown
+    const isExpired = (timeout + countdown) - elapsed <= 0
+
+    // End chat if elapsed time outside allowance
+    if (isExpired) {
+      localStorage.removeItem('THREAD_ID')
+      state.view = 'TIMEOUT'
+      if (state.status !== 'closed') {
+        this.thread.endChat()
+      }
+      document.dispatchEvent(this.livechatReady)
+      return
+    }
 
     const assignee = e.detail.data.inboxAssignee
     state.assignee = assignee ? assignee.firstName : null
-    const status = e.detail.data.consumerContact.status
-    state.status = status
- 
-    let messages = e.detail.data.messages
-
-    // Get unseen messages
     const unseen = e.detail.data.thread.unseenMessagesCount
     state.unseen = unseen
+    state.view = 'OPEN'
 
     // Recursively merge messages with previous messages
     while (messages.length) {
