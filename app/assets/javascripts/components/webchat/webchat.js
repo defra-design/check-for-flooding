@@ -169,7 +169,6 @@ class WebChat {
 
     // Can we send messages when offline?
     console.log('_startChat')
-    console.log('isAuthorised: ', state.isAuthorised, ' availability: ', state.availability)
 
     // Set userName
     sdk.getCustomer().setName(userName)
