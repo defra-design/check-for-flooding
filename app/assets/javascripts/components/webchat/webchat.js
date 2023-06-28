@@ -1,6 +1,6 @@
 'use strict'
 
-import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
 import State from './state'
 import Panel from './panel'
 import Notification from './notification'
@@ -415,9 +415,11 @@ class WebChat {
     const status = state.status
     if (status && status !== 'closed') {
       // This method has no promise to listen for...
+      console.log('...ending chat: ', this.thread instanceof LivechatThread)
       this.thread.endChat()
     } else {
       // Show feedback view
+      console.log('...showing feedback')
       this.panel.update(state)
       state.view = 'PRECHAT'
       // Start timeout
