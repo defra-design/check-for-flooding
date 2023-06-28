@@ -10,7 +10,7 @@ module.exports = {
     console.log(`--> Data update: Started at ${start.format('HH:mm:ss')}`)
     await updateRainfall(start)
     await updateLevels(start)
-    // await updateWarnings(start)
+    await updateWarnings(start)
     await updateOutlook(start)
     console.log(`--> Data update: Finished at ${moment().format('HH:mm:ss')}`)
   }
