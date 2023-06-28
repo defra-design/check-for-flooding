@@ -150,6 +150,7 @@ app.use('/', require('./app/routes/levels'))
 app.use('/', require('./app/routes/target-area'))
 app.use('/', require('./app/routes/station'))
 app.use('/', require('./app/routes/guidance'))
+app.use('/', require('./app/routes/webchat'))
 
 // Load routes (found in service/routes)
 app.use('/', require('./service/routes'))

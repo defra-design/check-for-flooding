@@ -14,6 +14,7 @@ class Transcript {
       const date = this._formatDate(messages[i].createdAt)
       string += `${author} at ${date}\n${messages[i].text}\n\n`
     }
+    string = string.replace(/<a\b[^>]*>/i,'').replace(/<\/a>/i, '')
     return string
   }
 

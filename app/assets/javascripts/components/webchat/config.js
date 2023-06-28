@@ -6,6 +6,7 @@ class Config {
     tablet: '834px'
   }
 
+  static availabilityEndPoint = '/webchat-availability'
   static timeout = 1200 // 20 minutes
   static countdown = 60 // Seconds
   static poll = 15 // Seconds

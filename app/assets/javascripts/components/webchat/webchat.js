@@ -547,7 +547,7 @@ class WebChat {
     let isPageLoad = true
     Utils.poll({
       fn: () => {
-        fetch('/service/webchat/availability', {
+        fetch(Config.availabilityEndPoint, {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         })
