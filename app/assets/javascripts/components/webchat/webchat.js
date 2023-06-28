@@ -399,7 +399,7 @@ class WebChat {
     // Show feedback view
     this.panel.update(state)
     state.view = 'PRECHAT'
-    // Start timeout
+    // Start/reset timeout
     this._resetTimeout()
   }
 
@@ -543,7 +543,7 @@ class WebChat {
     const state = this.state
     console.log('state.view: ', state.view)
 
-    // Start timeout
+    // Start/reset timeout
     this._resetTimeout()
 
     // Poll availability
@@ -583,7 +583,7 @@ class WebChat {
       // Instigated by adviser
       this.panel.setStatus(state)
 
-      // Start timeout
+      // Start/reset timeout
       this._resetTimeout()
     }
   }
@@ -732,7 +732,7 @@ class WebChat {
       this._updateMessages()
     }
 
-    // Start timeout
+    // Start/reset timeout
     this._resetTimeout()
 
     // Play notification sound
