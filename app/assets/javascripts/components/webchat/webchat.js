@@ -59,7 +59,7 @@ class WebChat {
       panel.update(state, this.messages)
     }
 
-    // Attache sticky footer scroll event
+    // Attach sticky footer scroll event
     document.addEventListener('scroll', this._handleScrollEvent.bind(this))
 
     // Conditionally recover thread
