@@ -52,7 +52,7 @@
     <p><strong>Floodline helpline</strong><br/>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out more about call charges</a></p>
   </div>
 </div>
-{% elif model.view == 'START' and model.availability == 'AVAILABLE' %}
+{% elif model.view == 'START' %}
 <div class="wc__body">
   <div class="wc-prechat">
     <a href="#" class="wc-back-link" data-wc-back-prechat>Back</a>
@@ -145,42 +145,10 @@
     </div>
   </div>
 </div>
-{% elif model.view == 'SETTINGS' %}
-<div class="wc__body">
-  <div class="wc-postchat">
-    <div class="govuk-form-group">
-      <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-          <h3 class="govuk-fieldset__heading">
-            Settings
-          </h3>
-        </legend>
-        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-          <!-- <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="enter" name="enter" type="checkbox" value="enter">
-            <label class="govuk-label govuk-checkboxes__label" for="enter">
-              Enter to submit
-            </label>
-          </div> -->
-          <div class="govuk-checkboxes__item">
-            <input class="govuk-checkboxes__input" id="audio" name="audio" type="checkbox" value="audio">
-            <label class="govuk-label govuk-checkboxes__label" for="audio">
-              Audio notification
-            </label>
-          </div>
-        </div>
-      </fieldset>
-    </div>
-    <div class="govuk-button-group">
-      <button class="wc-save-settigns-btn" data-module="govuk-button" data-wc-save-settings-btn data-wc-save-settings>Save</button>
-      <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-save-settings-btn>Cancel</button>
-    </div>
-  </div>
-</div>
 {% else %}
 <div class="wc__body">
   <div class="wc-prechat">
-    <p>Connecting</p>
+    <p>Connecting to an adviser</p>
   </div>
 </div>
 {% endif %}

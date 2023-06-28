@@ -1,6 +1,6 @@
 'use strict'
 
-import { ChatSdk, EnvironmentName, ChatEvent, LivechatThread } from '@nice-devone/nice-cxone-chat-web-sdk'
+import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
 import State from './state'
 import Panel from './panel'
 import Notification from './notification'
@@ -56,7 +56,7 @@ class WebChat {
     if (state.isOpen) {
       const panel = this.panel
       panel.create(state, this._addEvents.bind(this))
-      panel.update(state, this.messages)
+      panel.update(state)
     }
 
     // Attach sticky footer scroll event
@@ -126,6 +126,7 @@ class WebChat {
       console.log(err)
       localStorage.removeItem('THREAD_ID')
       state.view = 'PRECHAT'
+      document.dispatchEvent(this.livechatReady)
     }
   }
 
