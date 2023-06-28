@@ -1,7 +1,7 @@
 // global styles for <a> and <p> tags
 $govuk-global-styles: true;
 $govuk-new-link-styles: true;
-$govuk-suppressed-warnings: 'ie8';
+$govuk-suppressed-warnings: ie8;
 
 // Tablet/desktop overide to address modern iPads 
 $govuk-breakpoints: (
