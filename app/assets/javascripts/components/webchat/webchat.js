@@ -364,15 +364,18 @@ class WebChat {
   _timeoutChat() {
     const state = this.state
     const status = state.status
-    const thread = this.thread
 
     // Close thread
     localStorage.removeItem('THREAD_ID')
     this.messages = []
     if (status && status !== 'closed') {
-      state.view = 'TIMEOUT'
-      thread.endChat()
+      this.thread.endChat()
     }
+
+    // Show timeout view
+    state.view = 'TIMEOUT'
+    this.panel.update(state)
+    state.view = 'PRECHAT'
   }
 
   _confirmEndChat () {
@@ -578,16 +581,9 @@ class WebChat {
     // *** Detect timeout and update view
 
     // Currently only responding to a closed case
-    if (state.status === 'closed') {
-      const panel = this.panel
-      if (state.view === 'TIMEOUT') {
-        // Instigated by timeout countdown
-        panel.update(state, this.messages)
-        state.view = 'PRECHAT'
-      } else if (state.view !== 'FEEDBACK') {
-        // Instigated by adviser
-        panel.setStatus(state)
-      }
+    if (state.status === 'closed' && state.view === 'OPEN') {
+      // Instigated by adviser
+      this.panel.setStatus(state)
 
       // Start timeout
       this._resetTimeout()
