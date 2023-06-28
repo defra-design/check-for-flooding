@@ -8,7 +8,7 @@ import Keyboard from './keyboard'
 import Utils from './utils'
 import Transcript from './transcript'
 import Config from './config'
-import { countBy } from 'lodash'
+import Availability from './availability'
 
 const env = window.nunjucks.configure('views')
 
@@ -24,7 +24,10 @@ class WebChat {
     // Initialise state
     this.state = new State(this._openChat.bind(this), this._closeChat.bind(this))
 
-    // Intialise panel
+    // Initialise availability
+    this.availability = new Availability(id, this._openChat.bind(this))
+
+    // Initialise panel
     this.panel = new Panel()
 
     // Initialise notification
@@ -33,7 +36,7 @@ class WebChat {
     // Initialise keyboard interface
     Keyboard.init(this.state)
 
-    // Custom events
+    // Attach custom ready event listener
     this.livechatReady = new CustomEvent('livechatReady', {})
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
 
@@ -44,39 +47,26 @@ class WebChat {
       body.classList.add('wc-body')
     }
 
-    // Init
-    this._init()
-  }
-
-  async _init () {
-    // Event
-    const availability = document.getElementById(this.id)
-    availability.addEventListener('click', e => {
-      if (e.target.hasAttribute('data-wc-open-btn')) {
-        this._openChat(e)
-      }
-    })
-    document.addEventListener('scroll', this._handleScrollEvent.bind(this))
-    this.availability = availability   
-
     // Render availability
-    this._updateAvailability()
+    const state = this.state
+    this.availability.update(state)
+    this._handleScrollEvent()
     
     // Open panel if #webchat exists
-    const state = this.state
     if (state.isOpen) {
       const panel = this.panel
       panel.create(state, this._addEvents.bind(this))
       panel.update(state, this.messages)
     }
 
-    // Conditionally authorise user and recover thread
+    // Attache sticky footer scroll event
+    document.addEventListener('scroll', this._handleScrollEvent.bind(this))
+
+    // Conditionally recover thread
     if (state.hasThread) {
-      await this._authorise()
-      await this._recoverThread()
+      this._recoverThread()
     } else {
-      // Ready
-      document.dispatchEvent(this.livechatReady) 
+      document.dispatchEvent(this.livechatReady)
     }
   }
 
@@ -127,6 +117,7 @@ class WebChat {
 
     // Recover thread
     try { // Address issue with no thread but we still have the session id
+      await this._authorise()
       await this._getThread()
       await this.thread.recover()
       state.view = 'OPEN'
@@ -264,23 +255,6 @@ class WebChat {
     }, true)
   }
 
-  _updateAvailability () {
-    const state = this.state
-    const availability = this.availability
-    const isStart = !availability.hasAttribute('data-wc-no-start')
-
-    availability.innerHTML = env.render('webchat-availability.html', {
-      model: {
-        availability: state.availability,
-        isStart: isStart,
-        view: state.view,
-        unseen: state.unseen
-      }
-    })
-
-    this._handleScrollEvent()
-  }
-
   _updateMessages () {
     console.log('_updateMessages')
 
@@ -384,7 +358,7 @@ class WebChat {
       this._handleScrollEvent(e)
     }
 
-    this._updateAvailability()
+    this.availability.update(state)
   }
 
   _timeoutChat() {
@@ -580,7 +554,7 @@ class WebChat {
         .then(isAvailable => {
           console.log('Polling availability')
           state.availability = isAvailable ? 'AVAILABLE' : 'OFFLINE'
-          this._updateAvailability()
+          this.availability.update(state)
           const panel = this.panel
           if (isPageLoad) {
             panel.update(state, this.messages)
@@ -728,7 +702,7 @@ class WebChat {
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
       state.unseen += 1
-      this._updateAvailability()
+      this.availability.update(state)
     }
 
     // Clear input
@@ -792,7 +766,7 @@ class WebChat {
     const state = this.state
 
     state.unseen = 0
-    this._updateAvailability()
+    this.availability.update(state)
   }
 
   _handleTimeout (e) {
@@ -841,14 +815,14 @@ class WebChat {
 
   _handleScrollEvent (e) {
     const state = this.state
-    const availability = this.availability
-    const link = availability.querySelector('[data-wc-link]')
+    const container = this.availability.container
+    const link = container.querySelector('[data-wc-link]')
 
     if (!link) {
       return
     }
 
-    const rect = availability.getBoundingClientRect()
+    const rect = container.getBoundingClientRect()
     const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
     link.classList.toggle('wc-link--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
