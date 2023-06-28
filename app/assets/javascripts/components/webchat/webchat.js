@@ -373,9 +373,6 @@ class WebChat {
     // Close thread
     localStorage.removeItem('THREAD_ID')
     this.messages = []
-    if (status && status !== 'closed') {
-      this.thread.endChat()
-    }
 
     // Show timeout view
     state.view = 'TIMEOUT'
@@ -383,6 +380,11 @@ class WebChat {
 
     // Clear timeout
     this._resetTimeout()
+
+    // End thread if still open
+    if (status && status !== 'closed') {
+      this.thread.endChat()
+    }
 
     // Reset view
     state.view = 'PRECHAT'
@@ -652,6 +654,8 @@ class WebChat {
         this.thread.endChat()
       }
       document.dispatchEvent(this.livechatReady)
+      // Reset view
+      state.view = 'PRECHAT'
       return
     }
 
