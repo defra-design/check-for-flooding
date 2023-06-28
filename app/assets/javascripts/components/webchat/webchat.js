@@ -346,6 +346,11 @@ class WebChat {
     const state = this.state
     state.isOpen = false
 
+    // Conditionaly reset view
+    if (state.view === 'TIMEOUT') {
+      state.view = 'PRECHAT'
+    }
+
     // Reset timeout
     if (this.timeout) {
       this._resetTimeout()
@@ -383,6 +388,7 @@ class WebChat {
 
     // End thread if still open
     if (status && status !== 'closed') {
+      // *** SDK bug? Doesn't return a promise and doesn't fire event on remote
       this.thread.endChat()
     }
 
@@ -403,8 +409,7 @@ class WebChat {
 
     const status = state.status
     if (status && status !== 'closed') {
-      // This method has no promise to listen for...
-      // ** Event doesnt fire on Heroku
+      // *** SDK bug? Doesn't return a promise and doesn't fire event on remote
       this.thread.endChat()
     }
     
@@ -651,11 +656,12 @@ class WebChat {
       localStorage.removeItem('THREAD_ID')
       state.view = 'TIMEOUT'
       if (state.status !== 'closed') {
+        // *** SDK bug? Doesn't return a promise and doesn't fire event on remote
         this.thread.endChat()
       }
+
+      // Ready
       document.dispatchEvent(this.livechatReady)
-      // Reset view
-      state.view = 'PRECHAT'
       return
     }
 
@@ -692,7 +698,7 @@ class WebChat {
   }
 
   _handleCaseCreatedEvent (e) {
-    // Fires on local but no on Heroku?
+    // Fires on local but no on remote?
     console.log('_handleCaseCreatedEvent')
 
     // const state = this.state
