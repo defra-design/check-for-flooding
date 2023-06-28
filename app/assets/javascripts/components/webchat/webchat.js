@@ -437,14 +437,14 @@ class WebChat {
     const state = this.state
     state.view = 'START'
     console.log('_continue')
-    this.panel.update(state, this.messages)
+    this.panel.update(state)
   }
 
   _endChat () {
     const state = this.state
     state.view = 'END'
     console.log('_endChat')
-    this.panel.update(state, this.messages)
+    this.panel.update(state)
   }
 
   _resumeChat () {
@@ -698,6 +698,7 @@ class WebChat {
 
     const state = this.state
     state.view = 'OPEN'
+    this.panel.update(state)
   }
 
   _handleMessageCreatedEvent (e) {
@@ -741,10 +742,7 @@ class WebChat {
     }
 
     // Update panel
-    if (state.view === 'START') {
-      state.view = 'OPEN'
-      this.panel.update(state, this.messages)
-    } else {
+    if (state.view === 'OPEN') {
       this._updateMessages()
     }
 

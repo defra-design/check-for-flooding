@@ -78,13 +78,11 @@
 </div>
 {% elif model.view == 'OPEN' %}
 <div class="wc__body" data-wc-body>
-  {% if model.messages | length %}
   <ul class="wc-list" data-wc-message-list>
     {% for message in model.messages %}
     {{ message.html | safe }}
     {% endfor %}
   </ul>
-  {% endif %}
 </div>
 <div class="wc__footer">
   <form class="wc-message" data-wc-message>
