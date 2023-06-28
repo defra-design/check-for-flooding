@@ -578,8 +578,6 @@ class WebChat {
     const state = this.state
     state.status = e.detail.data.case.status
 
-    // *** Detect timeout and update view
-
     // Currently only responding to a closed case
     if (state.status === 'closed' && state.view === 'OPEN') {
       // Instigated by adviser
