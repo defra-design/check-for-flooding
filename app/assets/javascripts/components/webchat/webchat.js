@@ -415,16 +415,15 @@ class WebChat {
     const status = state.status
     if (status && status !== 'closed') {
       // This method has no promise to listen for...
-      console.log('...ending chat: ', this.thread instanceof LivechatThread)
+      // ** Event doesnt fire on Heroku
       this.thread.endChat()
-    } else {
-      // Show feedback view
-      console.log('...showing feedback')
-      this.panel.update(state)
-      state.view = 'PRECHAT'
-      // Start timeout
-      this._resetTimeout()
     }
+    
+    // Show feedback view
+    this.panel.update(state)
+    state.view = 'PRECHAT'
+    // Start timeout
+    this._resetTimeout()
   }
 
   _prechat () {
@@ -601,23 +600,20 @@ class WebChat {
     const state = this.state
     state.status = e.detail.data.case.status
 
-    // *** Detect timeout and uopdate view
+    // *** Detect timeout and update view
 
     // Currently only responding to a closed case
     if (state.status === 'closed') {
       const panel = this.panel
-      if (state.view === 'FEEDBACK') {
-        // Intigated by user
-        panel.update(state, this.messages)
-        state.view = 'PRECHAT'
-      } else if (state.view === 'TIMEOUT') {
+      if (state.view === 'TIMEOUT') {
         // Instigated by timeout countdown
         panel.update(state, this.messages)
         state.view = 'PRECHAT'
-      } else {
+      } else if (state.view !== 'FEEDBACK') {
         // Instigated by adviser
         panel.setStatus(state)
       }
+
       // Start timeout
       this._resetTimeout()
     }
