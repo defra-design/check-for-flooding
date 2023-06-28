@@ -36,7 +36,7 @@ class WebChat {
     // Initialise keyboard interface
     Keyboard.init(this.state)
 
-    // Attach custom ready event listener
+    // Attach custom 'ready' event listener
     this.livechatReady = new CustomEvent('livechatReady', {})
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
 
@@ -52,7 +52,7 @@ class WebChat {
     this.availability.update(state)
     this._handleScrollEvent()
     
-    // Open panel if #webchat exists
+    // Render panel if #webchat exists
     if (state.isOpen) {
       const panel = this.panel
       panel.create(state, this._addEvents.bind(this))
@@ -62,10 +62,11 @@ class WebChat {
     // Attach sticky footer scroll event
     document.addEventListener('scroll', this._handleScrollEvent.bind(this))
 
-    // Conditionally recover thread
     if (state.hasThread) {
+      // Recover thread
       this._recoverThread()
     } else {
+      // Dispatch ready event
       document.dispatchEvent(this.livechatReady)
     }
   }
@@ -116,7 +117,8 @@ class WebChat {
     const state = this.state
 
     // Recover thread
-    try { // Address issue with no thread but we still have the session id
+    try {
+      // Address issue with no thread but we still have the session id
       await this._authorise()
       await this._getThread()
       this.thread.recover()
@@ -124,7 +126,9 @@ class WebChat {
     } catch (err) {
       console.log(err)
       localStorage.removeItem('THREAD_ID')
+      // Reset view
       state.view = 'PRECHAT'
+      // Dispatch ready event
       document.dispatchEvent(this.livechatReady)
     }
   }
@@ -143,7 +147,7 @@ class WebChat {
     this.thread = thread
     state.hasThread = true
 
-    // Add event listeners
+    // Add thread event listeners
     thread.onThreadEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
     thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     thread.onThreadEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
@@ -158,10 +162,10 @@ class WebChat {
     await this._authorise()
     const sdk = this.sdk
 
-    // Can we send messages when offline?
-    console.log('_startChat')
+    // *** Todo: Check availability again before sending message
+    console.log('_startChat: ', state.availability)
 
-    // Set userName
+    // *** Set userName. SDK issue where populates last name from string following space 
     sdk.getCustomer().setName(userName)
 
     // Start chat
@@ -173,6 +177,7 @@ class WebChat {
       console.log()
     }
 
+    // Update panel attributes
     this.panel.setAttributes(state)
   }
 
@@ -375,6 +380,11 @@ class WebChat {
     // Show timeout view
     state.view = 'TIMEOUT'
     this.panel.update(state)
+
+    // Clear timeout
+    this._resetTimeout()
+
+    // Reset view
     state.view = 'PRECHAT'
   }
 
@@ -499,9 +509,11 @@ class WebChat {
     clearTimeout(this.timeout)
     clearInterval(this.countdown)
 
-    // We dont have an open thread
+    // We don't have an open thread
     const status = this.state.status
-    if (!status || status === 'closed') {
+    const view = this.state.view
+
+    if (!status || status === 'closed' || view === 'TIMEOUT') {
       console.log('Timeout stopped...')
       return
     }
