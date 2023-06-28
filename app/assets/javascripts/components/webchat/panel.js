@@ -137,7 +137,7 @@ class Panel {
     root.classList.toggle('wc-html', isFullscreen)
     const body = document.body
     body.classList.toggle('wc-body', isFullscreen)
-    container.setAttribute('aria-modal', isFullscreen)
+    container.setAttribute('aria-modal', true)
 
     const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {
