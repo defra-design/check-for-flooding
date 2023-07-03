@@ -565,6 +565,16 @@ class WebChat {
     // Start/reset timeout
     this._resetTimeout()
 
+    const update = (isPageLoad) => {
+      this.availability.update(state)
+      const panel = this.panel
+      if (isPageLoad) {
+        panel.update(state, this.messages)
+      } else {
+        panel.setStatus(state)
+      }
+    }
+
     // Poll availability
     let isPageLoad = true
     Utils.poll({
@@ -573,17 +583,25 @@ class WebChat {
           method: 'GET',
           headers: { 'Accept': 'application/json' }
         })
-        .then(response => response.json())
-        .then(isAvailable => {
-          console.log('Polling availability')
-          state.availability = isAvailable ? 'AVAILABLE' : 'OFFLINE'
-          this.availability.update(state)
-          const panel = this.panel
-          if (isPageLoad) {
-            panel.update(state, this.messages)
+        .then(res => {
+          if (res.ok) {
+            res.json()
           } else {
-            panel.setStatus(state)
+            return res.text().then(text => {
+              throw new Error(text)
+            })
           }
+        })
+        .then(json => {
+          console.log('Polling availability')
+          state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
+          update(isPageLoad)
+          isPageLoad = false
+        })
+        .catch(err => {
+          console.log('Polling error')
+          state.availability = 'OFFLINE'
+          update(isPageLoad)
           isPageLoad = false
         })
       },
