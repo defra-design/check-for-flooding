@@ -98,7 +98,7 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.MESSAGE_SEEN_BY_END_USER, this._handleMessageSeenByEndUserEvent.bind(this))
 
     this.sdk = sdk
-    
+
     // Authorise
     const response = await sdk.authorize()
 
@@ -137,7 +137,6 @@ class WebChat {
 
   async _getThread () {
     const state = this.state
-    const sdk = this.sdk
 
     // Get thread
     let threadId = localStorage.getItem('THREAD_ID')
@@ -145,7 +144,7 @@ class WebChat {
       threadId = Utils.generateThreadId()
       localStorage.setItem('THREAD_ID', threadId)
     }
-    const thread = await sdk.getThread(threadId)
+    const thread = await this.sdk.getThread(threadId)
     this.thread = thread
     state.hasThread = true
   }
