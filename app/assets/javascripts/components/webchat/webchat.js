@@ -76,10 +76,10 @@ class WebChat {
 
     // New SDK instance
     const sdk = new ChatSdk({
-      brandId: process.env.CXONE_BRANDID, // Your tenant ID, found in the script on the "Initialization & Test" page for the chat channel.
-      channelId: process.env.CXONE_CHANNELID, // Your channel ID, found in the script on the "Initialization & Test" page for the chat channel.
-      customerId: localStorage.getItem('CUSTOMER_ID') || '', // This must be generated on every page visit and should be unique to each contact.
-      environment: EnvironmentName.EU1 // Your environment's region: AU1, CA1, EU1, JP1, NA1, UK1, or custom.
+      brandId: process.env.CXONE_BRANDID,
+      channelId: process.env.CXONE_CHANNELID,
+      customerId: localStorage.getItem('CUSTOMER_ID') || '',
+      environment: EnvironmentName.EU1
     })
 
     // Event listeners
@@ -154,7 +154,9 @@ class WebChat {
     const state = this.state
   
     // Authorise user
-    await this._authorise()
+    if (!state.isAuthorised) {
+      await this._authorise()
+    }
     const sdk = this.sdk
 
     // *** Todo: Check availability again before sending message
