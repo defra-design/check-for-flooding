@@ -585,21 +585,20 @@ class WebChat {
         })
         .then(res => {
           if (res.ok) {
-            res.json()
+            res.json().then(json => {
+              console.log('Polling availability')
+              state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
+              update(isPageLoad)
+              isPageLoad = false
+            })
           } else {
             return res.text().then(text => {
               throw new Error(text)
             })
           }
         })
-        .then(json => {
-          console.log('Polling availability')
-          state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
-          update(isPageLoad)
-          isPageLoad = false
-        })
         .catch(err => {
-          console.log('Polling error')
+          console.log('Polling error ', err)
           state.availability = 'OFFLINE'
           update(isPageLoad)
           isPageLoad = false
