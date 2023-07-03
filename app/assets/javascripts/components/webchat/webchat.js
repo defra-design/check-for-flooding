@@ -92,7 +92,6 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.ROUTING_QUEUE_UPDATED, this._handleRoutingQueueUpdatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.USER_ASSIGNED_TO_ROUTING_QUEUE, this._handleUserAssignedToRoutingQueueEvent.bind(this))
     sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueueEvent.bind(this))
-    // sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, this._handleSetPositionInQueueEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_SEEN_BY_END_USER, this._handleMessageSeenByEndUserEvent.bind(this))
 
     this.sdk = sdk
@@ -311,7 +310,7 @@ class WebChat {
         questionExceeded: question.length > 500
       }
       this.panel.update(this.state, null, error)
-      
+
       // Move focus to error summary
       const summary = this.panel.container.querySelector('[data-wc-error-summary]')
       summary.focus()
