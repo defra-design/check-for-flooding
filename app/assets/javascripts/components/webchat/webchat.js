@@ -133,6 +133,7 @@ class WebChat {
   }
 
   async _getThread () {
+    console.log('_getThread')
     const state = this.state
     const sdk = this.sdk
 
@@ -143,6 +144,7 @@ class WebChat {
       localStorage.setItem('THREAD_ID', threadId)
     }
     const thread = await sdk.getThread(threadId)
+    console.log(thread)
     this.thread = thread
     state.hasThread = true
 
