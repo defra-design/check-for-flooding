@@ -113,6 +113,7 @@ class WebChat {
   }
 
   async _recoverThread () {
+    console.log('_recoverThread')
     const state = this.state
 
     // Recover thread
@@ -120,7 +121,7 @@ class WebChat {
       // Address issue with no thread but we still have the session id
       await this._authorise()
       await this._getThread()
-      this.thread.recover() // *** Unhandle promise rejection on remote only?
+      await this.thread.recover() // *** Unhandled promise rejection on remote only?
     } catch (err) {
       console.log(err)
       localStorage.removeItem('THREAD_ID')
