@@ -80,7 +80,7 @@ class Panel {
     addEvents()
   }
 
-  update (state, messages) {
+  update (state, messages, error) {
     console.log('panel.update()')
    
     // Update content
@@ -101,7 +101,8 @@ class Panel {
         hasAudio: state.hasAudio,
         assignee: state.assignee,
         messages: messages,
-        timeout: this._timeout
+        timeout: this._timeout,
+        error: error
       }
     }
 

@@ -142,11 +142,17 @@
   .govuk-form-group {
     margin-bottom: 15px;
   }
+  .govuk-label + p {
+    margin-bottom: 10px;
+  }
   .wc-message__textbox {
     margin-bottom: 5px !important;
   }
   .wc-hint {
     font-size: 16px;
+  }
+  .wc-textarea--error {
+    @extend .govuk-textarea--error;
   }
   p, ul {
     font-size: 16px;
@@ -523,4 +529,13 @@
 // Overides
 .wc .govuk-character-count {
   margin-bottom: 0px;
+}
+.wc .govuk-error-summary {
+  margin-bottom: 30px;
+}
+.wc .govuk-error-summary__list {
+  margin-bottom: 0px;
+  li:last-child {
+    margin-bottom: 0px;
+  }
 }

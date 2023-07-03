@@ -155,7 +155,7 @@ class WebChat {
     thread.onThreadEvent(ChatEvent.AGENT_CONTACT_ENDED, this._handleAgentContactEndedEvent.bind(this))
   }
 
-  async _startChat (userName, message) {
+  async _startChat (name, question) {
     const state = this.state
   
     // Authorise user
@@ -166,13 +166,13 @@ class WebChat {
     console.log('_startChat: ', state.availability)
 
     // *** Set userName. SDK issue where populates last name from string following space 
-    sdk.getCustomer().setName(userName)
+    sdk.getCustomer().setName(name)
 
     // Start chat
     await this._getThread()
 
     try {
-      this.thread.startChat(message)
+      this.thread.startChat(question)
     } catch (err) {
       console.log()
     }
@@ -238,6 +238,11 @@ class WebChat {
         e.preventDefault()
         this._toggleAudio(e.target)
       }
+      if (e.target.hasAttribute('data-wc-error-summary-link')) {
+        e.preventDefault()
+        const id = e.target.href.slice(e.target.href.indexOf('#') + 1)
+        document.getElementById(id).focus()
+      }
     })
     // Send keystroke event
     container.addEventListener('keydown', e => {
@@ -293,16 +298,27 @@ class WebChat {
   }
 
   _validatePrechat (successCb) {
-    const userName = document.getElementById('name').value
-    const message = document.getElementById('message').value
+    const name = document.getElementById('name').value
+    const question = document.getElementById('question').value
 
-    if (!(userName.length && message.length >= 2 && message.length <= 500)) {
-      // Validation error
-      console.log(`Enter a name and/or message, message length ${message.length}`)
+    // Validation error
+    if (!(name.length && question.length >= 2 && question.length <= 500)) {
+      const error = {
+        name: name,
+        question: question,
+        nameEmpty: name.length < 2,
+        questionEmpty: question.length === 0,
+        questionExceeded: question.length > 500
+      }
+      this.panel.update(this.state, null, error)
+      
+      // Move focus to error summary
+      const summary = this.panel.container.querySelector('[data-wc-error-summary]')
+      summary.focus()
       return
     }
 
-    successCb(userName, message)
+    successCb(name, question)
   }
 
   _openChat (e) {
