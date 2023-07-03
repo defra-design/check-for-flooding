@@ -97,9 +97,10 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.USER_UNASSIGNED_FROM_ROUTING_QUEUE, this._handleUserUnassignedFromRoutingQueueEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_SEEN_BY_END_USER, this._handleMessageSeenByEndUserEvent.bind(this))
 
+    this.sdk = sdk
+    
     // Authorise
     const response = await sdk.authorize()
-    this.sdk = sdk
 
     // Set customerId
     const customerId = response?.consumerIdentity.idOnExternalPlatform
