@@ -36,17 +36,16 @@ class WebChat {
     // Initialise keyboard interface
     Keyboard.init(this.state)
 
-    // Reinstate html visiblity
+    // Reinstate html visiblity (avoid refresh flicker)
     const body = document.body
     if (body.classList.contains('wc-hidden')) {
       body.classList.remove('wc-hidden')
       body.classList.add('wc-body')
     }
 
-    // Render availability
+    // Render availability content
     const state = this.state
     this.availability.update(state)
-    this._handleScrollEvent()
     
     // Render panel if #webchat exists
     if (state.isOpen) {
@@ -57,6 +56,7 @@ class WebChat {
 
     // Attach sticky footer scroll event
     document.addEventListener('scroll', this._handleScrollEvent.bind(this))
+    this._handleScrollEvent()
 
     // Attach custom 'ready' event listener
     this.livechatReady = new CustomEvent('livechatReady', {})
