@@ -55,7 +55,7 @@ class WebChat {
     // Render panel if #webchat exists
     if (state.isOpen) {
       const panel = this.panel
-      panel.create(state, this._addEvents.bind(this))
+      panel.create(state, this._addButtonEvents.bind(this))
       panel.update(state)
     }
 
@@ -156,13 +156,12 @@ class WebChat {
     if (!state.isAuthorised) {
       await this._authorise()
     }
-    const sdk = this.sdk
 
     // *** Todo: Check availability again before sending message
     console.log('_startChat: ', state.availability)
 
-    // *** Set userName. SDK issue where populates last name from string following space 
-    sdk.getCustomer().setName(name)
+    // *** Set userName. SDK issue where populates last name from string after last space 
+    this.sdk.getCustomer().setName(name)
 
     // Start chat
     await this._getThread()
@@ -177,7 +176,7 @@ class WebChat {
     this.panel.setAttributes(state)
   }
 
-  _addEvents () {
+  _addButtonEvents () {
     const container = this.panel.container
 
     // Button events
@@ -210,7 +209,7 @@ class WebChat {
         e.preventDefault()
         this._continue(e)
       }
-      if (e.target.hasAttribute('data-wc-back-prechat')) {
+      if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
       }
@@ -338,7 +337,7 @@ class WebChat {
     const panel = this.panel
     if (!panel.container) {
       // Create panel
-      panel.create(state, this._addEvents.bind(this))
+      panel.create(state, this._addButtonEvents.bind(this))
       panel.update(state, this.messages)
 
       // Mark messages as seen

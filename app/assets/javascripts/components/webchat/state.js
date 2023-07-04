@@ -4,7 +4,7 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    const isAuthorised = !!localStorage.getItem('CUSTOMER_ID')
+    const isAuthorised = false
     const hasThread = !!localStorage.getItem('THREAD_ID')
     const hasAudio = !localStorage.getItem('AUDIO_OFF')
     const isBack = sessionStorage.getItem('IS_BACK') === 'true'
