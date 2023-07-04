@@ -175,9 +175,17 @@ class WebChat {
         e.preventDefault()
         this._closeChat(e)
       }
-      if (e.target.hasAttribute('data-wc-submit-feedback-btn')) {
+      if (e.target.hasAttribute('data-wc-continue-btn')) {
         e.preventDefault()
-        this._submitFeedback()
+        this._continue(e)
+      }
+      if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
+        e.preventDefault()
+        this._prechat(e)
+      }
+      if (e.target.hasAttribute('data-wc-submit-btn')) {
+        e.preventDefault()
+        this._validatePrechat(this._startChat.bind(this))
       }
       if (e.target.hasAttribute('data-wc-end-btn')) {
         e.preventDefault()
@@ -191,17 +199,13 @@ class WebChat {
         e.preventDefault()
         this._confirmEndChat()
       }
-      if (e.target.hasAttribute('data-wc-continue-btn')) {
+      if (e.target.hasAttribute('data-wc-feedback-btn')) {
         e.preventDefault()
-        this._continue(e)
+        this._feedback()
       }
-      if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
+      if (e.target.hasAttribute('data-wc-submit-feedback-btn')) {
         e.preventDefault()
-        this._prechat(e)
-      }
-      if (e.target.hasAttribute('data-wc-submit-btn')) {
-        e.preventDefault()
-        this._validatePrechat(this._startChat.bind(this))
+        this._submitFeedback()
       }
       if (e.target.hasAttribute('data-wc-settings-btn')) {
         e.preventDefault()
@@ -447,6 +451,15 @@ class WebChat {
     state.view = 'OPEN'
     console.log('_resumeChat')
     this.panel.update(state, this.messages)
+  }
+
+  _feedback () {
+    const state = this.state
+    state.view = 'FEEDBACK'
+    this.panel.update(state)
+    
+    // Dont persist view, set to prechat
+    state.view = 'PRECHAT'
   }
 
   _submitFeedback () {
@@ -859,14 +872,14 @@ class WebChat {
   }
 
   _handleScrollEvent (e) {
-    // Return if we dont the availability link have     
+    // Return if we dont have the availability link
+    const container = this.availability.container
     const link = container.querySelector('[data-wc-link]')
     if (!link) {
       return
     }
 
     // Calculate offset
-    const container = this.availability.container
     const rect = container.getBoundingClientRect()
     const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
 
