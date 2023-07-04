@@ -36,10 +36,6 @@ class WebChat {
     // Initialise keyboard interface
     Keyboard.init(this.state)
 
-    // Attach custom 'ready' event listener
-    this.livechatReady = new CustomEvent('livechatReady', {})
-    document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
-
     // Reinstate html visiblity
     const body = document.body
     if (body.classList.contains('wc-hidden')) {
@@ -62,6 +58,10 @@ class WebChat {
     // Attach sticky footer scroll event
     document.addEventListener('scroll', this._handleScrollEvent.bind(this))
 
+    // Attach custom 'ready' event listener
+    this.livechatReady = new CustomEvent('livechatReady', {})
+    document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
+    
     if (state.hasThread) {
       // Recover thread
       this._recoverThread()
