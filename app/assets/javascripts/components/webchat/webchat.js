@@ -155,6 +155,7 @@ class WebChat {
     await this._getThread()
     try {
       this.thread.startChat(question)
+      console.log(this.sdk)
     } catch (err) {
       console.log()
     }
