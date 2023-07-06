@@ -155,8 +155,6 @@ class WebChat {
     await this._getThread()
     try {
       this.thread.startChat(question)
-      this.sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
-      this.sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
       console.log(this.sdk._messageEmitter)
     } catch (err) {
       console.log(err)
