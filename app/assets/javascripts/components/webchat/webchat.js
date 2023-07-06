@@ -597,6 +597,7 @@ class WebChat {
 
     // Poll availability
     let isPageLoad = true
+    const interval = Config.poll > 0 ? Config.poll * 1000 : 0
     Utils.poll({
       fn: () => {
         fetch(Config.availabilityEndPoint, {
@@ -625,7 +626,7 @@ class WebChat {
           isPageLoad = false
         })
       },
-      interval: Config.poll * 1000
+      interval: interval
     }) 
   }
 
