@@ -609,6 +609,7 @@ class WebChat {
               console.log('Polling availability')
               this.state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
               update(isPageLoad)
+              this._handleScrollEvent()
               isPageLoad = false
             })
           } else {
@@ -757,6 +758,7 @@ class WebChat {
     if (direction === 'outbound' && !state.isOpen) {
       state.unseen += 1
       this.availability.update(state)
+      this._handleScrollEvent()
     }
 
     // Clear input
