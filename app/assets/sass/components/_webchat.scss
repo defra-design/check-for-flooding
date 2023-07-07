@@ -61,7 +61,7 @@
   &:focus {
     outline: none;
   }
-  &:focus[keyboard-focus]:after {
+  &:focus.wc-focus-visible:after {
     @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
     left: 4px;
     right: 4px;
@@ -297,7 +297,7 @@
   &:focus {
     outline: none;
   }
-  &:focus[keyboard-focus] {
+  &:focus.wc-focus-visible {
     outline: 3px solid $govuk-focus-colour;
   }
   svg {
@@ -339,7 +339,7 @@
   align-items: baseline;
   border-top: 1px solid govuk-colour('black');
   border-bottom: 1px solid govuk-colour('black');
-  &[keyboard-focus]:after {
+  &.wc-focus-visible:after {
     @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
     left: 4px;
     right: 4px;

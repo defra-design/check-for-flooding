@@ -3,6 +3,7 @@
 import { Button, CharacterCount } from 'govuk-frontend'
 import Utils from './utils'
 import Config from './config'
+import Keyboard from './keyboard'
 
 const env = window.nunjucks.configure('views')
 
@@ -29,6 +30,11 @@ class Panel {
 
     const model = { ...state }
     content.innerHTML = env.render('webchat-panel.html', { model })
+
+    // Move focus to container and manage inert
+    container.setAttribute('data-wc-obscure', '')
+    container.focus()
+    Keyboard.toggleInert(container)
     this.container = container
 
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))

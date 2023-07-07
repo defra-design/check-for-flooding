@@ -50,7 +50,7 @@ class WebChat {
     // Render panel if #webchat exists
     if (state.isOpen) {
       const panel = this.panel
-      panel.create(state, this._addButtonEvents.bind(this))
+      panel.create(state, this._addDomEvents.bind(this))
       panel.update(state)
     }
 
@@ -163,7 +163,7 @@ class WebChat {
     this.panel.setAttributes(this.state)
   }
 
-  _addButtonEvents () {
+  _addDomEvents () {
     // Button events
     const container = this.panel.container
     container.addEventListener('click', e => {
@@ -248,6 +248,14 @@ class WebChat {
         this._sendMessage()
       }
     }, true)
+    // Close dialog
+    container.addEventListener('keyup', e => {
+      console.log(e)
+
+      if (this.state.isOpen && (e.key === 'Escape' || e.key === 'Esc')) {
+        this._closeChat()
+      }
+    })
   }
 
   _updateMessages () {
@@ -325,7 +333,7 @@ class WebChat {
     const panel = this.panel
     if (!panel.container) {
       // Create panel
-      panel.create(state, this._addButtonEvents.bind(this))
+      panel.create(state, this._addDomEvents.bind(this))
       panel.update(state, this.messages)
 
       // Mark messages as seen
@@ -371,6 +379,11 @@ class WebChat {
 
     // Update availability link content
     this.availability.update(state)
+
+    // Move focus back to instigator
+    Keyboard.toggleInert()
+    const startChat = this.availability.container.querySelector('[data-wc-open-btn]')
+    startChat.focus()
   }
 
   _timeoutChat() {
@@ -437,6 +450,8 @@ class WebChat {
     state.view = 'START'
     console.log('_continue')
     this.panel.update(state)
+    const nameField = document.getElementById('name')
+    nameField.focus()
   }
 
   _endChat () {
@@ -721,12 +736,7 @@ class WebChat {
   }
 
   _handleCaseCreatedEvent (e) {
-    // Fires on local but no on Heroku?
     console.log('_handleCaseCreatedEvent')
-
-    // const state = this.state
-    // state.view = 'OPEN'
-    // this.panel.update(state)
   }
 
   _handleMessageCreatedEvent (e) {
@@ -774,8 +784,12 @@ class WebChat {
     if (state.view === 'START') {
       state.view = 'OPEN'
       this.panel.update(state, this.messages)
+      const messageField = document.getElementById('message')
+      messageField.focus()
     } else if (state.view === 'OPEN') {
       this._updateMessages()
+      const messageField = document.getElementById('message')
+      messageField.focus()
     }
 
     // Start/reset timeout
