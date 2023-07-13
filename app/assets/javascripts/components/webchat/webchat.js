@@ -182,6 +182,7 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
+        this.panel.container.querySelector('[data-wc-inner]').focus()
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         e.preventDefault()
@@ -383,7 +384,11 @@ class WebChat {
     // Move focus back to instigator
     Keyboard.toggleInert()
     const startChat = this.availability.container.querySelector('[data-wc-open-btn]')
-    startChat.focus()
+    if (startChat) {
+      startChat.focus()
+    } else {
+      Keyboard.getFirstFocusableEl().focus()
+    }
   }
 
   _timeoutChat() {

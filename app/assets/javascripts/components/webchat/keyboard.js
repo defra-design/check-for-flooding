@@ -65,31 +65,22 @@ class Keyboard {
     }
 
     static _getFocusParent () {
-        const el = document.activeElement.closest(`
-            [data-wc-inner]
-        `)
+        const el = document.querySelector('[data-wc-inner]')
+
+        if (el && !document.activeElement.closest(`[data-wc-inner]`)) {
+            el.focus()
+        }
 
         return el
     }
 
     static _constrainFocus (e) {
         const el = this._getFocusParent()
-
         if (!el) {
             return
         }
 
-        const selectors = [
-            'a[href]:not([disabled])',
-            'button:not([disabled])',
-            'textarea:not([disabled])',
-            'div[role="textbox"]',
-            'input:not([disabled])',
-            'select:not([disabled])',
-            '*[tabindex="0"]:not([disabled])'
-        ]
-        let focusableEls = Array.from(el.querySelectorAll(selectors.join(',')))
-        focusableEls = focusableEls.filter(e => !e.closest('[hidden]'))
+        const focusableEls = this._getFocusableEls(el)
         const firstFocusableEl = focusableEls[0]
         const lastFocusableEl = focusableEls[focusableEls.length - 1]
 
@@ -143,8 +134,28 @@ class Keyboard {
         }
     }
 
+    static _getFocusableEls (el) {
+        const selectors = [
+            'a[href]:not([disabled])',
+            'button:not([disabled])',
+            'textarea:not([disabled])',
+            'div[role="textbox"]',
+            'input:not([disabled])',
+            'select:not([disabled])',
+            '*[tabindex="0"]:not([disabled])'
+        ]
+        let focusableEls = Array.from(el.querySelectorAll(selectors.join(',')))
+        focusableEls = focusableEls.filter(e => !e.closest('[hidden]') && !e.closest('[aria-hidden="true"]'))
+        return focusableEls
+    }
+
     static toggleInert (el) {
         this._toggleInert(el)
+    }
+
+    static getFirstFocusableEl () {
+        const focusableEls = this._getFocusableEls(document)
+        return focusableEls.length ? focusableEls[0] : null
     }
 }
 

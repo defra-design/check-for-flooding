@@ -20,6 +20,8 @@ class Availability {
     const container = this.container
     const isStart = !container.hasAttribute('data-wc-no-start')
 
+    const hasFocus = document.activeElement.hasAttribute('data-wc-open-btn')
+
     container.innerHTML = env.render('webchat-availability.html', {
       model: {
         availability: state.availability,
@@ -28,6 +30,11 @@ class Availability {
         unseen: state.unseen
       }
     })
+
+    const link = container.querySelector('[data-wc-open-btn]')
+    if (hasFocus && link) {
+      link.focus()
+    }
   }
 }
 
