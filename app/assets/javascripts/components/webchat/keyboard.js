@@ -24,11 +24,6 @@ class Keyboard {
         document.addEventListener('keyup', (e) => {
             this._isKeyboard = true
             if (e.key === 'Tab') {
-                const obscure = document.querySelector('[data-wc-obscure]')
-                const isWithinObscure = document.activeElement.closest('[data-wc-obscure]')
-                if (obscure && !isWithinObscure) {
-                    obscure.focus()
-                }
                 const el = this._getFocusParent()
                 if (el) {
                     this._toggleInert(el)
