@@ -545,3 +545,8 @@
 .defra-map-vt-layer canvas {
   mix-blend-mode: darken;
 }
+
+// Layer blur
+#map-outlook .ol-layer canvas {
+  filter: blur(6px);
+}
