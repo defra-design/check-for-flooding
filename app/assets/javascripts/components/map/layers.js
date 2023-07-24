@@ -288,7 +288,7 @@ window.flood.maps.layers = {
       }),
       renderMode: 'hybrid',
       style: window.flood.maps.styles.outlookPolygons,
-      opacity: 0.6,
+      opacity: 1,
       zIndex: 4
     })
   },
