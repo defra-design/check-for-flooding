@@ -50,7 +50,7 @@ router.get('/station/:id/:downstream?', async (req, res) => {
       id: `${station.id}-max`,
       name: 'max',
       value: station.levelMax,
-      date: station.levelMaxDateTime
+      date: station.levelMaxDatetime
     },
     {
       id: `${station.id}-high`,
