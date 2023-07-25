@@ -393,6 +393,11 @@ function OutlookMap (mapId, options) {
       setFeatureVisibility()
     }
   })
+
+  // Layer rendering
+  // areasOfConcern.on('rendercomplete', e => {
+  //   e.context.canvas.style.filter = 'blur(10px)'
+  // })
 }
 
 // Export a helper factory to create this map

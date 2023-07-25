@@ -324,7 +324,6 @@ window.flood.maps.styles = {
   outlookPolygons: (feature) => {
     if (!feature.get('isVisible')) { return }
     const zIndex = feature.get('z-index')
-    const lineDash = [2, 3]
     let strokeColour = '#85994b'
     let fillColour = '#85994b'
     if (feature.get('risk-level') === 2) {
@@ -342,7 +341,6 @@ window.flood.maps.styles = {
     const style = new Style({
       stroke: new Stroke({ color: strokeColour, width: 1 }),
       fill: new Fill({ color: fillColour }),
-      lineDash: lineDash,
       zIndex: zIndex
     })
     return isSelected ? [selectedStroke, style] : style
