@@ -31,10 +31,11 @@ class Panel {
     const model = { ...state }
     content.innerHTML = env.render('webchat-panel.html', { model })
 
-    // Move focus to container and manage inert
+    // Move focus to wc__inner and manage inert
     container.setAttribute('data-wc-obscure', '')
-    container.focus()
+    container.firstChild.focus()
     Keyboard.toggleInert(container)
+
     this.container = container
 
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))
@@ -145,6 +146,20 @@ class Panel {
     const body = document.body
     body.classList.toggle('wc-body', isFullscreen)
     container.setAttribute('aria-modal', true)
+
+    const backBtn = container.querySelector('[data-wc-back-btn]')
+    const hideBtn = container.querySelector('[data-wc-hide-btn]')
+    const closeBtn = container.querySelector('[data-wc-close-btn]')
+
+    if (backBtn) {
+      backBtn.hidden = !isFullscreen
+    }
+    if (hideBtn) {
+      hideBtn.hidden = isFullscreen
+    }
+    if (closeBtn) {
+      closeBtn.hidden = isFullscreen
+    }
 
     const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {

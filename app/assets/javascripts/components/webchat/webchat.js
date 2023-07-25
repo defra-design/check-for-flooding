@@ -171,6 +171,10 @@ class WebChat {
         e.preventDefault()
         this._closeChat(e)
       }
+      if (e.target.hasAttribute('data-wc-hide-btn')) {
+        e.preventDefault()
+        this._closeChat(e)
+      }
       if (e.target.hasAttribute('data-wc-close-btn')) {
         e.preventDefault()
         this._closeChat(e)
@@ -182,7 +186,7 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
-        this.panel.container.querySelector('[data-wc-inner]').focus()
+        this.panel.container.firstChild.focus()
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         e.preventDefault()
@@ -251,8 +255,6 @@ class WebChat {
     }, true)
     // Close dialog
     container.addEventListener('keyup', e => {
-      console.log(e)
-
       if (this.state.isOpen && (e.key === 'Escape' || e.key === 'Esc')) {
         this._closeChat()
       }
@@ -343,6 +345,8 @@ class WebChat {
         thread.lastMessageSeen()
       }
     }
+
+    console.log('_openChat', document.activeElement)
 
     // Hide sticky availability
     this._handleScrollEvent()

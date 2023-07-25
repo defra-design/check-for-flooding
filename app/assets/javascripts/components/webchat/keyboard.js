@@ -19,21 +19,20 @@ class Keyboard {
             if (e.key === 'Tab' || e.key === 'Escape' || e.key === 'Esc') {
                 this._constrainFocus(e)
             }
-        }, true)
+        })
 
         document.addEventListener('keyup', (e) => {
             this._isKeyboard = true
             if (e.key === 'Tab') {
-                const el = this._getFocusParent()
+                const el = this._focusParent()
                 if (el) {
                     this._toggleInert(el)
                 }
             }
-        }, true)
+        })
 
         document.addEventListener('pointerdown', (e) => {
             this._isKeyboard = false
-            // e.target.classList.remove('am-u-focus-visible')
         })
 
         document.addEventListener('focus', (e) => {
@@ -59,7 +58,7 @@ class Keyboard {
         return (tagNames.includes(el.tagName) || el.tabIndex >= 0 || isTextbox) && !isHidden
     }
 
-    static _getFocusParent () {
+    static _focusParent () {
         const el = document.querySelector('[data-wc-inner]')
 
         if (el && !document.activeElement.closest(`[data-wc-inner]`)) {
@@ -70,7 +69,7 @@ class Keyboard {
     }
 
     static _constrainFocus (e) {
-        const el = this._getFocusParent()
+        const el = this._focusParent()
         if (!el) {
             return
         }
@@ -78,19 +77,20 @@ class Keyboard {
         const focusableEls = this._getFocusableEls(el)
         const firstFocusableEl = focusableEls[0]
         const lastFocusableEl = focusableEls[focusableEls.length - 1]
+        
+        console.log('_constrainFocus', document.activeElement, firstFocusableEl)
 
         if (e.shiftKey ) {
-            console.log(document.activeElement, el, firstFocusableEl)
-            if (document.activeElement === el || document.activeElement === firstFocusableEl) {
-                console.log('On first element')
-                e.preventDefault()
+            if (document.activeElement === firstFocusableEl) {
+                console.log('On first element', lastFocusableEl)
                 lastFocusableEl.focus()
+                e.preventDefault()
             }
         } else {
             if (document.activeElement === lastFocusableEl) {
                 console.log('On last element')
-                e.preventDefault()
                 firstFocusableEl.focus()
+                e.preventDefault()
             }
         }
     }

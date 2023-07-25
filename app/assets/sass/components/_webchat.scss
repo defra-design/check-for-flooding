@@ -313,12 +313,8 @@
     display: none;
   }
 }
-.wc-hide-btn {
-  @include mq ($until: 'tablet') {
-    display: none;
-  }
-}
-.wc-close-btn[data-wc-back-btn] {
+.wc-hide-btn,
+.wc-close-btn {
   @include mq ($until: 'tablet') {
     display: none;
   }
