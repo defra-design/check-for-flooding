@@ -54,6 +54,8 @@ class Availability {
 
     // Toggle static/sticky display
     const isFixed = (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold
+    document.documentElement.classList.toggle('wc-scroll-padding', isFixed)
+    document.body.classList.toggle('wc-scroll-padding', isFixed)
     link.classList.toggle('wc-link--fixed', isFixed)
   }
 }

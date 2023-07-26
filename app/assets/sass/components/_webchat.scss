@@ -17,6 +17,9 @@
     left:0px;
   }
 }
+.wc-scroll-padding {
+  scroll-padding-bottom: calc(2rem + 20px);
+}
 .wc-hidden {
   visibility: hidden;
 }
