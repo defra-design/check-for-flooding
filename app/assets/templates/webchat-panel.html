@@ -120,7 +120,7 @@
   </div>
 </div>
 {% elif model.view == 'OPEN' %}
-<div class="wc__body" data-wc-body>
+<div class="wc__body" tabindex="0" data-wc-body>
   <ul class="wc-list" data-wc-message-list>
     {% for message in model.messages %}
     {{ message.html | safe }}

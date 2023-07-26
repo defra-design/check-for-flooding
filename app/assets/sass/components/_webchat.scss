@@ -76,6 +76,19 @@
   flex: 1 1 auto;
   overflow-y: auto;
   overscroll-behavior: contain;
+  position: relative;
+  &:focus {
+    outline: none;
+  }
+  &:focus.wc-focus-visible {
+    outline: 3px solid transparent;
+    outline-offset: -2px;
+    box-shadow:
+      inset 0px 0px 0px 2px $govuk-focus-colour,
+      inset 0px 0px 0px 4px govuk-colour('black'), 
+      0px 0px 0px 1px $govuk-focus-colour;
+    z-index: 2;
+  }
 }
 .wc__footer {
   flex: 0 0 0;

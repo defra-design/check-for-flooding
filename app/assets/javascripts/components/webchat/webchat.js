@@ -55,8 +55,10 @@ class WebChat {
     }
 
     // Attach sticky footer scroll event
-    document.addEventListener('scroll', this._handleScrollEvent.bind(this))
-    this._handleScrollEvent()
+    document.addEventListener('scroll', e => {
+      this.availability.scroll(state)
+    })
+    this.availability.scroll(state)
 
     // Attach custom 'ready' event listener
     this.livechatReady = new CustomEvent('livechatReady', {})
@@ -97,8 +99,10 @@ class WebChat {
     // Add sdk event listeners
     sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleCaseCreatedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
@@ -234,10 +238,14 @@ class WebChat {
         document.getElementById(id).focus()
       }
     })
-    // Send keystroke event
     container.addEventListener('keydown', e => {
+      // Send keystroke event
       if (e.target.hasAttribute('data-wc-textbox')) {
         this._handleSendKeystrokeEvent()
+      }
+      // Prevent body scroll
+      if (e.target.hasAttribute('data-wc-body')) {
+        e.stopPropagation()
       }
     })
     // Reset timeout event
@@ -296,7 +304,8 @@ class WebChat {
     const question = document.getElementById('question').value
 
     // Validation error
-    if (!(name.length && question.length >= 2 && question.length <= 500)) {
+    const isError = !(name.length && question.length >= 2 && question.length <= 500)
+    if (isError) {
       const error = {
         name: name,
         question: question,
@@ -349,7 +358,7 @@ class WebChat {
     console.log('_openChat', document.activeElement)
 
     // Hide sticky availability
-    this._handleScrollEvent()
+    this.availability.scroll(state)
   }
 
   _closeChat (e) {
@@ -379,7 +388,7 @@ class WebChat {
       panel.setAttributes(state)
       panel.container = panel.container.remove()
       state.replaceState()
-      this._handleScrollEvent(e)
+      this.availability.scroll(state)
     }
 
     // Update availability link content
@@ -432,6 +441,8 @@ class WebChat {
     const state = this.state
     state.view = 'FEEDBACK'
     this.panel.update(state)
+    const btn = document.querySelector('[data-wc-submit-feedback-btn]')
+    btn.focus()
 
     // Clear timeout
     this._resetTimeout()
@@ -439,7 +450,6 @@ class WebChat {
     // End thread if still open
     const status = state.status
     if (status && status !== 'closed') {
-      // *** SDK bug? Doesn't return a promise and doesn't fire event on remote
       this.thread.endChat()
     }
     
@@ -459,8 +469,8 @@ class WebChat {
     state.view = 'START'
     console.log('_continue')
     this.panel.update(state)
-    const nameField = document.getElementById('name')
-    nameField.focus()
+    const name = document.getElementById('name')
+    name.focus()
   }
 
   _endChat () {
@@ -468,6 +478,8 @@ class WebChat {
     state.view = 'END'
     console.log('_endChat')
     this.panel.update(state)
+    const btn = document.querySelector('[data-wc-confirm-end-btn]')
+    btn.focus()
   }
 
   _resumeChat () {
@@ -475,21 +487,29 @@ class WebChat {
     state.view = 'OPEN'
     console.log('_resumeChat')
     this.panel.update(state, this.messages)
+    const textbox = document.querySelector('[data-wc-textbox]')
+    textbox.focus()
   }
 
   _feedback () {
+    console.log('_feedback')
     const state = this.state
     state.view = 'FEEDBACK'
     this.panel.update(state)
-    
+    const btn = document.querySelector('[data-wc-submit-feedback-btn]')
+    btn.focus()
+
     // Dont persist view, set to prechat
     state.view = 'PRECHAT'
   }
 
   _submitFeedback () {
+    console.log('_submitFeedback')
     const state = this.state
     state.view = 'FINISH'
     this.panel.update(state)
+    const btn = document.querySelector('[role="button"][data-wc-close-btn]')
+    btn.focus()
     
     // Dont persist view, set to prechat
     state.view = 'PRECHAT'
@@ -634,7 +654,7 @@ class WebChat {
               console.log('Polling availability')
               this.state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
               update(isPageLoad)
-              this._handleScrollEvent()
+              this.availability.scroll(this.state)
               isPageLoad = false
             })
           } else {
@@ -686,7 +706,7 @@ class WebChat {
 
     // Set thread status
     const state = this.state
-    const status = e.detail.data.consumerContact.status
+    const status = e.detail.data.contact.status
     state.status = status
 
     // Calculate elapsed time
@@ -778,7 +798,7 @@ class WebChat {
     if (direction === 'outbound' && !state.isOpen) {
       state.unseen += 1
       this.availability.update(state)
-      this._handleScrollEvent()
+      this.availability.scroll(state)
     }
 
     // Clear input
@@ -793,22 +813,24 @@ class WebChat {
     if (state.view === 'START') {
       state.view = 'OPEN'
       this.panel.update(state, this.messages)
-      const messageField = document.getElementById('message')
-      messageField.focus()
     } else if (state.view === 'OPEN') {
       this._updateMessages()
-      const messageField = document.getElementById('message')
-      messageField.focus()
     }
 
-    // Start/reset timeout
-    this._resetTimeout()
+    // Set focus to message field
+    const messageField = document.getElementById('message')
+    if (messageField && direction === 'inbound') {
+      messageField.focus()
+    }
 
     // Play notification sound
     if (state.hasAudio && direction === 'outbound') {
       const notification = this.notification
       notification.playSound()
     }
+
+    // Start/reset timeout
+    this._resetTimeout()
   }
 
   _handleAgentTypingEvent (e) {
@@ -895,23 +917,6 @@ class WebChat {
         console.log('Chat has timedout')
       }
     })
-  }
-
-  _handleScrollEvent (e) {
-    // Return if we dont have the availability link
-    const container = this.availability.container
-    const link = container.querySelector('[data-wc-link]')
-    if (!link) {
-      return
-    }
-
-    // Calculate offset
-    const rect = container.getBoundingClientRect()
-    const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
-
-    // Toggle static/sticky display
-    const state = this.state
-    link.classList.toggle('wc-link--fixed', (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold)
   }
 
   _handleSendKeystrokeEvent () {

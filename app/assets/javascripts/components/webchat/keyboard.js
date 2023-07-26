@@ -78,17 +78,13 @@ class Keyboard {
         const firstFocusableEl = focusableEls[0]
         const lastFocusableEl = focusableEls[focusableEls.length - 1]
         
-        console.log('_constrainFocus', document.activeElement, firstFocusableEl)
-
         if (e.shiftKey ) {
             if (document.activeElement === firstFocusableEl) {
-                console.log('On first element', lastFocusableEl)
                 lastFocusableEl.focus()
                 e.preventDefault()
             }
         } else {
             if (document.activeElement === lastFocusableEl) {
-                console.log('On last element')
                 firstFocusableEl.focus()
                 e.preventDefault()
             }

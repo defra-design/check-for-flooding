@@ -35,6 +35,26 @@ class Availability {
     if (hasFocus && link) {
       link.focus()
     }
+    
+    // Toggle skip link
+    const hasSkipLink = (state.view === 'OPEN' || state.view === 'END') && !state.isOpen
+    console.log('hasSkipLink', hasSkipLink)
+  }
+
+  scroll (state) {
+    const container = this.container
+    const link = container.querySelector('[data-wc-link]')
+    if (!link) {
+      return
+    }
+
+    // Calculate offset
+    const rect = container.getBoundingClientRect()
+    const isBelowFold = rect.top + 35 > (window.innerHeight || document.documentElement.clientHeight)
+
+    // Toggle static/sticky display
+    const isFixed = (state.view === 'OPEN' || state.view === 'END') && !state.isOpen && isBelowFold
+    link.classList.toggle('wc-link--fixed', isFixed)
   }
 }
 
