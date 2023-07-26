@@ -99,10 +99,8 @@ class WebChat {
     // Add sdk event listeners
     sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
-    // sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleCaseCreatedEvent.bind(this))
-    // sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleCaseCreatedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleCaseStatusChangedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleContactCreatedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
@@ -243,10 +241,6 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-textbox')) {
         this._handleSendKeystrokeEvent()
       }
-      // Prevent body scroll
-      if (e.target.hasAttribute('data-wc-body')) {
-        e.stopPropagation()
-      }
     })
     // Reset timeout event
     container.addEventListener('keyup', e => {
@@ -264,7 +258,7 @@ class WebChat {
     // Close dialog
     container.addEventListener('keyup', e => {
       if (this.state.isOpen && (e.key === 'Escape' || e.key === 'Esc')) {
-        this._closeChat()
+        this._closeChat(e)
       }
     })
   }
@@ -324,10 +318,11 @@ class WebChat {
     successCb(name, question)
   }
 
-  _openChat (e) {
-    console.log('_openChat')
+  _openChat (e, instigatorId) {
+    console.log('_openChat', instigatorId)
 
     const state = this.state
+    state.instigatorId = instigatorId
     state.isOpen = true
 
     // Reset timeout
@@ -355,8 +350,6 @@ class WebChat {
       }
     }
 
-    console.log('_openChat', document.activeElement)
-
     // Hide sticky availability
     this.availability.scroll(state)
   }
@@ -365,6 +358,14 @@ class WebChat {
     console.log('_closeChat')
 
     const state = this.state
+
+    // History back
+    const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
+    if (isBtn && state.isBack) {
+      state.back()
+      return
+    }
+
     state.isOpen = false
 
     // Conditionaly reset view
@@ -377,30 +378,26 @@ class WebChat {
       this._resetTimeout()
     }
 
-    const isBtn = e instanceof PointerEvent || e instanceof MouseEvent || e instanceof KeyboardEvent
     const panel = this.panel
+    const instigatorId = state.instigatorId
 
-    if (isBtn && state.isBack) {
-      // History back
-      state.back()
-    } else if (panel.container) {
-      // Remove panel
+    // Remove panel
+    if (panel.container) {
       panel.setAttributes(state)
       panel.container = panel.container.remove()
       state.replaceState()
-      this.availability.scroll(state)
     }
 
     // Update availability link content
     this.availability.update(state)
+    this.availability.scroll(state)
 
     // Move focus back to instigator
     Keyboard.toggleInert()
-    const startChat = this.availability.container.querySelector('[data-wc-open-btn]')
-    if (startChat) {
-      startChat.focus()
-    } else {
-      Keyboard.getFirstFocusableEl().focus()
+    if (instigatorId) {
+      console.log(Keyboard._isKeyboard)
+      document.getElementById(instigatorId).focus()
+      delete state.instigatorId
     }
   }
 
@@ -674,8 +671,8 @@ class WebChat {
     }) 
   }
 
-  _handleCaseStatusChangedEvent (e) {
-    console.log('_handleCaseStatusChangedEvent')
+  _handleContactStatusChangedEvent (e) {
+    console.log('_handleContactStatusChangedEvent')
 
     //  *** Not triggering on Heroku?
 
@@ -764,8 +761,8 @@ class WebChat {
     document.dispatchEvent(this.livechatReady)
   }
 
-  _handleCaseCreatedEvent (e) {
-    console.log('_handleCaseCreatedEvent')
+  _handleContactCreatedEvent (e) {
+    console.log('_handleContactCreatedEvent')
   }
 
   _handleMessageCreatedEvent (e) {
