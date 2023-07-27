@@ -390,7 +390,8 @@
     border: 0px;
     height: 20px;
     resize: none;
-    overflow: hidden;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
     &:focus {
       outline: none;
       box-shadow: none;
@@ -564,6 +565,9 @@
     background-color: transparent;
     text-decoration: underline;
     color: $govuk-link-colour;
+  }
+  &:active {
+    color: govuk-colour('black');
   }
   &.wc-focus-visible:focus {
     background-color: $govuk-focus-colour;

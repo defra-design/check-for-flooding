@@ -241,6 +241,15 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-textbox')) {
         this._handleSendKeystrokeEvent()
       }
+      // Prevent scroll chaining
+      if (e.target.hasAttribute('data-wc-body')) {
+        const m = e.target
+        const isBottom = m.scrollTop === (m.scrollHeight - m.offsetHeight)
+        const isTop = m.scrollTop <= 0
+        if ((e.key === 'ArrowUp' && isTop) || (e.key === 'ArrowDown' && isBottom)) {
+          e.preventDefault()
+        }
+      }
     })
     // Reset timeout event
     container.addEventListener('keyup', e => {

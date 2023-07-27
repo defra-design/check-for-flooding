@@ -82,7 +82,8 @@ class Panel {
         const text = (e.clipboardData || window.clipboardData).getData('text')
         const textbox = document.getElementById('message')
         const label = textbox.previousElementSibling
-        textbox.innerText = text
+        Utils.insertTextAtCaret(text)
+        // textbox.innerText = text
         Utils.toggleLabel(label, 'v', textbox)
       }
     }, true)

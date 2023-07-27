@@ -146,15 +146,38 @@ class Utils {
   static autosize (textbox, maxHeight) {
     const el = textbox
     el.style.cssText = 'height:auto'
-    if (el.scrollHeight >= maxHeight) {
-      el.style.cssText = `overflow: auto; height: ${maxHeight}px`
+    if (el.scrollHeight >= maxHeight && el.style.height !== maxHeight + 'px') {
+      console.log('scrollHeight >= maxHeight', el.style.cssText)
+      el.style.cssText = `overflow-y: auto; height: ${maxHeight}px`
+      // Need to remove as its added on every keyup
       el.removeEventListener('keyup', this)
     } else {
+      console.log('scrollHeight < maxHeight')
       el.style.cssText = `height:${el.scrollHeight}px`
       // setTimeout(() => {
       //   el.style.cssText = 'height:auto'
       //   el.style.cssText = 'height:' + el.scrollHeight + 'px'
       // }, 0)
+    }
+  }
+
+  static insertTextAtCaret (text) {
+    let sel
+    let range
+    if (window.getSelection) {
+      sel = window.getSelection()
+      if (sel.getRangeAt && sel.rangeCount) {
+        // Insert range at caret
+        range = sel.getRangeAt(0)
+        range.deleteContents()
+        range.insertNode(document.createTextNode(text))
+        // Move caret to end of range
+        range.collapse(false)
+        sel.removeAllRanges()
+        sel.addRange(range)
+      }
+    } else if (document.selection && document.selection.createRange) {
+      document.selection.createRange().text = text
     }
   }
 
@@ -190,30 +213,6 @@ class Utils {
     }
     return duration
   }
-
-  // static iosSoftKeyboardOffset (state, container) {
-  //   const acceptsKeyboardInput = (el) => { 
-  //     return (
-  //       el.tagName === 'INPUT' ||
-  //       el.tagName === 'TEXTAREA' ||
-  //       el.isContentEditable
-  //     )
-  //   }
-  //   container.addEventListener('focus', e => {
-  //     const isMobile = state.isMobile
-  //     if (!isMobile || !acceptsKeyboardInput(e.target)) {
-  //       return
-  //     }
-  //     document.body.setAttribute('data-keyboard-open', '')
-  //     console.log('Keyboard showing: ', document.body.clientHeight, window.innerHeight, window.outerHeight)
-  //   }, true)
-  //   container.addEventListener('blur', e => {
-  //     if (!document.body.hasAttribute('data-keyboard-open')) {
-  //       return
-  //     }
-  //     document.body.removeAttribute('data-keyboard-open')
-  //   }, true)
-  // }
 }
 
 export default Utils
