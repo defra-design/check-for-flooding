@@ -36,7 +36,7 @@ class Keyboard {
         })
 
         document.addEventListener('focus', (e) => {
-            const isScope = !!e.target.closest('[data-wc-availability], [data-wc]')
+            const isScope = !!e.target.closest('#wc-availability, #wc-panel')
             if (!isScope) {
                 return
             }

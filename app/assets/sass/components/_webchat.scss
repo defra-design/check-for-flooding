@@ -488,6 +488,10 @@
   }
   &:focus {
     color: govuk-colour('black');
+    box-shadow: none;
+    background-color: transparent;
+    text-decoration: underline;
+    color: $govuk-focus-colour;
   }
   &:hover:not(:focus):not(:active) {
     color: $govuk-link-hover-colour;
@@ -549,5 +553,22 @@
   margin-bottom: 0px;
   li:last-child {
     margin-bottom: 0px;
+  }
+}
+
+// Keyboard only focus helper
+[data-wc-focus-visible] {
+  &:focus {
+    color: govuk-colour('black');
+    box-shadow: none;
+    background-color: transparent;
+    text-decoration: underline;
+    color: $govuk-link-colour;
+  }
+  &.wc-focus-visible:focus {
+    background-color: $govuk-focus-colour;
+    box-shadow: 0 -2px $govuk-focus-colour, 0 4px govuk-colour('black');
+    text-decoration: none;
+    color: govuk-colour('black');
   }
 }
