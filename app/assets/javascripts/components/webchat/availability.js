@@ -18,15 +18,25 @@ class Availability {
     const skipMain = document.querySelector('a[data-module="govuk-skip-link"]')
     skipMain.parentNode.insertBefore(skipLink, skipMain.nextSibling)
 
-    // Event
+    this.skipLink = skipLink
+    this.container = container
+
+    // Events
     document.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-open-btn')) {
         openChatCb(e, e.target.id)
       }
     })
-
-    this.skipLink = skipLink
-    this.container = container
+    document.addEventListener('keydown', e => {
+      if (e.key === ' ' && e.target.hasAttribute('data-wc-open-btn')) {
+        e.preventDefault()
+      }
+    })
+    document.addEventListener('keyup', e => {
+      if (e.key === ' ' && e.target.hasAttribute('data-wc-open-btn')) {
+        openChatCb(e, e.target.id)
+      }
+    })
   }
 
   update (state) {
@@ -42,7 +52,7 @@ class Availability {
       }
     })
 
-    // Conditionally reinstate focus
+    // Conditionally reinstate focus after dom replacement
     const link = container.querySelector('[data-wc-open-btn]')
     const hasFocus = document.activeElement.hasAttribute('data-wc-open-btn')
     if (hasFocus && link) {

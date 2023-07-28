@@ -404,8 +404,10 @@ class WebChat {
     // Move focus back to instigator
     Keyboard.toggleInert()
     if (instigatorId) {
-      console.log(Keyboard._isKeyboard)
-      document.getElementById(instigatorId).focus()
+      const instigator = document.getElementById(instigatorId)
+      if (instigator) {
+        document.getElementById(instigatorId).focus()
+      }
       delete state.instigatorId
     }
   }
@@ -728,7 +730,7 @@ class WebChat {
       localStorage.removeItem('THREAD_ID')
       state.view = 'TIMEOUT'
       if (state.status !== 'closed') {
-        // *** SDK bug? Doesn't return a promise? Doesn't fire event on Heroku?
+        // *** SDK bug? Doesn't return a promise?
         this.thread.endChat()
       }
 
@@ -740,7 +742,9 @@ class WebChat {
     // Set assignee and unseen message count
     const assignee = e.detail.data.inboxAssignee
     state.assignee = assignee ? assignee.firstName : null
-    const unseen = e.detail.data.thread.unseenMessagesCount
+    // ** Broken in v1.3.0 LivechatRecovered response no longer has unseenMessagesCount
+    console.log(e.detail.data)
+    const unseen = e.detail.data.thread.unseenMessagesCount || 0
     state.unseen = unseen
     state.view = 'OPEN'
 
@@ -802,6 +806,7 @@ class WebChat {
 
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
+      console.log(JSON.stringify(state))
       state.unseen += 1
       this.availability.update(state)
       this.availability.scroll(state)

@@ -144,16 +144,15 @@ class Utils {
   }
 
   static autosize (textbox, maxHeight) {
-    const el = textbox
-    el.style.cssText = 'height:auto'
-    if (el.scrollHeight >= maxHeight && el.style.height !== maxHeight + 'px') {
-      console.log('scrollHeight >= maxHeight', el.style.cssText)
-      el.style.cssText = `overflow-y: auto; height: ${maxHeight}px`
+    const scrollTop = textbox.scrollTop
+    textbox.style.cssText = 'height:auto'
+    if (textbox.scrollHeight >= maxHeight) {
+      textbox.style.cssText = `overflow-y: auto; height: ${maxHeight}px`
+      textbox.scrollTop = scrollTop
       // Need to remove as its added on every keyup
-      el.removeEventListener('keyup', this)
+      textbox.removeEventListener('keyup', this)
     } else {
-      console.log('scrollHeight < maxHeight')
-      el.style.cssText = `height:${el.scrollHeight}px`
+      textbox.style.cssText = `height:${textbox.scrollHeight}px`
       // setTimeout(() => {
       //   el.style.cssText = 'height:auto'
       //   el.style.cssText = 'height:' + el.scrollHeight + 'px'
