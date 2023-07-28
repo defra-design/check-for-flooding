@@ -97,15 +97,22 @@ class WebChat {
     state.availability = isOnline ? 'AVAILABLE' : 'OFFLINE'
 
     // Add sdk event listeners
+
+    // v1.3.0
     sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleContactCreatedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
-    sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
     sdk.onChatEvent(ChatEvent.AGENT_TYPING_ENDED, this._handleAgentTypingEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_SEEN_BY_END_USER, this._handleMessageSeenByEndUserEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleContactCreatedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
+
+    // v1.2.0
+    // sdk.onChatEvent(ChatEvent.CASE_INBOX_ASSIGNEE_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleContactCreatedEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
 
     this.sdk = sdk
   }
