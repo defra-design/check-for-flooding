@@ -89,48 +89,48 @@
       {% else %}
       <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
       {% endif %}
-
-      {# -- Flood area -- #}
-      <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.geography }}</p>
-      
-      {# -- Trigger levels -- #}
-      {% set levelsLength = model.targetArea.levels | length %}
-      <p>
-        {% if levelsLength == 1 %}
-        {% if model.ab == 'a' %}
-        <a href="/station/{{ model.targetArea.levels[0].id }}">View the latest indicator level for this area</a>
-        {% else %}
-        <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].riverName }} level at {{ model.targetArea.levels[0].name }}</a> which gives an indication of the latest level for this area.
-        {% endif %}
-        {% elif levelsLength > 1 %}
-        {% if model.ab == 'a' %}
-        <a href="/target-area/{{ model.targetArea.id }}/levels">View the latest indicator levels for this area
-        {% else %}
-        View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.
-        {% endif %}
-        {% else %}
-        <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
-        {% endif %}
-      </p>
-
-      {# -- Get flood warnings by phone, text or email -- #}
-      <p>
-        <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
-          <span class="defra-link-icon__icon"><svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg></span>{% if model.isActive %}Get flood warnings by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
-        </a>
-        <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings">
-          {% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
-        </a> -->
-      </p>
-
-      {# -- Feedback -- #}
-      {% if model.isActive %}
-      <p>Could this information be better? <a href="">Tell us how to improve it.</a></p>
-      {% endif %}
-      
-      {% include "partials/social.html" %}
-      {% include "partials/context-footer.html" %}
     </div>
+
+    {# -- Flood area -- #}
+    <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.geography }}</p>
+    
+    {# -- Trigger levels -- #}
+    {% set levelsLength = model.targetArea.levels | length %}
+    <p>
+      {% if levelsLength == 1 %}
+      {% if model.ab == 'a' %}
+      <a href="/station/{{ model.targetArea.levels[0].id }}">View the latest indicator level for this area</a>
+      {% else %}
+      <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].riverName }} level at {{ model.targetArea.levels[0].name }}</a> which gives an indication of the latest level for this area.
+      {% endif %}
+      {% elif levelsLength > 1 %}
+      {% if model.ab == 'a' %}
+      <a href="/target-area/{{ model.targetArea.id }}/levels">View the latest indicator levels for this area
+      {% else %}
+      View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.
+      {% endif %}
+      {% else %}
+      <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
+      {% endif %}
+    </p>
+
+    {# -- Get flood warnings by phone, text or email -- #}
+    <p>
+      <a href="https://www.gov.uk/sign-up-for-flood-warnings" class="defra-link-icon">
+        <span class="defra-link-icon__icon"><svg viewBox="0 0 14 20" width="14" height="20" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" fill="currentColor"><path d="M9.27 15.747C9.27 16.99 8.26 18 7.016 18s-2.253-1.01-2.253-2.253H9.27zM6.015 1.86v-.859A1 1 0 0 1 7.016 0c.553 0 1.002.449 1.002 1.001v.859c2.284.465 4.006 2.487 4.006 4.907v4.357l1.628 1.661c.488.489.488 1.282 0 1.771a1.25 1.25 0 0 1-.886.366H1.252a1.25 1.25 0 0 1-.886-.366c-.488-.489-.488-1.282 0-1.771l1.643-1.661V6.767c0-2.42 1.721-4.442 4.006-4.907z"/></svg></span>{% if model.isActive %}Get flood warnings by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
+      </a>
+      <!-- <a href="https://www.gov.uk/sign-up-for-flood-warnings">
+        {% if model.isActive %}Get updates by phone, text or email{% else %}Get flood warnings by phone, text or email{% endif %}
+      </a> -->
+    </p>
+
+    {# -- Feedback -- #}
+    {% if model.isActive %}
+    <p>Could this information be better? <a href="">Tell us how to improve it.</a></p>
+    {% endif %}
+    
+    {% include "partials/social.html" %}
+    {% include "partials/context-footer.html" %}
   </div>
   <div class="govuk-grid-column-one-third">
     {% include "partials/related-content.html" %}
