@@ -67,10 +67,6 @@ class Panel {
         const textbox = e.target
         const label = textbox.previousElementSibling
         Utils.toggleLabel(label, null, textbox)
-        // Reset autosize
-        // if (textbox.childNodes.length === 0) {
-        //   textbox.style.cssText = 'height:auto'
-        // }
       }
     }, true)
     container.addEventListener('paste', e => {
