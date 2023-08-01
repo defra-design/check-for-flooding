@@ -467,6 +467,7 @@ maps.createOutlookMap = (mapId, options = {}) => {
 
   // Create map on button press
   button.addEventListener('click', (e) => {
+    e.preventDefault()
     // Advance history
     const data = { v: mapId, isBack: true }
     const title = options.title
