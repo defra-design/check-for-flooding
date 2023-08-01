@@ -120,7 +120,8 @@ class Utils {
 
   static toggleLabel (label, key, textbox) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
-    const hasValue = textbox.textContent.length > 0
+    const hasValue = textbox.value.length > 0
+    console.log('length', textbox.value.length)
     const isValidChar = key && key.length === 1 && chars.test(key)
     const isHidden = hasValue || (!hasValue && isValidChar)
     label.classList.toggle('wc-message__label--hidden', isHidden)
@@ -143,21 +144,12 @@ class Utils {
     }
   }
 
-  static autosize (textbox, maxHeight) {
-    const scrollTop = textbox.scrollTop
-    textbox.style.cssText = 'height:auto'
-    if (textbox.scrollHeight >= maxHeight) {
-      textbox.style.cssText = `overflow-y: auto; height: ${maxHeight}px`
-      textbox.scrollTop = scrollTop
-      // Need to remove as its added on every keyup
-      textbox.removeEventListener('keyup', this)
-    } else {
-      textbox.style.cssText = `height:${textbox.scrollHeight}px`
-      // setTimeout(() => {
-      //   el.style.cssText = 'height:auto'
-      //   el.style.cssText = 'height:' + el.scrollHeight + 'px'
-      // }, 0)
-    }
+  static autosize (textbox) {
+    const offset = textbox.offsetHeight - textbox.clientHeight
+    textbox.addEventListener('input', e => {
+      e.target.style.height = 'auto'
+      e.target.style.height = e.target.scrollHeight + offset + 'px'
+    })
   }
 
   static insertTextAtCaret (text) {

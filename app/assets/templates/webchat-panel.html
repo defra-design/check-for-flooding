@@ -132,7 +132,7 @@
     <label class="wc-message__label{% if model.textboxValue | length %} wc-message__label--hidden{% endif %}" for="message">
       {% if model.textboxValue %}{{ model.textboxValue }}{% else %}Your message{% endif %}
     </label>
-    <div role="textbox" contenteditable="true" aria-multiline="{{ model.isMobile }}" aria-required="true" class="wc-message__textbox" id="message" name="message" data-wc-focus-parent data-wc-textbox></div>
+    <textarea rows="1" aria-required="true" class="wc-message__textbox" id="message" name="message" data-wc-focus-parent data-wc-autosize data-wc-textbox></textarea>
     <input type="submit" class="wc-message__send" value="Send" data-wc-send-btn />
   </form>
   <div class="wc-settings">

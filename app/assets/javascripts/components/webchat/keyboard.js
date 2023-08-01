@@ -130,7 +130,6 @@ class Keyboard {
             'a[href]:not([disabled])',
             'button:not([disabled])',
             'textarea:not([disabled])',
-            'div[role="textbox"]',
             'input:not([disabled])',
             'select:not([disabled])',
             '*[tabindex="0"]:not([disabled])'

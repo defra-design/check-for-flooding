@@ -47,8 +47,6 @@ class Panel {
         const label = textbox.previousElementSibling
         // Conditionally show label
         Utils.toggleLabel(label, e.key, textbox)
-        // Autosize height
-        Utils.autosize(e.target, 120)
         // Conditionally submit form
         Utils.submit(e, textbox)
       }
@@ -70,9 +68,9 @@ class Panel {
         const label = textbox.previousElementSibling
         Utils.toggleLabel(label, null, textbox)
         // Reset autosize
-        if (textbox.childNodes.length === 0) {
-          textbox.style.cssText = 'height:auto'
-        }
+        // if (textbox.childNodes.length === 0) {
+        //   textbox.style.cssText = 'height:auto'
+        // }
       }
     }, true)
     container.addEventListener('paste', e => {
@@ -133,6 +131,12 @@ class Panel {
     const characterCounts = content.querySelectorAll('[data-module="govuk-character-count"]')
     for (let i = 0; i <= characterCounts.length; i++) {
       new CharacterCount(characterCounts[i]).init()
+    }
+
+    // Initialise autoresize
+    const textbox = content.querySelector('[data-wc-textbox]')
+    if (textbox) {
+      Utils.autosize(textbox)
     }
 
     // Scroll messages

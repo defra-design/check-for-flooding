@@ -371,15 +371,18 @@
     left: 0px;
     bottom: 0px;
     color: govuk-colour('dark-grey');
+    z-index: 3;
   }
   &__label--hidden {
     @extend .govuk-visually-hidden;
   }
   &__textbox {
     @extend .govuk-textarea;
+    box-sizing: border-box;
     min-height: auto;
     font-size: 16px;
     line-height: 20px;
+    max-height: 120px;
     flex: 1 1 auto;
     align-self: flex-end;
     margin: 20px;
