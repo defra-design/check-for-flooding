@@ -121,7 +121,6 @@ class Utils {
   static toggleLabel (label, key, textbox) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
     const hasValue = textbox.value.length > 0
-    console.log('length', textbox.value.length)
     const isValidChar = key && key.length === 1 && chars.test(key)
     const isHidden = hasValue || (!hasValue && isValidChar)
     label.classList.toggle('wc-message__label--hidden', isHidden)
