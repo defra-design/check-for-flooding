@@ -337,7 +337,7 @@ window.flood.maps.styles = {
       fillColour = '#d4351c'
     }
     const isSelected = feature.get('isSelected')
-    const selectedStroke = new Style({ stroke: new Stroke({ color: '#FFDD00', width: 16 }), zIndex: zIndex })
+    const selectedStroke = new Style({ stroke: new Stroke({ color: '#0b0c0c', width: 16 }), zIndex: zIndex })
     const style = new Style({
       stroke: new Stroke({ color: strokeColour, width: 1 }),
       fill: new Fill({ color: fillColour }),
