@@ -1,0 +1,25 @@
+{
+  "name": "Check for flooding",
+  "short_name": "CFF",
+  "theme_color": "#0b0c0c",
+  "background_color": "#0b0c0c",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "https://check-for-flooding.herokuapp.com/",
+  "description": "View current flood warnings and alerts for England and the national flood forecast for the next 5 days. Also check river, sea, groundwater and rainfall levels.",
+  "orientation": "any",
+  "icons": [
+      {
+          "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-192.png",
+          "sizes": "192x192"
+      },
+      {
+        "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-180.png",
+        "sizes": "180x180"
+      },
+      {
+        "src": "https://check-for-flooding.herokuapp.com/public/images/cff-icon-120.png",
+        "sizes": "120x120"
+      }
+  ]
+}
