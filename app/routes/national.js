@@ -21,4 +21,9 @@ router.get('/', async (req, res) => {
   }
 })
 
+// PWA Offline
+router.get('/offline', (req, res) => {
+  res.render('offline')
+})
+
 module.exports = router
