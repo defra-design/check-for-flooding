@@ -110,7 +110,7 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
 
     // v1.2.0
-    // sdk.onChatEvent(ChatEvent.CASE_INBOX_ASSIGNEE_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
+    sdk.onChatEvent(ChatEvent.CASE_INBOX_ASSIGNEE_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
     // sdk.onChatEvent(ChatEvent.CASE_CREATED, this._handleContactCreatedEvent.bind(this))
     // sdk.onChatEvent(ChatEvent.CASE_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
 
