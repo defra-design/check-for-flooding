@@ -68,7 +68,7 @@ module.exports = {
       }
       const api = await axios.get(uri, config)
       const host = `api-${api.data.area}.niceincontact.com` // 'api-e32.niceincontact.com'
-      const service = '/incontactapi/services/v26.0/skills/18524648/activity'
+      const service = '/incontactapi/services/v26.0/skills/20823624/activity' // '/incontactapi/services/v26.0/skills/18524648/activity'
 
       // Skills/activity
       uri = `https://${host}${service}`
@@ -84,6 +84,8 @@ module.exports = {
       }
       const skill = await axios.get(uri, config)
       const advisersAvailable = skill.data.skillActivity[0].agentsAvailable >= 1
+
+      console.log(skill.data)
 
       return {
         isAvailable: advisersAvailable
