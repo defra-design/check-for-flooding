@@ -17,6 +17,7 @@ module.exports = {
     const clientSecret = process.env.CXONE_CLIENT_SECRET
     const accessKey = process.env.CXONE_ACCESS_KEY
     const accessSecret = process.env.CXONE_ACCESS_SECRET
+    const skillEndpoint = process.env.CXONE_SKILL_ENDPOINT
     const authorisation = 'Basic ' + Buffer.from(`${encodeURIComponent(clientId)}:${encodeURIComponent(clientSecret)}`).toString('base64')
 
     // *** Use discovery to find issuer
@@ -68,10 +69,9 @@ module.exports = {
       }
       const api = await axios.get(uri, config)
       const host = `api-${api.data.area}.niceincontact.com` // 'api-e32.niceincontact.com'
-      const service = '/incontactapi/services/v26.0/skills/20823624/activity' // '/incontactapi/services/v26.0/skills/18524648/activity'
 
       // Skills/activity
-      uri = `https://${host}${service}`
+      uri = `https://${host}${skillEndpoint}`
       token = auth.data.access_token
       const tokenType = auth.data.token_type
       config = {
