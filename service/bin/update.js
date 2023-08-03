@@ -11,7 +11,7 @@ module.exports = {
     await updateRainfall(start)
     await updateLevels(start)
     await updateWarnings(start)
-    await updateOutlook(start)
+    // await updateOutlook(start)
     console.log(`--> Data update: Finished at ${moment().format('HH:mm:ss')}`)
   }
 }
