@@ -79,7 +79,7 @@ class WebChat {
       brandId: process.env.CXONE_BRANDID,
       channelId: process.env.CXONE_CHANNELID,
       customerId: localStorage.getItem('CUSTOMER_ID') || '',
-      environment: EnvironmentName.EU1
+      environment: EnvironmentName.UK1
     })
 
     // Authorise and set customerId
