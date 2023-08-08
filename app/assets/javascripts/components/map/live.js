@@ -281,7 +281,9 @@ function LiveMap (mapId, options) {
     const extent = container.map.getView().calculateExtent(container.map.getSize())
     const layers = dataLayers.filter(layer => layer !== vectorTiles && lyrs.some(lyr => layer.get('featureCodes').includes(lyr)))
     // Add target area if it isn't an active alert or warning
-    if (!layers.includes(warnings) && targetArea.pointFeature) layers.push(warnings)
+    if (!layers.includes(warnings) && !layers.includes(surfaceWaterWarnings) && targetArea.pointFeature) {
+      layers.push(warnings)
+    }
     // Add vectortile polygons to labels
     if (layers.includes(warnings) && isBigZoom) {
       let warningPolygonFeatures = getWarningPolygonsIntersectingExtent(extent)
