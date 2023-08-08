@@ -71,6 +71,24 @@ const createIconStyle = (options) => {
   })
 }
 
+const createImage = (options) => {
+  const defaults = {
+    size: [100, 100],
+    anchor: [0.5, 0.5],
+    offset: [0, 0],
+    scale: 0.5,
+    zIndex: 1
+  }
+  options = Object.assign({}, defaults, options)
+  return new Icon({
+    src: '/public/images/map-symbols.png',
+    size: options.size,
+    anchor: options.anchor,
+    offset: options.offset,
+    scale: options.scale
+  })
+}
+
 const styleCache = (() => {
   return {
     // Warnings
@@ -117,6 +135,16 @@ const styleCache = (() => {
     measurementNoneSelected: createIconStyle({ offset: [100, 1900], zIndex: 10 }),
     text: createTextStyle(),
     textLarge: createTextStyle({ font: 'Bold 16px GDS Transport, Arial, sans-serif', offsetY: -13, radius: 3 })
+  }
+})()
+
+const imageCache = (() => {
+  return {
+    // Warnings
+    alert: createImage({ offset: [0, 200], zIndex: 3 }),
+    alertSelected: createImage({ offset: [100, 200], zIndex: 10 }),
+    targetArea: createImage({ offset: [0, 300], zIndex: 1 }),
+    targetAreaSelected: createImage({ offset: [100, 300], zIndex: 10 }),
   }
 })()
 
@@ -214,6 +242,32 @@ window.flood.maps.styles = {
     }
   },
 
+  surfaceWaterWarnings: (feature, resolution) => {
+    const isSelected = feature.get('isSelected')
+    if (resolution >= bigZoom) {
+      // Icon
+      return new Style({
+        geometry: feature => {
+          let geometry = feature.getGeometry()
+          let geometryType = geometry.getType()
+          return (
+              geometryType == 'Polygon' ? geometry.getInteriorPoint() :
+              geometryType == 'MultiPolygon' ? geometry.getInteriorPoints() :
+              geometry
+          )
+        },
+        image: isSelected ? imageCache.alertSelected : imageCache.alert
+      })
+    } else {
+      const alpha = resolution <= 14 ? resolution >= 4 ? (Math.floor(resolution) / 20) : 0.2 : 0.7
+      const strokeColour = isSelected ? colorAsString([11, 12, 12, 0.65]) : 'transparent'
+      return new Style({
+        stroke: new Stroke({ color: strokeColour, width: 2 }),
+        fill: new Fill({ color: colorAsString([241, 135, 0, alpha]) })
+      })
+    }
+  },
+
   warnings: (feature, resolution) => {
     // Hide warning symbols or hide when polygon is shown
     if (!feature.get('isVisible') || resolution < bigZoom) {
@@ -270,30 +324,30 @@ window.flood.maps.styles = {
   // WebGL styles
   //
 
-  warningsJSON: {
-    filter: ['case',
-      ['<', ['resolution'], 100],
-      false,
-      ['case',
-        ['==', ['get', 'isVisible'], 'true'],
-        true,
-        false
-      ]
-    ],
-    symbol: {
-      symbolType: 'image',
-      src: '/public/images/map-symbols.png',
-      size: 50,
-      rotateWithView: false,
-      offset: [0, 0],
-      textureCoord: ['match', ['get', 'severity'],
-        3, [0, 0.09523809523, 0.5, 0.14285714285],
-        2, [0, 0.04761904761, 0.5, 0.09523809523],
-        1, [0, 0, 0.5, 0.04761904761],
-        [0, 0.14285714285, 0.5, 0.19047619047]
-      ]
-    }
-  },
+  // warningsJSON: {
+  //   filter: ['case',
+  //     ['<', ['resolution'], 100],
+  //     false,
+  //     ['case',
+  //       ['==', ['get', 'isVisible'], 'true'],
+  //       true,
+  //       false
+  //     ]
+  //   ],
+  //   symbol: {
+  //     symbolType: 'image',
+  //     src: '/public/images/map-symbols.png',
+  //     size: 50,
+  //     rotateWithView: false,
+  //     offset: [0, 0],
+  //     textureCoord: ['match', ['get', 'severity'],
+  //       3, [0, 0.09523809523, 0.5, 0.14285714285],
+  //       2, [0, 0.04761904761, 0.5, 0.09523809523],
+  //       1, [0, 0, 0.5, 0.04761904761],
+  //       [0, 0.14285714285, 0.5, 0.19047619047]
+  //     ]
+  //   }
+  // },
 
   stationsJSON: {
     symbol: {
@@ -320,21 +374,6 @@ window.flood.maps.styles = {
   //
   // Vector styles outlook
   //
-
-  surfaceWaterWarningPolygons: (feature) => {
-    if (!feature.get('isVisible')) { return }
-    const zIndex = feature.get('z-index')
-    const strokeColour = '#f47738'
-    const fillColour = '#f47738'
-    const isSelected = feature.get('isSelected')
-    const selectedStroke = new Style({ stroke: new Stroke({ color: '#0b0c0c', width: 16 }), zIndex: zIndex })
-    const style = new Style({
-      stroke: new Stroke({ color: strokeColour, width: 1 }),
-      fill: new Fill({ color: fillColour }),
-      zIndex: zIndex
-    })
-    return isSelected ? [selectedStroke, style] : style
-  },
 
   outlookPolygons: (feature) => {
     if (!feature.get('isVisible')) { return }
@@ -363,7 +402,7 @@ window.flood.maps.styles = {
 
   labels: (feature, resolution) => {
     let offsetY = resolution >= bigZoom ? 30 : 35
-    if (feature.get('type') === 'TA') {
+    if (['TA', 'SW'].includes(feature.get('type'))) {
       offsetY = resolution >= bigZoom ? 37 : 0
     }
     return new Style({

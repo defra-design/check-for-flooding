@@ -14,15 +14,23 @@ module.exports = {
     return new OutlookGeoJSON(outlook)
   },
   getWarningsGeoJSON: async () => {
+    // const response = await db.query(`
+    // SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
+    // FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
+    // UNION
+    // SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
+    // FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
+    // UNION
+    // SELECT id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, name, severity, raised_date AT TIME ZONE '+00' AS raised_date, raised_date AT TIME ZONE '+00' AS severity_changed_date
+    // FROM warning_surface_water
+    // ORDER BY severity DESC;
+    // `)
     const response = await db.query(`
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
     FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
     UNION
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
     FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
-    UNION
-    SELECT id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, name, severity, raised_date AT TIME ZONE '+00' AS raised_date, raised_date AT TIME ZONE '+00' AS severity_changed_date
-    FROM warning_surface_water
     ORDER BY severity DESC;
     `)
     const features = []
@@ -141,20 +149,24 @@ module.exports = {
     }
     return geoJSON
   },
-  getSurfaceWaterWarningAreasGeoJSON: async () => {
+  getSurfaceWaterWarningsGeoJSON: async () => {
     const response = await db.query(`
-      SELECT id, 'SW' AS type, ST_AsGeoJSON(geom)::JSONB AS geometry, severity
+      SELECT id, 'SW' AS type, ST_AsGeoJSON(geom)::JSONB AS geometry, name, severity, raised_date AT TIME ZONE '+00' AS raised_date
       FROM warning_surface_water
     `)
     const features = []
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: `${item.id.toLowerCase()}p`,
+        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
           id: item.id.toLowerCase(),
-          severity: item.severity
+          name: item.name,
+          severity: Number(item.severity),
+          issuedDate: item.raised_date,
+          severityChangedDate: item.raised_date,
+          type: 'SW'
         }
       })
     })
@@ -164,6 +176,29 @@ module.exports = {
     }
     return geoJSON
   },
+  // getSurfaceWaterWarningAreasGeoJSON: async () => {
+  //   const response = await db.query(`
+  //     SELECT id, 'SW' AS type, ST_AsGeoJSON(geom)::JSONB AS geometry, severity
+  //     FROM warning_surface_water
+  //   `)
+  //   const features = []
+  //   response.forEach(item => {
+  //     features.push({
+  //       type: 'Feature',
+  //       id: `${item.id.toLowerCase()}p`,
+  //       geometry: item.geometry,
+  //       properties: {
+  //         id: item.id.toLowerCase(),
+  //         severity: item.severity
+  //       }
+  //     })
+  //   })
+  //   const geoJSON = {
+  //     type: 'FeatureCollection',
+  //     features: features
+  //   }
+  //   return geoJSON
+  // },
   // Vector tiles
   getVectorTile: async (x, y, z) => {
     const bbox = mercator.bbox(x, y, z, false)

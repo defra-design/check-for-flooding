@@ -119,20 +119,20 @@ window.flood.maps.layers = {
     })
   },
 
-  // warnings: () => {
-  //   return new VectorLayer({
-  //     ref: 'warnings',
-  //     featureCodes: 'ts, tw, ta, tr',
-  //     source: new VectorSource({
-  //       format: new GeoJSON(),
-  //       projection: 'EPSG:3857',
-  //       url: '/service/geojson/warnings'
-  //     }),
-  //     style: window.flood.maps.styles.warnings,
-  //     visible: false,
-  //     zIndex: 5
-  //   })
-  // },
+  warnings: () => {
+    return new VectorLayer({
+      ref: 'warnings',
+      featureCodes: 'ts, tw, ta, tr',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/warnings'
+      }),
+      style: window.flood.maps.styles.warnings,
+      visible: false,
+      zIndex: 7
+    })
+  },
 
   // river: () => {
   //   return new VectorLayer({
@@ -198,21 +198,21 @@ window.flood.maps.layers = {
   // WebGL layers
   //
 
-  warnings: () => {
-    return new WebGLPointsLayer({
-      ref: 'warnings',
-      className: 'defra-map-webgl-layer',
-      featureCodes: 'ts, tw, ta, tr',
-      source: new VectorSource({
-        format: new GeoJSON(),
-        projection: 'EPSG:3857',
-        url: '/service/geojson/warnings'
-      }),
-      style: window.flood.maps.styles.warningsJSON,
-      visible: false,
-      zIndex: 7
-    })
-  },
+  // warnings: () => {
+  //   return new WebGLPointsLayer({
+  //     ref: 'warnings',
+  //     className: 'defra-map-webgl-layer',
+  //     featureCodes: 'ts, tw, ta, tr',
+  //     source: new VectorSource({
+  //       format: new GeoJSON(),
+  //       projection: 'EPSG:3857',
+  //       url: '/service/geojson/warnings'
+  //     }),
+  //     style: window.flood.maps.styles.warningsJSON,
+  //     visible: false,
+  //     zIndex: 7
+  //   })
+  // },
 
   river: () => {
     return new WebGLPointsLayer({
@@ -278,18 +278,17 @@ window.flood.maps.layers = {
     })
   },
 
-  surfaceWaterWarningAreas: () => {
-    return new VectorImage({
-      ref: 'surfaceWaterWarningAreas',
+  surfaceWaterWarnings: () => {
+    return new VectorLayer({
+      ref: 'surfaceWaterWarnings',
       featureCodes: 'ta',
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
-        url: '/service/geojson/surface-water-warning-areas',
-        maxZoom: 12
+        url: '/service/geojson/surface-water-warnings'
       }),
-      renderMode: 'hybrid',
-      style: window.flood.maps.styles.surfaceWaterWarningPolygons,
+      renderMode: 'vector',
+      style: window.flood.maps.styles.surfaceWaterWarnings,
       opacity: 1,
       zIndex: 2
     })

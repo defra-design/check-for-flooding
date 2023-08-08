@@ -197,8 +197,8 @@ router.get('/service/geojson/:type', async (req, res, next) => {
       res.status(200).json(await mapServices.getOutlookGeoJSON())
     } else if (type === 'places') {
       res.status(200).json(await mapServices.getPlacesGeoJSON())
-    } else if (type === 'surface-water-warning-areas') {
-      res.status(200).json(await mapServices.getSurfaceWaterWarningAreasGeoJSON())
+    } else if (type === 'surface-water-warnings') {
+      res.status(200).json(await mapServices.getSurfaceWaterWarningsGeoJSON())
     } else {
       res.sendStatus(404)
     }

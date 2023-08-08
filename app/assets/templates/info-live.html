@@ -1,4 +1,4 @@
-{% if model.type == 'TA' %}
+{% if model.type == 'TA' or model.type === 'SW' %}
 <div id="infoDescription">
     <strong class="defra-map-info__name defra-map-info__name--emphasis">
         {% if model.severity == 1 %}

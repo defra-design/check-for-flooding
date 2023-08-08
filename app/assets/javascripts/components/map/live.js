@@ -88,7 +88,7 @@ function LiveMap (mapId, options) {
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
   const vectorTiles = maps.layers.vectorTiles()
-  const surfaceWaterWarningAreas = maps.layers.surfaceWaterWarningAreas()
+  const surfaceWaterWarnings = maps.layers.surfaceWaterWarnings()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -108,7 +108,7 @@ function LiveMap (mapId, options) {
   // These layers can be manipulated
   const dataLayers = [
     vectorTiles,
-    // surfaceWaterWarningAreas,
+    surfaceWaterWarnings,
     river,
     sea,
     groundwater,
@@ -288,6 +288,12 @@ function LiveMap (mapId, options) {
       warningPolygonFeatures = mergePolygons(warningPolygonFeatures, extent)
       addWarningPolygonsToLabels(warningPolygonFeatures)
     }
+    // Add surface water warnings to labels
+    // if (layers.includes(surfaceWaterWarnings)) {
+    //   let warningPolygonFeatures = getWarningPolygonsIntersectingExtent(extent)
+    //   warningPolygonFeatures = mergePolygons(warningPolygonFeatures, extent)
+    //   addWarningPolygonsToLabels(warningPolygonFeatures)
+    // }
     // Add point features to labels
     addPointFeaturesToLabels(layers, extent)
     const features = labels.getSource().getFeatures()
@@ -440,7 +446,7 @@ function LiveMap (mapId, options) {
     const model = feature.getProperties()
     model.id = feature.getId()
     // Format dates and id's for warnings and stations
-    if (model.type === 'TA') {
+    if (['TA', 'SW'].includes(model.type)) {
       model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
       model.severityChangedDate = `${formatTime(new Date(model.severityChangedDate))}, ${formatDayMonth(new Date(model.severityChangedDate))}`
     } else if (['S', 'M', 'G', 'C', 'R'].includes(model.type)) {
@@ -458,7 +464,6 @@ function LiveMap (mapId, options) {
     env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
     const html = env.render('info-live.html', { model: model })
     feature.set('html', html)
-    console.log(feature.getProperties())
   }
 
   // Set feature warning states when a source changes
