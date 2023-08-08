@@ -395,9 +395,16 @@ function OutlookMap (mapId, options) {
   })
 
   // Layer rendering
-  // areasOfConcern.on('rendercomplete', e => {
-  //   e.context.canvas.style.filter = 'blur(10px)'
-  // })
+  areasOfConcern.on('postrender', e => {
+    // const canvas = e.context.canvas
+    // const width = canvas.width
+    // const height = canvas.height
+    // const ctx = canvas.getContext('2d')
+    e.context.filter = 'blur(12px)'
+    console.log(e.context)
+    // const output = ctx.createImageData(width, height)
+    // ctx.putImageData(output, 0, 0)
+  })
 }
 
 // Export a helper factory to create this map

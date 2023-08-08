@@ -16,7 +16,8 @@ class Warnings {
         return {
           id: item.id,
           name: item.name,
-          date: date
+          date: date,
+          isSurfaceWater: item.is_surface_water
         }
       })
       const title = `${items.length} ${(items.length > 1 ? groupSeverity.pluralisedTitle : groupSeverity.title).toLowerCase()}`

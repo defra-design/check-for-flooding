@@ -60,8 +60,31 @@ module.exports = {
     LEFT JOIN measure_with_latest mwl ON mwl.rloi_id = tt.trigger_id
     LEFT JOIN warning w ON LOWER(ta2.fws_tacode) = LOWER(w.id)
     WHERE LOWER(ta2.fws_tacode) = LOWER($1)
-    GROUP BY tt.targetarea_id, ta2.fws_tacode, ta2.ta_name, ta2.area, ta2.descrip, ta2.geom, w.severity, w.message, w.message_changed_date);
+    GROUP BY tt.targetarea_id, ta2.fws_tacode, ta2.ta_name, ta2.area, ta2.descrip, ta2.geom, w.severity, w.message, w.message_changed_date)
+    UNION ALL
+    (SELECT DISTINCT ON (id)
+    lower(id) AS id,
+    'alert' AS type,
+    name,
+    null AS area,
+    null AS geography,
+    Replace(CONCAT(to_char(ST_X(ST_Centroid(geom)), '99.000000'),',',
+    to_char(ST_Y(ST_Centroid(geom)), '99.000000')), ' ', '') AS centroid,
+    Replace(CONCAT(to_char(ST_XMin(geom), '99.000000'),','
+    ,to_char(ST_YMin(geom), '99.000000'),','
+    ,to_char(ST_XMax(geom), '99.000000'),','
+    ,to_char(ST_YMax(geom), '99.000000')), ' ', '') AS bbox,
+    severity,
+    message,
+    raised_date AT TIME ZONE '+00' AS date,
+    null AS parent_id,
+    null AS parent_severity,
+    null AS trigger_levels
+    FROM warning_surface_water
+    WHERE LOWER(id) = LOWER($1)
+    GROUP BY id, name, geom, severity, message, raised_date);
     `, [id])
+    
     return response[0]
   }
 }

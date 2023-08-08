@@ -1,25 +1,25 @@
-self.addEventListener('install', function (event) {
+self.addEventListener('install', event => {
   event.waitUntil(preLoad())
 })
 
-var preLoad = function () {
+const preLoad = () => {
   console.log('Installing web app')
-  return caches.open('offline').then(function (cache) {
+  return caches.open('offline').then(cache => {
     console.log('caching index and important routes')
     return cache.addAll(['/offline.html'])
   })
 }
 
-self.addEventListener('fetch', function (event) {
-  event.respondWith(checkResponse(event.request).catch(function () {
+self.addEventListener('fetch', event => {
+  event.respondWith(checkResponse(event.request).catch(() => {
     return returnFromCache(event.request)
   }))
   event.waitUntil(addToCache(event.request))
 })
 
-var checkResponse = function (request) {
+const checkResponse = request => {
   return new Promise((resolve, reject) => {
-    fetch(request).then(function (response) {
+    fetch(request).then(response => {
       if (response.status !== 404) {
         resolve(response)
       } else {
@@ -29,16 +29,16 @@ var checkResponse = function (request) {
   })
 }
 
-var addToCache = (request) => caches.open('offline').then(function (cache) {
-  return fetch(request).then(function (response) {
+const addToCache = (request) => caches.open('offline').then(cache => {
+  return fetch(request).then(response => {
     console.log(response.url + ' was cached')
     return cache.put(request, response)
   })
 })
 
-var returnFromCache = function (request) {
-  return caches.open('offline').then(function (cache) {
-    return cache.match(request).then(function (matching) {
+const returnFromCache = request => {
+  return caches.open('offline').then(cache => {
+    return cache.match(request).then(matching => {
       if (!matching || matching.status === 404) {
         return cache.match('offline.html')
       } else {

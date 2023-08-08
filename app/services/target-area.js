@@ -12,7 +12,10 @@ module.exports = {
       })
       return response
     } catch (error) {
-      console.log(error)
+      // console.log(error)
+      return {
+        status: error.response.status
+      }
     }
   }
 }

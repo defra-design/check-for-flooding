@@ -88,6 +88,7 @@ function LiveMap (mapId, options) {
   const road = maps.layers.road()
   const satellite = maps.layers.satellite()
   const vectorTiles = maps.layers.vectorTiles()
+  const surfaceWaterWarningAreas = maps.layers.surfaceWaterWarningAreas()
   const warnings = maps.layers.warnings()
   const river = maps.layers.river()
   const sea = maps.layers.sea()
@@ -107,6 +108,7 @@ function LiveMap (mapId, options) {
   // These layers can be manipulated
   const dataLayers = [
     vectorTiles,
+    // surfaceWaterWarningAreas,
     river,
     sea,
     groundwater,
@@ -437,15 +439,15 @@ function LiveMap (mapId, options) {
   const setFeatureHtml = (feature) => {
     const model = feature.getProperties()
     model.id = feature.getId()
-    // Format dates and id's for stations
-    if (['s', 'r'].includes(feature.getId().toString().charAt(0))) {
+    // Format dates and id's for warnings and stations
+    if (model.type === 'TA') {
+      model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
+      model.severityChangedDate = `${formatTime(new Date(model.severityChangedDate))}, ${formatDayMonth(new Date(model.severityChangedDate))}`
+    } else if (['S', 'M', 'G', 'C', 'R'].includes(model.type)) {
       model.id = feature.getId().substring(1)
       model.rloiId = model.id.replace('-downstage', '')
       model.date = `${formatTime(new Date(model.valueDate))}, ${formatDayMonth(new Date(model.valueDate))}`
       model.nrwUrl = nrwUrl
-    } else if (model.issuedDate) {
-      model.date = `${formatTime(new Date(model.issuedDate))}, ${formatDayMonth(new Date(model.issuedDate))}`
-      model.severityChangedDate = `${formatTime(new Date(model.severityChangedDate))}, ${formatDayMonth(new Date(model.severityChangedDate))}`
     }
     // Add up/down id's for multistage stations
     if (model.type === 'M') {
@@ -456,6 +458,7 @@ function LiveMap (mapId, options) {
     env.addFilter('isNumber', (value) => { return typeof value === 'number' }, true)
     const html = env.render('info-live.html', { model: model })
     feature.set('html', html)
+    console.log(feature.getProperties())
   }
 
   // Set feature warning states when a source changes

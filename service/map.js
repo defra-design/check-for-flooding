@@ -16,9 +16,13 @@ module.exports = {
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
-    FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id) UNION
+    FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
+    UNION
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
     FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
+    UNION
+    SELECT id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, name, severity, raised_date AT TIME ZONE '+00' AS raised_date, raised_date AT TIME ZONE '+00' AS severity_changed_date
+    FROM warning_surface_water
     ORDER BY severity DESC;
     `)
     const features = []
@@ -114,11 +118,11 @@ module.exports = {
   },
   getTargetAreasGeoJSON: async () => {
     const response = await db.query(`
-    SELECT 5000 + id AS id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
-    FROM flood_alert_areas
-    UNION ALL
-    SELECT id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
-    FROM flood_warning_areas
+      SELECT 5000 + id AS id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
+      FROM flood_alert_areas
+      UNION ALL
+      SELECT id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
+      FROM flood_warning_areas
     `)
     const features = []
     response.forEach(item => {
@@ -128,6 +132,29 @@ module.exports = {
         geometry: item.geometry,
         properties: {
           fws_tacode: item.fws_tacode.toLowerCase()
+        }
+      })
+    })
+    const geoJSON = {
+      type: 'FeatureCollection',
+      features: features
+    }
+    return geoJSON
+  },
+  getSurfaceWaterWarningAreasGeoJSON: async () => {
+    const response = await db.query(`
+      SELECT id, 'SW' AS type, ST_AsGeoJSON(geom)::JSONB AS geometry, severity
+      FROM warning_surface_water
+    `)
+    const features = []
+    response.forEach(item => {
+      features.push({
+        type: 'Feature',
+        id: `${item.id.toLowerCase()}p`,
+        geometry: item.geometry,
+        properties: {
+          id: item.id.toLowerCase(),
+          severity: item.severity
         }
       })
     })

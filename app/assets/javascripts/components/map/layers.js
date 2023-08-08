@@ -210,7 +210,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.warningsJSON,
       visible: false,
-      zIndex: 6
+      zIndex: 7
     })
   },
 
@@ -226,7 +226,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 5
+      zIndex: 6
     })
   },
 
@@ -242,7 +242,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 4
+      zIndex: 5
     })
   },
 
@@ -258,7 +258,7 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
-      zIndex: 3
+      zIndex: 4
     })
   },
 
@@ -274,6 +274,23 @@ window.flood.maps.layers = {
       }),
       style: window.flood.maps.styles.stationsJSON,
       visible: false,
+      zIndex: 3
+    })
+  },
+
+  surfaceWaterWarningAreas: () => {
+    return new VectorImage({
+      ref: 'surfaceWaterWarningAreas',
+      featureCodes: 'ta',
+      source: new VectorSource({
+        format: new GeoJSON(),
+        projection: 'EPSG:3857',
+        url: '/service/geojson/surface-water-warning-areas',
+        maxZoom: 12
+      }),
+      renderMode: 'hybrid',
+      style: window.flood.maps.styles.surfaceWaterWarningPolygons,
+      opacity: 1,
       zIndex: 2
     })
   },

@@ -321,6 +321,21 @@ window.flood.maps.styles = {
   // Vector styles outlook
   //
 
+  surfaceWaterWarningPolygons: (feature) => {
+    if (!feature.get('isVisible')) { return }
+    const zIndex = feature.get('z-index')
+    const strokeColour = '#f47738'
+    const fillColour = '#f47738'
+    const isSelected = feature.get('isSelected')
+    const selectedStroke = new Style({ stroke: new Stroke({ color: '#0b0c0c', width: 16 }), zIndex: zIndex })
+    const style = new Style({
+      stroke: new Stroke({ color: strokeColour, width: 1 }),
+      fill: new Fill({ color: fillColour }),
+      zIndex: zIndex
+    })
+    return isSelected ? [selectedStroke, style] : style
+  },
+
   outlookPolygons: (feature) => {
     if (!feature.get('isVisible')) { return }
     const zIndex = feature.get('z-index')

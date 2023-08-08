@@ -44,7 +44,12 @@ router.get('/service/warnings/:x1/:y1/:x2/:y2', async (req, res, next) => {
 router.get('/service/target-area/:id', async (req, res, next) => {
   try {
     const id = req.params.id
-    res.status(200).json(await targetAreaServices.getTargetArea(id))
+    const response = await targetAreaServices.getTargetArea(id)
+    if (response) {
+      res.status(200).json(response)
+    } else {
+      res.status(404).json({ error: 404 })
+    }
   } catch (err) {
     res.status(500)
     console.log(err)
@@ -192,6 +197,8 @@ router.get('/service/geojson/:type', async (req, res, next) => {
       res.status(200).json(await mapServices.getOutlookGeoJSON())
     } else if (type === 'places') {
       res.status(200).json(await mapServices.getPlacesGeoJSON())
+    } else if (type === 'surface-water-warning-areas') {
+      res.status(200).json(await mapServices.getSurfaceWaterWarningAreasGeoJSON())
     } else {
       res.sendStatus(404)
     }

@@ -3,7 +3,7 @@ const Level = require('./level')
 
 class TargetArea {
   constructor (data) {
-    const levels = data.trigger_levels.map(level => { return new Level(level) })
+    const levels = data.trigger_levels ? data.trigger_levels.map(level => { return new Level(level) }) : []
     this.levels = levels
     this.id = data.id
     this.name = data.name

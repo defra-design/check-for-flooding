@@ -17,13 +17,12 @@ router.get('/target-area/:id', async (req, res) => {
   const ab = req.query.t || 'a'
   const targetAreaResponse = await targetAreaServices.getTargetArea(cookie, id)
   if (targetAreaResponse.status === 200) {
-    if (!targetAreaResponse.data) {
-      return res.status(404).render('404')
-    }
     const targetArea = new TargetArea(targetAreaResponse.data)
     const model = new TargetAreaViewModel(targetArea)
     model.ab = ab
     return res.render('target-area', { model })
+  } else if (targetAreaResponse.status === 404) {
+    return res.status(404).render('404')
   } else {
     // Return 500 error
   }
