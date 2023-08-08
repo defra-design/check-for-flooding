@@ -51,7 +51,8 @@ module.exports = (env, argv) => ({
         BING_API_KEY: JSON.stringify(process.env.BING_API_KEY),
         OS_API_KEY: JSON.stringify(process.env.OS_API_KEY),
         CXONE_BRANDID: JSON.stringify(process.env.CXONE_BRANDID),
-        CXONE_CHANNELID: JSON.stringify(process.env.CXONE_CHANNELID)
+        CXONE_CHANNELID: JSON.stringify(process.env.CXONE_CHANNELID),
+        CXONE_ENVIRONMENT_NAME: JSON.stringify(process.env.CXONE_ENVIRONMENT_NAME)
       }
     }),
     new webpack.NormalModuleReplacementPlugin(
