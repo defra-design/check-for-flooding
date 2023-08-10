@@ -282,12 +282,14 @@ window.flood.maps.layers = {
     return new VectorLayer({
       ref: 'surfaceWaterWarnings',
       featureCodes: 'ta',
+      className: 'defra-map-sw-layer',
       source: new VectorSource({
         format: new GeoJSON(),
         projection: 'EPSG:3857',
         url: '/service/geojson/surface-water-warnings'
       }),
       renderMode: 'vector',
+      updateWhileInteracting: true,
       style: window.flood.maps.styles.surfaceWaterWarnings,
       opacity: 1,
       zIndex: 2

@@ -20,6 +20,7 @@ module.exports = {
     w1.message_changed_date AT TIME ZONE '+00' AS date,
     ta1.parent AS parent_id,
     w2.severity AS parent_severity,
+    'river-sea' AS source,
     coalesce(json_agg(json_build_object(
     'id', mwl.rloi_id,
     'name', mwl.name,
@@ -50,6 +51,7 @@ module.exports = {
     w.message_changed_date AT TIME ZONE '+00' AS date,
     null AS parent_id,
     null AS parent_severity,
+    'river-sea' AS source,
     coalesce(json_agg(json_build_object(
     'id', mwl.rloi_id,
     'name', mwl.name,
@@ -79,12 +81,12 @@ module.exports = {
     raised_date AT TIME ZONE '+00' AS date,
     null AS parent_id,
     null AS parent_severity,
+    'surface-water' AS source,
     null AS trigger_levels
     FROM warning_surface_water
     WHERE LOWER(id) = LOWER($1)
     GROUP BY id, name, geom, severity, message, raised_date);
     `, [id])
-    
     return response[0]
   }
 }

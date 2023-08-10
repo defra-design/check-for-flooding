@@ -18,7 +18,7 @@ import simplify from '@turf/simplify'
 import intersect from '@turf/intersect'
 import union from '@turf/union'
 
-const { xhr, addOrUpdateParameter, getParameterByName, forEach, getSummaryList } = window.flood.utils
+const { xhr, addOrUpdateParameter, getParameterByName, forEach, getSummaryList, normaliseKernel, convolve } = window.flood.utils
 const { setExtentFromLonLat, getLonLatFromExtent } = window.flood.maps
 const maps = window.flood.maps
 const MapContainer = maps.MapContainer
@@ -703,6 +703,20 @@ function LiveMap (mapId, options) {
       const feature = river.getSource().getFeatureById(newFeatureId) || sea.getSource().getFeatureById(newFeatureId)
       toggleSelectedFeature(newFeatureId)
       panToFeature(feature)
+    }
+  })
+
+  // Surface water layer
+  surfaceWaterWarnings.on('postrender', e => {
+    let resolution = e.frameState.viewState.resolution
+    const canvas = e.context.canvas
+    const radius = 24
+    if (resolution > bigZoom) {
+      canvas.style.filter = 'none'
+    } else {
+      resolution = Math.round(resolution)
+      const blur = Math.round((bigZoom / resolution) * radius)
+      canvas.style.filter = `blur(${blur}px)`  
     }
   })
 }

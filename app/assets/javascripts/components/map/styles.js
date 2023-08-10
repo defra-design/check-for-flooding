@@ -244,33 +244,28 @@ window.flood.maps.styles = {
 
   surfaceWaterWarnings: (feature, resolution) => {
     const isSelected = feature.get('isSelected')
-    if (resolution >= bigZoom) {
-      // Icon
-      return new Style({
-        geometry: feature => {
-          let geometry = feature.getGeometry()
-          let geometryType = geometry.getType()
-          return (
-              geometryType == 'Polygon' ? geometry.getInteriorPoint() :
-              geometryType == 'MultiPolygon' ? geometry.getInteriorPoints() :
-              geometry
-          )
-        },
-        image: isSelected ? imageCache.alertSelected : imageCache.alert
-      })
-    } else {
-      const alpha = resolution <= 14 ? resolution >= 4 ? (Math.floor(resolution) / 20) : 0.2 : 0.7
-      const strokeColour = isSelected ? colorAsString([11, 12, 12, 0.65]) : 'transparent'
-      return new Style({
-        stroke: new Stroke({ color: strokeColour, width: 2 }),
-        fill: new Fill({ color: colorAsString([241, 135, 0, alpha]) })
-      })
-    }
+    const geometries = feature.getGeometry().getGeometries()
+    // resolution >= bigZoom
+    const symbol = new Style({
+      geometry: geometries[0],
+      image: isSelected ? imageCache.alertSelected : imageCache.alert
+    })
+    const alpha = resolution <= 14 ? resolution >= 4 ? (Math.floor(resolution) / 20) : 0.2 : 0.7
+    const strokeColour = isSelected ? colorAsString([11, 12, 12, 0.65]) : 'transparent'
+    const polygon = new Style({
+      geometry: geometries[1],
+      stroke: new Stroke({ color: strokeColour, width: 2 }),
+      fill: new Fill({ color: colorAsString([241, 135, 0, alpha]) })
+    })
+    return resolution >= bigZoom ? symbol : polygon
   },
 
   warnings: (feature, resolution) => {
     // Hide warning symbols or hide when polygon is shown
-    if (!feature.get('isVisible') || resolution < bigZoom) {
+    if (feature.get('name') === 'Somerset coast at Porlock Weir') {
+      console.log('Somerset coast at Porlock Weir:', feature.get('isVisible') === 'false', resolution < bigZoom)
+    }
+    if (feature.get('isVisible') === 'false' || resolution < bigZoom) {
       return
     }
     const severity = feature.get('severity')
@@ -288,7 +283,7 @@ window.flood.maps.styles = {
   },
 
   stations: (feature, resolution) => {
-    if (feature.get('isVisible') === false) return
+    if (feature.get('isVisible') === 'false') return
     const state = feature.get('state')
     const isSelected = feature.get('isSelected')
     const isSymbol = resolution <= bigZoom
@@ -376,7 +371,7 @@ window.flood.maps.styles = {
   //
 
   outlookPolygons: (feature) => {
-    if (!feature.get('isVisible')) { return }
+    if (feature.get('isVisible') === 'false') { return }
     const zIndex = feature.get('z-index')
     let strokeColour = '#85994b'
     let fillColour = '#85994b'

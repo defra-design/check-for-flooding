@@ -16,6 +16,7 @@ class ViewModel {
     const titleActive = `Flood ${targetArea.type} for ${targetArea.name}`
     const isActive = targetArea.severity && targetArea.severity.id !== 4
     const isRemoved = targetArea.severity && targetArea.severity.id === 4
+    const isRiverSea = targetArea.source === 'river-sea'
     const date = `${moment(targetArea.date).format('h:mma')} on ${moment(targetArea.date).format('D MMMM YYYY')}`
     this.title = isActive ? titleActive : titleInActive
     this.targetArea = targetArea
@@ -28,11 +29,11 @@ class ViewModel {
     this.mapLayers = `mv,ts,tw,ta${!isActive ? ',tr' : ''}`
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
     this.bingApiKey = bingApiKey
-    this.mapFeature = {
+    this.mapFeature = isRiverSea ? {
       id: targetArea.id,
       name: targetArea.name,
       centre: targetArea.centroid
-    }
+    } : null
   }
 }
 module.exports = ViewModel

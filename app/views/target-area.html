@@ -92,7 +92,9 @@
     </div>
 
     {# -- Flood area -- #}
+    {% if model.targetArea.area %}
     <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.geography }}</p>
+    {% endif%}
     
     {# -- Trigger levels -- #}
     {% set levelsLength = model.targetArea.levels | length %}
