@@ -168,7 +168,7 @@ class Panel {
 
     const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {
-      textbox.setAttribute('aria-multiline', state.isMobile)
+      textbox.toggleAttribute('data-wc-enter-submit', !state.isMobile)
     }
   }
 

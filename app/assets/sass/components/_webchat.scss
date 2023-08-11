@@ -339,10 +339,24 @@
 .wc-submit-btn,
 .wc-confirm-end-btn,
 .wc-submit-feedback-btn,
-.wc-feedback-btn,
-.wc-save-settigns-btn {
+.wc-feedback-btn {
   @extend .govuk-button;
   font-size: 16px;
+  &:focus:not(:active):not(:hover) {
+    background-color: govuk-colour('green');
+    border-color: govuk-colour('green');
+    color: white;
+  }
+  &:focus:not(:active):hover {
+    border-color: transparent;
+    box-shadow: 0 2px 0 govuk-colour('black');
+  }
+  &.wc-focus-visible:focus:not(:active) {
+    border-color: $govuk-focus-colour;
+    color: govuk-colour('black');
+    background-color: $govuk-focus-colour;
+    box-shadow: 0 2px 0 govuk-colour('black');
+  }
 }
 .wc-message {
   position: relative;
@@ -425,12 +439,6 @@
     }
   }
 }
-.wc-settings {
-  padding: 5px 10px;
-  @include mq ($from: 'tablet') {
-    padding: 0px 5px;
-  }
-}
 .wc-credit {
   display: none;
   @include govuk-font($size: 14);
@@ -439,8 +447,7 @@
 }
 .wc-end-btn,
 .wc-transcript-btn,
-.wc-audio-btn,
-.wc-settings-btn {
+.wc-audio-btn {
   display: inline-block;
   color: $govuk-text-colour !important;
   margin: 10px 5px;

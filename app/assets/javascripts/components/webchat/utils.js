@@ -136,9 +136,9 @@ class Utils {
   }
 
   static suppressEnter (e, textbox) {
-    const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-    const hasValue = textbox.textContent.length > 0
-    if (e.key === 'Enter' && (!isMultiline && !e.altKey && !e.shiftKey || !hasValue)) {
+    const isEnterSubmit = textbox.getAttribute('data-wc-enter-submit')
+    const hasValue = textbox.value.length > 0
+    if (e.key === 'Enter' && (isEnterSubmit && !e.altKey && !e.shiftKey || !hasValue)) {
       e.preventDefault()
     }
   }

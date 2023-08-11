@@ -47,7 +47,7 @@ class WebChat {
     const state = this.state
     this.availability.update(state)
     
-    // Render panel if #webchat exists
+    // Render panel if #webchat exists in url
     if (state.isOpen) {
       const panel = this.panel
       panel.create(state, this._addDomEvents.bind(this))
@@ -568,13 +568,14 @@ class WebChat {
 
     // Do we need to check here?
     const message = document.getElementById('message')    
-    if (!(message && message.textContent.length)) {
+
+    if (!(message && message.value.length)) {
       return
     }
 
     // *** Some times this results in inconsitent data error?
     try {
-      this.thread.sendTextMessage(message.innerText.trim())
+      this.thread.sendTextMessage(message.value.trim())
     } catch (err) {
       console.log(err)
     }
@@ -822,7 +823,7 @@ class WebChat {
     // Clear input
     const textbox = document.querySelector('[data-wc-textbox]')
     if (textbox && direction === 'inbound') {
-      textbox.innerHTML = ''
+      textbox.value = ''
       const event = new Event('change')
       textbox.dispatchEvent(event)
     }
