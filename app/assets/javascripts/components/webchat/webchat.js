@@ -583,7 +583,7 @@ class WebChat {
 
   _resetTimeout () {
     // Return if not set
-    if (!Config.timeout > 0) {
+    if (Config.timeout <= 0) {
       return
     }
 

@@ -7,8 +7,8 @@ class Config {
   }
 
   static availabilityEndPoint = '/webchat-availability'
-  static timeout = 1200 // 20 minutes
-  static countdown = 60 // Seconds
+  static timeout = -1 // 20 minutes
+  static countdown = -1 // Seconds
   static poll = -1 // Seconds
   static isAudioNotifications = true
   static isMobileSendOnEnter = false

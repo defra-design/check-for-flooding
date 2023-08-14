@@ -91,6 +91,7 @@
       inset 0px 0px 0px 4px govuk-colour('black'), 
       0px 0px 0px 1px $govuk-focus-colour;
     z-index: 2;
+    filter: drop-shadow(0 0 1px red);
   }
 }
 .wc__footer {
