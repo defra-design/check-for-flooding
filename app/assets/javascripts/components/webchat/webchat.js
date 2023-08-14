@@ -727,11 +727,11 @@ class WebChat {
 
     // Calculate elapsed time
     let messages = e.detail.data.messages
-    const latestDatetime = new Date(messages[0].createdAt)
-    const elapsed = Math.abs((new Date()) - latestDatetime) / 1000
     const timeout = Config.timeout
     const countdown = Config.countdown
-    const isExpired = (timeout + countdown) - elapsed <= 0
+    const latestDatetime = new Date(messages[0].createdAt)
+    const elapsed = Math.abs((new Date()) - latestDatetime) / 1000
+    const isExpired = timeout > 0 && (timeout + countdown) - elapsed <= 0
 
     // End chat if elapsed time outside allowance
     if (isExpired) {

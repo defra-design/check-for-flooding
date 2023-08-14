@@ -37,12 +37,15 @@
   // overflow: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x pan-y;
+  background-color: white;
   @include mq ($from: tablet) {
     top: auto;
     left: auto;
     width: 400px;
     height: 540px;
-    padding: 10px;
+    // padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
   }
 }
 .wc--open {
@@ -54,7 +57,8 @@
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  background-color: white;
+  // background-color: white;
+  background-color: transparent;
   border: 0px;
   outline: 0px;
   @include mq ($from: tablet) {
@@ -90,12 +94,15 @@
       inset 0px 0px 0px 2px $govuk-focus-colour,
       inset 0px 0px 0px 4px govuk-colour('black'), 
       0px 0px 0px 1px $govuk-focus-colour;
-    z-index: 2;
-    filter: drop-shadow(0 0 1px red);
+    // z-index: 2;
+  }
+  &:focus.wc-focus-visible + .wc__footer {
+    z-index: -1;
   }
 }
 .wc__footer {
   flex: 0 0 0;
+  position: relative;
 }
 .wc-visibility-hidden {
   @include mq ($until: tablet) {
@@ -199,6 +206,8 @@
   margin: 0px;
   padding: 0px;
   // height: 100%;
+  position: relative;
+  z-index: -1;
   > li {
     margin-bottom: 0;
   }
