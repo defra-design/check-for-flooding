@@ -128,17 +128,18 @@ class Utils {
 
   static submit (e, textbox) {
     const form = textbox.closest('form')
-    const isMultiline = textbox.getAttribute('aria-multiline') === 'true'
-    if (e.key !== 'Enter' || isMultiline || e.altKey || e.shiftKey) {
+    const isEnterSubmit = textbox.hasAttribute('data-wc-enter-submit')
+    if (e.key !== 'Enter' || !isEnterSubmit || e.altKey || e.shiftKey) {
       return
     }
     form.dispatchEvent(new Event('submit'))
   }
 
   static suppressEnter (e, textbox) {
-    const isEnterSubmit = textbox.getAttribute('data-wc-enter-submit')
+    const isEnterSubmit = textbox.hasAttribute('data-wc-enter-submit')
     const hasValue = textbox.value.length > 0
-    if (e.key === 'Enter' && (isEnterSubmit && !e.altKey && !e.shiftKey || !hasValue)) {
+    console.log(e.key === 'Enter', !hasValue, isEnterSubmit, !e.altKey, !e.shiftKey)
+    if (e.key === 'Enter' && (!hasValue || isEnterSubmit && !e.altKey && !e.shiftKey)) {
       e.preventDefault()
     }
   }

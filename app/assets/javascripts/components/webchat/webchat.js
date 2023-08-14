@@ -824,6 +824,7 @@ class WebChat {
     const textbox = document.querySelector('[data-wc-textbox]')
     if (textbox && direction === 'inbound') {
       textbox.value = ''
+      textbox.style.height = 'auto'
       const event = new Event('change')
       textbox.dispatchEvent(event)
     }
