@@ -1,0 +1,16 @@
+{% if model.view == 'OPEN' %}
+<form class="wc-message" data-wc-message>
+  <label class="wc-message__label{% if model.textboxValue | length %} wc-message__label--hidden{% endif %}" for="message">
+    {% if model.textboxValue %}{{ model.textboxValue }}{% else %}Your message{% endif %}
+  </label>
+  <textarea rows="1" aria-required="true" class="wc-message__textbox" id="message" name="message"{% if not model.isMobile %} data-wc-enter-submit{% endif %} data-wc-focus-parent data-wc-autosize data-wc-textbox></textarea>
+  <input type="submit" class="wc-message__send" value="Send" data-wc-send-btn />
+</form>
+<div class="wc-settings">
+  <!-- <a href="#" class="wc-settings-btn" role="button" data-module="govuk-button" data-wc-settings-btn>Settings</a> -->
+  <a href="#" class="wc-audio-btn" role="button" data-module="govuk-button" data-wc-audio-btn>Turn audio <span>{% if model.hasAudio %}off{% else %}on{% endif %}</span></a>
+  {% if model.messages | length %}
+  <a href="#" class="wc-transcript-btn" download="transcript.txt" data-wc-transcript-btn>Save chat</a>
+  {% endif %}
+</div>
+{% endif %}

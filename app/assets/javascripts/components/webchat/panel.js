@@ -16,27 +16,37 @@ class Panel {
   create (state, addEvents) {
     console.log('panel.create()')
 
-    const container = document.createElement('div')
-    container.id = 'wc-panel'
-    container.setAttribute('class', `wc${state.isOpen ? ' wc--open' : ''}`)
-    container.setAttribute('aria-label', 'webchat')
-    container.setAttribute('aria-modal', false)
-    container.setAttribute('role', 'dialog')
-    container.setAttribute('open', '')
-    container.setAttribute('data-wc', '')
-    container.innerHTML = '<div class="wc__inner" tabindex="-1" data-wc-inner></div>'
-    document.body.appendChild(container)
-    const content = container.querySelector('[data-wc-inner]')
+    const model = {
+      isOpen: state.isOpen,
+      view: state.view
+    }
+    document.body.insertAdjacentHTML('beforeend', env.render('webchat-panel.html', { model }))
 
-    const model = { ...state }
-    content.innerHTML = env.render('webchat-panel.html', { model })
+    const container = document.querySelector('[data-wc]')
+    const inner = container.querySelector('[data-wc-inner]')
+    const header = inner.querySelector('[data-wc-header]')
+    const status = inner.querySelector('[data-wc-status]')
+    const statusMessage = inner.querySelector('[data-wc-status-message]')
+    const body = inner.querySelector('[data-wc-body]')
+    const content = inner.querySelector('[data-wc-content]')
+    const list = inner.querySelector('[data-wc-list]')
+    const footer = inner.querySelector('[data-wc-footer]')
 
-    // Move focus to wc__inner and manage inert
-    container.setAttribute('data-wc-obscure', '')
-    container.firstChild.focus()
+    // Move focus to wc__inner and set inert
+    inner.focus()
     Keyboard.toggleInert(container)
 
     this.container = container
+    this.inner = inner
+    this.header = header
+    this.status = status
+    this.statusMessage = statusMessage
+    this.body = body
+    this.content = content
+    this.list = list
+    this.footer = footer
+
+    console.log(this.list)
 
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))
 
@@ -89,7 +99,6 @@ class Panel {
   update (state, messages, error) {
     console.log('panel.update()')
    
-    // Update content
     const container = document.getElementById('wc-panel')
     if (!container) {
       return
@@ -97,46 +106,63 @@ class Panel {
 
     // Model
     const model = {
-      model: {
-        availability: state.availability,
-        view: state.view,
-        status: state.status,
-        isOpen: state.isOpen,
-        isBack: state.isBack,
-        isMobile: state.isMobile,
-        hasAudio: state.hasAudio,
-        assignee: state.assignee,
-        messages: messages,
-        timeout: this._timeout,
-        error: error
-      }
+      availability: state.availability,
+      view: state.view,
+      status: state.status,
+      isOpen: state.isOpen,
+      isBack: state.isBack,
+      isMobile: state.isMobile,
+      hasAudio: state.hasAudio,
+      assignee: state.assignee,
+      messages: messages,
+      timeout: this._timeout,
+      error: error
     }
 
     // Update panel
-    const content = container.querySelector('[data-wc-inner]')
-    content.innerHTML = env.render('webchat-panel.html', model)
+    this.header.innerHTML = env.render('webchat-header.html', { model })
+    this.content.innerHTML = env.render('webchat-content.html', { model })
+    this.footer.innerHTML = env.render('webchat-footer.html', { model })
 
+    // Update body
+    const isViewOpen = state.view === 'OPEN'
+    this.content.toggleAttribute('hidden', isViewOpen)
+    this.list.toggleAttribute('hidden', !isViewOpen)
+    this.status.toggleAttribute('hidden', !isViewOpen)
+    if (isViewOpen) {
+      this.body.tabIndex = 0
+      this.body.setAttribute('aria-label', 'Conversation')
+    } else {
+      this.body.removeAttribute('tabindex')
+      this.body.removeAttribute('aria-label')
+    }
+
+    // Add messages
+    if (isViewOpen && messages) {
+      for (let i = 0; i < messages.length; i++) {
+        this.list.innerHTML += env.render('webchat-message.html', { model: messages[i] })
+      }
+      this.scrollToLatest()
+    }
+    
     // Update status
     this.setStatus(state)
 
     // Initialise GOV.UK components
-    const buttons = content.querySelectorAll('[data-module="govuk-button"]')
+    const buttons = container.querySelectorAll('[data-module="govuk-button"]')
     for (let i = 0; i <= buttons.length; i++) {
       new Button(buttons[i]).init()
     }
-    const characterCounts = content.querySelectorAll('[data-module="govuk-character-count"]')
+    const characterCounts = container.querySelectorAll('[data-module="govuk-character-count"]')
     for (let i = 0; i <= characterCounts.length; i++) {
       new CharacterCount(characterCounts[i]).init()
     }
 
     // Initialise autoresize
-    const textbox = content.querySelector('[data-wc-textbox]')
+    const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {
       Utils.autosize(textbox)
     }
-
-    // Scroll messages
-    this.scrollToLatest()
   }
 
   setAttributes (state) {
@@ -148,8 +174,7 @@ class Panel {
     const isFullscreen = state.isMobile && state.isOpen
     const root = document.getElementsByTagName('html')[0]
     root.classList.toggle('wc-html', isFullscreen)
-    const body = document.body
-    body.classList.toggle('wc-body', isFullscreen)
+    document.body.classList.toggle('wc-body', isFullscreen)
     container.setAttribute('aria-modal', true)
 
     const backBtn = container.querySelector('[data-wc-back-btn]')
@@ -166,6 +191,10 @@ class Panel {
       closeBtn.hidden = isFullscreen
     }
 
+    // Add header attributes
+    this.header.classList.toggle('wc__header--open', state.view === 'OPEN')
+
+    // Toggle textbox behaviour
     const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {
       textbox.toggleAttribute('data-wc-enter-submit', !state.isMobile)
@@ -175,39 +204,42 @@ class Panel {
   setStatus (state) {
     console.log('panel.setStatus()')
 
-    // Update continue
+    // Update continue button
     const continueChat = document.querySelector('[data-wc-continue-chat]')
     if (continueChat) {
       continueChat.innerHTML = env.render('webchat-continue.html', {
         model: { availability: state.availability }
       })
     }
-    // Update request
+
+    // Update request button
     const requestChat = document.querySelector('[data-wc-request-chat]')
     if (requestChat) {
       requestChat.innerHTML = env.render('webchat-request.html', {
         model: { availability: state.availability }
       })
     }
-    // Update status
-    const status = document.querySelector('[data-wc-status]')
-    if (status) {
-      status.innerHTML = env.render('webchat-status.html', {
-        model: {
-          availability: state.availability,
-          assignee: state.assignee,
-          status: state.status
-        }
-      })
+
+    // Update status message
+    const statusMessage = this.statusMessage
+    let html = 'Connecting you to an adviser'
+    if (state.availability == 'AVAILABLE') {
+      if (state.status == 'closed') {
+        html = 'Session ended'
+      } else if (state.assignee) {
+        html = `Speaking with ${state.assignee}`
+      } else {
+        html = 'Connecting you to an adviser'
+      }
+    } else if (state.availability == 'OFFLINE') {
+      html = 'No advisers currently available'
     }
+    statusMessage.innerHTML = html
   }
 
   scrollToLatest () {
     // Scroll to latest
-    const body = this.container.querySelector('[data-wc-body]')
-    if (body) {
-      body.scrollTop = body.scrollHeight
-    }
+    this.body.scrollTop = this.body.scrollHeight
   }
 }
 

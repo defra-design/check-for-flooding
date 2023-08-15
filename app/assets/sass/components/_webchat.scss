@@ -96,13 +96,17 @@
       0px 0px 0px 1px $govuk-focus-colour;
     // z-index: 2;
   }
-  &:focus.wc-focus-visible + .wc__footer {
-    z-index: -1;
+  &:focus.wc-focus-visible + .wc__footer .wc-message {
+    border-top: 1px solid transparent;
   }
 }
 .wc__footer {
   flex: 0 0 0;
   position: relative;
+}
+.wc-settings {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .wc-visibility-hidden {
   @include mq ($until: tablet) {
@@ -160,8 +164,7 @@
 }
 
 // Pre and post chat
-.wc-prechat,
-.wc-postchat {
+.wc-content {
   padding: 20px 15px;
   .govuk-form-group {
     margin-bottom: 15px;
@@ -216,7 +219,7 @@
     flex: 0 0 auto;
     max-width: 75%;
     margin: 0px 15px;
-    padding: 5px 0px;
+    padding: 5px 0px 0px;
     @include mq ($from: 'tablet') {
       margin-left: 10px;
       margin-right: 10px;
@@ -265,13 +268,13 @@
   &__item--inbound &__item-inner {
     background-color: govuk-colour('blue');
     color: white;
-    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
     a:not(:focus), a:visited:not(:focus) {
       color: white;
     }
   }
   &__item--outbound &__item-inner {
-    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
   }
   &__item-meta {
     display: block;
@@ -578,6 +581,9 @@
 }
 
 // Keyboard only focus helper
+.wc [hidden] {
+  display: none !important;
+}
 [data-wc-focus-visible] {
   &:focus {
     color: govuk-colour('black');

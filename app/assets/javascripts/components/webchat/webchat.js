@@ -195,7 +195,7 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
-        this.panel.container.firstChild.focus()
+        this.panel.inner.focus()
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         e.preventDefault()
@@ -282,20 +282,20 @@ class WebChat {
   _updateMessages () {
     console.log('_updateMessages')
     
-    const list = document.querySelector('[data-wc-message-list]')
+    const list = document.querySelector('[data-wc-list]')
     if (!list) {
       return
     }
 
-    // Remove group meta
     const messages = this.messages
     const len = messages.length
     const message = messages[len - 1]
-    const isAddition = len > 1 && messages[len - 2].direction === message.direction
 
-    if (isAddition) {
-      list.querySelector('li:last-child [data-wc-item-meta]').remove()
-    }
+    // Remove group meta
+    // const isAddition = len > 1 && messages[len - 2].direction === message.direction
+    // if (isAddition) {
+    //   list.querySelector('li:last-child [data-wc-item-meta]').remove()
+    // }
 
     // Add new item
     list.insertAdjacentHTML('beforeend', message.html)
@@ -857,7 +857,7 @@ class WebChat {
     console.log('_handleAgentTypingEvent')
 
     // Event may fire when list is not available
-    const list = document.querySelector('[data-wc-message-list]')
+    const list = document.querySelector('[data-wc-list]')
     if (!list) {
       return
     }
@@ -872,8 +872,8 @@ class WebChat {
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', `
         <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
+          <div class="wc-list__item-meta">${agentName} is typing</div>
           <div class="wc-list__item-inner"><svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16"><circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="14" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle></svg></div>
-          <span class="wc-list__item-meta">${agentName} is typing</span>
         </li>
       `)
       const panel = this.panel
@@ -903,7 +903,7 @@ class WebChat {
 
     if (container) {
       // *** If we have the list but dont already have the timeout markup
-      const list = container.querySelector('[data-wc-message-list]')
+      const list = container.querySelector('[data-wc-list]')
       const timeout = container.querySelector('[data-wc-timeout]')
       if (list && !timeout) {
         list.insertAdjacentHTML('afterend', `
@@ -911,7 +911,7 @@ class WebChat {
             <div class="wc-timeout__inner">
               <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
             </div>
-            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
+            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue web chat</a>
           </div>
         `)
         this.panel.scrollToLatest()

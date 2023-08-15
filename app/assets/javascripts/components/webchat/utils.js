@@ -82,9 +82,11 @@ class Utils {
 
   static addMessagesHtml (env, messages) { 
     const m = messages
-    for (let i = 0; i < m.length; i++) {  
-      const isGroup = (i === m.length - 1) || (i < (m.length - 1) && m[i].direction !== m[i + 1].direction)
-      m[i].isGroup = isGroup
+    for (let i = 0; i < m.length; i++) {
+      const isGroupStart = i === 0 || (i > 0 && m[i].direction !== m[i - 1].direction)
+      const isGroupEnd = (i === m.length - 1) || (i < (m.length - 1) && m[i].direction !== m[i + 1].direction)
+      m[i].isGroupStart = isGroupStart
+      m[i].isGroupEnd = isGroupEnd
       const html = env.render('webchat-message.html', { model: m[i] })
       m[i].html = html
     }
