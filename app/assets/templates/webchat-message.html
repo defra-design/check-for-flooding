@@ -1,6 +1,4 @@
 <li class="wc-list__item wc-list__item--{{ model.direction | lower }}">
-  {% if model.isGroupStart %}
-  <div class="wc-list__item-meta" data-wc-item-meta>{% if model.direction == 'outbound' %}{{ model.assignee}}{% else %}You{% endif %} <span class="govuk-visually-hidden">said;</span></div>
-  {% endif %}
+  <div class="{% if model.isGroupStart %}wc-list__item-meta{% else %}govuk-visually-hidden{% endif %}" data-wc-item-meta>{% if model.direction == 'outbound' %}{{ model.assignee}}{% else %}You{% endif %} <span class="govuk-visually-hidden">said;</span></div>
   <div class="wc-list__item-inner">{{ model.text | safe }}</div>
 </li>

@@ -74,6 +74,8 @@ class WebChat {
   }
 
   async _authorise () {
+    console.log('_authorise')
+
     // New SDK instance
     const sdk = new ChatSdk({
       brandId: process.env.CXONE_BRANDID,
@@ -408,8 +410,9 @@ class WebChat {
     this.availability.update(state)
     this.availability.scroll(state)
 
-    // Move focus back to instigator
     Keyboard.toggleInert()
+    
+    // Move focus back to instigator
     if (instigatorId) {
       const instigator = document.getElementById(instigatorId)
       if (instigator) {
@@ -692,8 +695,6 @@ class WebChat {
 
   _handleContactStatusChangedEvent (e) {
     console.log('_handleContactStatusChangedEvent')
-
-    //  *** Not triggering on Heroku?
 
     // Currently only responding to a closed case
     const state = this.state

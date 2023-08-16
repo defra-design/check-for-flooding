@@ -46,8 +46,6 @@ class Panel {
     this.list = list
     this.footer = footer
 
-    console.log(this.list)
-
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))
 
     // Message events
@@ -139,9 +137,11 @@ class Panel {
 
     // Add messages
     if (isViewOpen && messages) {
+      let items = ''
       for (let i = 0; i < messages.length; i++) {
-        this.list.innerHTML += env.render('webchat-message.html', { model: messages[i] })
+        items += env.render('webchat-message.html', { model: messages[i] })
       }
+      this.list.innerHTML = items
       this.scrollToLatest()
     }
     
@@ -204,34 +204,29 @@ class Panel {
   setStatus (state) {
     console.log('panel.setStatus()')
 
-    // Update continue button
-    const continueChat = document.querySelector('[data-wc-continue-chat]')
-    if (continueChat) {
-      continueChat.innerHTML = env.render('webchat-continue.html', {
-        model: { availability: state.availability }
-      })
-    }
-
-    // Update request button
-    const requestChat = document.querySelector('[data-wc-request-chat]')
-    if (requestChat) {
-      requestChat.innerHTML = env.render('webchat-request.html', {
-        model: { availability: state.availability }
+    // Update continue and request chat buttons
+    const continueBtn = document.querySelector('[data-wc-continue-chat], [data-wc-request-chat]')
+    if (continueBtn) {
+      continueBtn.innerHTML = env.render('webchat-continue.html', {
+        model: {
+          view: state.view,
+          availability: state.availability
+        }
       })
     }
 
     // Update status message
     const statusMessage = this.statusMessage
     let html = 'Connecting you to an adviser'
-    if (state.availability == 'AVAILABLE') {
-      if (state.status == 'closed') {
+    if (state.availability === 'AVAILABLE') {
+      if (state.status === 'closed') {
         html = 'Session ended'
       } else if (state.assignee) {
         html = `Speaking with ${state.assignee}`
       } else {
         html = 'Connecting you to an adviser'
       }
-    } else if (state.availability == 'OFFLINE') {
+    } else if (state.availability === 'OFFLINE') {
       html = 'No advisers currently available'
     }
     statusMessage.innerHTML = html

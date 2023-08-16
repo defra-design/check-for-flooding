@@ -504,11 +504,15 @@
   &:visited {
     color: $govuk-link-colour;
   }
+  span {
+    pointer-events: none;
+  }
   svg {
     @include mq ($from: 'tablet') {
       top: 3px;
     }
     color: govuk-colour('black');
+    pointer-events: none;
   }
   &:focus {
     color: govuk-colour('black');

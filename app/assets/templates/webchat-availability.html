@@ -1,11 +1,16 @@
-<div class="wc-link" hidden data-wc-link>
+{% if model.isAvailable %}
+<div class="wc-link" data-wc-link>
   <div class="wc-link__inner">
     <a href="#webchat" id="wc-open" role="button" draggable="false" class="wc-open-btn" data-wc-open-btn data-wc-focus-visible>
-      <span data-wc-link-text></span>
-      <span aria-live="polite" data-wc-link-unseen></span>
+      {{ model.btnText }}
+      <span aria-live="polite">
+        {% if model.unseen %}
+        <span class="wc-open-btn__unseen">{{ model.unseen }}</span> <span class="govuk-visually-hidden">new message{% if model.unseen > 1 %}s{% endif %}</span>
+        {% endif %}
+      </span>
     </a>
   </div>
 </div>
-<p class="govuk-body" hidden data-wc-no-link>
-  When an adviser is available, a 'start chat' link will appear.
-</p>
+{% else %}
+<p class="govuk-body">When an adviser is available, a 'start chat' link will appear.</p>
+{% endif %}
