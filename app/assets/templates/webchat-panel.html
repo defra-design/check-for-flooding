@@ -1,21 +1,7 @@
 <div id="wc-panel" class="wc{% if model.isOpen %} wc--open{% endif %}" role="dialog" aria-label="web chat" aria-modal="false" open data-wc data-wc-obscure>
   <div class="wc__inner" tabindex="-1" data-wc-inner>
-    <div class="wc__header">
-      <div class="wc-header" data-wc-header></div>
-      <div class="wc-status" {% if model.view != 'OPEN' %}hidden{% endif %} data-wc-status >
-        <p class="wc-status__content" aria-live="polite">
-          <span class="govuk-visually-hidden">Status:</span>
-          <span data-wc-status-message> {{ model.status | safe }}</span>
-        </p>
-        <div class="wc-status__button">
-          <a href="#" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
-        </div>
-      </div>
-    </div>
-    <div class="wc__body" data-wc-body>
-      <div class="wc-content" data-wc-content{% if model.view == 'OPEN' %} hidden{% endif %}></div>
-      <ul class="wc-list" aria-live="polite" data-wc-list{% if model.view != 'OPEN' %} hidden{% endif %}></ul>
-    </div>
+    <div class="wc__header" data-wc-header></div>
+    <div class="wc__body" data-wc-body></div>
     <div class="wc__footer" data-wc-footer></div>
   </div>
 </div>

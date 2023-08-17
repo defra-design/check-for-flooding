@@ -25,26 +25,16 @@ class Panel {
     const container = document.querySelector('[data-wc]')
     const inner = container.querySelector('[data-wc-inner]')
     const header = inner.querySelector('[data-wc-header]')
-    const status = inner.querySelector('[data-wc-status]')
-    const statusMessage = inner.querySelector('[data-wc-status-message]')
     const body = inner.querySelector('[data-wc-body]')
-    const content = inner.querySelector('[data-wc-content]')
-    const list = inner.querySelector('[data-wc-list]')
     const footer = inner.querySelector('[data-wc-footer]')
+    this.container = container
+    this.header = header
+    this.body = body
+    this.footer = footer
 
     // Move focus to wc__inner and set inert
     inner.focus()
     Keyboard.toggleInert(container)
-
-    this.container = container
-    this.inner = inner
-    this.header = header
-    this.status = status
-    this.statusMessage = statusMessage
-    this.body = body
-    this.content = content
-    this.list = list
-    this.footer = footer
 
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))
 
@@ -117,36 +107,23 @@ class Panel {
       error: error
     }
 
+    console.log(model)
+
     // Update panel
     this.header.innerHTML = env.render('webchat-header.html', { model })
-    this.content.innerHTML = env.render('webchat-content.html', { model })
+    this.body.innerHTML = env.render('webchat-body.html', { model })
     this.footer.innerHTML = env.render('webchat-footer.html', { model })
 
     // Update body
     const isViewOpen = state.view === 'OPEN'
-    this.content.toggleAttribute('hidden', isViewOpen)
-    this.list.toggleAttribute('hidden', !isViewOpen)
-    this.status.toggleAttribute('hidden', !isViewOpen)
     if (isViewOpen) {
       this.body.tabIndex = 0
       this.body.setAttribute('aria-label', 'Conversation')
+      this.scrollToLatest()
     } else {
       this.body.removeAttribute('tabindex')
       this.body.removeAttribute('aria-label')
     }
-
-    // Add messages
-    if (isViewOpen && messages) {
-      let items = ''
-      for (let i = 0; i < messages.length; i++) {
-        items += env.render('webchat-message.html', { model: messages[i] })
-      }
-      this.list.innerHTML = items
-      this.scrollToLatest()
-    }
-    
-    // Update status
-    this.setStatus(state)
 
     // Initialise GOV.UK components
     const buttons = container.querySelectorAll('[data-module="govuk-button"]')
@@ -191,45 +168,11 @@ class Panel {
       closeBtn.hidden = isFullscreen
     }
 
-    // Add header attributes
-    this.header.classList.toggle('wc__header--open', state.view === 'OPEN')
-
     // Toggle textbox behaviour
     const textbox = container.querySelector('[data-wc-textbox]')
     if (textbox) {
       textbox.toggleAttribute('data-wc-enter-submit', !state.isMobile)
     }
-  }
-
-  setStatus (state) {
-    console.log('panel.setStatus()')
-
-    // Update continue and request chat buttons
-    const continueBtn = document.querySelector('[data-wc-continue-chat], [data-wc-request-chat]')
-    if (continueBtn) {
-      continueBtn.innerHTML = env.render('webchat-continue.html', {
-        model: {
-          view: state.view,
-          availability: state.availability
-        }
-      })
-    }
-
-    // Update status message
-    const statusMessage = this.statusMessage
-    let html = 'Connecting you to an adviser'
-    if (state.availability === 'AVAILABLE') {
-      if (state.status === 'closed') {
-        html = 'Session ended'
-      } else if (state.assignee) {
-        html = `Speaking with ${state.assignee}`
-      } else {
-        html = 'Connecting you to an adviser'
-      }
-    } else if (state.availability === 'OFFLINE') {
-      html = 'No advisers currently available'
-    }
-    statusMessage.innerHTML = html
   }
 
   scrollToLatest () {

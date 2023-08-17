@@ -24,6 +24,12 @@ class WebChat {
     // Initialise state
     this.state = new State(this._openChat.bind(this), this._closeChat.bind(this))
 
+    // Add aria-live element
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="govuk-visually-hidden" aria-live="polite" data-wc-live></div>
+    `)
+    this.live = document.querySelector('[data-wc-live]')
+
     // Initialise availability
     this.availability = new Availability(id, this._openChat.bind(this))
 
@@ -37,10 +43,9 @@ class WebChat {
     Keyboard.init(this.state)
 
     // Reinstate html visiblity (avoid refresh flicker)
-    const body = document.body
-    if (body.classList.contains('wc-hidden')) {
-      body.classList.remove('wc-hidden')
-      body.classList.add('wc-body')
+    if (document.body.classList.contains('wc-hidden')) {
+      document.body.classList.remove('wc-hidden')
+      document.body.classList.add('wc-body')
     }
 
     // Render availability content
@@ -101,7 +106,7 @@ class WebChat {
     // Add sdk event listeners
 
     // v1.3.0
-    sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
+    // sdk.onChatEvent(ChatEvent.CONSUMER_AUTHORIZED, this._handleConsumerAuthorizedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.LIVECHAT_RECOVERED, this._handleLivechatRecoveredEvent.bind(this))
     sdk.onChatEvent(ChatEvent.MESSAGE_CREATED, this._handleMessageCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.AGENT_TYPING_STARTED, this._handleAgentTypingEvent.bind(this))
@@ -635,31 +640,22 @@ class WebChat {
   // Event handlers
   //
 
-  _handleConsumerAuthorizedEvent (e) {
-    console.log('_handleConsumerAuthorizedEvent')
-  }
+  // _handleConsumerAuthorizedEvent (e) {
+  //   console.log('_handleConsumerAuthorizedEvent')
+  // }
 
   _handleReadyEvent (e) {
     console.log('_handleReadyEvent')
-    console.log('state.view: ', this.state.view)
 
     // Start/reset timeout
     this._resetTimeout()
 
-    // Reusable logic
-    const update = (isPageLoad) => {
-      const state = this.state
-      this.availability.update(state)
-      const panel = this.panel
-      if (isPageLoad) {
-        panel.update(state, this.messages)
-      } else {
-        panel.setStatus(state)
-      }
-    }
+    const state = this.state
+    const panel = this.panel
+    const availability = this.availability
+    const messages = this.messages
 
     // Poll availability
-    let isPageLoad = true
     const interval = Config.poll > 0 ? Config.poll * 1000 : 0
     Utils.poll({
       fn: () => {
@@ -671,10 +667,10 @@ class WebChat {
           if (res.ok) {
             res.json().then(json => {
               console.log('Polling availability')
-              this.state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
-              update(isPageLoad)
-              this.availability.scroll(this.state)
-              isPageLoad = false
+              state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
+              panel.update(state, messages)
+              availability.update(state)
+              availability.scroll(state)
             })
           } else {
             return res.text().then(text => {
@@ -684,9 +680,11 @@ class WebChat {
         })
         .catch(err => {
           console.log('Polling error ', err)
+          // Fall back
           this.state.availability = 'OFFLINE'
-          update(isPageLoad)
-          isPageLoad = false
+          panel.update(state, messages)
+          availability.update(state)
+          availability.scroll(state)
         })
       },
       interval: interval
@@ -702,7 +700,10 @@ class WebChat {
 
     // Instigated by adviser
     if (state.status === 'closed' && state.view === 'OPEN') {
-      this.panel.setStatus(state)
+      this.panel.update(state, this.messages)
+
+      // Update live element
+      Utils.updateLiveElement(document.querySelector('[data-wc-status]').innerHTML)
 
       // Start/reset timeout
       this._resetTimeout()
@@ -715,11 +716,13 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
     state.assignee = assignee ? assignee.firstName : null
-    this.panel.setStatus(state)
+    this.panel.update(state, this.messages)
   }
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
+
+    console.log(e.detail.data)
 
     // Set thread status
     const state = this.state
@@ -752,7 +755,6 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     state.assignee = assignee ? assignee.firstName : null
     // ** Broken in v1.3.0 LivechatRecovered response no longer has unseenMessagesCount
-    console.log(e.detail.data)
     const unseen = e.detail.data.thread.unseenMessagesCount || 0
     state.unseen = unseen
     state.view = 'OPEN'
@@ -777,7 +779,7 @@ class WebChat {
     this.messages = Utils.sortMessages(this.messages)
 
     // Add html to message objects
-    this.messages = Utils.addMessagesHtml(env, this.messages)
+    this.messages = Utils.addMessagesHtml(this.messages)
     
     // Ready
     document.dispatchEvent(this.livechatReady)
@@ -811,11 +813,10 @@ class WebChat {
     this.messages.push(message)
 
     // Add html to messages
-    this.messages = Utils.addMessagesHtml(env, this.messages)
+    this.messages = Utils.addMessagesHtml(this.messages)
 
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
-      console.log(JSON.stringify(state))
       state.unseen += 1
       this.availability.update(state)
       this.availability.scroll(state)
@@ -836,6 +837,10 @@ class WebChat {
       this.panel.update(state, this.messages)
     } else if (state.view === 'OPEN') {
       this._updateMessages()
+
+      // Update live element
+      const author = message.direction === 'outbound' ? message.assignee : 'You' 
+      Utils.updateLiveElement(`${author} said: ${message.text}`)
     }
 
     // Set focus to message field
@@ -878,6 +883,9 @@ class WebChat {
         </li>
       `)
       const panel = this.panel
+
+      // Update live element
+      Utils.updateLiveElement(`${agentName} is typing`)
 
       // Scroll to show new elements
       panel.scrollToLatest()

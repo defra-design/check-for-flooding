@@ -2,6 +2,8 @@
 
 import Config from './config'
 
+const env = window.nunjucks.configure('views')
+
 class Utils {
   static addOrUpdateParameter (uri, key, value) {
     // Temporariliy remove fragment
@@ -80,7 +82,7 @@ class Utils {
     })
   }
 
-  static addMessagesHtml (env, messages) { 
+  static addMessagesHtml (messages) { 
     const m = messages
     for (let i = 0; i < m.length; i++) {
       const isGroupStart = i === 0 || (i > 0 && m[i].direction !== m[i - 1].direction)
@@ -205,6 +207,12 @@ class Utils {
       duration = `${Math.floor(seconds / 60)} minutes`
     }
     return duration
+  }
+
+  static updateLiveElement (text) {
+    const el = document.querySelector('[data-wc-live]')
+    el.innerHTML = text
+    setTimeout(() => { el.innerHTML = '' }, 1000)
   }
 }
 

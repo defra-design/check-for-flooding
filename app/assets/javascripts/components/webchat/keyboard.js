@@ -102,7 +102,7 @@ class Keyboard {
             while (el.parentNode && el !== document.body) {
                 let sibling = el.parentNode.firstChild
                 while (sibling) {
-                    if (sibling.nodeType === 1 && sibling !== el) {
+                    if (sibling.nodeType === 1 && sibling !== el && !sibling.hasAttribute('data-wc-live')) {
                         if (!sibling.hasAttribute('aria-hidden')) {
                             sibling.setAttribute('aria-hidden', true)
                             sibling.setAttribute('data-wc-inert', '')

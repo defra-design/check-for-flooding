@@ -1,22 +1,45 @@
-
-{% if model.isBack %}
-<button class="wc-back-btn" aria-label="Back" data-wc-back-btn {% if not model.isMobile %}hidden{% endif %}>
-  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
-    <path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" fill="currentColor"/>
-  </svg>
-</button>    
-{% endif %}
-<h2 class="wc-title">Floodline web chat</h2>
-{% if model.view == 'OPEN' or model.view == 'END' %}
-<button class="wc-hide-btn" aria-label="Hide chat" data-wc-hide-btn {% if model.isMobile %}hidden{% endif %}>
-  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
-    <path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/>
-  </svg>
-</button>   
-{% else %}
-<button class="wc-close-btn" aria-label="Close window" data-wc-close-btn {% if model.isMobile %}hidden{% endif %}>
-  <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
-    <path d="M10,8.6L15.6,3L17,4.4L11.4,10L17,15.6L15.6,17L10,11.4L4.4,17L3,15.6L8.6,10L3,4.4L4.4,3L10,8.6Z" fill="currentColor"></path>
-  </svg>
-</button>
+<div class="wc-header">
+  {% if model.isBack %}
+  <button class="wc-back-btn" aria-label="Back" data-wc-back-btn {% if not model.isMobile %}hidden{% endif %}>
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
+      <path d="M4.828,11L12.314,18.485L10.899,19.899L1,10L10.899,0.101L12.314,1.515L4.828,9L19,9L19,11L4.828,11Z" fill="currentColor"/>
+    </svg>
+  </button>    
+  {% endif %}
+  <h2 class="wc-title">Floodline webchat</h2>
+  {% if model.view == 'OPEN' or model.view == 'END' %}
+  <button class="wc-hide-btn" aria-label="Hide chat" data-wc-hide-btn {% if model.isMobile %}hidden{% endif %}>
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
+      <path d="M10 14.4l-7-7L4.4 6l5.6 5.6L15.6 6 17 7.4l-7 7z" fill="currentColor"/>
+    </svg>
+  </button>   
+  {% else %}
+  <button class="wc-close-btn" aria-label="Close window" data-wc-close-btn {% if model.isMobile %}hidden{% endif %}>
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
+      <path d="M10,8.6L15.6,3L17,4.4L11.4,10L17,15.6L15.6,17L10,11.4L4.4,17L3,15.6L8.6,10L3,4.4L4.4,3L10,8.6Z" fill="currentColor"></path>
+    </svg>
+  </button>
+  {% endif %}
+</div>
+{% if model.view == 'OPEN' %}
+<div class="wc-status">
+  <p class="wc-status__content" data-wc-status>
+    {% if model.availability == 'AVAILABLE' %}
+    {% if model.status == 'closed' %}
+    Session ended
+    {% elif model.assignee %}
+    Speaking with {{ model.assignee }}
+    {% else %}
+    Connecting you to an adviser
+    {% endif %}
+    {% elif model.availability == 'OFFLINE' %}
+    No advisers currently available
+    {% else %}
+    Connecting you to an adviser
+    {% endif %}
+  </p>
+  <div class="wc-status__button">
+    <a href="#" role="button" class="wc-end-btn" data-wc-end-btn>End chat</a>
+  </div>
+</div>
 {% endif %}

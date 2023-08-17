@@ -1,5 +1,7 @@
 'use strict'
 
+import Utils from './utils'
+
 const env = window.nunjucks.configure('views')
 
 class Availability {
@@ -9,7 +11,7 @@ class Availability {
     target.insertAdjacentHTML('afterend', env.render('webchat-skiplink.html'))
     this.skipLink = target.nextSibling
 
-    // Add availability container
+    // Set availability container
     const container = document.getElementById(id)
     this.container = container
 
@@ -33,6 +35,7 @@ class Availability {
   }
 
   update (state) {
+    console.log('update')
     const container = this.container
     const isStart = !container.hasAttribute('data-wc-no-start')
     const isAvailable = (isStart && state.availability === 'AVAILABLE') || state.view == 'OPEN' || state.view == 'END'
@@ -54,6 +57,11 @@ class Availability {
       link.focus()
     }
     
+    // Alert assistive technology
+    if (state.unseen > 0) {
+      Utils.updateLiveElement (`${state.unseen} new message${state.unseen > 1 ? 's' : ''}`)
+    }
+
     // Toggle skip link
     const hasSkip = (state.view === 'OPEN' || state.view === 'END') && !state.isOpen
     this.skipLink.toggleAttribute('hidden', !hasSkip)
