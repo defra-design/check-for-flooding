@@ -888,7 +888,7 @@ class WebChat {
             <div class="wc-timeout__inner">
               <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
             </div>
-            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue web chat</a>
+            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
           </div>
         `)
         this.panel.scrollToLatest()

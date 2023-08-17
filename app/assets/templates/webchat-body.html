@@ -1,15 +1,15 @@
 {% if model.view == 'PRECHAT' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">What you can use web chat for</h3>
+  <h3 class="govuk-heading-m">What you can use webchat for</h3>
   <p>Webchat lets you talk directly to a Floodline adviser.</p>
-  <p>You can use web chat to get: </p>
+  <p>You can use webchat to get: </p>
   <ul class="govuk-list govuk-list--bullet">
     <li>current flood warnings and alerts in your area</li>
     <li>information on the flood warning service</li>
     <li>advice on what to do before, during and after a flood</li>
   </ul>
   <p>There are other ways to <a href="https://www.gov.uk/sign-up-for-flood-warnings">sign up for flood warnings</a> and <a href="https://defragroup.eu.qualtrics.com/jfe/form/SV_8uMAuaH3kbJl965?Source=https://check-for-flooding.service.gov.uk">manage your flood warnings account</a>.</p>
-  <p>Do not use web chat to <a href="https://www.gov.uk/report-flood-cause">report a flood</a>.</p>
+  <p>Do not use webchat to <a href="https://www.gov.uk/report-flood-cause">report a flood</a>.</p>
   {% if model.availability == 'AVAILABLE' %}
   <button class="wc-continue-btn govuk-!-margin-top-2" data-module="govuk-button" data-wc-continue-btn>
     Continue
@@ -26,7 +26,7 @@
 
 {% elif model.view == 'START' %}
 <div class="wc-content">
-  <a href="#" class="wc-back-link" data-wc-prechat-back-btn>What you can use web chat for</a>
+  <a href="#" class="wc-back-link" data-wc-prechat-back-btn>What you can use webchat for</a>
   {% if model.error %}
   <div class="govuk-error-summary" data-module="govuk-error-summary" tabindex="-1" data-wc-error-summary>
     <div role="alert">
@@ -127,7 +127,7 @@
 {% elif model.view == 'FEEDBACK' %}
 <div class="wc-content">
   <h3 class="govuk-heading-m">Give feedback</h3>
-  <p>Floodline web chat is in public beta</p>
+  <p>Floodline webchat is in public beta</p>
   <div class="govuk-button-group">
     <button class="wc-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Submit</button>
     <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-close-btn>Cancel</a>
