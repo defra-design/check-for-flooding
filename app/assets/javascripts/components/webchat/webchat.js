@@ -146,6 +146,10 @@ class WebChat {
   }
 
   async _startChat (name, question) {
+    // Alert assitive technology
+    const panel = this.panel
+    // panel.alertAT('Submitting your question')
+
     // Authorise user
     if (!this.state.isAuthorised) {
       await this._authorise()
@@ -166,7 +170,7 @@ class WebChat {
     }
 
     // Update panel attributes
-    this.panel.setAttributes(this.state)
+    panel.setAttributes(this.state)
   }
 
   _addDomEvents () {
@@ -810,11 +814,13 @@ class WebChat {
       // Update panel if new question
       state.view = 'OPEN'
       panel.update(state)
-
+      // Alert assistive technology
+      const el = document.querySelector('[data-wc-status]')
+      const text = el ? el.innerHTML : ''
+      panel.alertAT(text)
     } else if (state.view === 'OPEN' && state.isOpen) {
       // Add message if existing thread
       panel.addMessage(message)
-
       // Mark as seen
       if (this.thread) {
         this.thread.lastMessageSeen()

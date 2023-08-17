@@ -101,11 +101,12 @@ class Panel {
     this.body.innerHTML = env.render('webchat-body.html', { model })
     this.footer.innerHTML = env.render('webchat-footer.html', { model })
 
-    // Update body
+    // Make body keyboard accessible 
     const isViewOpen = state.view === 'OPEN'
     if (isViewOpen) {
       this.body.tabIndex = 0
-      this.body.setAttribute('aria-label', 'Conversation')
+      const label = `Conversation with ${state.messages.length} message${state.messages.length > 1 ? 's' : ''}`
+      this.body.setAttribute('aria-label', label)
       this.scrollToLatest()
     } else {
       this.body.removeAttribute('tabindex')
