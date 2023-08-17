@@ -15,6 +15,12 @@ class Availability {
     const container = document.getElementById(id)
     this.container = container
 
+    // Add live element
+    container.insertAdjacentHTML('beforebegin', `
+      <div class="wc-live" aria-live="polite" data-wc-live></div>
+    `)
+    this.live = container.previousElementSibling
+
     // Events
     document.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-open-btn')) {
@@ -59,7 +65,8 @@ class Availability {
     
     // Alert assistive technology
     if (state.unseen > 0) {
-      Utils.updateLiveElement (`${state.unseen} new message${state.unseen > 1 ? 's' : ''}`)
+      const text = `${state.unseen} new message${state.unseen > 1 ? 's' : ''}`
+      this.alertAT(text)
     }
 
     // Toggle skip link
@@ -84,6 +91,12 @@ class Availability {
     document.documentElement.classList.toggle('wc-scroll-padding', isFixed)
     document.body.classList.toggle('wc-scroll-padding', isFixed)
     link.classList.toggle('wc-link--fixed', isFixed)
+  }
+
+  alertAT (text) {
+    const el = this.live
+    el.innerHTML = `<p>${text}</p>`
+    setTimeout(() => { el.innerHTML = '' }, 1000)
   }
 }
 

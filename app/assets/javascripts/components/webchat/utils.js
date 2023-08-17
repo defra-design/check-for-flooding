@@ -208,12 +208,6 @@ class Utils {
     }
     return duration
   }
-
-  static updateLiveElement (text) {
-    const el = document.querySelector('[data-wc-live]')
-    el.innerHTML = text
-    setTimeout(() => { el.innerHTML = '' }, 1000)
-  }
 }
 
 export default Utils

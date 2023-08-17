@@ -23,6 +23,9 @@
 .wc-hidden {
   visibility: hidden;
 }
+.wc-live {
+  @extend .govuk-visually-hidden;
+}
 .wc {
   display: none;
   position: fixed;

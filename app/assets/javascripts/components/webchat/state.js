@@ -22,6 +22,7 @@ class State {
     this._isOpen = isOpen
     this._openChat = openChat
     this._closeChat = closeChat
+    this._messages = []
 
     // Help with browser back behaviour
     if (history.length <= 1) {
@@ -142,6 +143,14 @@ class State {
 
   get isBack () {
     return this._isBack
+  }
+
+  get messages () {
+    return this._messages
+  }
+
+  set messages (messages) {
+    this._messages = messages
   }
 }
 

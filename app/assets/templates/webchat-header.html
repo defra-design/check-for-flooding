@@ -26,9 +26,9 @@
   <p class="wc-status__content" data-wc-status>
     {% if model.availability == 'AVAILABLE' %}
     {% if model.status == 'closed' %}
-    Session ended
+    {% if model.assignee %}{{ model.assignee }} ended the session{% else %}Session ended by adviser{% endif %}
     {% elif model.assignee %}
-    Speaking with {{ model.assignee }}
+    You are speaking with {{ model.assignee }}
     {% else %}
     Connecting you to an adviser
     {% endif %}
@@ -43,3 +43,4 @@
   </div>
 </div>
 {% endif %}
+<div class="wc-live" aria-live="polite" data-wc-live></div>

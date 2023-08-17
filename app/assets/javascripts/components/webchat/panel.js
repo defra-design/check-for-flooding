@@ -84,7 +84,7 @@ class Panel {
     addEvents()
   }
 
-  update (state, messages, error) {
+  update (state, error) {
     console.log('panel.update()')
    
     const container = document.getElementById('wc-panel')
@@ -102,12 +102,10 @@ class Panel {
       isMobile: state.isMobile,
       hasAudio: state.hasAudio,
       assignee: state.assignee,
-      messages: messages,
+      messages: state.messages,
       timeout: this._timeout,
       error: error
     }
-
-    console.log(model)
 
     // Update panel
     this.header.innerHTML = env.render('webchat-header.html', { model })
@@ -140,6 +138,56 @@ class Panel {
     if (textbox) {
       Utils.autosize(textbox)
     }
+  }
+
+  addMessage (message) {
+    const list = this.container.querySelector('[data-wc-list]')
+    if (!list) {
+      return
+    }
+
+    list.insertAdjacentHTML('beforeend', message.html)
+
+    // Update live element
+    const author = message.direction === 'outbound' ? message.assignee : 'You'
+    const text = `${author} said: ${message.text}`
+    this.alertAT(text)
+
+    // Scroll messages
+    this.scrollToLatest()
+  }
+
+  toggleAgentTyping (name, isTyping) {
+    const list = this.body.querySelector('[data-wc-list]')
+    if (!list) {
+      return
+    }
+    
+    // Add or remove elements from list
+    const el = list.querySelector('[data-wc-agent-typing]')
+    if (isTyping) {
+      list.insertAdjacentHTML('beforeend', env.render('webchat-agent-typing.html', {
+        model: {
+          name: name
+        }
+      }))
+
+      // Update live element
+      this.alertAT(`${name} is typing`)
+
+      // Scroll to show new elements
+      this.scrollToLatest()
+
+    } else if (el) {
+      el.remove()
+    }
+  }
+
+  alertAT (text) {
+    // Get referecne to live element
+    const el = this.header.querySelector('[data-wc-live]')
+    el.innerHTML = `<p>${text}</p>`
+    setTimeout(() => { el.innerHTML = '' }, 1000)
   }
 
   setAttributes (state) {

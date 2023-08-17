@@ -10,25 +10,12 @@ import Transcript from './transcript'
 import Config from './config'
 import Availability from './availability'
 
-const env = window.nunjucks.configure('views')
-
 class WebChat {
   constructor (id) {  
     this.id = id
-    this.messages = []
-
-    // Update meta viewport
-    // const metaViewport = document.querySelector('meta[name="viewport"]')
-    // metaViewport.content += ', interactive-widget=resizes-content'
 
     // Initialise state
     this.state = new State(this._openChat.bind(this), this._closeChat.bind(this))
-
-    // Add aria-live element
-    document.body.insertAdjacentHTML('beforeend', `
-      <div class="govuk-visually-hidden" aria-live="polite" data-wc-live></div>
-    `)
-    this.live = document.querySelector('[data-wc-live]')
 
     // Initialise availability
     this.availability = new Availability(id, this._openChat.bind(this))
@@ -286,36 +273,6 @@ class WebChat {
     })
   }
 
-  _updateMessages () {
-    console.log('_updateMessages')
-    
-    const list = document.querySelector('[data-wc-list]')
-    if (!list) {
-      return
-    }
-
-    const messages = this.messages
-    const len = messages.length
-    const message = messages[len - 1]
-
-    // Remove group meta
-    // const isAddition = len > 1 && messages[len - 2].direction === message.direction
-    // if (isAddition) {
-    //   list.querySelector('li:last-child [data-wc-item-meta]').remove()
-    // }
-
-    // Add new item
-    list.insertAdjacentHTML('beforeend', message.html)
-
-    // Scroll messages
-    this.panel.scrollToLatest()
-
-    // Mark as seen
-    if (this.thread) {
-      this.thread.lastMessageSeen()
-    }
-  }
-
   _validatePrechat (successCb) {
     const name = document.getElementById('name').value
     const question = document.getElementById('question').value
@@ -364,7 +321,7 @@ class WebChat {
     if (!panel.container) {
       // Create panel
       panel.create(state, this._addDomEvents.bind(this))
-      panel.update(state, this.messages)
+      panel.update(state)
 
       // Mark messages as seen
       const thread = this.thread
@@ -432,11 +389,11 @@ class WebChat {
 
     // Close thread
     localStorage.removeItem('THREAD_ID')
-    this.messages = []
 
     // Show timeout view
     const state = this.state
     state.view = 'TIMEOUT'
+    state.messages = []
     this.panel.update(state)
 
     // Clear timeout
@@ -458,11 +415,11 @@ class WebChat {
   
     // Close thread
     localStorage.removeItem('THREAD_ID')
-    this.messages = []
 
     // Show feedback view
     const state = this.state
     state.view = 'FEEDBACK'
+    state.messages = []
     this.panel.update(state)
     const btn = document.querySelector('[data-wc-submit-feedback-btn]')
     btn.focus()
@@ -509,7 +466,7 @@ class WebChat {
     const state = this.state
     state.view = 'OPEN'
     console.log('_resumeChat')
-    this.panel.update(state, this.messages)
+    this.panel.update(state)
     const textbox = document.querySelector('[data-wc-textbox]')
     textbox.focus()
   }
@@ -554,7 +511,7 @@ class WebChat {
   }
 
   _mergeMessages (batch) {
-    // Create message model
+    // Create array of message objects
     const messages = []
     for (let i = 0; i < batch.length; i++) {
       messages.push({
@@ -568,7 +525,9 @@ class WebChat {
       })
     }
     messages.reverse()
-    this.messages = messages.concat(this.messages)
+
+    // Merge with existing messafes
+    this.state.messages = messages.concat(this.state.messages)
   }
 
   _sendMessage (e) {
@@ -625,7 +584,8 @@ class WebChat {
     console.log('download')
 
     // Need to test for accessibility of this approach
-    const transcript = new Transcript(this.messages)
+    const messages = this.state.messages
+    const transcript = new Transcript(messages)
     const data = transcript.data
     const anchor = document.createElement('a')
     anchor.className = 'govuk-visually-hidden'
@@ -650,13 +610,12 @@ class WebChat {
     // Start/reset timeout
     this._resetTimeout()
 
+    // Poll availability
+    const interval = Config.poll > 0 ? Config.poll * 1000 : 0
     const state = this.state
     const panel = this.panel
     const availability = this.availability
-    const messages = this.messages
 
-    // Poll availability
-    const interval = Config.poll > 0 ? Config.poll * 1000 : 0
     Utils.poll({
       fn: () => {
         fetch(Config.availabilityEndPoint, {
@@ -668,7 +627,7 @@ class WebChat {
             res.json().then(json => {
               console.log('Polling availability')
               state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
-              panel.update(state, messages)
+              panel.update(state)
               availability.update(state)
               availability.scroll(state)
             })
@@ -682,7 +641,7 @@ class WebChat {
           console.log('Polling error ', err)
           // Fall back
           this.state.availability = 'OFFLINE'
-          panel.update(state, messages)
+          panel.update(state)
           availability.update(state)
           availability.scroll(state)
         })
@@ -697,13 +656,16 @@ class WebChat {
     // Currently only responding to a closed case
     const state = this.state
     state.status = e.detail.data.case.status
+    const panel = this.panel
 
     // Instigated by adviser
     if (state.status === 'closed' && state.view === 'OPEN') {
-      this.panel.update(state, this.messages)
+      panel.update(state)
 
-      // Update live element
-      Utils.updateLiveElement(document.querySelector('[data-wc-status]').innerHTML)
+      // Alert assistive technology
+      const el = document.querySelector('[data-wc-status]')
+      const text = el ? el.innerHTML : ''
+      panel.alertAT(text)
 
       // Start/reset timeout
       this._resetTimeout()
@@ -712,17 +674,22 @@ class WebChat {
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
+    console.log(e.detail.data)
 
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
-    state.assignee = assignee ? assignee.firstName : null
-    this.panel.update(state, this.messages)
+    state.assignee = assignee ? assignee.nickname || assignee.firstName : null
+    const panel = this.panel
+    panel.update(state)
+
+    // Alert assistive technology
+    const el = document.querySelector('[data-wc-status]')
+    const text = el ? el.innerHTML : ''
+    panel.alertAT(text)
   }
 
   async _handleLivechatRecoveredEvent (e) {
     console.log('_handleLivechatRecoveredEvent')
-
-    console.log(e.detail.data)
 
     // Set thread status
     const state = this.state
@@ -753,7 +720,7 @@ class WebChat {
 
     // Set assignee and unseen message count
     const assignee = e.detail.data.inboxAssignee
-    state.assignee = assignee ? assignee.firstName : null
+    state.assignee = assignee ? assignee.nickname || assignee.firstName : null
     // ** Broken in v1.3.0 LivechatRecovered response no longer has unseenMessagesCount
     const unseen = e.detail.data.thread.unseenMessagesCount || 0
     state.unseen = unseen
@@ -773,13 +740,13 @@ class WebChat {
     console.log('All messages loaded')
 
     // Remove duplicates?? LoadMoreMessages doesnt always get a unique set?
-    this.messages = [...new Map(this.messages.map(m => [m.id, m])).values()]
+    state.messages = [...new Map(state.messages.map(m => [m.id, m])).values()]
 
     // Sort on date
-    this.messages = Utils.sortMessages(this.messages)
+    state.messages = Utils.sortMessages(state.messages)
 
     // Add html to message objects
-    this.messages = Utils.addMessagesHtml(this.messages)
+    state.messages = Utils.addMessagesHtml(state.messages)
     
     // Ready
     document.dispatchEvent(this.livechatReady)
@@ -810,10 +777,10 @@ class WebChat {
       createdAt: new Date(response.createdAt),
       direction: direction
     }
-    this.messages.push(message)
+    state.messages.push(message)
 
     // Add html to messages
-    this.messages = Utils.addMessagesHtml(this.messages)
+    state.messages = Utils.addMessagesHtml(state.messages)
 
     // Update unseen count
     if (direction === 'outbound' && !state.isOpen) {
@@ -831,22 +798,27 @@ class WebChat {
       textbox.dispatchEvent(event)
     }
 
-    // Update panel
+    // Update messages
+    const panel = this.panel
     if (state.view === 'START') {
+      // Update panel if new question
       state.view = 'OPEN'
-      this.panel.update(state, this.messages)
-    } else if (state.view === 'OPEN') {
-      this._updateMessages()
+      panel.update(state)
 
-      // Update live element
-      const author = message.direction === 'outbound' ? message.assignee : 'You' 
-      Utils.updateLiveElement(`${author} said: ${message.text}`)
+    } else if (state.view === 'OPEN' && state.isOpen) {
+      // Add message if existing thread
+      panel.addMessage(message)
+
+      // Mark as seen
+      if (this.thread) {
+        this.thread.lastMessageSeen()
+      }
     }
 
     // Set focus to message field
-    const messageField = document.getElementById('message')
-    if (messageField && direction === 'inbound') {
-      messageField.focus()
+    const el = document.getElementById('message')
+    if (el && direction === 'inbound') {
+      el.focus()
     }
 
     // Play notification sound
@@ -871,27 +843,11 @@ class WebChat {
     // Reset timeout
     this._resetTimeout()
 
-    // Add or remove elements from list
-    const el = list.querySelector('[data-wc-agent-typing]')
+    // Toggle agent typing
+    const panel = this.panel
     const isTyping = e.type === 'AgentTypingStarted'
-    const agentName = e.detail.data.user.firstName
-    if (isTyping) {
-      list.insertAdjacentHTML('beforeend', `
-        <li class="wc-list__item wc-list__item--outbound" data-wc-agent-typing>
-          <div class="wc-list__item-meta">${agentName} is typing</div>
-          <div class="wc-list__item-inner"><svg width="28" height="16" x="0px" y="0px" viewBox="0 0 28 16"><circle stroke="none" cx="3" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="14" cy="8" r="3" fill="currentColor"></circle><circle stroke="none" cx="25" cy="8" r="3" fill="currentColor"></circle></svg></div>
-        </li>
-      `)
-      const panel = this.panel
-
-      // Update live element
-      Utils.updateLiveElement(`${agentName} is typing`)
-
-      // Scroll to show new elements
-      panel.scrollToLatest()
-    } else if (el) {
-      el.remove()
-    }
+    const name = e.detail.data.user.firstName
+    panel.toggleAgentTyping(name, isTyping)
   }
 
   _handleMessageSeenByEndUserEvent (e) {
