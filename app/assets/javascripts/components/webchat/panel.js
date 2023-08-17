@@ -28,6 +28,7 @@ class Panel {
     const body = inner.querySelector('[data-wc-body]')
     const footer = inner.querySelector('[data-wc-footer]')
     this.container = container
+    this.inner = inner
     this.header = header
     this.body = body
     this.footer = footer
@@ -65,18 +66,6 @@ class Panel {
         const textbox = e.target
         const label = textbox.previousElementSibling
         Utils.toggleLabel(label, null, textbox)
-      }
-    }, true)
-    container.addEventListener('paste', e => {
-      console.log('paste: ', e)
-      if (e.target.closest('div#message')) {
-        e.preventDefault()
-        const text = (e.clipboardData || window.clipboardData).getData('text')
-        const textbox = document.getElementById('message')
-        const label = textbox.previousElementSibling
-        Utils.insertTextAtCaret(text)
-        // textbox.innerText = text
-        Utils.toggleLabel(label, 'v', textbox)
       }
     }, true)
 

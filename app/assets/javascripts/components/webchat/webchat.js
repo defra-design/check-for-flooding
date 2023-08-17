@@ -134,7 +134,10 @@ class WebChat {
     // Get thread
     let threadId = localStorage.getItem('THREAD_ID')
     if (!threadId) {
-      threadId = Utils.generateThreadId()
+      // Generate id
+      const random =  Math.floor(Math.random() * 1000).toString()
+      const time = (new Date()).getTime()
+      threadId = `${time}${random}`
       localStorage.setItem('THREAD_ID', threadId)
     }
     const thread = await this.sdk.getThread(threadId)
@@ -189,7 +192,6 @@ class WebChat {
       if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
-        this.panel.inner.focus()
       }
       if (e.target.hasAttribute('data-wc-submit-btn')) {
         e.preventDefault()
@@ -287,10 +289,12 @@ class WebChat {
         questionEmpty: question.length === 0,
         questionExceeded: question.length > 500
       }
-      this.panel.update(this.state, null, error)
+
+      const panel = this.panel
+      panel.update(this.state, error)
 
       // Move focus to error summary
-      const summary = this.panel.container.querySelector('[data-wc-error-summary]')
+      const summary = panel.container.querySelector('[data-wc-error-summary]')
       summary.focus()
       return
     }
@@ -441,7 +445,9 @@ class WebChat {
     const state = this.state
     state.view = 'PRECHAT'
     console.log('_prechat')
-    this.panel.update(state)
+    const panel = this.panel
+    panel.update(state)
+    panel.inner.focus()
   }
 
   _continue () {

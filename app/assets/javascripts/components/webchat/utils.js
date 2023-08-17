@@ -110,18 +110,6 @@ class Utils {
     return interval
   }
 
-  static generateThreadId () {
-    // let id
-    // if (crypto.randomUUID) {
-    //   id = crypto.randomUUID()
-    // } else {
-    //   id = Math.floor(Math.random() * 100000000).toString()
-    // }
-    const random =  Math.floor(Math.random() * 1000).toString()
-    const time = (new Date()).getTime()
-    return `${time}${random}`
-  }
-
   static toggleLabel (label, key, textbox) {
     const chars = /^[a-zA-Z0-9- !'^+%&/()=?_\-~`;#$½{[\]}\\|<>@,]+$/i // /^[a-z\d -]+$/i
     const hasValue = textbox.value.length > 0
@@ -154,26 +142,6 @@ class Utils {
       e.target.style.height = 'auto'
       e.target.style.height = e.target.scrollHeight + offset + 'px'
     })
-  }
-
-  static insertTextAtCaret (text) {
-    let sel
-    let range
-    if (window.getSelection) {
-      sel = window.getSelection()
-      if (sel.getRangeAt && sel.rangeCount) {
-        // Insert range at caret
-        range = sel.getRangeAt(0)
-        range.deleteContents()
-        range.insertNode(document.createTextNode(text))
-        // Move caret to end of range
-        range.collapse(false)
-        sel.removeAllRanges()
-        sel.addRange(range)
-      }
-    } else if (document.selection && document.selection.createRange) {
-      document.selection.createRange().text = text
-    }
   }
 
   static async poll ({ fn, validate, interval, maxAttempts }) {
