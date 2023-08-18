@@ -154,7 +154,9 @@ class WebChat {
   async _startChat (name, question) {
     // Alert assitive technology
     const panel = this.panel
-    // panel.alertAT('Submitting your question')
+    
+    // Show connecting
+    // this._connecting()
 
     // Authorise user
     if (!this.state.isAuthorised) {
@@ -203,7 +205,7 @@ class WebChat {
         e.preventDefault()
         this._prechat(e)
       }
-      if (e.target.hasAttribute('data-wc-submit-btn')) {
+      if (e.target.hasAttribute('data-wc-request-chat-btn')) {
         e.preventDefault()
         this._validatePrechat(this._startChat.bind(this))
       }
@@ -474,6 +476,17 @@ class WebChat {
     name.focus()
   }
 
+  _connecting () {
+    const panel = this.panel
+    const start = panel.body.querySelector('[data-wc-start]')
+    const connecting = panel.body.querySelector('[data-wc-connecting]')
+
+    start.setAttribute('hidden', '')
+    connecting.removeAttribute('hidden')
+
+    // Alert AT
+  }
+
   _endChat () {
     const state = this.state
     state.view = 'END'
@@ -672,7 +685,7 @@ class WebChat {
   }
 
   _handleContactStatusChangedEvent (e) {
-    console.log('_handleContactStatusChangedEvent')
+    console.log('_handleContactStatusChangedEvent', e.detail.data.case.status)
 
     // Currently only responding to a closed case
     const state = this.state
@@ -776,6 +789,77 @@ class WebChat {
     console.log('_handleContactCreatedEvent')
   }
 
+  // _handleMessageCreatedEvent (e) {
+  //   console.log('_handleMessageCreatedEvent')
+
+  //   const state = this.state  
+  //   const response = e.detail.data.message
+  //   const assignee = response.authorUser ? response.authorUser.firstName : null
+  //   const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
+  //   const direction = response.direction.toLowerCase()
+  //   state.status = e.detail.data.case.status
+  //   state.assignee = assignee
+
+  //   // Update messages array
+  //   const message = {
+  //     id: response.id,
+  //     text: Utils.parseMessage(response.messageContent.text),
+  //     user: user,
+  //     assignee: assignee,
+  //     date: Utils.formatDate(new Date(response.createdAt)),
+  //     createdAt: new Date(response.createdAt),
+  //     direction: direction
+  //   }
+  //   state.messages.push(message)
+
+  //   // Add html to messages
+  //   state.messages = Utils.addMessagesHtml(state.messages)
+
+  //   // Update unseen count
+  //   if (direction === 'outbound' && !state.isOpen) {
+  //     state.unseen += 1
+  //     this.availability.update(state)
+  //     this.availability.scroll(state)
+  //   }
+
+  //   // Return if new chat and waiting to connect
+  //   if (!(state.view === 'OPEN' && state.isOpen)) {
+  //     return
+  //   }
+
+  //   // Clear input
+  //   const textbox = document.querySelector('[data-wc-textbox]')
+  //   if (textbox && direction === 'inbound') {
+  //     textbox.value = ''
+  //     textbox.style.height = 'auto'
+  //     const event = new Event('change')
+  //     textbox.dispatchEvent(event)
+  //   }
+
+  //   // Add message if existing thread
+  //   this.panel.addMessage(message)
+
+  //   // Mark as seen
+  //   if (this.thread) {
+  //     this.thread.lastMessageSeen()
+  //   }
+
+  //   // Set focus to message field
+  //   const el = document.getElementById('message')
+  //   if (el && direction === 'inbound') {
+  //     el.focus()
+  //   }
+
+  //   // Play notification sound
+  //   if (state.hasAudio && direction === 'outbound') {
+  //     const notification = this.notification
+  //     notification.playSound()
+  //   }
+
+  //   // Start/reset timeout
+  //   this._resetTimeout()
+  // }
+
   _handleMessageCreatedEvent (e) {
     console.log('_handleMessageCreatedEvent')
 
@@ -829,6 +913,16 @@ class WebChat {
       const text = el ? el.innerHTML : ''
       panel.alertAT(text)
     } else if (state.view === 'OPEN' && state.isOpen) {
+      // Add message if existing thread
+      panel.addMessage(message)
+      // Mark as seen
+      if (this.thread) {
+        this.thread.lastMessageSeen()
+      }
+    }
+
+    // Add message if existing opem thread
+    if (state.view === 'OPEN' && state.isOpen) {
       // Add message if existing thread
       panel.addMessage(message)
       // Mark as seen

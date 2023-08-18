@@ -25,7 +25,7 @@
 </div>
 
 {% elif model.view == 'START' %}
-<div class="wc-content">
+<div class="wc-content" data-wc-start>
   <a href="#" class="wc-back-link" data-wc-prechat-back-btn>What you can use webchat for</a>
   {% if model.error %}
   <div class="govuk-error-summary" data-module="govuk-error-summary" tabindex="-1" data-wc-error-summary>
@@ -88,7 +88,7 @@
     </div>
   </div>
   {% if model.availability == 'AVAILABLE' %}
-  <button class="wc-submit-btn" data-module="govuk-button" data-wc-submit-btn>
+  <button class="wc-submit-btn" data-module="govuk-button" data-wc-request-chat-btn>
     Request chat
   </button>
   {% else %}
@@ -96,6 +96,11 @@
     A 'Request chat' link will be shown when an adviser is available. You don't need to refresh this page.
   </div>
   {% endif %}
+</div>
+<div class="wc-content" hidden data-wc-connecting>
+  <a href="#" class="wc-back-link" data-wc-prechat-back-btn>Request chat</a>
+  <h3 class="govuk-heading-m">Connecting you to an adviser</h3>
+  <p>Hang on a sec.</p>
 </div>
 
 {% elif model.view == 'OPEN' %}
