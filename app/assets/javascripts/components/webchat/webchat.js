@@ -155,13 +155,16 @@ class WebChat {
     // Alert assitive technology
     const panel = this.panel
     
-    // Show connecting
+    // Check availability in API (are there agents logged in?)
     // this._connecting()
 
     // Authorise user
     if (!this.state.isAuthorised) {
       await this._authorise()
     }
+
+    // Check SDK is online
+    // this._connecting()
 
     // *** Todo: Check availability again before sending message
     console.log('_startChat: ', this.state.availability)
