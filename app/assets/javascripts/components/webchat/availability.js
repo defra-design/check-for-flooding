@@ -1,16 +1,9 @@
 'use strict'
 
-import Utils from './utils'
-
 const env = window.nunjucks.configure('views')
 
 class Availability {
   constructor (id, openChatCb) {
-    // Add skiplink
-    const target = document.querySelector('a[data-module="govuk-skip-link"]')
-    target.insertAdjacentHTML('afterend', env.render('webchat-skiplink.html'))
-    this.skipLink = target.nextSibling
-
     // Set availability container
     const container = document.getElementById(id)
     this.container = container
@@ -41,7 +34,8 @@ class Availability {
   }
 
   update (state) {
-    console.log('update')
+    console.log('availability.update()')
+
     const container = this.container
     const isStart = !container.hasAttribute('data-wc-no-start')
     const isAvailable = (isStart && state.availability === 'AVAILABLE') || state.view == 'OPEN' || state.view == 'END'
@@ -68,10 +62,6 @@ class Availability {
       const text = `${state.unseen} new message${state.unseen > 1 ? 's' : ''}`
       this.alertAT(text)
     }
-
-    // Toggle skip link
-    const hasSkip = (state.view === 'OPEN' || state.view === 'END') && !state.isOpen
-    this.skipLink.toggleAttribute('hidden', !hasSkip)
   }
 
   scroll (state) {

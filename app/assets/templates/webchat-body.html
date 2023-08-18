@@ -81,7 +81,7 @@
         {% endif %}
       </p>
       {% endif %}
-      <textarea class="govuk-textarea{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{% if model.error %}{{ model.error.question }}{% endif %}</textarea>
+      <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{% if model.error %}{{ model.error.question }}{% endif %}</textarea>
     </div>
     <div id="question-info" class="wc-hint govuk-hint govuk-character-count__message">
       You can enter up to 500 characters

@@ -181,6 +181,9 @@
   .wc-hint {
     font-size: 16px;
   }
+  .wc-textarea-question {
+    resize: none;
+  }
   .wc-textarea--error {
     @extend .govuk-textarea--error;
   }

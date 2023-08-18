@@ -2,13 +2,14 @@
 
 import { ChatSdk, EnvironmentName, ChatEvent } from '@nice-devone/nice-cxone-chat-web-sdk'
 import State from './state'
+import Skiplink from './skiplink'
+import Availability from './availability'
 import Panel from './panel'
 import Notification from './notification'
 import Keyboard from './keyboard'
-import Utils from './utils'
 import Transcript from './transcript'
 import Config from './config'
-import Availability from './availability'
+import Utils from './utils'
 
 class WebChat {
   constructor (id) {  
@@ -23,11 +24,11 @@ class WebChat {
     // Initialise panel
     this.panel = new Panel()
 
+    // Initialise skiplink
+    this.skiplink = new Skiplink()
+
     // Initialise notification
     this.notification = new Notification()
-
-    // Initialise keyboard interface
-    Keyboard.init(this.state)
 
     // Reinstate html visiblity (avoid refresh flicker)
     if (document.body.classList.contains('wc-hidden')) {
@@ -35,8 +36,11 @@ class WebChat {
       document.body.classList.add('wc-body')
     }
 
-    // Render availability content
+    // Initialise keyboard interface
     const state = this.state
+    Keyboard.init(state)
+
+    // Render availability content
     this.availability.update(state)
     
     // Render panel if #webchat exists in url
@@ -45,6 +49,9 @@ class WebChat {
       panel.create(state, this._addDomEvents.bind(this))
       panel.update(state)
     }
+
+    // Conditionally add skiplink
+    this.skiplink.toggle(state.view === 'OPEN' || state.view === 'END')
 
     // Attach sticky footer scroll event
     document.addEventListener('scroll', e => {
@@ -56,11 +63,10 @@ class WebChat {
     this.livechatReady = new CustomEvent('livechatReady', {})
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
     
+    // Conditiopnally recover thread
     if (state.hasThread) {
-      // Recover thread
       this._recoverThread()
     } else {
-      // Dispatch ready event
       document.dispatchEvent(this.livechatReady)
     }
   }
@@ -325,6 +331,7 @@ class WebChat {
       state.pushState('PRECHAT')
     }
 
+    // Create panel
     const panel = this.panel
     if (!panel.container) {
       // Create panel
@@ -369,6 +376,10 @@ class WebChat {
     const panel = this.panel
     const instigatorId = state.instigatorId
 
+    // Toggle skiplink
+    const hasSkip = state.view === 'OPEN' || state.view === 'END'
+    this.skiplink.toggle(hasSkip)
+
     // Remove panel
     if (panel.container) {
       panel.setAttributes(state)
@@ -376,7 +387,7 @@ class WebChat {
       state.replaceState()
     }
 
-    // Update availability link content
+    // Update availability content
     this.availability.update(state)
     this.availability.scroll(state)
 
@@ -670,7 +681,7 @@ class WebChat {
 
     // Instigated by adviser
     if (state.status === 'closed' && state.view === 'OPEN') {
-      panel.update(state)
+      panel.updateHeader(state)
 
       // Alert assistive technology
       const el = document.querySelector('[data-wc-status]')
@@ -684,13 +695,12 @@ class WebChat {
 
   _handleAssignedAgentChangedEvent (e) {
     console.log('_handleAssignedAgentChangedEvent')
-    console.log(e.detail.data)
 
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
     const panel = this.panel
-    panel.update(state)
+    panel.updateHeader(state)
 
     // Alert assistive technology
     const el = document.querySelector('[data-wc-status]')

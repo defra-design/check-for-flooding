@@ -13,13 +13,31 @@ class Panel {
     this._timeout = Utils.getDuration(Config.timeout)
   }
 
+  _initComponents (el) {
+    // Initialise GOV.UK components
+    const buttons = el.querySelectorAll('[data-module="govuk-button"]')
+    for (let i = 0; i <= buttons.length; i++) {
+      new Button(buttons[i]).init()
+    }
+    const characterCounts = el.querySelectorAll('[data-module="govuk-character-count"]')
+    for (let i = 0; i <= characterCounts.length; i++) {
+      new CharacterCount(characterCounts[i]).init()
+    }
+    // Initialise autoresize
+    const textbox = el.querySelector('[data-wc-textbox]')
+    if (textbox) {
+      Utils.autosize(textbox)
+    }
+  }
+
   create (state, addEvents) {
     console.log('panel.create()')
 
     const model = {
-      isOpen: state.isOpen,
-      view: state.view
+      ...state
     }
+
+    console.log(model)
     document.body.insertAdjacentHTML('beforeend', env.render('webchat-panel.html', { model }))
 
     const container = document.querySelector('[data-wc]')
@@ -74,7 +92,20 @@ class Panel {
   }
 
   update (state, error) {
-    console.log('panel.update()')
+    console.log('panel.updateAll()')
+   
+    const container = document.getElementById('wc-panel')
+    if (!container) {
+      return
+    }
+
+    this.updateHeader(state)
+    this.updateBody(state, error)
+    this.updateFooter(state)
+  }
+
+  updateHeader (state) {
+    console.log('panel.updateHeader()')
    
     const container = document.getElementById('wc-panel')
     if (!container) {
@@ -83,51 +114,65 @@ class Panel {
 
     // Model
     const model = {
-      availability: state.availability,
-      view: state.view,
-      status: state.status,
-      isOpen: state.isOpen,
-      isBack: state.isBack,
-      isMobile: state.isMobile,
-      hasAudio: state.hasAudio,
-      assignee: state.assignee,
-      messages: state.messages,
-      timeout: this._timeout,
-      error: error
+      ...state
     }
 
-    // Update panel
-    this.header.innerHTML = env.render('webchat-header.html', { model })
-    this.body.innerHTML = env.render('webchat-body.html', { model })
-    this.footer.innerHTML = env.render('webchat-footer.html', { model })
+    const header = this.header
+    header.innerHTML = env.render('webchat-header.html', { model })
 
-    // Make body keyboard accessible 
+    this._initComponents(header)
+  }
+
+  updateBody (state, error) {
+    console.log('panel.updateBody()')
+   
+    const container = document.getElementById('wc-panel')
+    if (!container) {
+      return
+    }
+
+    // Model
+    const model = {
+      ...state,
+      error: error,
+      timeout: this._timeout
+    }
+
+    const body = this.body
+    body.innerHTML = env.render('webchat-body.html', { model })
+
+    // Toggle body keyboard accessibility
     const isViewOpen = state.view === 'OPEN'
     if (isViewOpen) {
-      this.body.tabIndex = 0
+      body.tabIndex = 0
       const label = `Conversation with ${state.messages.length} message${state.messages.length > 1 ? 's' : ''}`
-      this.body.setAttribute('aria-label', label)
+      body.setAttribute('aria-label', label)
       this.scrollToLatest()
     } else {
-      this.body.removeAttribute('tabindex')
-      this.body.removeAttribute('aria-label')
+      body.removeAttribute('tabindex')
+      body.removeAttribute('aria-label')
     }
 
-    // Initialise GOV.UK components
-    const buttons = container.querySelectorAll('[data-module="govuk-button"]')
-    for (let i = 0; i <= buttons.length; i++) {
-      new Button(buttons[i]).init()
-    }
-    const characterCounts = container.querySelectorAll('[data-module="govuk-character-count"]')
-    for (let i = 0; i <= characterCounts.length; i++) {
-      new CharacterCount(characterCounts[i]).init()
+    this._initComponents(body)
+  }
+
+  updateFooter (state) {
+    console.log('panel.updateFooter()')
+   
+    const container = document.getElementById('wc-panel')
+    if (!container) {
+      return
     }
 
-    // Initialise autoresize
-    const textbox = container.querySelector('[data-wc-textbox]')
-    if (textbox) {
-      Utils.autosize(textbox)
+    // Model
+    const model = {
+      ...state
     }
+
+    const footer = this.footer
+    footer.innerHTML = env.render('webchat-footer.html', { model })
+
+    this._initComponents(footer)
   }
 
   addMessage (message) {
@@ -173,13 +218,6 @@ class Panel {
     }
   }
 
-  alertAT (text) {
-    // Get referecne to live element
-    const el = this.header.querySelector('[data-wc-live]')
-    el.innerHTML = `<p>${text}</p>`
-    setTimeout(() => { el.innerHTML = '' }, 1000)
-  }
-
   setAttributes (state) {
     const container = this.container
     if (!container) {
@@ -216,6 +254,13 @@ class Panel {
   scrollToLatest () {
     // Scroll to latest
     this.body.scrollTop = this.body.scrollHeight
+  }
+
+  alertAT (text) {
+    // Get referecne to live element
+    const el = this.header.querySelector('[data-wc-live]')
+    el.innerHTML = `<p>${text}</p>`
+    setTimeout(() => { el.innerHTML = '' }, 1000)
   }
 }
 
