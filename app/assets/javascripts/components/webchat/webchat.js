@@ -921,16 +921,6 @@ class WebChat {
       }
     }
 
-    // Add message if existing opem thread
-    if (state.view === 'OPEN' && state.isOpen) {
-      // Add message if existing thread
-      panel.addMessage(message)
-      // Mark as seen
-      if (this.thread) {
-        this.thread.lastMessageSeen()
-      }
-    }
-
     // Set focus to message field
     const el = document.getElementById('message')
     if (el && direction === 'inbound') {
