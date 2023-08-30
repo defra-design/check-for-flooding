@@ -23,6 +23,8 @@ class State {
     this.isBack = isBack
     this.isOpen = isOpen
     this.messages = []
+    this.name = null
+    this.question = null
 
     // Private methods (callbacks)
     this._openChat = openChat

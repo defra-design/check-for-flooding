@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 const webchatServices = require('../services/webchat')
 
-const cache = new NodeCache({ stdTTL: 10 })
+const cache = new NodeCache({ stdTTL: 5 })
 
 const verifyCache = (req, res, next) => {
   try {

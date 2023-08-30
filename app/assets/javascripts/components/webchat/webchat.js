@@ -66,9 +66,11 @@ class WebChat {
     // Conditiopnally recover thread
     if (state.hasThread) {
       this._recoverThread()
-    } else {
-      document.dispatchEvent(this.livechatReady)
+      return
     }
+
+    // Ready to check availability
+    document.dispatchEvent(this.livechatReady)
   }
 
   async _authorise () {
@@ -151,25 +153,37 @@ class WebChat {
     this.state.hasThread = true
   }
 
-  async _startChat (name, question) {
+  async _updateAvailability () {
+    const state = this.state
+    state.availability = await Utils.getAvailability()
+    const availability = this.availability
+    availability.update(state)
+    availability.scroll(state)
+  }
+
+  async _startChat () {
     console.log('_startChat')
 
     // Check availability
+    await this._updateAvailability()
     const state = this.state
-
+    if (state.availability !== 'AVAILABLE') {
+      this._unavailable()
+      return
+    }
 
     // Authorise user
     if (!state.isAuthorised) {
       await this._authorise()
     }
 
-    // *** Set userName. SDK issue where populates last name from string after last space 
-    this.sdk.getCustomer().setName(name)
+    // ***Bug: Set userName populates last name from string after last space 
+    this.sdk.getCustomer().setName(state.name)
 
     // Start chat
-    await this._getThread()
     try {
-      this.thread.startChat(question || 'Begin conversation')
+      await this._getThread()
+      this.thread.startChat(state.question || 'Begin conversation')
     } catch (err) {
       console.log(err)
     }
@@ -177,6 +191,41 @@ class WebChat {
     // Update panel attributes
     const panel = this.panel
     panel.setAttributes(state)
+  }
+
+  async _confirmEndChat () {
+    console.log('_confirmEndChat')
+  
+    // Close thread
+    localStorage.removeItem('THREAD_ID')
+    const state = this.state
+    state.hasThread = false
+
+    // Clear name and initial question
+    state.name = null
+    state.question = null
+
+    // Update availability
+    await this._updateAvailability()
+
+    // Show feedback view
+    state.view = 'FEEDBACK'
+    state.messages = []
+    this.panel.update(state)
+    const btn = document.querySelector('[data-wc-submit-feedback-btn]')
+    btn.focus()
+
+    // Clear timeout
+    this._resetTimeout()
+
+    // End chat if still open
+    const status = state.status
+    if (status && status !== 'closed') {
+      this.thread.endChat()
+    }
+    
+    // Dont persist view, set to prechat
+    state.view = 'PRECHAT'
   }
 
   _addDomEvents () {
@@ -298,21 +347,22 @@ class WebChat {
   _validatePrechat (successCb) {
     const name = document.getElementById('name')
     const question = document.getElementById('question')
+    const state = this.state
+    state.name = name.value
+    state.question = question ? question.value : ''
 
     // Validation error
-    const isErrorName = name.value.length <= 0
-    const isErrorQuestion = question && (question.value.length <= 0 || question.value.length > 500)
+    const isErrorName = state.name.length <= 0
+    const isErrorQuestion = state.question.length <= 0 || state.question.length > 500
 
     if (isErrorName || isErrorQuestion) {
       const error = {
-        name: name.value,
-        question: question ? question.value : null,
         nameEmpty: isErrorName,
-        questionEmpty: question && question.value.length <= 0,
-        questionExceeded: question && question.value.length > 500
+        questionEmpty: state.question.length <= 0,
+        questionExceeded: state.question.length > 500
       }
       const panel = this.panel
-      panel.update(this.state, error)
+      panel.update(state, error)
 
       // Move focus to error summary
       const summary = panel.container.querySelector('[data-wc-error-summary]')
@@ -320,7 +370,7 @@ class WebChat {
       return
     }
 
-    successCb(name.value, question ? question.value : null)
+    successCb()
   }
 
   _openChat (e, instigatorId) {
@@ -440,34 +490,6 @@ class WebChat {
     state.view = 'PRECHAT'
   }
 
-  _confirmEndChat () {
-    console.log('_confirmEndChat')
-  
-    // Close thread
-    localStorage.removeItem('THREAD_ID')
-    const state = this.state
-    state.hasThread = false
-
-    // Show feedback view
-    state.view = 'FEEDBACK'
-    state.messages = []
-    this.panel.update(state)
-    const btn = document.querySelector('[data-wc-submit-feedback-btn]')
-    btn.focus()
-
-    // Clear timeout
-    this._resetTimeout()
-
-    // End chat if still open
-    const status = state.status
-    if (status && status !== 'closed') {
-      this.thread.endChat()
-    }
-    
-    // Dont persist view, set to prechat
-    state.view = 'PRECHAT'
-  }
-
   _prechat () {
     const state = this.state
     state.view = 'PRECHAT'
@@ -481,16 +503,18 @@ class WebChat {
     const state = this.state
     state.view = 'START'
     console.log('_start')
-    this.panel.update(state)
-    const name = document.getElementById('name')
-    name.focus()
+    const panel = this.panel
+    panel.update(state)
+    panel.container.focus()
   }
 
   _unavailable () {
     const state = this.state
     state.view = 'UNAVAILABLE'
     console.log('_unavailable')
-    this.panel.update(state)
+    const panel = this.panel
+    panel.update(state)
+    panel.container.focus()
 
     // Dont persist view, set to prechat
     state.view = 'PRECHAT'
@@ -678,48 +702,33 @@ class WebChat {
     this._resetTimeout()
 
     // Poll availability
+    let isInit = true
     const interval = Config.poll > 0 ? Config.poll * 1000 : 0
     const state = this.state
     const panel = this.panel
     const availability = this.availability
 
     Utils.poll({
-      fn: () => {
-        fetch(Config.availabilityEndPoint, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        })
-        .then(res => {
-          if (res.ok) {
-            res.json().then(json => {
-              console.log('Polling availability')
+      fn: async () => {
+        console.log('Polling availability')
+        state.availability = await Utils.getAvailability()
 
-              // Update state
-              state.availability = json.availability
-              if (state.view !== 'OPEN') {
-                state.view = state.availability === 'AVAILABLE' ? 'PRECHAT' : 'UNAVAILABLE'
-              }
+        // Set view
+        if (state.view !== 'OPEN') {
+          state.view = state.availability === 'AVAILABLE' ? 'PRECHAT' : 'UNAVAILABLE'
+        }
 
-              // Udate panel and availability
-              panel.update(state)
-              availability.update(state)
-              availability.scroll(state)
-            })
-          } else {
-            return res.text().then(text => {
-              throw new Error(text)
-            })
-          }
-        })
-        .catch(err => {
-          console.log('Polling error ', err)
-
-          // Fall back
-          state.availability = 'UNAVAILABLE'
+        // Update panel on page load only
+        if (isInit) {
           panel.update(state)
-          availability.update(state)
-          availability.scroll(state)
-        })
+        }
+
+        // Update availability on each poll
+        availability.update(state)
+        availability.scroll(state)
+
+        // Remove init flag
+        isInit = false
       },
       interval: interval
     }) 

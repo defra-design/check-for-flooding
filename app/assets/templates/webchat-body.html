@@ -1,5 +1,8 @@
 {% if model.view == 'UNAVAILABLE' %}
 <div class="wc-content">
+  {% if model.name %}
+  <a href="#" class="wc-back-link" data-wc-start-back-btn>Question details</a>
+  {% endif %}
   <h3 id="wc-subtitle" class="govuk-heading-m">Webchat is currently not available</h3>
   <p>Try again later, or call Floodline:</p>
   <p><strong>Floodline helpline</strong><br/>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out more about call charges</a></p>
@@ -70,7 +73,7 @@
         <span class="govuk-visually-hidden">Error:</span> Enter your name
       </p>
       {% endif %}
-      <input class="govuk-input {% if model.error.nameEmpty %}govuk-input--error{% endif %}" id="name" name="name" type="text" {% if model.error %}value="{{ model.error.name }}"{% endif %}>
+      <input class="govuk-input {% if model.error.nameEmpty %}govuk-input--error{% endif %}" id="name" name="name" type="text" value="{{ model.name }}">
     </div>
     <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="500">
       <div class="govuk-form-group {% if model.error.questionEmpty or model.error.questionExceeded %}govuk-form-group--error{% endif %}">
@@ -87,7 +90,7 @@
           {% endif %}
         </p>
         {% endif %}
-        <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{% if model.error %}{{ model.error.question }}{% endif %}</textarea>
+        <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{{ model.question }}</textarea>
       </div>
       <div id="question-info" class="wc-hint govuk-hint govuk-character-count__message">
         You can enter up to 500 characters

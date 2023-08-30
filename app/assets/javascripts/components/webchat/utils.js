@@ -166,14 +166,14 @@ class Utils {
     return new Promise(executePoll)
   }
 
-  static async getAvailability (endpoint) {
+  static async getAvailability () {
     try {
-      const response = await fetch(endpoint)
-      const json = await response.json()
-      return json.isAvailable
+      const response = await fetch(Config.availabilityEndPoint)
+      const data = await response.json()
+      return data.availability
     } catch (err) {
-      console.log(err)
-      return false
+      console.log('getAvailability', err)
+      return 'UNAVAILABLE'
     }
   }
 
