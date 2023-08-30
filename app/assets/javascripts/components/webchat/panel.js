@@ -43,7 +43,6 @@ class Panel {
       ...state
     }
 
-    console.log(model)
     document.body.insertAdjacentHTML('beforeend', env.render('webchat-panel.html', { model }))
 
     const container = document.querySelector('[data-wc]')
