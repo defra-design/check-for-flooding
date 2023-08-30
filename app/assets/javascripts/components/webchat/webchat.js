@@ -154,8 +154,11 @@ class WebChat {
   async _startChat (name, question) {
     console.log('_startChat')
 
-    // Authorise user
+    // Check availability
     const state = this.state
+
+
+    // Authorise user
     if (!state.isAuthorised) {
       await this._authorise()
     }
@@ -750,6 +753,11 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
+
+    // ***Limitation: Adviser availability doesn't fire an event in the SDK
+    if (assignee && state.availability !== 'AVAILABLE') {
+      state.availability = 'AVAILABLE'
+    }
 
     // Update header
     if (state.view === 'OPEN') {
