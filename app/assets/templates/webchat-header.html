@@ -6,7 +6,7 @@
     </svg>
   </button>    
   {% endif %}
-  <h2 class="wc-title">Floodline webchat</h2>
+  <h2 id="wc-title" class="wc-title">Floodline webchat</h2>
   {% if model.view == 'OPEN' or model.view == 'END' %}
   <button class="wc-hide-btn" aria-label="Minimise the webchat" data-wc-hide-btn {% if model.isMobile %}hidden{% endif %}>
     <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
@@ -23,24 +23,24 @@
 </div>
 {% if model.view == 'OPEN' %}
 <div class="wc-status">
-  <p class="wc-status__content" data-wc-status>
+  <div id="wc-subtitle" class="wc-status__content" data-wc-status>
     {% if model.availability == 'AVAILABLE' %}
     {% if model.status == 'closed' %}
     {% if model.assignee %}{{ model.assignee }} ended the session{% else %}Session ended by adviser{% endif %}
     {% elif model.assignee %}
     You are speaking with {{ model.assignee }}
     {% else %}
-    Connecting you to an adviser
+    No advisers currently available 
     {% endif %}
-    {% elif model.availability == 'OFFLINE' %}
-    No advisers currently available
+    {% elif model.availability == 'UNAVAILABLE' %}
+    Webchat is currently not available
     {% else %}
-    Connecting you to an adviser
+    Checking adviser availability
     {% endif %}
-  </p>
+  </div>
   <div class="wc-status__button">
     <a href="#" role="button" data-module="govuk-button" class="wc-end-btn" data-wc-end-btn>End chat</a>
   </div>
 </div>
 {% endif %}
-<div class="wc-live" aria-live="polite" data-wc-live></div>
+<div class="wc-live" aria-live="polite" data-wc-panel-live></div>

@@ -50,6 +50,16 @@
     margin-right: 10px;
     margin-bottom: 10px;
   }
+  &:focus {
+    outline: none;
+  }
+  &:focus.wc-focus-visible:after {
+    @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
+    left: 4px;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+  }
 }
 .wc--open {
   display: flex;
@@ -68,16 +78,6 @@
     border: 1px solid govuk-colour('black');
   }
   box-sizing: border-box;
-  &:focus {
-    outline: none;
-  }
-  &:focus.wc-focus-visible:after {
-    @include focus($glow: 5px, $strong: 2px, $background: 0px, $inset: 0px);
-    left: 4px;
-    right: 4px;
-    top: 4px;
-    bottom: 4px;
-  }
 }
 .wc__header {
   flex: 0 0 0;
@@ -152,6 +152,7 @@
   }
 }
 .wc-status__content {
+  @extend .govuk-body;
   flex: 1 1 auto;
   margin: 0px;
   font-size: 16px;
@@ -191,9 +192,10 @@
     font-size: 16px;
     margin-bottom: 15px;
   }
-  h3 {
+  .govuk-heading-m,
+  .govuk-error-summary__title {
     @include mq ($from: 'tablet') {
-      font-size: 16px;
+      font-size: 19px;
       margin-bottom: 15px;
     }
   }
@@ -216,6 +218,12 @@
   padding: 0px;
   position: relative;
   // z-index: -1;
+  .govuk-heading-m {
+    @include mq ($from: 'tablet') {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+  }
   > li {
     margin-bottom: 0;
   }
@@ -353,7 +361,7 @@
     display: none;
   }
 }
-.wc-continue-btn,
+.wc-start-btn,
 .wc-submit-btn,
 .wc-confirm-end-btn,
 .wc-submit-feedback-btn,
@@ -465,7 +473,8 @@
 }
 .wc-end-btn,
 .wc-transcript-btn,
-.wc-audio-btn {
+.wc-audio-btn,
+.wc-settings-btn {
   display: inline-block;
   color: $govuk-text-colour !important;
   margin: 10px 5px;

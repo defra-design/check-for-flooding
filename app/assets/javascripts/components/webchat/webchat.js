@@ -94,7 +94,7 @@ class WebChat {
 
     // Confirm availability from SDK
     const isOnline = response?.channel.availability.status === 'online'
-    state.availability = isOnline ? 'AVAILABLE' : 'OFFLINE'
+    state.availability = isOnline ? 'AVAILABLE' : 'UNAVAILABLE'
 
     // Add sdk event listeners
 
@@ -152,22 +152,13 @@ class WebChat {
   }
 
   async _startChat (name, question) {
-    // Alert assitive technology
-    const panel = this.panel
-    
-    // Check availability in API (are there agents logged in?)
-    // this._connecting()
+    console.log('_startChat')
 
     // Authorise user
-    if (!this.state.isAuthorised) {
+    const state = this.state
+    if (!state.isAuthorised) {
       await this._authorise()
     }
-
-    // Check SDK is online
-    // this._connecting()
-
-    // *** Todo: Check availability again before sending message
-    console.log('_startChat: ', this.state.availability)
 
     // *** Set userName. SDK issue where populates last name from string after last space 
     this.sdk.getCustomer().setName(name)
@@ -175,13 +166,14 @@ class WebChat {
     // Start chat
     await this._getThread()
     try {
-      this.thread.startChat(question)
+      this.thread.startChat(question || 'Begin conversation')
     } catch (err) {
       console.log(err)
     }
 
     // Update panel attributes
-    panel.setAttributes(this.state)
+    const panel = this.panel
+    panel.setAttributes(state)
   }
 
   _addDomEvents () {
@@ -200,13 +192,17 @@ class WebChat {
         e.preventDefault()
         this._closeChat(e)
       }
-      if (e.target.hasAttribute('data-wc-continue-btn')) {
+      if (e.target.hasAttribute('data-wc-start-btn')) {
         e.preventDefault()
-        this._continue(e)
+        this._start(e)
       }
       if (e.target.hasAttribute('data-wc-prechat-back-btn')) {
         e.preventDefault()
         this._prechat(e)
+      }
+      if (e.target.hasAttribute('data-wc-start-back-btn')) {
+        e.preventDefault()
+        this._start(e)
       }
       if (e.target.hasAttribute('data-wc-request-chat-btn')) {
         e.preventDefault()
@@ -218,7 +214,7 @@ class WebChat {
       }
       if (e.target.hasAttribute('data-wc-resume-btn')) {
         e.preventDefault()
-        this._resumeChat(e)
+        this._resumeChat()
       }
       if (e.target.hasAttribute('data-wc-confirm-end-btn')) {
         e.preventDefault()
@@ -244,9 +240,9 @@ class WebChat {
         e.preventDefault()
         this._saveSettings(e.target)
       }
-      if (e.target.hasAttribute('data-wc-audio-btn')) {
+      if (e.target.hasAttribute('data-wc-cancel-settings-btn')) {
         e.preventDefault()
-        this._toggleAudio(e.target)
+        this._resumeChat()
       }
       if (e.target.hasAttribute('data-wc-error-summary-link')) {
         e.preventDefault()
@@ -275,9 +271,15 @@ class WebChat {
         this._resetTimeout()
       }
     })
-    // Send message
+    // Form submit
     container.addEventListener('submit', e => {
-      if (e.target.hasAttribute('data-wc-message')) {
+      // Start chat form
+      if (e.target.hasAttribute('data-wc-start-form')) {
+        e.preventDefault()
+        this._validatePrechat(this._startChat.bind(this))
+      }
+      // Send message form
+      if (e.target.hasAttribute('data-wc-message-form')) {
         e.preventDefault()
         this._sendMessage()
       }
@@ -291,20 +293,21 @@ class WebChat {
   }
 
   _validatePrechat (successCb) {
-    const name = document.getElementById('name').value
-    const question = document.getElementById('question').value
+    const name = document.getElementById('name')
+    const question = document.getElementById('question')
 
     // Validation error
-    const isError = !(name.length && question.length >= 2 && question.length <= 500)
-    if (isError) {
-      const error = {
-        name: name,
-        question: question,
-        nameEmpty: name.length < 2,
-        questionEmpty: question.length === 0,
-        questionExceeded: question.length > 500
-      }
+    const isErrorName = name.value.length <= 0
+    const isErrorQuestion = question && (question.value.length <= 0 || question.value.length > 500)
 
+    if (isErrorName || isErrorQuestion) {
+      const error = {
+        name: name.value,
+        question: question ? question.value : null,
+        nameEmpty: isErrorName,
+        questionEmpty: question && question.value.length <= 0,
+        questionExceeded: question && question.value.length > 500
+      }
       const panel = this.panel
       panel.update(this.state, error)
 
@@ -314,7 +317,7 @@ class WebChat {
       return
     }
 
-    successCb(name, question)
+    successCb(name.value, question ? question.value : null)
   }
 
   _openChat (e, instigatorId) {
@@ -426,7 +429,7 @@ class WebChat {
     // End thread if still open
     const status = state.status
     if (status && status !== 'closed') {
-      // *** SDK bug? Doesn't return a promise and doesn't fire event on remote
+      // *** Bug: Promise is void, why?
       this.thread.endChat()
     }
 
@@ -439,9 +442,10 @@ class WebChat {
   
     // Close thread
     localStorage.removeItem('THREAD_ID')
+    const state = this.state
+    state.hasThread = false
 
     // Show feedback view
-    const state = this.state
     state.view = 'FEEDBACK'
     state.messages = []
     this.panel.update(state)
@@ -451,7 +455,7 @@ class WebChat {
     // Clear timeout
     this._resetTimeout()
 
-    // End thread if still open
+    // End chat if still open
     const status = state.status
     if (status && status !== 'closed') {
       this.thread.endChat()
@@ -467,27 +471,26 @@ class WebChat {
     console.log('_prechat')
     const panel = this.panel
     panel.update(state)
-    panel.inner.focus()
+    panel.container.focus()
   }
 
-  _continue () {
+  _start () {
     const state = this.state
     state.view = 'START'
-    console.log('_continue')
+    console.log('_start')
     this.panel.update(state)
     const name = document.getElementById('name')
     name.focus()
   }
 
-  _connecting () {
-    const panel = this.panel
-    const start = panel.body.querySelector('[data-wc-start]')
-    const connecting = panel.body.querySelector('[data-wc-connecting]')
+  _unavailable () {
+    const state = this.state
+    state.view = 'UNAVAILABLE'
+    console.log('_unavailable')
+    this.panel.update(state)
 
-    start.setAttribute('hidden', '')
-    connecting.removeAttribute('hidden')
-
-    // Alert AT
+    // Dont persist view, set to prechat
+    state.view = 'PRECHAT'
   }
 
   _endChat () {
@@ -503,9 +506,9 @@ class WebChat {
     const state = this.state
     state.view = 'OPEN'
     console.log('_resumeChat')
-    this.panel.update(state)
-    const textbox = document.querySelector('[data-wc-textbox]')
-    textbox.focus()
+    const panel = this.panel
+    panel.update(state)
+    panel.container.focus()
   }
 
   _feedback () {
@@ -532,9 +535,22 @@ class WebChat {
     state.view = 'PRECHAT'
   }
 
-  _toggleAudio (target) {
+  _settings () {
     const state = this.state
-    state.hasAudio = !state.hasAudio
+    state.view = 'SETTINGS'
+    console.log('_settings')
+    const panel = this.panel
+    panel.update(state)
+    panel.container.focus()
+    state.view = 'OPEN'
+  }
+
+  _saveSettings () {
+    // Toggle audio
+    const state = this.state
+    const panel = this.panel
+    const audio = panel.container.querySelector('#audio')
+    state.hasAudio = audio.checked
     const hasAudio = state.hasAudio
 
     if (hasAudio) {
@@ -542,9 +558,13 @@ class WebChat {
     } else {
       localStorage.setItem('AUDIO_OFF', true)
     }
-    console.log('_toggleAudio: ', hasAudio)
-    const text = target.querySelector('span')
-    text.innerText = hasAudio ? 'off' : 'on'
+    console.log('_hasAudio: ', hasAudio)
+
+    // Return to open view
+    state.view = 'OPEN'
+    console.log('_resumeChat')
+    panel.update(state)
+    panel.container.focus()
   }
 
   _mergeMessages (batch) {
@@ -577,7 +597,7 @@ class WebChat {
       return
     }
 
-    // *** Some times this results in inconsitent data error?
+    // *** Bug: Some times this results in inconsitent data error?
     try {
       this.thread.sendTextMessage(message.value.trim())
     } catch (err) {
@@ -633,6 +653,13 @@ class WebChat {
     document.body.removeChild(anchor)
   }
 
+  _alertAT (text) {
+    // Get referecne to live element
+    const el = document.querySelector('[data-wc-panel-live], [data-wc-availability-live]')
+    el.innerHTML = `<p>${text}</p>`
+    setTimeout(() => { el.innerHTML = '' }, 1000)
+  }
+
   //
   // Event handlers
   //
@@ -663,7 +690,14 @@ class WebChat {
           if (res.ok) {
             res.json().then(json => {
               console.log('Polling availability')
-              state.availability = json.isAvailable ? 'AVAILABLE' : 'OFFLINE'
+
+              // Update state
+              state.availability = json.availability
+              if (state.view !== 'OPEN') {
+                state.view = state.availability === 'AVAILABLE' ? 'PRECHAT' : 'UNAVAILABLE'
+              }
+
+              // Udate panel and availability
               panel.update(state)
               availability.update(state)
               availability.scroll(state)
@@ -676,8 +710,9 @@ class WebChat {
         })
         .catch(err => {
           console.log('Polling error ', err)
+
           // Fall back
-          this.state.availability = 'OFFLINE'
+          state.availability = 'UNAVAILABLE'
           panel.update(state)
           availability.update(state)
           availability.scroll(state)
@@ -702,7 +737,7 @@ class WebChat {
       // Alert assistive technology
       const el = document.querySelector('[data-wc-status]')
       const text = el ? el.innerHTML : ''
-      panel.alertAT(text)
+      this._alertAT(text)
 
       // Start/reset timeout
       this._resetTimeout()
@@ -715,17 +750,21 @@ class WebChat {
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
-    const panel = this.panel
-    panel.updateHeader(state)
+
+    // Update header
+    if (state.view === 'OPEN') {
+      const panel = this.panel
+      panel.updateHeader(state)
+    }
 
     // Alert assistive technology
     const el = document.querySelector('[data-wc-status]')
     const text = el ? el.innerHTML : ''
-    panel.alertAT(text)
+    this._alertAT(text)
   }
 
   async _handleLivechatRecoveredEvent (e) {
-    console.log('_handleLivechatRecoveredEvent')
+    console.log('_handleLivechatRecoveredEvent', e)
 
     // Set thread status
     const state = this.state
@@ -745,7 +784,7 @@ class WebChat {
       localStorage.removeItem('THREAD_ID')
       state.view = 'TIMEOUT'
       if (state.status !== 'closed') {
-        // *** SDK bug? Doesn't return a promise?
+        // *** Bug: Promise is void, why?
         this.thread.endChat()
       }
 
@@ -792,79 +831,8 @@ class WebChat {
     console.log('_handleContactCreatedEvent')
   }
 
-  // _handleMessageCreatedEvent (e) {
-  //   console.log('_handleMessageCreatedEvent')
-
-  //   const state = this.state  
-  //   const response = e.detail.data.message
-  //   const assignee = response.authorUser ? response.authorUser.firstName : null
-  //   const user = response.authorEndUserIdentity ? response.authorEndUserIdentity.fullName.trim() : null
-  //   const direction = response.direction.toLowerCase()
-  //   state.status = e.detail.data.case.status
-  //   state.assignee = assignee
-
-  //   // Update messages array
-  //   const message = {
-  //     id: response.id,
-  //     text: Utils.parseMessage(response.messageContent.text),
-  //     user: user,
-  //     assignee: assignee,
-  //     date: Utils.formatDate(new Date(response.createdAt)),
-  //     createdAt: new Date(response.createdAt),
-  //     direction: direction
-  //   }
-  //   state.messages.push(message)
-
-  //   // Add html to messages
-  //   state.messages = Utils.addMessagesHtml(state.messages)
-
-  //   // Update unseen count
-  //   if (direction === 'outbound' && !state.isOpen) {
-  //     state.unseen += 1
-  //     this.availability.update(state)
-  //     this.availability.scroll(state)
-  //   }
-
-  //   // Return if new chat and waiting to connect
-  //   if (!(state.view === 'OPEN' && state.isOpen)) {
-  //     return
-  //   }
-
-  //   // Clear input
-  //   const textbox = document.querySelector('[data-wc-textbox]')
-  //   if (textbox && direction === 'inbound') {
-  //     textbox.value = ''
-  //     textbox.style.height = 'auto'
-  //     const event = new Event('change')
-  //     textbox.dispatchEvent(event)
-  //   }
-
-  //   // Add message if existing thread
-  //   this.panel.addMessage(message)
-
-  //   // Mark as seen
-  //   if (this.thread) {
-  //     this.thread.lastMessageSeen()
-  //   }
-
-  //   // Set focus to message field
-  //   const el = document.getElementById('message')
-  //   if (el && direction === 'inbound') {
-  //     el.focus()
-  //   }
-
-  //   // Play notification sound
-  //   if (state.hasAudio && direction === 'outbound') {
-  //     const notification = this.notification
-  //     notification.playSound()
-  //   }
-
-  //   // Start/reset timeout
-  //   this._resetTimeout()
-  // }
-
   _handleMessageCreatedEvent (e) {
-    console.log('_handleMessageCreatedEvent')
+    console.log('_handleMessageCreatedEvent', this.state)
 
     const state = this.state  
     const response = e.detail.data.message
@@ -894,6 +862,10 @@ class WebChat {
       state.unseen += 1
       this.availability.update(state)
       this.availability.scroll(state)
+
+      // Alert assistive technology
+      const text = `${state.unseen} new message${state.unseen > 1 ? 's' : ''}`
+      this._alertAT(text)
     }
 
     // Clear input
@@ -911,23 +883,34 @@ class WebChat {
       // Update panel if new question
       state.view = 'OPEN'
       panel.update(state)
+
       // Alert assistive technology
-      const el = document.querySelector('[data-wc-status]')
-      const text = el ? el.innerHTML : ''
-      panel.alertAT(text)
+      // const el = document.querySelector('[data-wc-status]')
+      // const text = el ? el.innerHTML : ''
+      // this._alertAT(text)
+
+      // Set focus to panel
+      panel.container.focus()
+
     } else if (state.view === 'OPEN' && state.isOpen) {
       // Add message if existing thread
-      panel.addMessage(message)
+      panel.addMessage(message, state.messages.length)
+
       // Mark as seen
       if (this.thread) {
         this.thread.lastMessageSeen()
       }
-    }
 
-    // Set focus to message field
-    const el = document.getElementById('message')
-    if (el && direction === 'inbound') {
-      el.focus()
+      // Alert assistive technology
+      const author = message.direction === 'outbound' ? message.assignee : 'You'
+      const text = `${author} said: ${message.text}`
+      this._alertAT(text)
+
+      // Set focus to message field
+      const el = document.getElementById('message')
+      if (el && direction === 'inbound') {
+        el.focus()
+      }
     }
 
     // Play notification sound
@@ -957,6 +940,23 @@ class WebChat {
     const isTyping = e.type === 'AgentTypingStarted'
     const name = e.detail.data.user.firstName
     panel.toggleAgentTyping(name, isTyping)
+
+    // ***Bug: CaseInboxAssigneeChanged/AssignedAgentChanged not always firing
+    const state = this.state
+    if (!state.assignee) {
+      state.assignee = name
+      panel.updateHeader(state)
+
+      // Alert assistive technology
+      const el = document.querySelector('[data-wc-status]')
+      const text = el ? el.innerHTML : ''
+      this._alertAT(text)
+    }
+
+    // Alert assistive technology
+    if (isTyping) {
+      this._alertAT(`${name} is typing`)
+    }
   }
 
   _handleMessageSeenByEndUserEvent (e) {
@@ -976,7 +976,7 @@ class WebChat {
     let element
 
     if (container) {
-      // *** If we have the list but dont already have the timeout markup
+      // *** If we have the list but don't already have the timeout markup
       const list = container.querySelector('[data-wc-list]')
       const timeout = container.querySelector('[data-wc-timeout]')
       if (list && !timeout) {

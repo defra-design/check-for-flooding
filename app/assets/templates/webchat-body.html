@@ -1,6 +1,14 @@
-{% if model.view == 'PRECHAT' %}
+{% if model.view == 'UNAVAILABLE' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">What you can use webchat for</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Webchat is currently not available</h3>
+  <p>Try again later, or call Floodline:</p>
+  <p><strong>Floodline helpline</strong><br/>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out more about call charges</a></p>
+  <p>We’re running webchat as a trial, it will not always be available.</p>
+</div>
+
+{% elif model.view == 'PRECHAT' %}
+<div class="wc-content">
+  <h3 id="wc-subtitle" class="govuk-heading-m">What you can use webchat for</h3>
   <p>Webchat lets you talk directly to a Floodline adviser.</p>
   <p>You can use webchat to get: </p>
   <ul class="govuk-list govuk-list--bullet">
@@ -10,27 +18,21 @@
   </ul>
   <p>There are other ways to <a href="https://www.gov.uk/sign-up-for-flood-warnings">sign up for flood warnings</a> and <a href="https://defragroup.eu.qualtrics.com/jfe/form/SV_8uMAuaH3kbJl965?Source=https://check-for-flooding.service.gov.uk">manage your flood warnings account</a>.</p>
   <p>Do not use webchat to <a href="https://www.gov.uk/report-flood-cause">report a flood</a>.</p>
-  {% if model.availability == 'AVAILABLE' %}
-  <button class="wc-continue-btn govuk-!-margin-top-2" data-module="govuk-button" data-wc-continue-btn>
+  <button class="wc-start-btn govuk-!-margin-top-1" data-module="govuk-button" data-wc-start-btn>
     Continue
   </button>
-  {% else %}
-  <div class="wc-inset-text">
-    A 'Continue' link will be shown when an adviser is available. You don't need to refresh this page.
-  </div>
-  {% endif %}
   <h3 class="govuk-heading-m">Other flood information</h3>
   <p>Call Floodline for all other flood and flood warning information.</p>
   <p><strong>Floodline helpline</strong><br/>Telephone: 0345 988 1188<br>Textphone: 0345 602 6340<br>Open 24 hours a day, 7 days a week<br><a href="https://gov.uk/call-charges">Find out more about call charges</a></p>
 </div>
 
 {% elif model.view == 'START' %}
-<div class="wc-content" data-wc-start>
+<div class="wc-content">
   <a href="#" class="wc-back-link" data-wc-prechat-back-btn>What you can use webchat for</a>
   {% if model.error %}
   <div class="govuk-error-summary" data-module="govuk-error-summary" tabindex="-1" data-wc-error-summary>
     <div role="alert">
-      <h3 class="govuk-error-summary__title">
+      <h3 id="wc-error" class="govuk-error-summary__title">
         There is a problem
       </h2>
       <div class="govuk-error-summary__body">
@@ -55,52 +57,46 @@
     </div>
   </div>
   {% endif %}
-  <div class="govuk-form-group {% if model.error.nameEmpty %}govuk-form-group--error{% endif %}">
-    <label class="govuk-label" for="name">
-      Name
-    </label>
-    {% if model.error.nameEmpty %}
-    <p class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span> Enter your name
-    </p>
-    {% endif %}
-    <input class="govuk-input {% if model.error.nameEmpty %}govuk-input--error{% endif %}" id="name" name="name" type="text" {% if model.error %}value="{{ model.error.name }}"{% endif %}>
-  </div>
-  <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="500">
-    <div class="govuk-form-group {% if model.error.questionEmpty or model.error.questionExceeded %}govuk-form-group--error{% endif %}">
-      <label class="govuk-label" for="question">
-        Your question
-      </label>
-      {% if model.error.questionEmpty or model.error.questionExceeded %}
+  <h3 id="wc-subtitle" class="govuk-heading-m">Question details</h3>
+  <form data-wc-start-form>
+    <div class="govuk-form-group {% if model.error.nameEmpty %}govuk-form-group--error{% endif %}">
+      <!-- <h1 class="govuk-label-wrapper"> -->
+        <label class="govuk-label" for="name">
+          Your name
+        </label>
+      <!-- </h1> -->
+      {% if model.error.nameEmpty %}
       <p class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span>
-        {% if model.error.questionEmpty %}
-        Enter your question
-        {% else %}
-        Your question must be 500 characters or less
-        {% endif %}
+        <span class="govuk-visually-hidden">Error:</span> Enter your name
       </p>
       {% endif %}
-      <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{% if model.error %}{{ model.error.question }}{% endif %}</textarea>
+      <input class="govuk-input {% if model.error.nameEmpty %}govuk-input--error{% endif %}" id="name" name="name" type="text" {% if model.error %}value="{{ model.error.name }}"{% endif %}>
     </div>
-    <div id="question-info" class="wc-hint govuk-hint govuk-character-count__message">
-      You can enter up to 500 characters
+    <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="500">
+      <div class="govuk-form-group {% if model.error.questionEmpty or model.error.questionExceeded %}govuk-form-group--error{% endif %}">
+        <label class="govuk-label" for="question">
+          Your question
+        </label>
+        {% if model.error.questionEmpty or model.error.questionExceeded %}
+        <p class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span>
+          {% if model.error.questionEmpty %}
+          Enter your question
+          {% else %}
+          Your question must be 500 characters or less
+          {% endif %}
+        </p>
+        {% endif %}
+        <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{% if model.error %}{{ model.error.question }}{% endif %}</textarea>
+      </div>
+      <div id="question-info" class="wc-hint govuk-hint govuk-character-count__message">
+        You can enter up to 500 characters
+      </div>
     </div>
-  </div>
-  {% if model.availability == 'AVAILABLE' %}
-  <button class="wc-submit-btn" data-module="govuk-button" data-wc-request-chat-btn>
-    Request chat
-  </button>
-  {% else %}
-  <div class="wc-inset-text">
-    A 'Request chat' link will be shown when an adviser is available. You don't need to refresh this page.
-  </div>
-  {% endif %}
-</div>
-<div class="wc-content" hidden data-wc-connecting>
-  <a href="#" class="wc-back-link" data-wc-prechat-back-btn>Request chat</a>
-  <h3 class="govuk-heading-m">Connecting you to an adviser</h3>
-  <p>Hang on a sec.</p>
+    <button class="wc-submit-btn govuk-!-margin-top-1" data-module="govuk-button" data-wc-request-chat-btn>
+      Request chat
+    </button>
+  </form>
 </div>
 
 {% elif model.view == 'OPEN' %}
@@ -112,7 +108,7 @@
 
 {% elif model.view == 'TIMEOUT' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">Your session has timed out</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Your session has timed out</h3>
   <p>You did not do anything for {{ model.timeout }}.</p>
   <div class="govuk-button-group">
     <button class="wc-submit-feedback-btn" data-module="govuk-button" data-wc-feedback-btn>Give feedback</button>
@@ -122,7 +118,7 @@
 
 {% elif model.view == 'END' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">Are you sure you want to end the chat?</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Are you sure you want to end the chat?</h3>
   <div class="govuk-button-group">
     <button class="wc-confirm-end-btn" data-module="govuk-button" data-wc-confirm-end-btn>Yes, end chat</button>
     <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-resume-btn>No, resume chat</a>
@@ -131,7 +127,7 @@
 
 {% elif model.view == 'FEEDBACK' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">Give feedback</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Give feedback</h3>
   <p>Floodline webchat is in public beta</p>
   <div class="govuk-button-group">
     <button class="wc-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Submit</button>
@@ -141,15 +137,38 @@
 
 {% elif model.view == 'FINISH' %}
 <div class="wc-content">
-  <h3 class="govuk-heading-m">Feedback submitted</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Feedback submitted</h3>
   <p>Thank you for your feedback</p>
   <div>
     <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-focus-visible data-wc-close-btn>Close window</a>
   </div>
 </div>
-{% else %}
 
+{% elif model.view == 'SETTINGS' %}
 <div class="wc-content">
-  <p>Connecting to an adviser</p>
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        <h3 id="wc-subtitle" class="govuk-heading-m">Change settings</h3>
+      </legend>
+      <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="audio" name="audio" type="checkbox" value="audio"{% if model.hasAudio %} checked{% endif %}>
+          <label class="govuk-label govuk-checkboxes__label" for="audio">
+            Play a sound when receiving a new message
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="govuk-button-group">
+    <button class="wc-feedback-btn" data-module="govuk-button" data-wc-save-settings-btn>Save</button>
+    <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-cancel-settings-btn>Cancel</a>
+  </div>
+</div>
+
+{% else %}
+<div class="wc-content">
+  <p id="wc-subtitle" class="govuk-heading-m">Checking adviser availability</p>
 </div>
 {% endif %}

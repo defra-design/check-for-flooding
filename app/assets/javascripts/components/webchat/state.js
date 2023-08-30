@@ -4,19 +4,20 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    const isAuthorised = false
     const hasThread = !!localStorage.getItem('THREAD_ID')
     const hasAudio = !localStorage.getItem('AUDIO_OFF')
     const isBack = sessionStorage.getItem('IS_BACK') === 'true'
     const isOpen = window.location.hash === '#webchat'
+    const view = hasThread ? 'OPEN' : null
 
     // Public properties
-    this.availability = null
-    this.assignee = null
-    this.view = hasThread ? 'OPEN' : 'PRECHAT'
-    this.unseen = 0
-    this.isAuthorised = isAuthorised
     this.hasThread = hasThread
+    this.availability = null
+    this.status = null
+    this.view = view
+    this.assignee = null
+    this.unseen = 0
+    this.isAuthorised = false
     this.hasAudio = hasAudio
     this.isMobile = true
     this.isBack = isBack

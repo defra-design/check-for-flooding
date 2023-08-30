@@ -82,6 +82,7 @@
     "lodash.isequal": "^4.5.0",
     "marked": "^4.0.10",
     "moment-timezone": "^0.5.33",
+    "node-cache": "^5.1.2",
     "node-sass": "^6.0.1",
     "notifications-node-client": "^5.1.0",
     "nunjucks": "^3.2.1",

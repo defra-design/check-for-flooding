@@ -14,14 +14,14 @@ class Keyboard {
     }
 
     static _detectFocus () {
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', e => {
             this._isKeyboard = true
             if (e.key === 'Tab' || e.key === 'Escape' || e.key === 'Esc') {
                 this._constrainFocus(e)
             }
         })
 
-        document.addEventListener('keyup', (e) => {
+        document.addEventListener('keyup', e => {
             this._isKeyboard = true
             if (e.key === 'Tab') {
                 const el = this._focusParent()
@@ -31,11 +31,11 @@ class Keyboard {
             }
         })
 
-        document.addEventListener('pointerdown', (e) => {
+        document.addEventListener('pointerdown', e => {
             this._isKeyboard = false
         })
 
-        document.addEventListener('focus', (e) => {
+        document.addEventListener('focus', e => {
             const isScope = !!e.target.closest('#wc-availability, #wc-panel')
             if (!isScope) {
                 return
@@ -44,7 +44,7 @@ class Keyboard {
             target.classList.toggle('wc-focus-visible', this._isKeyboard)
         }, true)
 
-        document.addEventListener('blur',(e) => {
+        document.addEventListener('blur', e => {
             const target = e.target.hasAttribute('data-wc-focus-parent') ? e.target.parentNode : e.target
             target.classList.remove('wc-focus-visible')
         }, true)
@@ -59,9 +59,9 @@ class Keyboard {
     }
 
     static _focusParent () {
-        const el = document.querySelector('[data-wc-inner]')
+        const el = document.querySelector('[data-wc]')
 
-        if (el && !document.activeElement.closest(`[data-wc-inner]`)) {
+        if (el && !document.activeElement.closest(`[data-wc]`)) {
             el.focus()
         }
 

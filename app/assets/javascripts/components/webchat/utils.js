@@ -130,7 +130,6 @@ class Utils {
   static suppressEnter (e, textbox) {
     const isEnterSubmit = textbox.hasAttribute('data-wc-enter-submit')
     const hasValue = textbox.value.length > 0
-    console.log(e.key === 'Enter', !hasValue, isEnterSubmit, !e.altKey, !e.shiftKey)
     if (e.key === 'Enter' && (!hasValue || isEnterSubmit && !e.altKey && !e.shiftKey)) {
       e.preventDefault()
     }
@@ -165,6 +164,17 @@ class Utils {
     }
   
     return new Promise(executePoll)
+  }
+
+  static async getAvailability (endpoint) {
+    try {
+      const response = await fetch(endpoint)
+      const json = await response.json()
+      return json.isAvailable
+    } catch (err) {
+      console.log(err)
+      return false
+    }
   }
 
   static getDuration (seconds) {

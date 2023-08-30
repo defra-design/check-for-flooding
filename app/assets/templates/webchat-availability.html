@@ -1,4 +1,5 @@
-{% if model.isAvailable %}
+<div class="wc-live" aria-live="polite" data-wc-availability-live></div>
+{% if model.isLink %}
 <div class="wc-link" data-wc-link>
   <div class="wc-link__inner">
     <a href="#webchat" id="wc-open" role="button" draggable="false" class="wc-open-btn" data-wc-open-btn data-wc-focus-visible>
@@ -6,6 +7,10 @@
     </a>
   </div>
 </div>
+{% elif model.isText %}
+{% if model.availability == 'UNAVAILABLE' %}
+<p class="govuk-body">When it is available, a 'start chat' link will appear.</p>
 {% else %}
-<p class="govuk-body">When an adviser is available, a 'start chat' link will appear.</p>
+<p class="govuk-body">Checking adviser availability</p>
+{% endif %}
 {% endif %}

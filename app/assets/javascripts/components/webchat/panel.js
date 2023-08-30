@@ -30,6 +30,12 @@ class Panel {
     }
   }
 
+  _updateMessagesLabel (total) {
+    const body = this.body
+    const label = `Conversation with ${total} message${total > 1 ? 's' : ''}`
+    body.setAttribute('aria-label', label)
+  }
+
   create (state, addEvents) {
     console.log('panel.create()')
 
@@ -41,18 +47,16 @@ class Panel {
     document.body.insertAdjacentHTML('beforeend', env.render('webchat-panel.html', { model }))
 
     const container = document.querySelector('[data-wc]')
-    const inner = container.querySelector('[data-wc-inner]')
-    const header = inner.querySelector('[data-wc-header]')
-    const body = inner.querySelector('[data-wc-body]')
-    const footer = inner.querySelector('[data-wc-footer]')
+    const header = container.querySelector('[data-wc-header]')
+    const body = container.querySelector('[data-wc-body]')
+    const footer = container.querySelector('[data-wc-footer]')
     this.container = container
-    this.inner = inner
     this.header = header
     this.body = body
     this.footer = footer
 
-    // Move focus to wc__inner and set inert
-    inner.focus()
+    // Move focus to container and set inert
+    container.focus()
     Keyboard.toggleInert(container)
 
     Utils.listenForDevice('mobile', this.setAttributes.bind(this, state))
@@ -98,6 +102,9 @@ class Panel {
     if (!container) {
       return
     }
+
+    // Update labelledyby
+    this.container.setAttribute('aria-labelledyby', error ? 'wc-title wc-subtitle wc-error' : 'wc-title wc-subtitle')
 
     this.updateHeader(state)
     this.updateBody(state, error)
@@ -145,8 +152,7 @@ class Panel {
     const isViewOpen = state.view === 'OPEN'
     if (isViewOpen) {
       body.tabIndex = 0
-      const label = `Conversation with ${state.messages.length} message${state.messages.length > 1 ? 's' : ''}`
-      body.setAttribute('aria-label', label)
+      this._updateMessagesLabel(state.messages.length)
       this.scrollToLatest()
     } else {
       body.removeAttribute('tabindex')
@@ -175,7 +181,7 @@ class Panel {
     this._initComponents(footer)
   }
 
-  addMessage (message) {
+  addMessage (message, total) {
     const list = this.container.querySelector('[data-wc-list]')
     if (!list) {
       return
@@ -183,10 +189,8 @@ class Panel {
 
     list.insertAdjacentHTML('beforeend', message.html)
 
-    // Update live element
-    const author = message.direction === 'outbound' ? message.assignee : 'You'
-    const text = `${author} said: ${message.text}`
-    this.alertAT(text)
+    // Update message label
+    this._updateMessagesLabel(total)
 
     // Scroll messages
     this.scrollToLatest()
@@ -206,9 +210,6 @@ class Panel {
           name: name
         }
       }))
-
-      // Update live element
-      this.alertAT(`${name} is typing`)
 
       // Scroll to show new elements
       this.scrollToLatest()
@@ -254,13 +255,6 @@ class Panel {
   scrollToLatest () {
     // Scroll to latest
     this.body.scrollTop = this.body.scrollHeight
-  }
-
-  alertAT (text) {
-    // Get referecne to live element
-    const el = this.header.querySelector('[data-wc-live]')
-    el.innerHTML = `<p>${text}</p>`
-    setTimeout(() => { el.innerHTML = '' }, 1000)
   }
 }
 
