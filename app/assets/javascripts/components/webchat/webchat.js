@@ -796,8 +796,7 @@ class WebChat {
     // Set assignee and unseen message count
     const assignee = e.detail.data.inboxAssignee
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
-    // ** Broken in v1.3.0 LivechatRecovered response no longer has unseenMessagesCount
-    const unseen = e.detail.data.thread.unseenMessagesCount || 0
+    const unseen = e.detail.data.thread.unseenByEndUserMessagesCount || 0
     state.unseen = unseen
     state.view = 'OPEN'
 
@@ -941,9 +940,11 @@ class WebChat {
     const name = e.detail.data.user.firstName
     panel.toggleAgentTyping(name, isTyping)
 
+    // ***Limitation: Adviser availability doesn't fire an event in the SDK
     // ***Bug: CaseInboxAssigneeChanged/AssignedAgentChanged not always firing
     const state = this.state
-    if (!state.assignee) {
+    if (!state.assignee || state.availability !== 'AVAILABLE') {
+      state.availability = 'AVAILABLE'
       state.assignee = name
       panel.updateHeader(state)
 
