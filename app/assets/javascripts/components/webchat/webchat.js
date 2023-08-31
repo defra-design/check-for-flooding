@@ -402,7 +402,7 @@ class WebChat {
 
     // Update SDK
     const thread = this.thread
-    thread.setCustomField('satisfaction1', '4')
+    thread.setCustomField('s', '4')
 
     successCb()
   }
