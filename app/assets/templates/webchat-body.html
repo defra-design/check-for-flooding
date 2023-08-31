@@ -63,11 +63,9 @@
   <h3 id="wc-subtitle" class="govuk-heading-m">Question details</h3>
   <form data-wc-start-form>
     <div class="govuk-form-group {% if model.error.nameEmpty %}govuk-form-group--error{% endif %}">
-      <!-- <h1 class="govuk-label-wrapper"> -->
-        <label class="govuk-label" for="name">
-          Your name
-        </label>
-      <!-- </h1> -->
+      <label class="govuk-label" for="name">
+        Your name
+      </label>
       {% if model.error.nameEmpty %}
       <p class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span> Enter your name
@@ -130,8 +128,63 @@
 
 {% elif model.view == 'FEEDBACK' %}
 <div class="wc-content">
+  {% if model.error %}
+  <div class="govuk-error-summary" data-module="govuk-error-summary" tabindex="-1" data-wc-error-summary>
+    <div role="alert">
+      <h3 id="wc-error" class="govuk-error-summary__title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          {% if model.error.satisfactionEmpty %}
+          <li>
+            <a href="#satisfaction" data-wc-error-summary-link>Select how did you feel about webchat</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <h3 id="wc-subtitle" class="govuk-heading-m">Give feedback</h3>
-  <p>Floodline webchat is in public beta</p>
+  <div class="govuk-form-group{% if model.error.satisfactionEmpty %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend">
+        Overall, how did you feel about your webchat
+      </legend>
+      {% if model.error.satisfactionEmpty %}
+      <p class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Select how did you feel about your webchat
+      </p>
+      {% endif %}
+      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="satisfied" name="satisfaction" type="radio" value="satisfied">
+          <label class="govuk-label govuk-radios__label" for="satisfied">
+            Satisfied
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="no-opinion" name="satisfaction" type="radio" value="no-opinion">
+          <label class="govuk-label govuk-radios__label" for="no-opinion">
+            No opinion
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="dissatisfied" name="satisfaction" type="radio" value="dissatisfied">
+          <label class="govuk-label govuk-radios__label" for="dissatisfied">
+            Dissatisfied
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="improve-webchat">
+      How can we improve webchat
+    </label>
+    <textarea class="govuk-textarea govuk-!-margin-bottom-4" id="improve-webchat" name="improve-webchat" rows="5"></textarea>
+  </div>
   <div class="govuk-button-group">
     <button class="wc-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Submit</button>
     <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-close-btn>Cancel</a>
@@ -140,8 +193,7 @@
 
 {% elif model.view == 'FINISH' %}
 <div class="wc-content">
-  <h3 id="wc-subtitle" class="govuk-heading-m">Feedback submitted</h3>
-  <p>Thank you for your feedback</p>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Thank you for your feedback</h3>
   <div>
     <a href="#" role="button" draggable="false" data-module="govuk-button" data-wc-focus-visible data-wc-close-btn>Close window</a>
   </div>
@@ -161,6 +213,12 @@
             Play a sound when receiving a new message
           </label>
         </div>
+        <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="scroll" name="scroll" type="checkbox" value="scroll"{% if model.isScroll %} checked{% endif %}>
+          <label class="govuk-label govuk-checkboxes__label" for="scroll">
+            Scroll automatically to a new message
+          </label>
+        </div>
       </div>
     </fieldset>
   </div>
@@ -172,6 +230,6 @@
 
 {% else %}
 <div class="wc-content">
-  <p id="wc-subtitle" class="govuk-heading-m">Checking adviser availability</p>
+  <p id="wc-subtitle" class="govuk-heading-m">Connecting to Floodline</p>
 </div>
 {% endif %}

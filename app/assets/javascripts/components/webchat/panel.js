@@ -36,6 +36,15 @@ class Panel {
     body.setAttribute('aria-label', label)
   }
 
+  _scrollToLatest (isScroll) {
+    if (!isScroll) {
+      return
+    }
+
+    // Scroll to latest
+    this.body.scrollTop = this.body.scrollHeight
+  }
+
   create (state, addEvents) {
     console.log('panel.create()')
 
@@ -151,8 +160,9 @@ class Panel {
     const isViewOpen = state.view === 'OPEN'
     if (isViewOpen) {
       body.tabIndex = 0
-      this._updateMessagesLabel(state.messages.length)
-      this.scrollToLatest()
+      const total = state.messages.length
+      this._updateMessagesLabel(total)
+      this._scrollToLatest(state.isScroll)
     } else {
       body.removeAttribute('tabindex')
       body.removeAttribute('aria-label')
@@ -180,7 +190,7 @@ class Panel {
     this._initComponents(footer)
   }
 
-  addMessage (message, total) {
+  addMessage (state, message) {
     const list = this.container.querySelector('[data-wc-list]')
     if (!list) {
       return
@@ -189,13 +199,14 @@ class Panel {
     list.insertAdjacentHTML('beforeend', message.html)
 
     // Update message label
+    const total = state.messages.length
     this._updateMessagesLabel(total)
 
     // Scroll messages
-    this.scrollToLatest()
+    this._scrollToLatest(state.isScroll)
   }
 
-  toggleAgentTyping (name, isTyping) {
+  toggleAgentTyping (state, isTyping) {
     const list = this.body.querySelector('[data-wc-list]')
     if (!list) {
       return
@@ -206,15 +217,46 @@ class Panel {
     if (isTyping) {
       list.insertAdjacentHTML('beforeend', env.render('webchat-agent-typing.html', {
         model: {
-          name: name
+          name: state.assignee
         }
       }))
 
       // Scroll to show new elements
-      this.scrollToLatest()
+      this._scrollToLatest(state.isScroll)
 
     } else if (el) {
       el.remove()
+    }
+  }
+
+  toggleTimeout (state, hasTimeout) {
+    const container = this.container
+    const timeout = container.querySelector('[data-wc-timeout]')
+
+    if (hasTimeout) {
+      const list = container.querySelector('[data-wc-list]')
+
+      // *** If we have the list but don't already have the timeout markup
+      if (list && !timeout) {
+        list.insertAdjacentHTML('afterend', `
+          <div class="wc-timeout" data-wc-timeout>
+            <div class="wc-timeout__inner">
+              <div class="wc-timeout__message">Webchat will end in <span data-wc-countdown>${seconds} seconds</span></div>
+            </div>
+            <a href="#" class="wc-cancel-timeout-btn" data-wc-cancel-timeout>Continue webchat</a>
+          </div>
+        `)
+        this._scrollToLatest(state.isScroll)
+
+        // Clear timeout
+        const clearBtn = container.querySelector('[data-wc-cancel-timeout]')
+        clearBtn.addEventListener('click', e => {
+          e.preventDefault()
+          this._resetTimeout()
+        })
+      }
+    } else if (timeout) {
+      timeout.remove()
     }
   }
 
@@ -249,11 +291,6 @@ class Panel {
     if (textbox) {
       textbox.toggleAttribute('data-wc-enter-submit', !state.isMobile)
     }
-  }
-
-  scrollToLatest () {
-    // Scroll to latest
-    this.body.scrollTop = this.body.scrollHeight
   }
 }
 

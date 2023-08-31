@@ -173,14 +173,16 @@
   .govuk-form-group {
     margin-bottom: 15px;
   }
+  .govuk-label,
+  .govuk-fieldset__legend,
+  .wc-hint {
+    font-size: 16px;
+  }
   .govuk-label + p {
     margin-bottom: 10px;
   }
   .wc-message__textbox {
     margin-bottom: 5px !important;
-  }
-  .wc-hint {
-    font-size: 16px;
   }
   .wc-textarea-question {
     resize: none;
