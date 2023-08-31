@@ -4,10 +4,10 @@ import Utils from './utils'
 
 class State {
   constructor (openChat, closeChat) {
-    const hasThread = !!localStorage.getItem('THREAD_ID')
+    const threadId = localStorage.getItem('THREAD_ID')
     const isBack = sessionStorage.getItem('IS_BACK') === 'true'
     const isOpen = window.location.hash === '#webchat'
-    const view = hasThread ? 'OPEN' : null
+    const view = !!threadId ? 'OPEN' : null
 
     // Settings
     const settings = localStorage.getItem('SETTINGS')
@@ -15,7 +15,7 @@ class State {
     const isScroll = settings ? settings.split(',')[1] : true
 
     // Public properties
-    this.hasThread = hasThread
+    this.threadId = threadId
     this.availability = null
     this.status = null
     this.view = view

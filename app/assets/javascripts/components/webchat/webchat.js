@@ -64,7 +64,7 @@ class WebChat {
     document.addEventListener('livechatReady', this._handleReadyEvent.bind(this))
     
     // Conditiopnally recover thread
-    if (state.hasThread) {
+    if (state.threadId) {
       this._recoverThread()
       return
     }
@@ -110,6 +110,7 @@ class WebChat {
     sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CONTACT_CREATED, this._handleContactCreatedEvent.bind(this))
     sdk.onChatEvent(ChatEvent.CONTACT_STATUS_CHANGED, this._handleContactStatusChangedEvent.bind(this))
+    sdk.onChatEvent('SetConsumerContactCustomFields', this._handleChatEvent.bind(this))
 
     // v1.2.0
     sdk.onChatEvent(ChatEvent.CASE_INBOX_ASSIGNEE_CHANGED, this._handleAssignedAgentChangedEvent.bind(this))
@@ -150,15 +151,22 @@ class WebChat {
     }
     const thread = await this.sdk.getThread(threadId)
     this.thread = thread
-    this.state.hasThread = true
+    this.state.threadId = threadId
   }
 
   async _updateAvailability () {
     const state = this.state
+    const previousAvailability = state.availability
     state.availability = await Utils.getAvailability()
     const availability = this.availability
     availability.update(state)
     availability.scroll(state)
+
+    // Alert assistive technology
+    const isNewlyAvailable = previousAvailability === 'UNAVAILABLE' && state.availability === 'AVAILABLE'
+    if (!state.isOpen && isNewlyAvailable) {
+      this._alertAT('Webchat now available')
+    }
   }
 
   async _startChat () {
@@ -199,7 +207,7 @@ class WebChat {
     // Close thread
     localStorage.removeItem('THREAD_ID')
     const state = this.state
-    state.hasThread = false
+    state.threadId = null
 
     // Clear name and initial question
     state.messages = []
@@ -207,7 +215,7 @@ class WebChat {
     state.question = null
 
     // Show feedback view
-    this._feedback()   
+    this._feedback()      
 
     // Clear timeout
     this._resetTimeout()
@@ -371,6 +379,7 @@ class WebChat {
     // Validation error
     const isErrorSatisfaction = !hasChecked
 
+    // Missing satisfaction selection
     if (isErrorSatisfaction) {
       const error = {
         satisfactionEmpty: true
@@ -390,6 +399,10 @@ class WebChat {
 
       return
     }
+
+    // Update SDK
+    const thread = this.thread
+    thread.setCustomField('satisfaction1', '4')
 
     successCb()
   }
@@ -695,9 +708,10 @@ class WebChat {
     document.body.removeChild(anchor)
   }
 
-  _alertAT (text) {
-    // Get referecne to live element
+  _alertAT (text, politeness = 'polite') {
+    // Get reference to live element
     const el = document.querySelector('[data-wc-panel-live], [data-wc-availability-live]')
+    el.setAttribute('aria-live', politeness)
     el.innerHTML = `<p>${text}</p>`
     setTimeout(() => { el.innerHTML = '' }, 1000)
   }
@@ -929,11 +943,6 @@ class WebChat {
       // Update panel if new question
       state.view = 'OPEN'
       panel.update(state)
-
-      // Alert assistive technology
-      // const el = document.querySelector('[data-wc-status]')
-      // const text = el ? el.innerHTML : ''
-      // this._alertAT(text)
 
       // Set focus to panel
       panel.container.focus()
