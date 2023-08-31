@@ -95,8 +95,8 @@ class WebChat {
     state.isAuthorised = true
 
     // Confirm availability from SDK
-    const isOnline = response?.channel.availability.status === 'online'
-    state.availability = isOnline ? 'AVAILABLE' : 'UNAVAILABLE'
+    const isOnline = response && response.channel.availability.status === 'online'
+    state.availability = isOnline ? state.availability : 'UNAVAILABLE'
 
     // Add sdk event listeners
 
@@ -205,9 +205,6 @@ class WebChat {
     state.messages = []
     state.name = null
     state.question = null
-
-    // Update availability
-    await this._updateAvailability()
 
     // Show feedback view
     this._feedback()   
@@ -401,6 +398,12 @@ class WebChat {
     console.log('_openChat', instigatorId)
 
     const state = this.state
+
+    // Return if already open
+    if (state.isOpen) {
+      return
+    }
+    
     state.instigatorId = instigatorId
     state.isOpen = true
 
@@ -708,7 +711,7 @@ class WebChat {
   // }
 
   async _handleLivechatRecoveredEvent (e) {
-    console.log('_handleLivechatRecoveredEvent', e)
+    console.log('_handleLivechatRecoveredEvent')
 
     // Set thread status
     const state = this.state
@@ -815,24 +818,34 @@ class WebChat {
   }
 
   _handleContactStatusChangedEvent (e) {
-    console.log('_handleContactStatusChangedEvent', e.detail.data.case.status)
+    console.log('_handleContactStatusChangedEvent', this.state.view)
 
-    // Currently only responding to a closed case
     const state = this.state
     state.status = e.detail.data.case.status
     const panel = this.panel
 
-    // Instigated by adviser
-    if (state.view === 'OPEN' && state.status === 'closed') {
-      panel.updateHeader(state)
+    // ***Todo: Need a more robust way to determine who instigated this
+    const isEndedByAdviser = state.messages.length
 
-      // Alert assistive technology
-      const el = document.querySelector('[data-wc-status]')
-      const text = el ? el.innerHTML : ''
-      this._alertAT(text)
+    // Currently only responding to a closed case
+    if (state.status === 'closed') {
+      // Instigated by adviser
+      if (isEndedByAdviser && state.view === 'OPEN') {
+        panel.updateHeader(state)
 
-      // Start/reset timeout
-      this._resetTimeout()
+        // Alert assistive technology
+        const el = document.querySelector('[data-wc-status]')
+        const text = el ? el.innerHTML : ''
+        this._alertAT(text)
+
+        // Start/reset timeout
+        this._resetTimeout()
+      }
+
+      // Instigated by end user
+      if (!isEndedByAdviser) {
+        this._updateAvailability()
+      }
     }
   }
 
@@ -844,8 +857,8 @@ class WebChat {
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
 
     // ***Limitation: Adviser availability doesn't fire an event in the SDK
-    if (assignee && state.availability !== 'AVAILABLE') {
-      state.availability = 'AVAILABLE'
+    if (assignee && !['AVAILABLE', 'EXISTING'].includes(state.availability)) {
+      state.availability = 'EXISTING'
     }
 
     // Update header
@@ -865,7 +878,7 @@ class WebChat {
   }
 
   _handleMessageCreatedEvent (e) {
-    console.log('_handleMessageCreatedEvent', this.state)
+    console.log('_handleMessageCreatedEvent')
 
     const state = this.state  
     const response = e.detail.data.message
@@ -977,8 +990,8 @@ class WebChat {
 
     // ***Limitation: Adviser availability doesn't fire an event in the SDK
     // ***Bug: CaseInboxAssigneeChanged/AssignedAgentChanged not always firing
-    if (!state.assignee || state.availability !== 'AVAILABLE') {
-      state.availability = 'AVAILABLE'
+    if (!state.assignee || !['AVAILABLE', 'EXISTING'].includes(state.availability)) {
+      state.availability = 'EXISTING'
       panel.updateHeader(state)
 
       // Alert assistive technology

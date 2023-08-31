@@ -7,9 +7,9 @@ class Notification {
 
     // Create context
     const context = new (window.AudioContext || window.webkitAudioContext)()
-    context.addEventListener('statechange', () => {
-      console.log('Audio: ', context.state)
-    })
+    // context.addEventListener('statechange', () => {
+    //   console.log('Audio: ', context.state)
+    // })
     this._context = context
 
     // Unlock audio

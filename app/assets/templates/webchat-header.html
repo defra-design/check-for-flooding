@@ -24,7 +24,7 @@
 {% if model.view == 'OPEN' %}
 <div class="wc-status">
   <div id="wc-subtitle" class="wc-status__content" data-wc-status>
-    {% if model.availability == 'AVAILABLE' %}
+    {% if model.availability == 'AVAILABLE' or model.availability == 'EXISTING' %}
     {% if model.status == 'closed' %}
     {% if model.assignee %}{{ model.assignee }} ended the session{% else %}Session ended by adviser{% endif %}
     {% elif model.assignee %}

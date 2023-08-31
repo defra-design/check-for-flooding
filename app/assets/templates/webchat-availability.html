@@ -8,7 +8,7 @@
   </div>
 </div>
 {% elif model.isText %}
-{% if model.availability == 'UNAVAILABLE' %}
+{% if model.availability == 'EXISTING' or model.availability == 'UNAVAILABLE' %}
 <p class="govuk-body">When it is available, a 'start chat' link will appear.</p>
 {% else %}
 <p class="govuk-body">Checking availability</p>

@@ -100,8 +100,9 @@ module.exports = {
       const isOpen = isWithinHours(days)
 
       // Availability
-      const isAvailable = isOpen && hasCapacity && hasAgentsAvailable
-      const availability = isAvailable ? 'AVAILABLE' : 'UNAVAILABLE'
+      const isAvailable = isOpen && hasAgentsAvailable && hasCapacity
+      const isExistingOnly = isOpen && hasAgentsAvailable && !hasCapacity
+      const availability = isAvailable ? 'AVAILABLE' : isExistingOnly ? 'EXISTING' : 'UNAVAILABLE'
       
       return {
         date: new Date(), 
