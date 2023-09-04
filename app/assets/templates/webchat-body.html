@@ -1,7 +1,7 @@
 {% if model.view == 'UNAVAILABLE' %}
 <div class="wc-content">
   {% if model.name %}
-  <a href="#" class="wc-back-link" data-wc-start-back-btn>Question details</a>
+  <a href="#" class="wc-back-link" data-wc-start-back-btn>Your name and question</a>
   {% endif %}
   <h3 id="wc-subtitle" class="govuk-heading-m">Webchat is currently not available</h3>
   <p>Try again later, or call Floodline:</p>
@@ -60,7 +60,7 @@
     </div>
   </div>
   {% endif %}
-  <h3 id="wc-subtitle" class="govuk-heading-m">Question details</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Your name and question</h3>
   <form data-wc-start-form>
     <div class="govuk-form-group {% if model.error.nameEmpty %}govuk-form-group--error{% endif %}">
       <label class="govuk-label" for="name">
@@ -181,7 +181,7 @@
   </div>
   <div class="govuk-form-group">
     <label class="govuk-label" for="improvements">
-      How can we improve webchat
+      How can we improve webchat? (optional)
     </label>
     <textarea class="govuk-textarea govuk-!-margin-bottom-4" id="improvements" name="improvements" rows="5"></textarea>
   </div>
