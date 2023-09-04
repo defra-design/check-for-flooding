@@ -374,13 +374,10 @@ class WebChat {
 
   _validateFeedback (successCb) {
     const panel = this.panel
-    const hasChecked = panel.container.querySelector('input[name="satisfaction"]:checked')
-    
-    // Validation error
-    const isErrorSatisfaction = !hasChecked
+    const satisfaction = panel.container.querySelector('input[name="satisfaction"]:checked')
 
     // Missing satisfaction selection
-    if (isErrorSatisfaction) {
+    if (!satisfaction) {
       const error = {
         satisfactionEmpty: true
       }
@@ -402,7 +399,9 @@ class WebChat {
 
     // Update SDK
     const thread = this.thread
-    thread.setCustomField('s', '4')
+    const improvements = panel.container.querySelector('textarea[name="improvements"]')
+    thread.setCustomField('rating', satisfaction.value)
+    thread.setCustomField('comment', improvements.value)
 
     successCb()
   }
