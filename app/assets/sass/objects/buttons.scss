@@ -2,6 +2,7 @@
 .defra-button-start {
     @extend .govuk-button;
     @extend .govuk-button--secondary;
+    color: currentColor !important;
     svg {
         color: currentColor;
         display: inline-block;
