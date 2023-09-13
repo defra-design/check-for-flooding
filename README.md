@@ -1,10 +1,9 @@
-**Check for flooding prototype**
-# FSR-301 - Rainfall - v3
+# Check for flooding prototype - v5
 
-## Rainfall detail page
-- Recent trend on map and list
-- Search catchments
-- Disambiguate locations, catchments and rivers
-- Initial accessibility work on station detail page
+For research and testing only
 
-
+## Information architecture changes
+- Bringing search onto home page
+- 'Cross-selling' long term flood risk
+  
+https://check-for-flooding.herokuapp.com
