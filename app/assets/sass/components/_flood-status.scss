@@ -3,23 +3,6 @@
     @include mq ($from: tablet) {
         padding-bottom:15px;
     }
-    svg {
-        vertical-align: middle;
-        width: 40px;
-        height: 40px;
-        @include mq ($from: tablet) {
-            width: 50px;
-            height: 50px;
-        }
-    }
-    &--small svg {
-        width: 30px;
-        height: 30px;
-        @include mq ($from: tablet) {
-            width: 35px;
-            height: 35px;
-        }
-    }
     &--full &-item__container {
         @include mq ($from: desktop) {
             width: 66.66%;
@@ -58,6 +41,15 @@
             padding:20px 20px 20px 0px;
         }
     }
+    svg {
+        vertical-align: middle;
+        width: 40px;
+        height: 40px;
+        @include mq ($from: tablet) {
+            width: 50px;
+            height: 50px;
+        }
+    }
     &__text-secondary {
         display: block;
     }
@@ -82,6 +74,14 @@
         right: 0px;
         border: 1px solid transparent;
         pointer-events: none;
+    }
+}
+.defra-flood-status--small .defra-flood-status-item svg {
+    width: 30px;
+    height: 30px;
+    @include mq ($from: tablet) {
+        width: 35px;
+        height: 35px;
     }
 }
 .defra-flood-status-item--severe {
