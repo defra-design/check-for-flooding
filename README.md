@@ -1,10 +1,12 @@
-**Check for flooding prototype**
-# FSR-301 - Rainfall - v3
+# Check for flooding prototype - v4
 
-## Rainfall detail page
-- Recent trend on map and list
-- Search catchments
-- Disambiguate locations, catchments and rivers
-- Initial accessibility work on station detail page
+For research and testing only
+
+## Webchat
+- Uses CXOne SDK and API
+- Interface
+- Accessibility
+  
+https://check-for-flooding.herokuapp.com
 
 
