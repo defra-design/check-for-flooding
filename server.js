@@ -152,7 +152,6 @@ app.use('/prototype-admin', prototypeAdminRoutes)
 
 // Load routes (found in app/routes)
 app.use('/', require('./app/routes/index'))
-app.use('/', require('./app/routes/find-location'))
 app.use('/', require('./app/routes/location'))
 app.use('/', require('./app/routes/warnings'))
 app.use('/', require('./app/routes/levels'))

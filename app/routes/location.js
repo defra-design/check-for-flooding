@@ -12,7 +12,7 @@ const BannerLocation = require('../models/banner-location')
 const ViewModel = require('../models/views/location')
 
 router.get('/location', (req, res) => {
-  res.redirect('/find-location')
+  res.redirect('/')
 })
 
 router.get('/location/:location', async (req, res) => {

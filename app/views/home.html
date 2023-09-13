@@ -66,11 +66,6 @@
       Updated at <time datetime="">{{ model.warningsDate }}</time>
     </p> 
 
-    <!-- <a href="/find-location" class="defra-button-start govuk-!-margin-bottom-7" role="button" data-module="govuk-button">
-      Check for flooding near you
-      <svg focusable="false" aria-hidden="true" width="13" height="15" viewBox="0 0 13 15"><path d="M0.325,0l4.875,0l7.5,7.5l-7.5,7.5l-4.875,0l7.5,-7.5l-7.5,-7.5Z" fill="currentColor"/></svg>
-    </a> -->
-
     <h2 class="govuk-heading-m" id="outlook">Flood risk for the next 5 days</h2>
     {% if model.outlookOutOfDate or model.dataError %}
     <div class="defra-service-error govuk-!-margin-bottom-3">
