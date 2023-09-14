@@ -88,7 +88,7 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
   window.flood = {
     model: {
       mapButtonText: {{ model.mapButtonText | dump | safe }},
-      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon govuk-!-margin-bottom-4',
+      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon',
       mapLayers: {{ model.mapLayers | dump | safe }},
       extent: {{ model.place.bbox | dump | safe }},
       hasWarnings: {{ model.hasWarnings | dump | safe }},

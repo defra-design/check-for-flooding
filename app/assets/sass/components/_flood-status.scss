@@ -1,7 +1,7 @@
 .defra-flood-status {
-    padding-bottom:10px;
+    padding-bottom:15px;
     @include mq ($from: tablet) {
-        padding-bottom:15px;
+        padding-bottom:20px;
     }
     &--full &-item__container {
         @include mq ($from: desktop) {
@@ -20,7 +20,7 @@
     margin-top:0px;
     margin-bottom:10px;
     &:last-of-type {
-        margin-bottom:5px;
+        margin-bottom:0px;
     }
     &__container {
         position:relative;
@@ -162,5 +162,5 @@
 .defra-flood-status__text {
     @extend .govuk-body;
     @include govuk-responsive-margin(3, 'top');
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }

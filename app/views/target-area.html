@@ -18,7 +18,7 @@
 </div>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <a href="/" class="defra-flood-location-link">Check another location</a>
+    <a href="/flood-warnings-and-alerts" class="govuk-back-link">Flood alerts and warnings</a>
   </div>
 </div>
 {% endblock %}
@@ -74,22 +74,20 @@
       {{ model.title }}
     </h1>
     {% if model.targetAreaMessageDate %}
-    <p class="defra-flood-meta govuk-!-margin-top-1 govuk-!-margin-bottom-0">
+    <p class="defra-flood-meta defra-flood-meta--no-border">
       <time datetime="">{{ model.targetAreaMessageDate }}</time>
     </p>
     {% endif %}
     <span id="map-live"></span>
 
-    <div class="govuk-!-padding-top-6">
-      {% if model.targetArea.message %}
-      <p>{{ model.targetArea.message | safe }}</p>
-      {% elif model.type == 'warning' %}
-      <p>We'll update this page when there's a flood warning in the area.</p>
-      <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
-      {% else %}
-      <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
-      {% endif %}
-    </div>
+    {% if model.targetArea.message %}
+    <p>{{ model.targetArea.message | safe }}</p>
+    {% elif model.type == 'warning' %}
+    <p>We'll update this page when there's a flood warning in the area.</p>
+    <p>A flood warning means flooding to some property is expected. A severe flood warning means there's a danger to life.</p>
+    {% else %}
+    <p>We'll update this page when there's a flood alert in the area, which means flooding to low lying land is possible.</p>
+    {% endif %}
 
     {# -- Flood area -- #}
     {% if model.targetArea.area %}
@@ -146,7 +144,7 @@
   window.flood = {
     model: {
       mapButtonText: {{ model.mapButtonText | dump | safe }},
-      mapButtonClass: {{ model.mapButtonClass | dump | safe }},
+      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon',
       mapLayers: {{ model.mapLayers | dump | safe }},
       selectedId: {{ model.targetArea.id | dump | safe }},
       type: {{ model.targetArea.type | dump | safe }},

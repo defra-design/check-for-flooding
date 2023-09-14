@@ -2,7 +2,10 @@
     @include govuk-font($size: 16);
     color:$govuk-text-colour;
     position:relative;
-    margin-top: 20px;
     padding-bottom: 5px;
     border-bottom: 1px solid $govuk-border-colour;
+    &--no-border {
+        border: 0px;
+        padding-bottom: 0px;
+    }
 }
