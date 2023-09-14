@@ -13,6 +13,8 @@ class ViewModel {
     this.mapButtonText = hasWarnings ? 'View map of flood warnings and alerts' : 'View map'
     this.mapLayers = `mv,ts,tw,ta${banner.hasRemoved ? ',tr' : ''}`
     this.bingApiKey = bingApiKey
+    // Related links
+    this.notHasRelatedLongterm = true
   }
 }
 module.exports = ViewModel
