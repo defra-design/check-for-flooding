@@ -2,12 +2,9 @@
     position: relative;
     z-index: 0;
     background-color: transparent;
-    margin:20px 0 0 0;
+    margin:0;
     padding:0px;
     list-style:none;
-    @include mq ($from: tablet) {
-        margin-top: 30px;
-    }
     &:after {
         content: '';
         display:block;
@@ -36,6 +33,11 @@
             @include govuk-font($size: 19);
             margin-top: -5px;
             margin-bottom: 0px;
+        }
+    }
+    &__category:first-of-type &__category-title {
+        @include mq ($until: tablet) {
+            margin-top: 10px;
         }
     }
     &__items {
