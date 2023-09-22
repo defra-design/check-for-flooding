@@ -32,7 +32,7 @@ class Availability {
 
     const container = this.container
     const isText = !container.hasAttribute('data-wc-no-text')
-    const hasThread = state.hasThread
+    const hasThread = state.threadId
     const isLink = hasThread || (isText && state.availability === 'AVAILABLE')
     const btnText = hasThread ? 'Show chat' : 'Start chat'
 
