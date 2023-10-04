@@ -371,7 +371,9 @@ window.flood.maps.styles = {
   //
 
   outlookPolygons: (feature) => {
-    if (feature.get('isVisible') === 'false') { return }
+    if (!feature.get('isVisible')) {
+      return
+    }
     const zIndex = feature.get('z-index')
     let strokeColour = '#85994b'
     let fillColour = '#85994b'
@@ -386,7 +388,7 @@ window.flood.maps.styles = {
       fillColour = '#d4351c'
     }
     const isSelected = feature.get('isSelected')
-    const selectedStroke = new Style({ stroke: new Stroke({ color: '#0b0c0c', width: 16 }), zIndex: zIndex })
+    const selectedStroke = new Style({ stroke: new Stroke({ color: '#0b0c0c', width: 4 }), zIndex: zIndex })
     const style = new Style({
       stroke: new Stroke({ color: strokeColour, width: 1 }),
       fill: new Fill({ color: fillColour }),
