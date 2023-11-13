@@ -5,7 +5,7 @@ import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
 import { axisBottom, axisLeft } from 'd3-axis'
 import { scaleLinear, scaleTime } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
-import { timeDay } from 'd3-time'
+import { timeDay, timeHour } from 'd3-time'
 import { select, selectAll, pointer } from 'd3-selection'
 import { bisector, extent } from 'd3-array'
 const { xhr, simplify } = window.flood.utils
@@ -32,7 +32,11 @@ function LineChart (containerId, stationId, data, options = {}) {
 
     // Draw axis
     const xAxis = axisBottom().tickSizeOuter(0)
-    xAxis.scale(xScale).ticks(timeDay).tickFormat(d => { return '' })
+    // xAxis.scale(xScale).ticks(timeDay).tickFormat(d => { return '' })
+
+    // DB: Time offset
+    xAxis.scale(xScale).ticks(timeHour.filter(d => { return d.getHours() === 6 })).tickFormat('')
+
     yAxis = axisLeft().ticks(5).tickFormat(d => {
       // return parseFloat(d).toFixed(2) + 'm'
       return parseFloat(d).toFixed(1)
@@ -52,13 +56,23 @@ function LineChart (containerId, stationId, data, options = {}) {
     svg.selectAll('.y.axis .tick text').attr('x', 9)
 
     // Update grid lines
+    // svg.select('.x.grid')
+    //   .attr('transform', 'translate(0,' + height + ')')
+    //   .call(axisBottom(xScale)
+    //     .ticks(timeDay)
+    //     .tickSize(-height, 0, 0)
+    //     .tickFormat('')
+    //   )
+
+    // DB: Time offset
     svg.select('.x.grid')
       .attr('transform', 'translate(0,' + height + ')')
       .call(axisBottom(xScale)
-        .ticks(timeDay)
+        .ticks(timeHour.filter(d => { return d.getHours() === 6 }))
         .tickSize(-height, 0, 0)
         .tickFormat('')
       )
+
     svg.select('.y.grid')
       .attr('transform', 'translate(0,' + 0 + ')')
       .call(axisLeft(yScale)
