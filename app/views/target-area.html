@@ -91,26 +91,6 @@
     {% if model.targetArea.area %}
     <p>Flood {{ model.targetArea.type }} area: {{ model.targetArea.geography }}</p>
     {% endif%}
-    
-    {# -- Trigger levels -- #}
-    {% set levelsLength = model.targetArea.levels | length %}
-    <p>
-      {% if levelsLength == 1 %}
-      {% if model.ab == 'a' %}
-      <a href="/station/{{ model.targetArea.levels[0].id }}">View the latest indicator level for this area</a>
-      {% else %}
-      <a href="/station/{{ model.targetArea.levels[0].id }}">View the {{ model.targetArea.levels[0].riverName }} level at {{ model.targetArea.levels[0].name }}</a> which gives an indication of the latest level for this area.
-      {% endif %}
-      {% elif levelsLength > 1 %}
-      {% if model.ab == 'a' %}
-      <a href="/target-area/{{ model.targetArea.id }}/levels">View the latest indicator levels for this area
-      {% else %}
-      View the <a href="/target-area/{{ model.targetArea.id }}/levels">measuring stations which give an indication of the latest levels</a> for this area.
-      {% endif %}
-      {% else %}
-      <a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a>
-      {% endif %}
-    </p>
 
     {# -- Get flood warnings by phone, text or email -- #}
     <p>
@@ -126,8 +106,13 @@
     {% if model.isActive %}
     <p>Could this information be better? <a href="">Tell us how to improve it.</a></p>
     {% endif %}
-    
-    {% include "partials/social.html" %}
+
+    {# -- Trigger levels -- #}
+    <h2 class="govuk-heading-m">Latest levels</h2>
+    {% include "partials/level-summary.html" %}
+    <p><a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a></p>
+
+    {# -- Context footer -- #}
     {% include "partials/context-footer.html" %}
   </div>
   <div class="govuk-grid-column-one-third">
