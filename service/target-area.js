@@ -115,7 +115,6 @@ module.exports = {
     WHERE LOWER(id) = LOWER($1)
     GROUP BY id, name, geom, severity, message, raised_date);
     `, [id])
-    console.log(response[0])
     return response[0]
   }
 }
