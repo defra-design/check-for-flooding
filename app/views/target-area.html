@@ -75,9 +75,9 @@
     </h1>
     <span id="map-live"></span>
 
-    <div class="defra-flood-meta defra-flood-meta--no-border">
-      <time datetime="">{% if model.targetAreaMessageDate %}{{ model.targetAreaMessageDate }}{% else %}Up to date as of 10:27am on 30 November 2023{% endif %}</time>
-    </div>
+    <p class="defra-flood-meta defra-flood-meta--no-border">
+      <strong><time datetime="">{% if model.targetAreaMessageDate %}{{ model.targetAreaMessageDate }}{% else %}Up to date as of 10:27am on 30 November 2023{% endif %}</time></strong>
+    </p>
     {% if model.targetArea.message %}
     <p>{{ model.targetArea.message | safe }}</p>
     {% elif model.type == 'warning' %}

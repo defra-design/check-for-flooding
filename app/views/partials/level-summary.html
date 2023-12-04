@@ -2,7 +2,8 @@
 <div class="defra-live">
   <h2 class="defra-live__title">Latest levels</h2>
   {% for trigger in model.targetArea.triggerLevels %}
-  <p><strong>{{ trigger.elapsedTime }}</strong><br/>The <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}">{{ trigger.riverName }} level at {{ trigger.name }}</a> was {{ trigger.latestHeight | toFixed(2) }} metres. Property flooding is possible when it goes above {{ trigger.threshold | toFixed(2) }} metres.</p>
+  <p class="defra-flood-meta defra-flood-meta--no-border govuk-!-margin-bottom-0"><strong>{{ trigger.elapsedTime }}</strong></p>
+  <p>The <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}">{{ trigger.riverName }} level at {{ trigger.name }}</a> was {{ trigger.latestHeight | toFixed(2) }} metres. Property flooding is possible when it goes above {{ trigger.threshold | toFixed(2) }} metres.</p>
   {% endfor %}
   <p class="defra-live__supplementary">This content updates automatically, you don't need to refresh</p>
 </div>
