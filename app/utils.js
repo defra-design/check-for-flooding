@@ -36,6 +36,22 @@ const formatDatePast = (date) => {
   return `${moment(date).tz('Europe/London').format('D\xa0MMMM\xa0YYYY')}`
 }
 
+const formatElapsedTime = (date) => {
+  const duration = (new Date() - new Date(date))
+  const mins = Math.floor(duration / (1000 * 60))
+  const hours = Math.floor(duration / (1000 * 60 * 60))
+  const days = parseInt(Math.floor(hours / 24))
+  if (mins < 91 || hours < 2) {
+    return `${mins} minutes ago`
+  } else {
+    if (hours < 48) {
+      return `${hours} hours ago`
+    } else {
+      return `${days} days ago`
+    }
+  }
+}
+
 const bufferBbox = (bbox, m) => {
   // Convert bbox (binding box) )into polygon, add buffer, and convert back to bbox as db query needs a bbox envelope
   return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
@@ -86,6 +102,7 @@ module.exports = {
   formatTime,
   formatDate,
   formatDatePast,
+  formatElapsedTime,
   getSlug,
   groupBy,
   bufferBbox,

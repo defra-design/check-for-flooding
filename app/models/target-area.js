@@ -1,10 +1,10 @@
 const severity = require('../models/severity')
-const Level = require('./level')
+const TriggerLevel = require('./trigger-level')
 
 class TargetArea {
   constructor (data) {
-    const levels = data.trigger_levels ? data.trigger_levels.map(level => { return new Level(level) }) : []
-    this.levels = levels
+    const triggerLevels = data.trigger_levels ? data.trigger_levels.map(triggerLevel => { return new TriggerLevel(triggerLevel) }) : []
+    this.triggerLevels = triggerLevels
     this.id = data.id
     this.name = data.name
     this.type = data.type

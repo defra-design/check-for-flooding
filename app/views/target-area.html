@@ -73,11 +73,11 @@
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
       {{ model.title }}
     </h1>
-    {% if model.targetAreaMessageDate %}
-    <div class="defra-flood-meta defra-flood-meta--no-border"><time datetime="">{{ model.targetAreaMessageDate }}</time></div>
-    {% endif %}
     <span id="map-live"></span>
 
+    <div class="defra-flood-meta defra-flood-meta--no-border">
+      <time datetime="">{% if model.targetAreaMessageDate %}{{ model.targetAreaMessageDate }}{% else %}Up to date as of 10:27am on 30 November 2023{% endif %}</time>
+    </div>
     {% if model.targetArea.message %}
     <p>{{ model.targetArea.message | safe }}</p>
     {% elif model.type == 'warning' %}
@@ -108,9 +108,16 @@
     {% endif %}
 
     {# -- Trigger levels -- #}
-    <h2 class="govuk-heading-m">Latest levels</h2>
     {% include "partials/level-summary.html" %}
-    <p><a href="/river-sea-groundwater-rainfall-levels">Find a river, sea, groundwater or rainfall level in this area</a></p>
+    <p>
+      <a href="/river-sea-groundwater-rainfall-levels">
+        {% if model.targetArea.triggerLevels | length %}
+        Find other river and sea levels
+        {% else %}
+        Find river and sea levels in this area
+        {% endif %}
+      </a>
+    </p>
 
     {# -- Context footer -- #}
     {% include "partials/context-footer.html" %}

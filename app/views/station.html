@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% import "./macros/components.njk" as components %}
 
 {% block pageTitle %}
 {{ model.title }} - GOV.UK
@@ -73,11 +74,19 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <div class="defra-flood-statistics defra-flood-statistics--border">
-      <div class="govuk-!-margin-top-4" data-toggletip data-toggletip-label="More information about the latest reading" data-toggletip-content="We get readings more often as the risk of flooding increases.">
+      {{ components.toggletip(
+        'govuk-!-margin-top-4',
+        'More information about the latest reading',
+        'We get readings more often as the risk of flooding increases.',
+        '<h2 class="govuk-heading-s govuk-!-margin-bottom-0">
+          Latest at {{ model.time }}
+        </h2>'
+      ) }}
+      <!-- <div class="govuk-!-margin-top-4" data-toggletip data-toggletip-label="More information about the latest reading" data-toggletip-content="We get readings more often as the risk of flooding increases.">
         <h2 class="govuk-heading-s govuk-!-margin-bottom-0">
           Latest at {{ model.time }}
         </h2>
-      </div>
+      </div> -->
       <dl class="defra-flood-statistics__list" aria-label="Latest readings">
         <div class="defra-flood-statistics__item">
           <dt class="defra-flood-statistics__key">

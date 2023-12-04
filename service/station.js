@@ -105,7 +105,7 @@ module.exports = {
       b.lat
       FROM targetarea_trigger a
       LEFT JOIN measure_with_latest b ON a.trigger_id = b.rloi_id 
-      WHERE lower(a.targetarea_id) = $1
+      WHERE lower(a.targetarea_id) = lower($1)
       ORDER BY river_order, is_downstage;
     `, id)
     return response
