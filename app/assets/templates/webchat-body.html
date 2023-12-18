@@ -147,11 +147,11 @@
   </div>
   {% endif %}
   <h3 id="wc-subtitle" class="govuk-heading-m">Give feedback on Floodline webchat</h3>
-  <p>Please note we’re unable to respond to feedback</p>
+  <p>Please note we’re unable to respond to feedback.</p>
   <div class="govuk-form-group{% if model.error.satisfactionEmpty %} govuk-form-group--error{% endif %}">
     <fieldset class="govuk-fieldset">
       <legend class="wc-fieldset-heading govuk-fieldset__legend">
-        Overall, how did you feel about your webchat
+        Overall, how did you feel about webchat?
       </legend>
       {% if model.error.satisfactionEmpty %}
       <p class="govuk-error-message">
@@ -237,7 +237,7 @@
     <div id="research-hint" class="wc-hint govuk-hint">
       We will not share your email address or use it for anything else. We’ll delete it after 2 years.
     </div>
-    <input class="govuk-input govuk-!-margin-bottom-4" id="research" name="research" type="text" />
+    <input class="govuk-input govuk-!-margin-bottom-4" id="research" name="research" aria-describedby="research-hint" type="text" />
   </div>
   <div class="govuk-button-group">
     <button class="wc-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Submit</button>
