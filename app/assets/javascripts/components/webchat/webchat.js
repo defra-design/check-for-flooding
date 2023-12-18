@@ -577,8 +577,9 @@ class WebChat {
     const state = this.state
     state.view = 'FEEDBACK'
     this.panel.update(state)
-    const btn = document.querySelector('[data-wc-submit-feedback-btn]')
-    btn.focus()
+    this.panel.container.focus()
+    // const btn = document.querySelector('[data-wc-submit-feedback-btn]')
+    // btn.focus()
 
     // Dont persist view, set to prechat
     state.view = 'PRECHAT'

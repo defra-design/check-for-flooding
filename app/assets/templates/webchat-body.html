@@ -146,10 +146,11 @@
     </div>
   </div>
   {% endif %}
-  <h3 id="wc-subtitle" class="govuk-heading-m">Give feedback</h3>
+  <h3 id="wc-subtitle" class="govuk-heading-m">Give feedback on Floodline webchat</h3>
+  <p>Please note we’re unable to respond to feedback</p>
   <div class="govuk-form-group{% if model.error.satisfactionEmpty %} govuk-form-group--error{% endif %}">
     <fieldset class="govuk-fieldset">
-      <legend class="govuk-fieldset__legend">
+      <legend class="wc-fieldset-heading govuk-fieldset__legend">
         Overall, how did you feel about your webchat
       </legend>
       {% if model.error.satisfactionEmpty %}
@@ -158,6 +159,12 @@
       </p>
       {% endif %}
       <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="very-satisfied" name="satisfaction" type="radio" value="Very satisfied">
+          <label class="govuk-label govuk-radios__label" for="very-satisfied">
+            Very satisfied
+          </label>
+        </div>
         <div class="govuk-radios__item">
           <input class="govuk-radios__input" id="satisfied" name="satisfaction" type="radio" value="Satisfied">
           <label class="govuk-label govuk-radios__label" for="satisfied">
@@ -176,14 +183,61 @@
             Dissatisfied
           </label>
         </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="very-dissatisfied" name="satisfaction" type="radio" value="Very dissatisfied">
+          <label class="govuk-label govuk-radios__label" for="very-dissatisfied">
+            Very dissatisfied
+          </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  <div class="govuk-form-group{% if model.error.answerEmpty %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset">
+      <legend class="wc-fieldset-heading govuk-fieldset__legend">
+        Did the adviser answer your question?
+      </legend>
+      {% if model.error.answerEmpty %}
+      <p class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Did we answer your question
+      </p>
+      {% endif %}
+      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="answer-yes" name="answer" type="radio" value="Yes">
+          <label class="govuk-label govuk-radios__label" for="answer-yes">
+            Yes
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="answer-no" name="answer" type="radio" value="No">
+          <label class="govuk-label govuk-radios__label" for="answer-no">
+            No
+          </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="answer-partly" name="answer" type="radio" value="Partly">
+          <label class="govuk-label govuk-radios__label" for="answer-partly">
+            Partly
+          </label>
+        </div>
       </div>
     </fieldset>
   </div>
   <div class="govuk-form-group">
-    <label class="govuk-label" for="improvements">
+    <label class="wc-fieldset-heading govuk-label" for="improvements">
       How can we improve webchat? (optional)
     </label>
     <textarea class="govuk-textarea govuk-!-margin-bottom-4" id="improvements" name="improvements" rows="5"></textarea>
+  </div>
+  <div class="govuk-form-group">
+    <label class="wc-fieldset-heading govuk-label" for="research">
+      Tell us your email address if you want to take part in user research? (optional)
+    </label>
+    <div id="research-hint" class="wc-hint govuk-hint">
+      We will not share your email address or use it for anything else. We’ll delete it after 2 years.
+    </div>
+    <input class="govuk-input govuk-!-margin-bottom-4" id="research" name="research" type="text" />
   </div>
   <div class="govuk-button-group">
     <button class="wc-feedback-btn" data-module="govuk-button" data-wc-submit-feedback-btn>Submit</button>

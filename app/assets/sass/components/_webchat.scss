@@ -173,8 +173,11 @@
   .govuk-form-group {
     margin-bottom: 15px;
   }
-  .govuk-label,
+  .wc-fieldset-heading {
+    font-weight: bold;
+  }
   .govuk-fieldset__legend,
+  .govuk-label,
   .wc-hint {
     font-size: 16px;
   }

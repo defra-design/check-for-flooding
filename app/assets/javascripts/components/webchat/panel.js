@@ -40,14 +40,12 @@ class Panel {
     if (!isScroll) {
       return
     }
-
+    
     // Scroll to latest
     this.body.scrollTop = this.body.scrollHeight
   }
 
   create (state, addEvents) {
-    console.log('panel.create()')
-
     const model = {
       ...state
     }
@@ -92,7 +90,6 @@ class Panel {
     })
     container.addEventListener('change', e => {
       if (e.target.hasAttribute('data-wc-textbox')) {
-        console.log('change', e.target)
         const textbox = e.target
         const label = textbox.previousElementSibling
         Utils.toggleLabel(label, null, textbox)
@@ -103,9 +100,7 @@ class Panel {
     addEvents()
   }
 
-  update (state, error) {
-    console.log('panel.updateAll()')
-   
+  update (state, error) {   
     const container = document.getElementById('wc-panel')
     if (!container) {
       return
@@ -119,9 +114,7 @@ class Panel {
     this.updateFooter(state)
   }
 
-  updateHeader (state) {
-    console.log('panel.updateHeader()')
-   
+  updateHeader (state) {  
     const container = document.getElementById('wc-panel')
     if (!container) {
       return
@@ -138,9 +131,7 @@ class Panel {
     this._initComponents(header)
   }
 
-  updateBody (state, error) {
-    console.log('panel.updateBody()')
-   
+  updateBody (state, error) {  
     const container = document.getElementById('wc-panel')
     if (!container) {
       return
@@ -171,9 +162,7 @@ class Panel {
     this._initComponents(body)
   }
 
-  updateFooter (state) {
-    console.log('panel.updateFooter()')
-   
+  updateFooter (state) {  
     const container = document.getElementById('wc-panel')
     if (!container) {
       return
