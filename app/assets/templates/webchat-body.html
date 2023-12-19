@@ -88,13 +88,14 @@
           {% endif %}
         </p>
         {% endif %}
-        <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="5" aria-describedby="question-info">{{ model.question }}</textarea>
+        <textarea class="govuk-textarea wc-textarea-question{% if model.error.questionEmpty or model.error.questionExceeded %} wc-textarea--error{% endif %} govuk-js-character-count" id="question" name="question" rows="4" aria-describedby="question-info">{{ model.question }}</textarea>
       </div>
       <div id="question-info" class="wc-hint govuk-hint govuk-character-count__message">
         You can enter up to 500 characters
       </div>
     </div>
-    <button class="wc-submit-btn govuk-!-margin-top-1" data-module="govuk-button" data-wc-request-chat-btn>
+    <p id="wc-privacy" class="wc-inset-text">By selecting 'Request chat' you agree to the terms of our <a href="/privacy-notice">privacy notice</a>.</p>
+    <button class="wc-submit-btn govuk-!-margin-top-1" data-module="govuk-button" aria-details="wc-privacy" data-wc-request-chat-btn>
       Request chat
     </button>
   </form>

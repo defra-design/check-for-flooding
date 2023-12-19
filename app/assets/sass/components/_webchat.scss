@@ -193,6 +193,13 @@
   .wc-textarea--error {
     @extend .govuk-textarea--error;
   }
+  .wc-inset-text {
+    @extend .govuk-inset-text;
+    margin: 0 0 20px 0;
+    padding: 5px 5px 5px 15px;
+    font-size: 16px;
+    border-left-width: 5px;
+  }
   p, ul {
     font-size: 16px;
     margin-bottom: 15px;
@@ -317,7 +324,7 @@
 }
 .wc-back-link {
   @extend .govuk-back-link;
-  margin: 0 0 30px 0;
+  margin: 0 0 25px 0;
 }
 .wc-inset-text {
   @extend .govuk-inset-text;
