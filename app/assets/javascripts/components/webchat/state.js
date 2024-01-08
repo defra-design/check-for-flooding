@@ -37,7 +37,7 @@ class State {
 
     // Help with browser back behaviour
     if (history.length <= 1) {
-      this._isBack = false
+      this.isBack = false
       sessionStorage.removeItem('IS_BACK')
     }
 
@@ -63,17 +63,17 @@ class State {
   }
 
   pushState () {
-    this._isOpen = true
-    this._isBack = true
+    this.isOpen = true
+    this.isBack = true
     const url = `${window.location.href.split('#')[0]}#webchat`
-    history.pushState({ view: 'webchat', isBack: true }, '', url)
     sessionStorage.setItem('IS_BACK', true)
+    history.pushState({ view: 'webchat', isBack: true }, '', url)
   }
 
   back () {
     const offsetY = window.scrollY
     history.back()
-    if (!this._isMobile) {
+    if (!this.isMobile) {
       window.addEventListener('scroll', e => {
         window.scrollTo(0, offsetY)
       }, { once: true })

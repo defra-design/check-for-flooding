@@ -125,6 +125,8 @@ class Panel {
       ...state
     }
 
+    console.log(state)
+
     const header = this.header
     header.innerHTML = env.render('webchat-header.html', { model })
 
@@ -272,7 +274,7 @@ class Panel {
       hideBtn.hidden = isFullscreen
     }
     if (closeBtn) {
-      closeBtn.hidden = isFullscreen
+      closeBtn.hidden = state.isMobile && state.isBack
     }
 
     // Toggle textbox behaviour

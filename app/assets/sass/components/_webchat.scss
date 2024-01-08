@@ -368,7 +368,7 @@
   }
 }
 .wc-hide-btn,
-.wc-close-btn {
+.wc-close-btn[hidden] {
   @include mq ($until: 'tablet') {
     display: none;
   }
