@@ -499,12 +499,12 @@
   margin: 0px;
   width: auto;
 }
-.wc-link__inner {
+.wc-availability__inner {
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
 }
-.wc-link--fixed {
+.wc-availability--fixed {
   position: fixed;
   bottom: 0px;
   left: 0px;
@@ -521,7 +521,7 @@
     margin-bottom: 10px;
   }
 }
-.wc-link--hidden {
+.wc-availability--hidden {
   display:none;
 }
 .wc-open-btn {

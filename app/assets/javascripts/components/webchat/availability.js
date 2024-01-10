@@ -68,7 +68,7 @@ class Availability {
     const isFixed = isHidden && isBelowFold
     document.documentElement.classList.toggle('wc-scroll-padding', isFixed)
     document.body.classList.toggle('wc-scroll-padding', isFixed)
-    link.classList.toggle('wc-link--fixed', isFixed)
+    link.classList.toggle('wc-availability--fixed', isFixed)
   }
 }
 

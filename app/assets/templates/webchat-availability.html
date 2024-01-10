@@ -1,7 +1,7 @@
 <div class="wc-live" aria-live="polite" data-wc-availability-live></div>
 {% if model.isLink %}
-<div class="wc-link" data-wc-link>
-  <div class="wc-link__inner">
+<div class="wc-availability" data-wc-link>
+  <div class="wc-availability__inner">
     <a href="#webchat" id="wc-open" role="button" draggable="false" class="wc-open-btn" data-wc-open-btn data-wc-focus-visible>
       {{ model.btnText }}{% if model.unseen %}<span class="wc-open-btn__unseen">{{ model.unseen }}</span> <span class="govuk-visually-hidden">new message{% if model.unseen > 1 %}s{% endif %}</span>{% endif %}
     </a>
