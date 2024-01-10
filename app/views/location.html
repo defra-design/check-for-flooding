@@ -78,7 +78,7 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
     <!-- River and sea levels -->
     <h2 class="govuk-heading-m">River, sea, groundwater and rainfall levels</h2>
     <p>Measuring stations provide the latest river, sea, groundwater and rainfall levels. These levels can help you understand your flood risk now and over the next few days.</p>
-    <p><a href="/river-sea-groundwater-rainfall-levels?search={{ model.place.name | urlencode }}&searchType=place">Find river, sea, groundwater and rainfall levels</a></p> 
+    <p><a href="/river-sea-groundwater-rainfall-levels?search={{ model.place.name | urlencode }}&searchType=place">Find river, sea, groundwater and rainfall levels in this area</a></p> 
     <!-- end river and sea levels -->
 
     {% include "partials/context-footer.html" %}
