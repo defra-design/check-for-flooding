@@ -11,7 +11,6 @@ class Availability {
     // Events
     document.addEventListener('click', e => {
       if (e.target.hasAttribute('data-wc-open-btn')) {
-        console.log('click', e.target.id)
         openChatCb(e, e.target.id)
       }
     })
@@ -28,8 +27,6 @@ class Availability {
   }
 
   update (state) {
-    console.log('availability.update()')
-
     const container = this.container
     const isText = !container.hasAttribute('data-wc-no-text')
     const hasThread = state.threadId

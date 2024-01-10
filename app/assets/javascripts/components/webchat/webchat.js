@@ -74,8 +74,6 @@ class WebChat {
   }
 
   async _authorise () {
-    console.log('_authorise')
-
     // New SDK instance
     const sdk = new ChatSdk({
       brandId: process.env.CXONE_BRANDID,
@@ -121,8 +119,6 @@ class WebChat {
   }
 
   async _recoverThread () {
-    console.log('_recoverThread')
-
     // Recover thread
     try {
       await this._authorise()
@@ -170,8 +166,6 @@ class WebChat {
   }
 
   async _startChat () {
-    console.log('_startChat')
-
     // Check availability
     await this._updateAvailability()
     const state = this.state
@@ -202,8 +196,7 @@ class WebChat {
   }
 
   async _confirmEndChat () {
-    console.log('_confirmEndChat')
-  
+ 
     // Close thread
     localStorage.removeItem('THREAD_ID')
     const state = this.state
@@ -407,8 +400,6 @@ class WebChat {
   }
 
   _openChat (e, instigatorId) {
-    console.log('_openChat', instigatorId)
-
     const state = this.state
 
     // Return if already open
@@ -450,8 +441,6 @@ class WebChat {
   }
 
   _closeChat (e) {
-    console.log('_closeChat')
-
     const state = this.state
 
     // History back
@@ -499,8 +488,6 @@ class WebChat {
   }
 
   _timeoutChat() {
-    console.log('_timeoutChat')
-
     // Close thread
     localStorage.removeItem('THREAD_ID')
 
@@ -527,7 +514,6 @@ class WebChat {
   _prechat () {
     const state = this.state
     state.view = 'PRECHAT'
-    console.log('_prechat')
     const panel = this.panel
     panel.update(state)
     panel.container.focus()
@@ -536,7 +522,6 @@ class WebChat {
   _start () {
     const state = this.state
     state.view = 'START'
-    console.log('_start')
     const panel = this.panel
     panel.update(state)
     panel.container.focus()
@@ -545,7 +530,6 @@ class WebChat {
   _unavailable () {
     const state = this.state
     state.view = 'UNAVAILABLE'
-    console.log('_unavailable')
     const panel = this.panel
     panel.update(state)
     panel.container.focus()
@@ -557,7 +541,6 @@ class WebChat {
   _endChat () {
     const state = this.state
     state.view = 'END'
-    console.log('_endChat')
     this.panel.update(state)
     const btn = document.querySelector('[data-wc-confirm-end-btn]')
     btn.focus()
@@ -566,14 +549,12 @@ class WebChat {
   _resumeChat () {
     const state = this.state
     state.view = 'OPEN'
-    console.log('_resumeChat')
     const panel = this.panel
     panel.update(state)
     panel.container.focus()
   }
 
   _feedback () {
-    console.log('_feedback')
     const state = this.state
     state.view = 'FEEDBACK'
     this.panel.update(state)
@@ -586,7 +567,6 @@ class WebChat {
   }
 
   _submitFeedback () {
-    console.log('_submitFeedback')
     const state = this.state
     state.view = 'FINISH'
     this.panel.update(state)
@@ -600,7 +580,6 @@ class WebChat {
   _settings () {
     const state = this.state
     state.view = 'SETTINGS'
-    console.log('_settings')
     const panel = this.panel
     panel.update(state)
     panel.container.focus()
@@ -620,7 +599,6 @@ class WebChat {
 
     // Return to open view
     state.view = 'OPEN'
-    console.log('_resumeChat')
     panel.update(state)
     panel.container.focus()
   }
@@ -646,8 +624,6 @@ class WebChat {
   }
 
   _sendMessage (e) {
-    console.log('_sendMessage')
-
     // Do we need to check here?
     const message = document.getElementById('message')    
 
@@ -677,10 +653,7 @@ class WebChat {
     const state = this.state
     const status = state.status
     const view = state.view
-    if (!status || status === 'closed' || view === 'TIMEOUT') {
-      console.log('Timeout stopped...')
-      return
-    }
+    if (!status || status === 'closed' || view === 'TIMEOUT') return
     
     // Remove timeout cancel button
     if (view === 'OPEN') {
@@ -688,13 +661,10 @@ class WebChat {
     }
 
     // Restart timeout
-    console.log('Timeout started...')
     this.timeout = setTimeout(this._handleTimeout.bind(this), Config.timeout * 1000)
   }
 
   _download () {
-    console.log('download')
-
     // Need to test for accessibility of this approach
     const messages = this.state.messages
     const transcript = new Transcript(messages)
@@ -720,13 +690,7 @@ class WebChat {
   // Event handlers
   //
 
-  // _handleConsumerAuthorizedEvent (e) {
-  //   console.log('_handleConsumerAuthorizedEvent')
-  // }
-
   async _handleLivechatRecoveredEvent (e) {
-    console.log('_handleLivechatRecoveredEvent')
-
     // Set thread status
     const state = this.state
     const status = e.detail.data.contact.status
@@ -777,7 +741,6 @@ class WebChat {
         messages = []
       }
     }
-    console.log('All messages loaded')
 
     // Remove duplicates?? LoadMoreMessages doesnt always get a unique set?
     state.messages = [...new Map(state.messages.map(m => [m.id, m])).values()]
@@ -793,8 +756,6 @@ class WebChat {
   }
 
   _handleReadyEvent (e) {
-    console.log('_handleReadyEvent')
-
     // Start/reset timeout
     this._resetTimeout()
 
@@ -807,7 +768,6 @@ class WebChat {
 
     Utils.poll({
       fn: async () => {
-        console.log('Polling availability')
         state.availability = await Utils.getAvailability()
 
         // Set view
@@ -818,6 +778,13 @@ class WebChat {
         // Update panel on page load only
         if (isInit) {
           panel.update(state)
+        }
+
+        // Alert assistive technology
+        if (isInit && state.isOpen) {
+          const el = document.querySelector('[data-wc-status]')
+          const text = el ? el.innerHTML : ''
+          this._alertAT(text)
         }
 
         // Update availability on each poll
@@ -832,8 +799,6 @@ class WebChat {
   }
 
   _handleContactStatusChangedEvent (e) {
-    console.log('_handleContactStatusChangedEvent', this.state.view)
-
     const state = this.state
     state.status = e.detail.data.case.status
     const panel = this.panel
@@ -864,8 +829,6 @@ class WebChat {
   }
 
   _handleAssignedAgentChangedEvent (e) {
-    console.log('_handleAssignedAgentChangedEvent')
-
     const assignee = e.detail.data.inboxAssignee
     const state = this.state
     state.assignee = assignee ? assignee.nickname || assignee.firstName : null
@@ -888,12 +851,10 @@ class WebChat {
   }
 
   _handleContactCreatedEvent (e) {
-    console.log('_handleContactCreatedEvent')
+    // console.log('_handleContactCreatedEvent')
   }
 
   _handleMessageCreatedEvent (e) {
-    console.log('_handleMessageCreatedEvent')
-
     const state = this.state  
     const response = e.detail.data.message
     const assignee = response.authorUser ? response.authorUser.firstName : null
@@ -979,8 +940,6 @@ class WebChat {
   }
 
   _handleAgentTypingEvent (e) {
-    console.log('_handleAgentTypingEvent')
-
     // Event may fire when list is not available
     const list = document.querySelector('[data-wc-list]')
     if (!list) {
@@ -1015,9 +974,7 @@ class WebChat {
     }
   }
 
-  _handleMessageSeenByEndUserEvent (e) {
-    console.log('_handleMessageSeenByEndUserEvent')
-    
+  _handleMessageSeenByEndUserEvent (e) {  
     // Clear unseen count
     const state = this.state
     state.unseen = 0
@@ -1025,8 +982,6 @@ class WebChat {
   }
 
   _handleTimeout (e) {
-    console.log('Countdown starting...')
-
     // Show timeout notification
     const state = this.state
     const panel = this.panel
@@ -1037,18 +992,16 @@ class WebChat {
     // Set countdown
     const element = panel.container.querySelector('[data-wc-countdown]')
     this.countdown = Utils.setCountdown(element, () => {
-      console.log('Count down ended')
+      // console.log('Count down ended')
       if (container) {
         this._timeoutChat()
       } else {
-        console.log('Chat has timedout')
+        // console.log('Chat has timedout')
       }
     })
   }
 
   _handleSendKeystrokeEvent () {
-    console.log('_handleSendKeystrokeEvent')
-
     this.thread.keystroke(1000)
     setTimeout(() => {
       this.thread.stopTyping()
@@ -1056,7 +1009,7 @@ class WebChat {
   }
 
   _handleChatEvent (e) {
-    console.log('Chat event: ', e)
+    // console.log('Chat event: ', e)
   }
 }
 

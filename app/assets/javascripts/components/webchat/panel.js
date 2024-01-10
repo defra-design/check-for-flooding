@@ -125,8 +125,6 @@ class Panel {
       ...state
     }
 
-    console.log(state)
-
     const header = this.header
     header.innerHTML = env.render('webchat-header.html', { model })
 
