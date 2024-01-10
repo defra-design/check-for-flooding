@@ -30,7 +30,8 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-8">
-      Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}near{% endif%} {{ model.place.name }}
+      <!-- Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}near{% endif%} {{ model.place.name }} -->
+      Check for flooding in {{ model.place.name }}
     </h1>
     <h2 class="govuk-heading-m">Flood risk today</h2>
   </div>
