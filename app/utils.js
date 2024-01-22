@@ -44,7 +44,7 @@ const formatElapsedTime = (date) => {
   if (mins <= 60 && hours < 2) {
     return `${mins} minutes ago`
   } else {
-    return 'more than 1 hour ago'
+    return 'More than 1 hour ago'
   }
 }
 
