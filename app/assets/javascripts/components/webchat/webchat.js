@@ -680,7 +680,8 @@ class WebChat {
 
   _alertAT (text, politeness = 'polite') {
     // Get reference to live element
-    const el = document.querySelector('[data-wc-panel-live], [data-wc-availability-live]')
+    // const el = document.querySelector('[data-wc-panel-live], [data-wc-availability-live]')
+    const el = document.querySelector('[data-wc-panel-live]')
     el.setAttribute('aria-live', politeness)
     el.innerHTML = `<p>${text}</p>`
     setTimeout(() => { el.innerHTML = '' }, 1000)

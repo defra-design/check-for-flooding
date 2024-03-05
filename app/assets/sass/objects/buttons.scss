@@ -29,10 +29,10 @@ button.defra-button-secondary {
     background-color: white;
     padding: 10px;
     cursor: pointer;
-    color: govuk-colour('black');
+    color: govuk-colour('blue');
     text-decoration: none;
     &:visited {
-        color: govuk-colour('black');
+        color: govuk-colour('blue');
     }
     &:hover {
         background-color: govuk-colour('light-grey');
@@ -40,6 +40,7 @@ button.defra-button-secondary {
     &:focus {
         background-color: $govuk-focus-colour;
         border-color: $govuk-focus-colour;
+        color: govuk-colour('black');
         box-shadow: 0 2px 0 govuk-colour('black');
         outline-offset: 0;
         outline: 2px solid transparent;
@@ -49,9 +50,9 @@ button.defra-button-secondary {
         border: 1px solid govuk-colour('mid-grey');
         box-shadow: none;
     }
-    &__icon {
-        color: govuk-colour('black');
-    }
+}
+.defra-button-secondary__icon {
+    color: govuk-colour('black');
     svg {
         color: currentColor;
         position: relative;
