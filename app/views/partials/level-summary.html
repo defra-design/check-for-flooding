@@ -3,7 +3,16 @@
   <h2 class="defra-live__title">Latest level{% if model.targetArea.triggerLevels > 1 %}s{% endif %}</h2>
   {% for trigger in model.targetArea.triggerLevels %}
   <p class="defra-flood-meta defra-flood-meta--no-border govuk-!-margin-bottom-0"><strong>{{ trigger.elapsedTime }}</strong></p>
-  <p>The {{ trigger.riverName }} level at {{ trigger.name }} was {{ trigger.latestHeight }} metres. Property flooding is possible when it goes above {{ trigger.threshold }} metres. <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}">Monitor the {{ trigger.riverName }} level at {{ trigger.name }}</a></p>
+  <p>The {{ trigger.riverName }} level at {{ trigger.name }} was {{ trigger.latestHeight }} metres. Property flooding is possible when it goes above {{ trigger.threshold }} metres.
+    {% if model.targetArea.triggerLevels.length > 1 %}
+    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}">Monitor the {{ trigger.riverName }} level at {{ trigger.name }}</a>
+    {% endif %}
+  </p>
+  {% if model.targetArea.triggerLevels.length == 1 %}
+  <p>
+    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}">Monitor the {{ trigger.riverName }} level at {{ trigger.name }}</a>
+  </p>
+  {% endif %}
   {% endfor %}
   <p class="defra-live__supplementary">{% if model.targetArea.triggerLevels > 1 %}These levels{% else %}This level{% endif %} will update automatically</p>
 </div>
