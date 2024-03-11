@@ -32,8 +32,12 @@ router.get('/station/:id/:downstream?', async (req, res) => {
     if (station.latestDatetime) {
       const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
       const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
-      telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
-      telemetry = telemetry.data
+      try {
+        telemetry = await telemetryServices.getStationTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
+        telemetry = telemetry.data
+      } catch (err) {
+        console.log(err)
+      }
       // Generate dummy station forecast
       if (station.isForecast) {
         const forecast = await telemetryServices.getStationForecastTelemetry(cookie, station.latestDatetime, station.latestHeight, station.levelHigh)
