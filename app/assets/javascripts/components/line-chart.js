@@ -5,7 +5,7 @@ import { area as d3Area, line as d3Line, curveMonotoneX } from 'd3-shape'
 import { axisBottom, axisLeft } from 'd3-axis'
 import { scaleLinear, scaleTime } from 'd3-scale'
 import { timeFormat } from 'd3-time-format'
-import { timeDay, timeHour } from 'd3-time' // 6hour change
+import { timeHour } from 'd3-time' // 6hour change
 import { select, selectAll, pointer } from 'd3-selection'
 import { bisector, extent } from 'd3-array'
 const { xhr, simplify } = window.flood.utils

@@ -13,7 +13,7 @@ if (document.querySelectorAll('[data-toggletip]')) {
 if (document.getElementById('line-chart')) {
   const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
   const thresholdId = `threshold-${window.flood.model.id}-high`
-  const threshold = document.querySelector(`[data-id="${thresholdId}"]`)
+  const threshold = document.querySelector(`[data-id="${window.flood.utils.getParameterByName('tid') || thresholdId}"]`)
   if (threshold) {
     lineChart.addThreshold({
       id: thresholdId,
