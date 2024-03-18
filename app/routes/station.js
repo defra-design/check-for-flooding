@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const thresholdServices = require('../services/threshold')
 const stationServices = require('../services/station')
 const telemetryServices = require('../services/telemetry')
 const locationServices = require('../services/location')
@@ -49,20 +50,27 @@ router.get('/station/:id/:downstream?', async (req, res) => {
     } else {
       telemetry = {}
     }
-    // Thresholds
-    thresholds = new Thresholds([{
+    // Warning thresholds
+    const thresholdResponse = await thresholdServices.getThresholds(cookie, rloiId, isDownstream)
+    // Add thresholds from station data and merge with warning thresholds
+    let data = thresholdResponse.data
+    const hasAlerts = !!data.find(x => x.name === 'alert')
+    console.log(hasAlerts)
+    data.push({
       id: `${station.id}-max`,
       name: 'max',
       value: station.levelMax,
       date: station.levelMaxDatetime
-    },
-    {
-      id: `${station.id}-high`,
-      name: 'high',
-      value: station.levelHigh,
-      date: null
+    })
+    if (!hasAlerts) {
+      items.push({
+        id: `${station.id}-high`,
+        name: 'high',
+        value: station.levelHigh,
+        date: null
+      })  
     }
-    ], station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
+    thresholds = new Thresholds(data, station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
   } else {
     // Return 500 error
   }

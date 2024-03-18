@@ -4,6 +4,7 @@ const warningServices = require('./warning')
 const riverServices = require('./river')
 const stationServices = require('./station')
 const outlookServices = require('./outlook')
+const thresholdServices = require('./threshold')
 const targetAreaServices = require('./target-area')
 const telemetryServices = require('./telemetry')
 const mapServices = require('./map')
@@ -131,6 +132,22 @@ router.get('/service/stations-by-river/:name', async (req, res, next) => {
 router.get('/service/stations-by-target-area-trigger/:id', async (req, res, next) => {
   try {
     res.status(200).json(await stationServices.getStationsByTargetAreaTrigger(req.params.id))
+  } catch (err) {
+    res.status(500)
+    console.log(err)
+  }
+})
+
+//
+// Thresholds
+//
+
+// Get thresholds for a station
+router.get('/service/thresholds/:id/:downstream?', async (req, res, next) => {
+  const isDownstage = req.params.downstream === 'downstream'
+  const rloiId = `${req.params.id}${isDownstage ? '-downstage' : ''}`
+  try {
+    res.status(200).json(await thresholdServices.getThresholds(rloiId))
   } catch (err) {
     res.status(500)
     console.log(err)

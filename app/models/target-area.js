@@ -1,6 +1,10 @@
 const severity = require('../models/severity')
 const TriggerLevel = require('./trigger-level')
 
+function parseMessage (message) {
+  return message.replace(/(\r?\n)+/g, '\n').split('\n').map(p => `<p>${p}</p>`).join(' ')
+}
+
 class TargetArea {
   constructor (data) {
     const triggerLevels = data.trigger_levels ? data.trigger_levels.map(triggerLevel => { return new TriggerLevel(triggerLevel) }) : []
@@ -9,7 +13,7 @@ class TargetArea {
     this.name = data.name
     this.type = data.type
     this.severity = severity.find(item => item.id === parseInt(data.severity, 10))
-    this.message = data.message?.trim()
+    this.message = parseMessage(data.message?.trim())
     this.area = data.area
     this.geography = data.geography
     this.date = data.date

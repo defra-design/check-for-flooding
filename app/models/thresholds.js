@@ -25,12 +25,12 @@ class Threshold {
         level: Number(key).toFixed(2),
         isLatest: Number(key) === latest,
         isExceeded: Number(key) <= latest,
-        values: value.map(x => {
+        values: value.map(item => {
           return {
-            id: x.id,
-            name: this.createName(x),
+            id: item.id,
+            name: this.createName(item),
             type: '',
-            description: x.description || this.createDescription(x)
+            description: this.createDescription(item)
           }
         })
       }
@@ -42,21 +42,40 @@ class Threshold {
   }
 
   createName (item) {
-    let name = item.name
-    if (name === 'max') {
-      name = 'Highest level on record'
-    } else if (name === 'high') {
-      name = 'Top of the normal range'
+    let name
+    switch (item.name) {
+      case 'max':
+        name = 'Highest level on record'
+        break
+      case 'high':
+        name = 'Top of the normal range'
+        break
+      case 'warning':
+        name = 'Property flooding possible'
+        break
+      case 'alert':
+        name = 'Flooding of low laying land'
     }
     return name
   }
 
   createDescription (item) {
     let description
-    if (item.name === 'max') {
-      description = `Water reaches the highest level recorded at this measuring station (${utils.formatDatePast(item.date)})`
-    } else if (item.name === 'high') {
-      description = 'Top of the normal range, above this flooding may occur'
+    switch (item.name) {
+      case 'max':
+        description = `Water reaches the highest level recorded at this measuring station (${utils.formatDatePast(item.date)})`
+        break
+      case 'high':
+        description = 'Top of the normal range, above this flooding may occur'
+        break
+      case 'warning':
+        description = `Property flooding possible: ${item.description}`
+        break
+      case 'alert':
+        description = `Low laying land flooding: ${item.description}`
+        break
+      default:
+        description = item.description
     }
     return description
   }
