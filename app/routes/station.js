@@ -55,7 +55,6 @@ router.get('/station/:id/:downstream?', async (req, res) => {
     // Add thresholds from station data and merge with warning thresholds
     let data = thresholdResponse.data
     const hasAlerts = !!data.find(x => x.name === 'alert')
-    console.log(hasAlerts)
     data.push({
       id: `${station.id}-max`,
       name: 'max',
