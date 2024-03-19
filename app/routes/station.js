@@ -21,15 +21,16 @@ router.get('/station/:id/:downstream?', async (req, res) => {
   const cookie = req.headers.cookie || null
   const isDownstream = req.params.downstream?.toLowerCase() === 'downstream'
   const rloiId = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStation(cookie, rloiId, isDownstream)
   let telemetry, station, banner, thresholds, place
+
+  // Get station details
+  const stationResponse = await stationServices.getStation(cookie, rloiId, isDownstream)
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
       return res.status(404).render('404')
     }
-    // Station details
     station = new Station(stationResponse.data)
-    // Station telemetry
+    // Telemetry
     if (station.latestDatetime) {
       const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
       const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
@@ -39,10 +40,9 @@ router.get('/station/:id/:downstream?', async (req, res) => {
       } catch (err) {
         console.log(err)
       }
-      // Generate dummy station forecast
+      // Generate dummy forecast
       if (station.isForecast) {
         const forecast = await telemetryServices.getStationForecastTelemetry(cookie, station.latestDatetime, station.latestHeight, station.levelHigh)
-        // Add station properties
         telemetry.forecast = forecast.data.values
         station.forecastHighest = forecast.data.highestValue
         station.forecastHighestDateTime = forecast.data.highestValueDateTime
@@ -50,29 +50,16 @@ router.get('/station/:id/:downstream?', async (req, res) => {
     } else {
       telemetry = {}
     }
-    // Warning thresholds
+
+    // Get thresholds
     const thresholdResponse = await thresholdServices.getThresholds(cookie, rloiId, isDownstream)
     // Add thresholds from station data and merge with warning thresholds
-    let data = thresholdResponse.data
-    const hasAlerts = !!data.find(x => x.name === 'alert')
-    data.push({
-      id: `${station.id}-max`,
-      name: 'max',
-      value: station.levelMax,
-      date: station.levelMaxDatetime
-    })
-    if (!hasAlerts) {
-      items.push({
-        id: `${station.id}-high`,
-        name: 'high',
-        value: station.levelHigh,
-        date: null
-      })  
-    }
-    thresholds = new Thresholds(data, station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
+    thresholds = new Thresholds(thresholdResponse.data, station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
   } else {
     // Return 500 error
   }
+
+  // Get place details
   const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
   if (locationResponse.status === 200) {
     if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
@@ -87,6 +74,7 @@ router.get('/station/:id/:downstream?', async (req, res) => {
   } else {
     // Return 500 error
   }
+
   const model = new ViewModel(station, banner, telemetry, thresholds, place)
   return res.render('station', { model })
 })
@@ -94,15 +82,16 @@ router.get('/station/:id/:downstream?', async (req, res) => {
 router.get('/rainfall-station/:id', async (req, res) => {
   const cookie = req.headers.cookie || null
   const id = req.params.id.toLowerCase()
-  const stationResponse = await stationServices.getStationRain(cookie, id)
   let telemetry, station, banner, place
+
+  // Get station details
+  const stationResponse = await stationServices.getStationRain(cookie, id)
   if (stationResponse.status === 200) {
     if (!stationResponse.data) {
       return res.status(404).render('404')
     }
-    // Station details
     station = new Station(stationResponse.data)
-    // Rainfall telemetry
+    // Telemetry
     const start = moment(station.latestDatetime).subtract(5, 'days').toISOString().replace(/.\d+Z$/g, 'Z')
     const end = moment().toISOString().replace(/.\d+Z$/g, 'Z')
     telemetry = await telemetryServices.getRainfallTelemetry(cookie, station.measureId, start, end, station.latestDatetime)
@@ -110,6 +99,8 @@ router.get('/rainfall-station/:id', async (req, res) => {
   } else {
     // Return 500 error
   }
+
+  // Get place details
   const locationResponse = await locationServices.getLocationByLatLon(station.centroid[1], station.centroid[0])
   if (locationResponse.status === 200) {
     if (!locationResponse.data && locationResponse.data.resourceSets && locationResponse.data.resourceSets.length) {
@@ -124,6 +115,7 @@ router.get('/rainfall-station/:id', async (req, res) => {
   } else {
     // Return 500 error
   }
+
   const model = new ViewModel(station, banner, telemetry, null, place)
   return res.render('rainfall', { model })
 })

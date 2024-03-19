@@ -43,7 +43,7 @@ class Threshold {
 
   createName (item) {
     let name
-    switch (item.name) {
+    switch (item.type) {
       case 'max':
         name = 'Highest level on record'
         break
@@ -61,7 +61,7 @@ class Threshold {
 
   createDescription (item) {
     let description
-    switch (item.name) {
+    switch (item.type) {
       case 'max':
         description = `Water reaches the highest level recorded at this measuring station (${utils.formatDatePast(item.date)})`
         break
@@ -77,6 +77,7 @@ class Threshold {
       default:
         description = item.description
     }
+    console.log(description)
     return description
   }
 }
