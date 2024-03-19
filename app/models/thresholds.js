@@ -77,7 +77,6 @@ class Threshold {
       default:
         description = item.description
     }
-    console.log(description)
     return description
   }
 }
