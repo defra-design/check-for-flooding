@@ -10,7 +10,7 @@
   </p>
   {% if model.targetArea.triggerLevels.length == 1 %}
   <p>
-    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}?tid=threshold-{{ model.targetArea.id | lower }}">Monitor the latest{% if model.targetArea.triggerLevels > 1 %} {{ trigger.riverName }}{% endif %} level at {{ trigger.name }}</a>
+    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}?tid=threshold-{{ trigger.id }}">Monitor the latest{% if model.targetArea.triggerLevels > 1 %} {{ trigger.riverName }}{% endif %} level at {{ trigger.name }}</a>
   </p>
   {% endif %}
   {% endfor %}
