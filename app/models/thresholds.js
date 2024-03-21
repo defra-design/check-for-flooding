@@ -50,11 +50,13 @@ class Threshold {
       case 'high':
         name = 'Top of the normal range'
         break
-      case 'warning':
-        name = 'Property flooding possible'
-        break
-      case 'alert':
-        name = 'Flooding of low laying land'
+      default:
+        name = item.name
+      // case 'warning':
+      //   name = 'Property flooding possible'
+      //   break
+      // case 'alert':
+      //   name = 'Flooding of low laying land'
     }
     return name
   }
