@@ -400,8 +400,8 @@ function OutlookMap (mapId, options) {
     // const width = canvas.width
     // const height = canvas.height
     // const ctx = canvas.getContext('2d')
-    e.context.filter = 'blur(12px)'
-    console.log(e.context)
+    // e.context.filter = 'blur(12px)'
+    // console.log(e.context)
     // const output = ctx.createImageData(width, height)
     // ctx.putImageData(output, 0, 0)
   })
