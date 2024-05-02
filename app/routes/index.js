@@ -5,7 +5,7 @@ const outlookServices = require('../services/outlook')
 const locationServices = require('../services/location')
 const Place = require('../models/place')
 const Warnings = require('../models/warnings')
-const Outlook = require('../models/outlook/outlook')
+const Outlook = require('../models/outlook')
 const ViewModel = require('../models/views/home')
 
 // Add your routes here - above the module.exports line

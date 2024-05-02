@@ -67,7 +67,9 @@ Check for flooding {% if model.place.type === 'admindivision2' %}in{% else %}nea
       <p class="govuk-body govuk-!-margin-bottom-0">There is no recent data.</p>
     </div> 
     {% else %}
-      {% include "partials/outlook-region.html" %}
+    {{ model.outlook.regionalSummary | safe }}
+    <span id="map-outlook"></span>
+    <div class="defra-flood-meta">Updated <time datetime="{{ model.outlook.outlookUTC }}">{{ model.outlook.outlookTimestamp }}</time>.</br>Produced by the Met Office and Environment Agency</div>
     {% endif %}
 
     <h2 class="govuk-heading-m">Long term flood risk</h2>

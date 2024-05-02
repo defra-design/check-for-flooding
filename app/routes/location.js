@@ -7,7 +7,7 @@ const levelServices = require('../services/level')
 const Place = require('../models/place')
 const Warnings = require('../models/warnings')
 const Levels = require('../models/levels')
-const Outlook = require('../models/outlook/outlook-tabs')
+const Outlook = require('../models/outlook')
 const BannerLocation = require('../models/banner-location')
 const ViewModel = require('../models/views/location')
 
@@ -31,6 +31,7 @@ router.get('/location/:location', async (req, res) => {
       const levels = new Levels(null, levelResponse.data)
       const banner = new BannerLocation(place, warnings, levels)
       const outlook = new Outlook(outlookResponse.data, { bbox2k: place.bbox })
+      console.log(outlook)
       const model = new ViewModel(place, banner, outlook, referrer)
       return res.render('location', { model })
     } else {
