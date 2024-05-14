@@ -1,0 +1,46 @@
+.defra-details {
+  @include govuk-font($size: 19);
+  color: $govuk-link-colour;
+  padding: 5px 2px 5px 0;
+  margin: -5px 0 0;
+  &__summary {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    list-style-type: none;
+    margin-bottom: 20px;
+  }
+  &__marker {
+    content: '';
+    box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-color: currentColor;
+    border: .0625rem solid;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+  &__marker:after {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    bottom: .3125rem;
+    left: .375rem;
+    width: .375rem;
+    height: .375rem;
+    transform: rotate(-45deg);
+    border-color: currentColor;
+    border-top: .125rem solid;
+    border-right: .125rem solid;
+  }
+  &__label {
+    margin-left: 3px;
+    vertical-align: middle;
+    text-decoration: underline;
+  }
+}
+.defra-details[open] .defra-details__marker {
+  transform: rotate(180deg);
+}

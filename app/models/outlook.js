@@ -203,6 +203,148 @@ const buildMatrix = (data, place) => {
   return matrix
 }
 
+const day = (n, l) => {
+  const d = (new Date()).getDay() === 0 ? 6 : (new Date()).getDay() - 1
+  return n === 0
+    ? 'Today'
+    : n === 1
+    ? 'Tomorrow'
+    : l.day[d + n > 6 ? d + n - 7 : d + n]
+}
+
+const where = (m) => {
+  return [m[0], m[1], [
+    Math.max(m[2][0], m[3][0]),
+    Math.max(m[2][1], m[3][1])
+  ]]
+}
+
+const source = (m, l) => {
+  const sources = []
+  for (let i = 0; i < m.length; i++ ) {
+    m[i][0] > 0 && i > 1 ? sources.push(l.source[i]) : null
+  }
+  return sources
+}
+
+const isSame = (a, b) => {
+  return JSON.stringify(a) === JSON.stringify(b)
+}
+
+const groupBy = (objectArray, property) => {
+  return objectArray.reduce((acc, obj) => {
+    if (!acc[obj[property]])
+      acc[obj[property]] = []
+    acc[obj[property]].push(obj)
+    return acc
+  }, {})
+}
+
+const joinList = (a, s) => {
+  // const p = new RegExp(s + '(?=[^'+ s + ']+$)') // /;(?=[^;]+$)/
+  const p = new RegExp(';(?=[^;]+$)') // /;(?=[^;]+$)/
+  return a.join('; ').replace(p, ' and').replace(';', s)
+}
+
+const listWhere = (a, l) => {
+  let s = a.filter(a => [l.where[0], l.where[1]].includes(a))
+  let r = a.find(a => a === l.where[2]) || ''
+  s = s.length ? `${s.join(' and ')} areas${a.length === 3 ? ',' : ''}` : ''
+  return joinList([s, r].filter(w => w.length > 0), ',')
+}
+
+const splitData = (a) => {
+  const l = a.length ? a[0][1].flat(2).length : 0
+  if (l <= 4) return [a]
+  const f = JSON.parse(JSON.stringify(a))
+  f[0][1] = f[0][1].slice(0, 1)
+  const s = JSON.parse(JSON.stringify(a))
+  s[0][1] = s[0][1].splice(1)
+  return [f, s]
+}
+
+const groupByMatrix = (m, l) => {
+  const groups = []
+  for (let i = 0; i < m.length; i++ ) {
+    if (i > 0 && isSame(m[i-1], m[i])) {
+      const g = groups[groups.length - 1]
+      g.end = day(i, l)
+      g.length += 1
+      g.join = g.length === 2 ? ' and ' : ' through to '
+    } else {
+      groups.push({
+        start: day(i, l),
+        join: '',
+        end: '',
+        length: 1,
+        where: where(m[i]),
+        source: joinList(source(m[i], l), ',')
+      })
+    }
+  }
+
+  return groups
+}
+
+const groupByImpactLikelihood = (g) => {
+  const matrix = g.where.map((m, i) => ({
+    impact: m[0],
+    likelihood: m[1],
+    where: i + 1
+  }))
+  let group = groupBy(matrix, 'impact')
+  for (let i in group) {
+    group[i] = groupBy(group[i], 'likelihood')
+    for (let l in group[i]) {
+      for (let v in group[i][l]) {
+        group[i][l][v] = group[i][l][v].where
+      }
+    }
+  }
+  delete group['0']
+  return group
+}
+
+const sortArray = (g, l) => {
+  return Object.keys(g).sort().reverse().map(a => (
+    [l.impact[a-1], Object.keys(g[a]).sort().reverse().map(b => (
+      [l.likelihood[b-1], g[a][b].sort().map(c => (
+        l.where[c-1]
+      )
+    )]))
+  ]))
+}
+
+const createFirstSentence = (data, source, l) => {
+  let sentence = ''
+  for (let i = 0; i < data.length; i++ ) {
+    const g = data[i]
+    sentence += `${g[0].charAt(0).toUpperCase() + g[0].slice(1)} is `
+    for (let j = 0; j < g[1].length; j++ ) {
+      const d = data[i][1][j]
+      const w = listWhere(d[1], l)
+      //g[0]: impact, d[0]: liklihood, w: loation 
+      sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
+    }
+  }
+  return sentence.trim()
+}
+
+const createSecondSentence = (data, l) => {
+  let sentence = ''
+  for (let i = 0; i < data.length; i++ ) {
+    const g = data[i]
+    const p = []
+    for (let j = 0; j < g[1].length; j++ ) {
+      const d = data[i][1][j]
+      const w = listWhere(d[1], l)
+      p.push(`${j === 0 ? (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0] : d[0] + ' in ' + w}`)
+    }
+    sentence += joinList(p, ',')
+  }
+  return sentence.trim()
+}
+
 const createText = (matrix, offset = 0) => {
   const m = matrix.slice(offset)
 
@@ -212,148 +354,6 @@ const createText = (matrix, offset = 0) => {
     impact: ['flooding of low-lying land', 'isolated property flooding', 'property flooding and travel disruption', 'severe flooding and travel disruption'],
     where: ['riverside', 'coastal', 'across the region'],
     source: ['river', 'sea', 'surface water', 'groundwater']
-  }
-
-  const day = (n, l) => {
-    const d = (new Date()).getDay() === 0 ? 6 : (new Date()).getDay() - 1
-    return n === 0
-      ? 'Today'
-      : n === 1
-      ? 'Tomorrow'
-      : l.day[d + n > 6 ? d + n - 7 : d + n]
-  }
-
-  const where = (m) => {
-    return [m[0], m[1], [
-      Math.max(m[2][0], m[3][0]),
-      Math.max(m[2][1], m[3][1])
-    ]]
-  }
-
-  const source = (m, l) => {
-    const sources = []
-    for (let i = 0; i < m.length; i++ ) {
-      m[i][0] > 0 && i > 1 ? sources.push(l.source[i]) : null
-    }
-    return sources
-  }
-
-  const isSame = (a, b) => {
-    return JSON.stringify(a) === JSON.stringify(b)
-  }
-
-  const groupBy = (objectArray, property) => {
-    return objectArray.reduce((acc, obj) => {
-      if (!acc[obj[property]])
-        acc[obj[property]] = []
-      acc[obj[property]].push(obj)
-      return acc
-    }, {})
-  }
-
-  const joinList = (a, s) => {
-    // const p = new RegExp(s + '(?=[^'+ s + ']+$)') // /;(?=[^;]+$)/
-    const p = new RegExp(';(?=[^;]+$)') // /;(?=[^;]+$)/
-    return a.join('; ').replace(p, ' and').replace(';', s)
-  }
-
-  const listWhere = (a, l) => {
-    let s = a.filter(a => [l.where[0], l.where[1]].includes(a))
-    let r = a.find(a => a === l.where[2]) || ''
-    s = s.length ? `${s.join(' and ')} areas${a.length === 3 ? ',' : ''}` : ''
-    return joinList([s, r].filter(w => w.length > 0), ',')
-  }
-
-  const splitData = (a) => {
-    const l = a.length ? a[0][1].flat(2).length : 0
-    if (l <= 4) return [a]
-    const f = JSON.parse(JSON.stringify(a))
-    f[0][1] = f[0][1].slice(0, 1)
-    const s = JSON.parse(JSON.stringify(a))
-    s[0][1] = s[0][1].splice(1)
-    return [f, s]
-  }
-
-  const groupByMatrix = (m, l) => {
-    const groups = []
-    for (let i = 0; i < m.length; i++ ) {
-      if (i > 0 && isSame(m[i-1], m[i])) {
-        const g = groups[groups.length - 1]
-        g.end = day(i, l)
-        g.length += 1
-        g.join = g.length === 2 ? ' and ' : ' through to '
-      } else {
-        groups.push({
-          start: day(i, l),
-          join: '',
-          end: '',
-          length: 1,
-          where: where(m[i]),
-          source: joinList(source(m[i], l), ',')
-        })
-      }
-    }
-
-    return groups
-  }
-
-  const groupByImpactLikelihood = (g) => {
-    const matrix = g.where.map((m, i) => ({
-      impact: m[0],
-      likelihood: m[1],
-      where: i + 1
-    }))
-    let group = groupBy(matrix, 'impact')
-    for (let i in group) {
-      group[i] = groupBy(group[i], 'likelihood')
-      for (let l in group[i]) {
-        for (let v in group[i][l]) {
-          group[i][l][v] = group[i][l][v].where
-        }
-      }
-    }
-    delete group['0']
-    return group
-  }
-
-  const sortArray = (g, l) => {
-    return Object.keys(g).sort().reverse().map(a => (
-      [l.impact[a-1], Object.keys(g[a]).sort().reverse().map(b => (
-        [l.likelihood[b-1], g[a][b].sort().map(c => (
-          l.where[c-1]
-        )
-      )]))
-    ]))
-  }
-
-  const createFirstSentence = (data, source, l) => {
-    let sentence = ''
-    for (let i = 0; i < data.length; i++ ) {
-      const g = data[i]
-      sentence += `${g[0].charAt(0).toUpperCase() + g[0].slice(1)} is `
-      for (let j = 0; j < g[1].length; j++ ) {
-        const d = data[i][1][j]
-        const w = listWhere(d[1], l)
-        //g[0]: impact, d[0]: liklihood, w: loation 
-        sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
-      }
-    }
-    return sentence.trim()
-  }
-
-  const createSecondSentence = (data, l) => {
-    let sentence = ''
-    for (let i = 0; i < data.length; i++ ) {
-      const g = data[i]
-      const p = []
-      for (let j = 0; j < g[1].length; j++ ) {
-        const d = data[i][1][j]
-        const w = listWhere(d[1], l)
-        p.push(`${j === 0 ? (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0] : d[0] + ' in ' + w}`)
-      }
-      sentence += joinList(p, ',')
-    }
-    return sentence.trim()
   }
 
   const groups = groupByMatrix(m, l)
@@ -366,10 +366,13 @@ const createText = (matrix, offset = 0) => {
     const split = splitData(data)
     let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low' 
     html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p}</p>`)
-    html.push((i === 0 && groups.length > 1) ? '<p><a href="#">Show more</a></p>' : '')
   }
-  
-  return html.join('')
+ 
+  return {
+    summary: html[0],
+    more: html.length > 1 ? html.slice(1).join('') : null
+  }
+
 }
 
 class Outlook {
@@ -400,7 +403,9 @@ class Outlook {
 
     if (!place) return
     const matrix = buildMatrix(data, place)
-    this.regionalSummary = createText(matrix)
+    const offset = moment().startOf('day').diff(moment(data.last_modified_at).startOf('day'), 'days')
+    this.regional = offset <= 1 ? createText(matrix, offset) : null
+    this.isError = offset > 1
   }
 }
 module.exports = Outlook

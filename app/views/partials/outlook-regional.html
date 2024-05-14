@@ -1,0 +1,19 @@
+{% if model.outlook.isError %}
+<div class="defra-service-error govuk-!-margin-bottom-3">
+  <h2 class="defra-service-error__title" id="error-summary-title">Sorry, there is currently a problem with the data</h2>
+  <p class="govuk-body govuk-!-margin-bottom-0">There is no recent data.</p>
+</div> 
+{% else %}
+{{ model.outlook.regional.summary | safe }}
+{% if model.outlook.regional.more %}
+<details class="defra-details">
+  <summary class="defra-details__summary">
+    <span class="defra-details__marker"></span>
+    <span class="defra-details__label">Read more</span>
+  </summary>
+  {{ model.outlook.regional.more | safe }}
+</details>
+{% endif %}
+<span id="map-outlook"></span>
+<div class="defra-flood-meta">Updated <time datetime="{{ model.outlook.outlookUTC }}">{{ model.outlook.outlookTimestamp }}</time>.</br>Produced by the Met Office and Environment Agency</div>
+{% endif %}

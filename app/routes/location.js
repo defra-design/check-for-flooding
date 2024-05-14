@@ -31,7 +31,6 @@ router.get('/location/:location', async (req, res) => {
       const levels = new Levels(null, levelResponse.data)
       const banner = new BannerLocation(place, warnings, levels)
       const outlook = new Outlook(outlookResponse.data, { bbox2k: place.bbox })
-      console.log(outlook)
       const model = new ViewModel(place, banner, outlook, referrer)
       return res.render('location', { model })
     } else {
