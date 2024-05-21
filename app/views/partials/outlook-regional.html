@@ -8,10 +8,12 @@
 {% if model.outlook.regional.more %}
 <details class="defra-details">
   <summary class="defra-details__summary">
-    <span class="defra-details__marker"></span>
-    <span class="defra-details__label">Read more</span>
+    <span class="defra-details__chevron"></span>
+    <span class="defra-details__summary-text">Read more</span>
   </summary>
-  {{ model.outlook.regional.more | safe }}
+  <div class="defra-details__text">
+    {{ model.outlook.regional.more | safe }}
+  </div>
 </details>
 {% endif %}
 <span id="map-outlook"></span>

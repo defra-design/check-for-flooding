@@ -1,20 +1,27 @@
 .defra-details {
-  @include govuk-font($size: 19);
-  color: $govuk-link-colour;
-  padding: 5px 2px 5px 0;
-  margin: -5px 0 0;
+  @extend .govuk-details;
   &__summary {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    list-style-type: none;
-    margin-bottom: 20px;
+    @extend .govuk-details__summary;
+    padding-left: 0;
   }
-  &__marker {
+  &__summary:before {
+    content: none;
+  }
+  &__summary-text {
+    @extend .govuk-details__summary-text;
+    margin-left: 2px;
+  }
+  &__text {
+    @extend .govuk-details__text;
+    padding-left: 0;
+    border: 0;
+  }
+  &__chevron {
     content: '';
     box-sizing: border-box;
     display: inline-block;
     position: relative;
+    top: -1px;
     width: 1.25rem;
     height: 1.25rem;
     border-color: currentColor;
@@ -22,7 +29,7 @@
     border-radius: 50%;
     vertical-align: middle;
   }
-  &__marker:after {
+  &__chevron:after {
     content: '';
     box-sizing: border-box;
     position: absolute;
@@ -34,13 +41,14 @@
     border-color: currentColor;
     border-top: .125rem solid;
     border-right: .125rem solid;
+    transform: rotate(-45deg);
   }
-  &__label {
-    margin-left: 3px;
-    vertical-align: middle;
-    text-decoration: underline;
-  }
+  // &__label {
+  //   margin-left: 3px;
+  //   vertical-align: middle;
+  //   text-decoration: underline;
+  // }
 }
-.defra-details[open] .defra-details__marker {
+.defra-details[open] .defra-details__chevron {
   transform: rotate(180deg);
 }
