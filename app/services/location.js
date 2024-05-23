@@ -9,7 +9,10 @@ module.exports = {
   getLocationBySlug: async (slug) => {
     slug = slug.replace(/-/g, ' ')
     const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(slug)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=1&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,AdminDivision2`
-    const response = await axios.get(uri).then((response) => { return response })
+    const response = await axios.get(uri).then((response) => { return response }).catch(err => {
+      console.log(err)
+      return null
+    })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
         let results = response.data.resourceSets[0].resources
@@ -35,7 +38,10 @@ module.exports = {
 
   getLocationByLatLon: async (lat, lon) => {
     const uri = `http://dev.virtualearth.net/REST/v1/Locations/${lat},${lon}?key=${apiKey}`
-    const response = await axios.get(uri).then((response) => { return response })
+    const response = await axios.get(uri).then((response) => { return response }).catch(err => {
+      console.log(err)
+      return null
+    })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
         let results = response.data.resourceSets[0].resources
@@ -59,7 +65,10 @@ module.exports = {
   getLocationsByQuery: async (query, isBestGuess) => {
     const maxResults = isBestGuess ? 1 : 5
     const uri = `https://dev.virtualearth.net/REST/v1/Locations?query=${encodeURI(query)},UK&userRegion=GB&include=ciso2&c=en-GB&maxResults=${maxResults}&userIP=127.0.0.1&key=${apiKey}&includeEntityTypes=PopulatedPlace,Postcode1,Postcode2,Postcode3,AdminDivision2`
-    const response = await axios.get(uri).then((response) => { return response })
+    const response = await axios.get(uri).then((response) => { return response }).catch(err => {
+      console.log(err)
+      return []
+    })
     if (response.status === 200) {
       if (response.data && response.data.resourceSets) {
         let results = response.data.resourceSets[0].resources
