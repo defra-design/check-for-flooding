@@ -2,7 +2,7 @@ const severity = require('../models/severity')
 const TriggerLevel = require('./trigger-level')
 
 function parseMessage (message) {
-  return message.replace(/(\r?\n)+/g, '\n').split('\n').map(p => `<p>${p}</p>`).join(' ')
+  return message?.replace(/(\r?\n)+/g, '\n').split('\n').map(p => `<p>${p}</p>`).join(' ')
 }
 
 class TargetArea {
