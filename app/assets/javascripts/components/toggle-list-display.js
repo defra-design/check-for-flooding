@@ -6,7 +6,7 @@ const { forEach } = window.flood.utils
 const ToggleListDisplay = (container, options) => {
   let isExpanded = false
   const list = document.querySelector('.defra-flood-impact-list')
-  const items = list.querySelectorAll(`[data-toggle-list-display-item="${options.type}"]`)
+  const items = list.querySelectorAll(`[data-toggle-list-display="${options.type}"]`)
   const button = document.createElement('button')
   button.className = 'defra-button-text-s govuk-!-margin-bottom-4'
   button.setAttribute('aria-controls', list.id)

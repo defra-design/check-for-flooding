@@ -12,6 +12,7 @@ const Warnings = require('../models/warnings')
 const Banner = require('../models/banner-station')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
+const threshold = require('../services/threshold')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')
@@ -21,6 +22,7 @@ router.get('/station/:id/:downstream?', async (req, res) => {
   const cookie = req.headers.cookie || null
   const isDownstream = req.params.downstream?.toLowerCase() === 'downstream'
   const rloiId = req.params.id.toLowerCase()
+  const thresholdId = req.query.tid?.toLowerCase()
   let telemetry, station, banner, thresholds, place
 
   // Get station details
@@ -54,7 +56,8 @@ router.get('/station/:id/:downstream?', async (req, res) => {
     // Get thresholds
     const thresholdResponse = await thresholdServices.getThresholds(cookie, rloiId, isDownstream)
     // Add thresholds from station data and merge with warning thresholds
-    thresholds = new Thresholds(thresholdResponse.data, station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null)
+    const latestHeight = station.status === 'active' && station.latestStatus === 'success' ? station.latestHeight : null
+    thresholds = new Thresholds(thresholdResponse.data, latestHeight, thresholdId)
   } else {
     // Return 500 error
   }

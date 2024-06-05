@@ -9,8 +9,6 @@ if (document.querySelectorAll('[data-toggletip]')) {
   window.flood.createToggletips({ type: 'i' })
 }
 
-console.log(window.flood.model)
-
 // Line chart
 if (document.getElementById('line-chart')) {
   const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
@@ -26,10 +24,19 @@ if (document.getElementById('line-chart')) {
 }
 
 // Toggle historical impacts
-const toggleListDisplay = document.getElementById('toggle-list-display')
-if (toggleListDisplay) {
-  window.flood.createToggleListDisplay(toggleListDisplay, {
+const impactToggle = document.getElementById('toggle-impact-display')
+if (impactToggle) {
+  window.flood.createToggleListDisplay(impactToggle, {
     type: 'impact',
     btnText: 'historical events'
+  })
+}
+
+// Toggle warning threholds
+const warningToggle = document.getElementById('toggle-warning-display')
+if (warningToggle) {
+  window.flood.createToggleListDisplay(warningToggle, {
+    type: 'warning',
+    btnText: 'property flooding'
   })
 }
