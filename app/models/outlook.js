@@ -385,7 +385,9 @@ class Outlook {
 
     this.hasOutlookConcern = Math.max(...riskLevels) > 0
 
-    this.full = data.public_forecast.england_forecast
+    let full = data.public_forecast.england_forecast
+    full = full.replace(/\r\n\r\n/g, '</p><p>').replace(/\n\n/g, '</p><p>')
+    this.full = `<p>${full}</p>`
 
     const issueDate = new Date(data.issued_at)
 

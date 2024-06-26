@@ -69,7 +69,7 @@
       <p class="govuk-body govuk-!-margin-bottom-0">There is no recent data.</p>
     </div>
     {% else %}
-    <p class="govuk-body">{{ model.outlook.full }}</p>
+    <p class="govuk-body">{{ model.outlook.full | safe }}</p>
     {% if model.outlook.hasOutlookConcern %}<span id="map-outlook"></span>{% endif %}
     <div class="defra-flood-meta">Updated at <time datetime="{{ model.outlook.outlookUTC }}">{{ model.outlook.outlookTimestamp }}</time><br>Produced by the Met Office and Environment Agency</div>
     {% endif %}
