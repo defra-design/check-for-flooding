@@ -12,7 +12,6 @@ const Warnings = require('../models/warnings')
 const Banner = require('../models/banner-station')
 const ViewModel = require('../models/views/station')
 const moment = require('moment-timezone')
-const threshold = require('../services/threshold')
 
 router.get('/station', (req, res) => {
   res.redirect('/river-sea-groundwater-rainfall-levels')

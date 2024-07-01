@@ -7,11 +7,14 @@ const ToggleListDisplay = (container, options) => {
   let isExpanded = false
   const list = document.querySelector('.defra-flood-impact-list')
   const items = list.querySelectorAll(`[data-toggle-list-display="${options.type}"]`)
+  const itemDefault = list.querySelector(`[data-toggle-list-display="${options.type}-default"]`)
   const button = document.createElement('button')
   button.className = 'defra-button-text-s govuk-!-margin-bottom-4'
   button.setAttribute('aria-controls', list.id)
   button.setAttribute('data-module', 'govuk-button')
   container.appendChild(button)
+
+  console.log(itemDefault)
 
   const toggleDisplay = () => {
     // Toggle Button
@@ -20,6 +23,7 @@ const ToggleListDisplay = (container, options) => {
     // Toggle list
     forEach(items, (item) => {
       item.style.display = isExpanded ? 'block' : 'none'
+      itemDefault.style.display = !isExpanded ? 'block' : 'none'
     })
   }
 

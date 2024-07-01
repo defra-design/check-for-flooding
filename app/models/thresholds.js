@@ -3,8 +3,23 @@ const utils = require('../utils')
 class Threshold {
   constructor (thresholds, latest = null, thresholdId) {
     thresholds = thresholds.filter(x => !!(x.value))
+    const firstWarning = this.getFirstWarning(thresholds)
+    firstWarning ? thresholds.push(firstWarning) : null
     if (latest) latest = Math.round(latest * 100) / 100
     return this.createBands(thresholds, latest, thresholdId)
+  }
+
+  getFirstWarning(thresholds) {
+    const values = thresholds.filter(t => t.type === 'warning').map(t => Number(t.value))
+    const value = values.length ? Math.min(...values) : null
+    return value ? {
+      id: 'warning-default',
+      name: 'Property flooding possible above this level',
+      description: 'Property flooding possible above this level',
+      type: 'warning-default',
+      value: value,
+      date: null
+    } : null
   }
 
   createBands (thresholds, latest, thresholdId) {
@@ -31,7 +46,7 @@ class Threshold {
           return {
             id: item.id,
             name: this.createName(item),
-            type: item.type === 'warning' && `threshold-${item.id}` !== thresholdId ? 'warning' : '',
+            type: item.type === 'warning' ? `threshold-${item.id}` !== thresholdId ? 'warning' : '' : item.type,
             description: this.createDescription(item)
           }
         })

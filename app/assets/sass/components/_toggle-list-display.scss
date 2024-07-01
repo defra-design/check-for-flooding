@@ -1,3 +1,3 @@
-.js-enabled [data-toggle-list-display] {
+.js-enabled [data-toggle-list-display]:not([data-toggle-list-display="warning-default"]) {
   display: none;
 }
