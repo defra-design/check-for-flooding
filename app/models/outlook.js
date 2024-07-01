@@ -364,7 +364,7 @@ const createText = (matrix, offset = 0) => {
     const group = groupByImpactLikelihood(groups[i], l)
     const data = sortArray(group, l)
     const split = splitData(data)
-    let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low' 
+    let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low' + '.' 
     html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p}</p>`)
   }
  
