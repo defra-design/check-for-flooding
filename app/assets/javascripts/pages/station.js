@@ -37,6 +37,6 @@ const warningToggle = document.getElementById('toggle-warning-display')
 if (warningToggle) {
   window.flood.createToggleListDisplay(warningToggle, {
     type: 'warning',
-    btnText: 'property flooding'
+    btnText: 'all property flooding'
   })
 }
