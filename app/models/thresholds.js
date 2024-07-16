@@ -86,7 +86,7 @@ class Threshold {
         description = `Property flooding possible: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
         break
       case 'alert':
-        description = `Low laying land flooding: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
+        description = `Low-lying land flooding: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
         break
       default:
         description = item.description
