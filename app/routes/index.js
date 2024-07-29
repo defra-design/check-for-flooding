@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
     const model = new ViewModel(warnings, outlook, null, null)
     res.render('home', { model })
   } else {
+    console.log(outlookResponse)
     // Return 500 error
   }
 })
