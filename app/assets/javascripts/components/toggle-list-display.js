@@ -14,8 +14,6 @@ const ToggleListDisplay = (container, options) => {
   button.setAttribute('data-module', 'govuk-button')
   container.appendChild(button)
 
-  console.log(itemDefault)
-
   const toggleDisplay = () => {
     // Toggle Button
     button.innerText = `${isExpanded ? 'Hide' : 'Show'} ${options.btnText}`

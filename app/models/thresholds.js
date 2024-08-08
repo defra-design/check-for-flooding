@@ -3,6 +3,11 @@ const utils = require('../utils')
 class Threshold {
   constructor (thresholds, latest = null, thresholdId) {
     thresholds = thresholds.filter(x => !!(x.value))
+    // Merge high with any alerts at the same level
+    const high = thresholds.find(x => x.type === 'high')
+    high.hasSameAlert = !!thresholds.find(x => high && x.type === 'alert' && x.value === high.value)
+    thresholds = thresholds.filter(x => x.type !== 'alert')
+    // Get first warning threshold
     const firstWarning = this.getFirstWarning(thresholds)
     firstWarning ? thresholds.push(firstWarning) : null
     if (latest) latest = Math.round(latest * 100) / 100
@@ -55,6 +60,7 @@ class Threshold {
     })
     // Sort in descending order on level
     bands.sort((a, b) => { return Number(a.level) - Number(b.level) }).reverse()
+    console.log(bands)
     return bands
   }
 
@@ -80,7 +86,9 @@ class Threshold {
         description = `Water reaches the highest level recorded at this measuring station (${utils.formatDatePast(item.date)})`
         break
       case 'high':
-        description = 'Top of the normal range, above this flooding may occur'
+        description = item.hasSameAlert
+          ? 'Top of the normal range. Low lying land flooding is possible above this level. One or more flood alerts may be issued'
+          : 'Top of the normal range, above this flooding may occur'
         break
       case 'warning':
         description = `Property flooding possible: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
