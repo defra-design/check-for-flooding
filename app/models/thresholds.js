@@ -2,29 +2,36 @@ const utils = require('../utils')
 
 class Threshold {
   constructor (thresholds, latest = null, thresholdId) {
-    thresholds = thresholds.filter(x => !!(x.value))
+    thresholds = thresholds.filter(t => !!(t.value))
     // Merge high with any alerts at the same level
-    const high = thresholds.find(x => x.type === 'high')
-    high.hasSameAlert = !!thresholds.find(x => high && x.type === 'alert' && x.value === high.value)
-    thresholds = thresholds.filter(x => x.type !== 'alert')
+    const high = thresholds.find(t => t.type === 'high')
+    high.hasSameAlert = !!thresholds.find(t => high && t.type === 'alert' && t.value === high.value)
+    thresholds = thresholds.filter(t => t.type !== 'alert')
     // Get first warning threshold
-    const firstWarning = this.getFirstWarning(thresholds)
+    const firstWarning = this.getFirstWarning(thresholds, thresholdId)
     firstWarning ? thresholds.push(firstWarning) : null
+    // Remove non-active or non thresholdId
+    thresholds = thresholds.filter(t => !(t.id !== thresholdId && t.type === 'warning' && t.severity < 2))
     if (latest) latest = Math.round(latest * 100) / 100
     return this.createBands(thresholds, latest, thresholdId)
   }
 
-  getFirstWarning(thresholds) {
-    const values = thresholds.filter(t => t.type === 'warning').map(t => Number(t.value))
-    const value = values.length ? Math.min(...values) : null
-    return value ? {
+  getFirstWarning(thresholds, thresholdId) {
+    let warnings = thresholds.filter(t => t.type === 'warning')
+    const numWarnings = warnings.length
+    if (!numWarnings) return
+    const value = Math.min(...warnings.map(w => parseFloat(w.value)))
+    const numActive = warnings.filter(w => w.severity >= 2).length
+    const hasDefault = numActive < numWarnings || (numWarnings === 1 && (numActive === 1 || warnings[0].id === thresholdId))
+    if (!hasDefault) return
+    return {
       id: 'warning-default',
       name: 'Property flooding possible above this level',
       description: 'Property flooding possible above this level',
       type: 'warning-default',
       value: value,
       date: null
-    } : null
+    }
   }
 
   createBands (thresholds, latest, thresholdId) {
@@ -41,7 +48,7 @@ class Threshold {
     // Create bands
     const bands = []
     Object.entries(groups).forEach(([key, value]) => {
-      const type = value.filter(item => item.type === 'warning' && `threshold-${item.id}` !== thresholdId).length === value.length ? 'warning' : ''
+      const type = value.filter(item => item.type === 'warning' && item.id !== thresholdId).length === value.length ? 'warning' : ''
       const band = {
         level: Number(key).toFixed(2),
         type: type,
@@ -51,7 +58,7 @@ class Threshold {
           return {
             id: item.id,
             name: this.createName(item),
-            type: item.type === 'warning' ? `threshold-${item.id}` !== thresholdId ? 'warning' : '' : item.type,
+            type: item.type === 'warning' ? item.id !== thresholdId ? 'warning' : '' : item.type,
             description: this.createDescription(item)
           }
         })
@@ -60,7 +67,6 @@ class Threshold {
     })
     // Sort in descending order on level
     bands.sort((a, b) => { return Number(a.level) - Number(b.level) }).reverse()
-    console.log(bands)
     return bands
   }
 

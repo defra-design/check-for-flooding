@@ -12,7 +12,7 @@ if (document.querySelectorAll('[data-toggletip]')) {
 // Line chart
 if (document.getElementById('line-chart')) {
   const lineChart = window.flood.charts.createLineChart('line-chart', window.flood.model.id, window.flood.model.telemetry)
-  const thresholdId = `threshold-${window.flood.model.rloiId}-high`
+  const thresholdId = `${window.flood.model.rloiId}-high`
   const threshold = document.querySelector(`[data-id="${window.flood.utils.getParameterByName('tid') || thresholdId}"]`)
   if (threshold) {
     lineChart.addThreshold({
@@ -33,10 +33,10 @@ if (impactToggle) {
 }
 
 // Toggle warning threholds
-const warningToggle = document.getElementById('toggle-warning-display')
-if (warningToggle) {
-  window.flood.createToggleListDisplay(warningToggle, {
-    type: 'warning',
-    btnText: 'all property flooding'
-  })
-}
+// const warningToggle = document.getElementById('toggle-warning-display')
+// if (warningToggle) {
+//   window.flood.createToggleListDisplay(warningToggle, {
+//     type: 'warning',
+//     btnText: 'all property flooding'
+//   })
+// }

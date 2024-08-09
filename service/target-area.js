@@ -37,10 +37,10 @@ module.exports = {
     )) filter (WHERE mwl.rloi_id IS NOT NULL), '[]'::json) AS trigger_levels
     FROM flood_warning_areas ta1
     LEFT JOIN (
-    Select id, targetarea_id, station_id, type, height, stage from trigger
+    Select * from (Select DISTINCT ON (station_id) id, targetarea_id, station_id, type, height, stage from trigger
     where LOWER(targetarea_id) = LOWER($1) and type SIMILAR TO '(FW RES FW|FW ACT FW|FW ACTCON FW)%'
-    order by array_position(array['FW RES FW','FW ACT FW','FW ACTCON FW'], type), height asc
-    limit 4
+    order by station_id, array_position(array['FW RES FW','FW ACT FW','FW ACTCON FW'], type), height asc
+    limit 5) u Order by height asc
     ) as t ON LOWER(ta1.fws_tacode) = LOWER(t.targetarea_id)
     LEFT JOIN measure_with_latest mwl ON mwl.rloi_id = t.station_id
     LEFT JOIN warning w1 ON LOWER(ta1.fws_tacode) = LOWER(w1.id)
@@ -82,10 +82,10 @@ module.exports = {
     )) filter (WHERE mwl.rloi_id IS NOT NULL), '[]'::json) AS trigger_levels
     FROM flood_alert_areas ta2
     LEFT JOIN (
-    Select id, targetarea_id, station_id, type, height, stage from trigger
+    Select * from (Select DISTINCT ON (station_id) id, targetarea_id, station_id, type, height, stage from trigger
     where LOWER(targetarea_id) = LOWER($1) and type SIMILAR TO '(FW RES FAL|FW ACT FAL|FW ACTCON FAL)%'
-    order by array_position(array['FW RES FAL', 'FW ACT FAL', 'FW ACTCON FAL'], type), height asc
-    limit 4
+    order by station_id, array_position(array['FW RES FAL', 'FW ACT FAL', 'FW ACTCON FAL'], type), height asc
+    limit 5) u Order by height asc
     ) as t ON LOWER(ta2.fws_tacode) = LOWER(t.targetarea_id)
     LEFT JOIN measure_with_latest mwl ON mwl.rloi_id = t.station_id
     LEFT JOIN warning w ON LOWER(ta2.fws_tacode) = LOWER(w.id)
