@@ -9,7 +9,7 @@ class TriggerLevel {
     this.status = data.status
     this.riverName = data.river_name
     this.riverDisplay = data.river_display
-    this.latestHeight = data.latest_height ? Math.round(data.latest_height * 100) / 100 : null
+    this.latestHeight = data.latest_height ? data.latest_height.toFixed(2) : null
     this.latestDatetime = data.latest_datetime ? utils.formatTimeDate(data.latest_datetime) : ''
     this.elapsedTime = data.latest_datetime ? utils.formatElapsedTime(data.latest_datetime) : ''
     this.latestStatus = data.latest_status

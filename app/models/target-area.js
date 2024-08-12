@@ -7,7 +7,9 @@ function parseMessage (message) {
 
 class TargetArea {
   constructor (data) {
-    const triggerLevels = data.trigger_levels ? data.trigger_levels.map(triggerLevel => { return new TriggerLevel(triggerLevel) }) : []
+    const triggerLevels = data.trigger_levels ? data.trigger_levels
+      .filter(t => !!t.latest_height)
+      .map(t => { return new TriggerLevel(t) }) : []
     this.triggerLevels = triggerLevels
     this.id = data.id
     this.name = data.name

@@ -5,7 +5,7 @@ class Threshold {
     thresholds = thresholds.filter(t => !!(t.value))
     // Merge high with any alerts at the same level
     const high = thresholds.find(t => t.type === 'high')
-    high.hasSameAlert = !!thresholds.find(t => high && t.type === 'alert' && t.value === high.value)
+    if (high) high.hasSameAlert = !!thresholds.find(t => high && t.type === 'alert' && t.value === high.value)
     thresholds = thresholds.filter(t => t.type !== 'alert')
     // Get first warning threshold
     const firstWarning = this.getFirstWarning(thresholds, thresholdId)
