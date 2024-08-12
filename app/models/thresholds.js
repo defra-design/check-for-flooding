@@ -97,7 +97,7 @@ class Threshold {
           : 'Top of the normal range, above this flooding may occur'
         break
       case 'warning':
-        description = `Property flooding possible: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
+        description = `Property flooding ${item.severity >= 2 ? 'expected' : 'possible'}: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
         break
       case 'alert':
         description = `Low-lying land flooding: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
