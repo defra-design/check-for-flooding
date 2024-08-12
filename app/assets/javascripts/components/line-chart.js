@@ -465,7 +465,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   const defaults = {
     btnAddThresholdClass: 'defra-button-text-s',
-    btnAddThresholdText: 'Show on chart <span class="govuk-visually-hidden">(Visual only)</span>'
+    btnAddThresholdText: 'Show on chart (Visual only)'
   }
   options = Object.assign({}, defaults, options)
 
@@ -529,7 +529,13 @@ function LineChart (containerId, stationId, data, options = {}) {
   document.querySelectorAll('[data-threshold-add]').forEach(container => {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
-    button.innerHTML = options.btnAddThresholdText
+    button.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="none" stroke="currentColor">
+        <path d="M18 17.984H2v-16" stroke-width="1.5"/>
+        <path d="M2 13.008l3-3.206 5 3.206 8-8.318" stroke-width="2"/>
+      </svg>
+    `
+    button.setAttribute('aria-label', options.btnAddThresholdText)
     button.setAttribute('aria-controls', `${containerId}-visualisation`)
     button.setAttribute('data-id', container.getAttribute('data-id'))
     button.setAttribute('data-threshold-add', '')
@@ -612,8 +618,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     significantContainer.node().parentNode.classList.remove('significant--visible')
     // svg.select('.focussed-cell').remove()
     // Add threshold button
-    if (!e.target.hasAttribute('data-threshold-add')) return
-    const button = e.target
+    const button = e.target.closest('button')
+    if (!button.hasAttribute('data-threshold-add')) return
     addThreshold({
       id: button.getAttribute('data-id'),
       level: Number(button.getAttribute('data-level')),
