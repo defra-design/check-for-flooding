@@ -530,9 +530,8 @@ function LineChart (containerId, stationId, data, options = {}) {
     const button = document.createElement('button')
     button.className = options.btnAddThresholdClass
     button.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="none" stroke="currentColor">
-        <path d="M18 17.984H2v-16" stroke-width="1.5"/>
-        <path d="M2 13.008l3-3.206 5 3.206 8-8.318" stroke-width="2"/>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="currentColor">
+        <path d="M2.75 14.443v2.791H18v1.5H1.25V1.984h1.5v7.967L6.789 4.91l5.016 4.013 5.056-5.899 2.278 1.952-6.944 8.101L7.211 9.09 2.75 14.443z"/>
       </svg>
     `
     button.setAttribute('aria-label', options.btnAddThresholdText)
