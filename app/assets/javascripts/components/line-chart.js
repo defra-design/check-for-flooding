@@ -619,7 +619,7 @@ function LineChart (containerId, stationId, data, options = {}) {
     // svg.select('.focussed-cell').remove()
     // Add threshold button
     const button = e.target.closest('button')
-    if (!button.hasAttribute('data-threshold-add')) return
+    if (!(button && button.hasAttribute('data-threshold-add'))) return
     addThreshold({
       id: button.getAttribute('data-id'),
       level: Number(button.getAttribute('data-level')),
