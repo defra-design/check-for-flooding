@@ -11,19 +11,19 @@ class Threshold {
     const firstWarning = this.getFirstWarning(thresholds, thresholdId)
     firstWarning ? thresholds.push(firstWarning) : null
     // Remove non-active or non thresholdId
-    thresholds = thresholds.filter(t => !(t.id !== thresholdId && t.type === 'warning' && t.severity < 2))
+    thresholds = thresholds.filter(t => !(t.type === 'warning' && t.severity < 2))
     if (latest) latest = Math.round(latest * 100) / 100
     return this.createBands(thresholds, latest, thresholdId)
   }
 
-  getFirstWarning(thresholds, thresholdId) {
+  getFirstWarning(thresholds) {
     let warnings = thresholds.filter(t => t.type === 'warning')
     const numWarnings = warnings.length
     if (!numWarnings) return
     const value = Math.min(...warnings.map(w => parseFloat(w.value)))
-    const numActive = warnings.filter(w => w.severity >= 2).length
-    const hasDefault = numActive < numWarnings || (numWarnings === 1 && (numActive === 1 || warnings[0].id === thresholdId))
-    if (!hasDefault) return
+    // const numActive = warnings.filter(w => w.severity >= 2).length
+    // const hasDefault = numActive < numWarnings || (numWarnings === 1 && (numActive === 1 || warnings[0].id === thresholdId))
+    // if (!hasDefault) return
     return {
       id: 'warning-default',
       name: 'Property flooding possible above this level',
@@ -97,7 +97,7 @@ class Threshold {
           : 'Top of the normal range, above this flooding may occur'
         break
       case 'warning':
-        description = `Property flooding ${item.severity >= 2 ? 'expected' : 'possible'}: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
+        description = `Flood warning issued: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
         break
       case 'alert':
         description = `Low-lying land flooding: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
