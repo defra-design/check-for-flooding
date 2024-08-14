@@ -2,13 +2,23 @@ const utils = require('../utils')
 
 class Threshold {
   constructor (thresholds, latest = null, thresholdId) {
-    thresholds = thresholds.filter(t => !!(t.value))
+    thresholds = thresholds.filter(t => !!(t.value)).map(t => { return {
+      ...t,
+      value: parseFloat(t.value)
+    }})
     // Merge high with any alerts at the same level
+    const firstAlert = this.getFirstAlert(thresholds)
     const high = thresholds.find(t => t.type === 'high')
-    if (high) high.hasSameAlert = !!thresholds.find(t => high && t.type === 'alert' && t.value === high.value)
+    const hasSameAlert = high.value === firstAlert?.value
+    console.log(high, firstAlert)
+    if (high) {
+      high.hasSameAlert = hasSameAlert
+      high.hasDiffAlert = firstAlert && !hasSameAlert
+    }
     thresholds = thresholds.filter(t => t.type !== 'alert')
+    firstAlert && !hasSameAlert ? thresholds.push(firstAlert) : null
     // Get first warning threshold
-    const firstWarning = this.getFirstWarning(thresholds, thresholdId)
+    const firstWarning = this.getFirstWarning(thresholds)
     firstWarning ? thresholds.push(firstWarning) : null
     // Remove non-active or non thresholdId
     thresholds = thresholds.filter(t => !(t.type === 'warning' && t.severity < 2))
@@ -16,17 +26,31 @@ class Threshold {
     return this.createBands(thresholds, latest, thresholdId)
   }
 
+  getFirstAlert(thresholds) {
+    let alerts = thresholds.filter(t => t.type === 'alert')
+    const numAlerts = alerts.length
+    if (!numAlerts) return
+    const value = Math.min(...alerts.map(w => w.value))
+
+    return {
+      id: 'alert-default',
+      name: 'Low lying land flooding possible',
+      description: 'Low lying land flooding possible above this level. One or more flood alerts may be issued',
+      type: 'alert-default',
+      value: value,
+      date: null
+    }
+  }
+
   getFirstWarning(thresholds) {
     let warnings = thresholds.filter(t => t.type === 'warning')
     const numWarnings = warnings.length
     if (!numWarnings) return
     const value = Math.min(...warnings.map(w => parseFloat(w.value)))
-    // const numActive = warnings.filter(w => w.severity >= 2).length
-    // const hasDefault = numActive < numWarnings || (numWarnings === 1 && (numActive === 1 || warnings[0].id === thresholdId))
-    // if (!hasDefault) return
+
     return {
       id: 'warning-default',
-      name: 'Property flooding possible above this level',
+      name: 'Property flooding possible',
       description: 'Property flooding possible above this level',
       type: 'warning-default',
       value: value,
@@ -93,8 +117,10 @@ class Threshold {
         break
       case 'high':
         description = item.hasSameAlert
-          ? 'Top of the normal range. Low lying land flooding is possible above this level. One or more flood alerts may be issued'
-          : 'Top of the normal range, above this flooding may occur'
+          ? 'Top of the normal range. Low lying land flooding possible above this level. One or more flood alerts may be issued'
+          : item.hasDiffAlert
+          ? 'Top of the normal range'
+          : 'Top of the normal range, above this level flooding is possible'
         break
       case 'warning':
         description = `Flood warning issued: <a href="/target-area/${item.targetarea_id}">${item.description}</a>`
