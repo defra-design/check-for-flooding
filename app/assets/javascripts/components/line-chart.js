@@ -123,6 +123,9 @@ function LineChart (containerId, stationId, data, options = {}) {
         .attr('class', 'threshold__line')
         .attr('aria-hidden', true)
         .attr('x2', xScale(xExtent[1])).attr('y2', 0)
+
+      // Label
+      const copy = `${threshold.level}m ${threshold.name}`.match(/[\s\S]{1,35}(?!\S)/g, '$&\n')
       const label = thresholdContainer.append('g')
         .attr('class', 'threshold-label')
       const path = label.append('path')
@@ -131,10 +134,13 @@ function LineChart (containerId, stationId, data, options = {}) {
       const text = label.append('text')
         .attr('class', 'threshold-label__text')
       text.append('tspan').attr('font-size', 0).text('Threshold: ')
-      text.append('tspan').attr('x', 10).attr('y', 22).text(`${threshold.level}m ${threshold.name}`)
+      copy.map((l, i) => text.append('tspan').attr('x', 10).attr('y', (i + 1) * 22).text(l.trim()))
       const textWidth = Math.round(text.node().getBBox().width)
-      path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,36 l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-36 l0,0`)
-      label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -46)`)
+      const textHeight = Math.round(text.node().getBBox().height)
+      path.attr('d', `m-0.5,-0.5 l${textWidth + 20},0 l0,${19 + textHeight} l-${((textWidth + 20) / 2) - 7.5},0 l-7.5,7.5 l-7.5,-7.5 l-${((textWidth + 20) / 2) - 7.5},0 l0,-${19 + textHeight} l0,0`)
+      label.attr('transform', `translate(${Math.round(width / 2 - ((textWidth + 20) / 2))}, -${29 + textHeight})`)
+
+      // Remove button
       const remove = thresholdContainer.append('a')
         .attr('role', 'button')
         .attr('class', 'threshold__remove')
@@ -147,6 +153,7 @@ function LineChart (containerId, stationId, data, options = {}) {
       remove.append('circle').attr('class', 'threshold__remove-button').attr('r', 11)
       remove.append('line').attr('x1', -3).attr('y1', -3).attr('x2', 3).attr('y2', 3)
       remove.append('line').attr('y1', -3).attr('x2', -3).attr('x1', 3).attr('y2', 3)
+
       // Set individual elements size and position
       thresholdContainer.attr('transform', 'translate(0,' + Math.round(yScale(threshold.level)) + ')')
     })

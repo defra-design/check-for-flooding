@@ -10,7 +10,6 @@ class Threshold {
     const firstAlert = this.getFirstAlert(thresholds)
     const high = thresholds.find(t => t.type === 'high')
     const hasSameAlert = high.value === firstAlert?.value
-    console.log(high, firstAlert)
     if (high) {
       high.hasSameAlert = hasSameAlert
       high.hasDiffAlert = firstAlert && !hasSameAlert
