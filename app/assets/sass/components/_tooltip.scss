@@ -1,104 +1,121 @@
 .defra-tooltip {
-  display: inline-block;
-  position: relative;
-	z-index: 1;
-	&--open {
-		z-index: 99;
-	}
-	&--open:before {
-		content: '';
-		position: absolute;
-		z-index: 1;
-		width: 8px;
-		height: 8px;
-		background:white;
-		top: auto;
-		bottom: 100%;
-		left: 50%;
-		margin: -0px 0px 6px -4px;
-		-webkit-transform: rotate(135deg);
-		-moz-transform: rotate(135deg);
-		-o-transform: rotate(135deg);
-		transform: rotate(135deg);
-	}
-  &--open:after {
-		content: '';
-		position: absolute;
-		z-index: -1;
-		width: 8px;
-		height: 8px;
-		background:white;
-		top: auto;
-		bottom: 100%;
-		left: 50%;
-		margin: 0px 0px 6px -4px;
-		-webkit-transform: rotate(135deg);
-		-moz-transform: rotate(135deg);
-		-o-transform: rotate(135deg);
-		transform: rotate(135deg);
-		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
-  }
-	&__tool {
-		outline: 0px;
-	}
-	&__tool:not(a) {
-		margin: 3px;
-	}
-  a {
-		color: $govuk-text-colour !important;
-		text-decoration: none;
-		margin-bottom: -1px;
-		border-bottom: 1px dashed govuk-colour('dark-grey');
-		cursor: help;
-  }
-  a:focus {
-		border: 0px;
-		margin-bottom: -1px;
-  }
-	&__tool[keyboard-focus]:not(a):focus {
-		outline: 3px solid govuk-colour('black');
-		color: govuk-colour('black');
-		background-color: $govuk-focus-colour;
-	}
-  &__tip {
-		box-sizing: border-box;
-		position: absolute;
-		top: auto;
-		bottom: 100%;
-		left: 0px;
-		margin-bottom: 10px;
-		background-color: white;
-		padding: 7.5px 10px;
-		text-align: left;
-		box-shadow: 0px 0px 2px 1px govuk-colour('mid-grey');
-		@include govuk-font($size: 16, $weight: regular);
-		p {
-			@include govuk-font($size: 16, $weight: regular);
-			margin-bottom: 10px;
-		}
-		p:last-child {
-				margin-bottom: 0px;
-		}
-  }
-	&--fixed-width .defra-tooltip__tip {
-		padding: 10px;
-		@include mq ($from: tablet) {
-			padding: 15px;
-		}
-		width: 250px;
-	}
-	&--bottom .defra-tooltip__tip {
-		top: 100%;
-		bottom: auto;
-		margin-top: 10px;
-	}
-	&--bottom.defra-tooltip--open:before,
-	&--bottom.defra-tooltip--open:after {
-		top: 100%;
-		bottom: auto;
-		margin: 6px 0px 0px -4px;
+	position: relative;
+}
+.defra-tooltip__label {
+	display: none;
+	position: absolute;
+}
+.defra-tooltip__label-inner {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	width: max-content;
+	max-width: 200px;
+	padding: 4px 5px;
+	background: govuk-colour(black);
+	border: 2px solid govuk-colour(black);
+	margin-bottom: 0;
+	&:after {
+			content: '';
+			position: absolute;
+			box-sizing: border-box;
+			z-index: 1;
+			width: 10px;
+			height: 10px;
+			color: govuk-colour(black);
+			border: 5px solid currentcolor;
+			-webkit-transform: rotate(135deg);
+			-moz-transform: rotate(135deg);
+			-o-transform: rotate(135deg);
+			transform: rotate(135deg);
 	}
 }
-.defra-tooltip:not(.defra-tooltip--open) .defra-tooltip__tip {
-  @include defra-visually-hidden();
+.defra-tooltip__label-inner.govuk-body-s {
+	color: white;
+	margin-bottom: 0;
+}
+
+// Above and below
+.defra-tooltip--below .defra-tooltip__label,
+.defra-tooltip--above .defra-tooltip__label {
+	width: 200px;
+	left: 50%;
+	text-align: center;
+	margin-left: -100px;
+}
+
+.defra-tooltip--below .defra-tooltip__label {
+	top: 100%;
+}
+
+.defra-tooltip--above .defra-tooltip__label {
+	bottom: 100%;
+}
+
+.defra-tooltip--below .defra-tooltip__label-inner,
+.defra-tooltip--above .defra-tooltip__label-inner {
+	&:after {
+			left: 50%;
+			margin-left: -4px;
+	}
+}
+.defra-tooltip--below .defra-tooltip__label-inner {
+	margin-top: 10px;
+	&:after {
+			top: -6px;
+	}
+}
+
+.defra-tooltip--above .defra-tooltip__label-inner {
+	margin-bottom: 10px;
+	&:after {
+			bottom: -6px;
+	}
+}
+
+// Left and right
+.defra-tooltip--left .defra-tooltip__label,
+.defra-tooltip--right .defra-tooltip__label {
+	height: 150%;
+	top: -25%;
+	// &:before {
+	// 		content: '';
+	// 		display: inline-block;
+	// 		height: 100%; 
+	// 		vertical-align: middle;
+	// }
+}
+
+.defra-tooltip--left .defra-tooltip__label-inner,
+.defra-tooltip--right .defra-tooltip__label-inner {
+	&:after {
+			top: 50%;
+			margin-top: -4px;
+	}
+}
+
+.defra-tooltip--left .defra-tooltip__label {
+	right: 100%;
+}
+
+.defra-tooltip--left .defra-tooltip__label-inner {
+	margin-right: 10px;
+	&:after {
+			right: -6px;
+	}
+}
+
+.defra-tooltip--right .defra-tooltip__label {
+	left: 100%;
+}
+
+.defra-tooltip--right .defra-tooltip__label-inner {
+	margin-left: 10px;
+	&:after {
+			left: -6px;
+	}
+}
+
+.defra-tooltip--visible .defra-tooltip__label {
+	display: block;
 }

@@ -3,6 +3,7 @@ import '../utils'
 import '../components/line-chart'
 import '../components/toggle-list-display'
 import '../components/toggletip'
+import '../components/tooltip'
 
 // Toggletips
 if (document.querySelectorAll('[data-toggletip]')) {
@@ -23,6 +24,9 @@ if (document.getElementById('line-chart')) {
   }
 }
 
+// Add tooltips
+window.flood.createTooltips()
+
 // Toggle historical impacts
 const impactToggle = document.getElementById('toggle-impact-display')
 if (impactToggle) {
@@ -31,12 +35,3 @@ if (impactToggle) {
     btnText: 'historical events'
   })
 }
-
-// Toggle warning threholds
-// const warningToggle = document.getElementById('toggle-warning-display')
-// if (warningToggle) {
-//   window.flood.createToggleListDisplay(warningToggle, {
-//     type: 'warning',
-//     btnText: 'all property flooding'
-//   })
-// }

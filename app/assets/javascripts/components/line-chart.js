@@ -472,7 +472,7 @@ function LineChart (containerId, stationId, data, options = {}) {
 
   const defaults = {
     btnAddThresholdClass: 'defra-button-text-s',
-    btnAddThresholdText: 'Show on chart (Visual only)'
+    btnAddThresholdText: 'Show on chart'
   }
   options = Object.assign({}, defaults, options)
 
@@ -533,21 +533,46 @@ function LineChart (containerId, stationId, data, options = {}) {
   const tooltipDescription = tooltipText.append('tspan').attr('class', 'tooltip-text').attr('x', 12).attr('dy', '1.4em')
 
   // Add optional 'Add threshold' buttons
-  document.querySelectorAll('[data-threshold-add]').forEach(container => {
-    const button = document.createElement('button')
-    button.className = options.btnAddThresholdClass
-    button.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="currentColor">
-        <path d="M2.75 14.443v2.791H18v1.5H1.25V1.984h1.5v7.967L6.789 4.91l5.016 4.013 5.056-5.899 2.278 1.952-6.944 8.101L7.211 9.09 2.75 14.443z"/>
-      </svg>
+  document.querySelectorAll('[data-threshold-add]').forEach((container, i) => {
+    const tooltip = document.createElement('div')
+    tooltip.className = 'defra-tooltip defra-tooltip--left'
+    tooltip.setAttribute('data-tooltip', '')
+    tooltip.innerHTML = `
+      <button class="${options.btnAddThresholdClass}"
+        aria-labelledby="tooltip-${i}"
+        aria-controls="${containerId}-visualisation"
+        data-id="${container.getAttribute('data-id')}"
+        data-level="${container.getAttribute('data-level')}"
+        data-name="${container.getAttribute('data-name')}"
+        data-threshold-add >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="currentColor">
+          <path d="M2.75 14.443v2.791H18v1.5H1.25V1.984h1.5v7.967L6.789 4.91l5.016 4.013 5.056-5.899 2.278 1.952-6.944 8.101L7.211 9.09 2.75 14.443z"/>
+        </svg>
+      </button>
+      <div id="tooltip-${i}" class="defra-tooltip__label" role="tooltip">
+        <div class="defra-tooltip__label-inner govuk-body-s">
+          ${options.btnAddThresholdText}
+          <span class="govuk-visually-hidden>(visual only)</span>
+        </div>
+      </div>
     `
-    button.setAttribute('aria-label', options.btnAddThresholdText)
-    button.setAttribute('aria-controls', `${containerId}-visualisation`)
-    button.setAttribute('data-id', container.getAttribute('data-id'))
-    button.setAttribute('data-threshold-add', '')
-    button.setAttribute('data-level', container.getAttribute('data-level'))
-    button.setAttribute('data-name', container.getAttribute('data-name'))
-    container.parentElement.replaceChild(button, container)
+    container.parentElement.replaceChild(tooltip, container)
+
+    // tooltip.className = ''
+    // const button = document.createElement('button')
+    // button.className = options.btnAddThresholdClass
+    // button.innerHTML = `
+    //   <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd" fill="currentColor">
+    //     <path d="M2.75 14.443v2.791H18v1.5H1.25V1.984h1.5v7.967L6.789 4.91l5.016 4.013 5.056-5.899 2.278 1.952-6.944 8.101L7.211 9.09 2.75 14.443z"/>
+    //   </svg>
+    // `
+    // button.setAttribute('aria-label', options.btnAddThresholdText)
+    // button.setAttribute('aria-controls', `${containerId}-visualisation`)
+    // button.setAttribute('data-id', container.getAttribute('data-id'))
+    // button.setAttribute('data-threshold-add', '')
+    // button.setAttribute('data-level', container.getAttribute('data-level'))
+    // button.setAttribute('data-name', container.getAttribute('data-name'))
+    // container.parentElement.replaceChild(button, container)
   })
 
   // Define globals

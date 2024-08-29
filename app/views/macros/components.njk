@@ -3,3 +3,16 @@
   {{ body | safe }}
 </div>
 {% endmacro %}
+
+{% macro tooltip(id, body, label, isVisible) %}
+<div class="defra-tooltip defra-tooltip--{{ position }}{% if isVisible %} defra-tooltip--visible{% endif %}" data-tooltip aria-labelledby="{{ id }}">
+  <button class="defra-tooltip__button" aria-labelledby="{{ id }}">
+    {{ body }}
+  </button>
+  <div id="{{ id }}" class="defra-tooltip__label" role="tooltip">
+      <div class="defra-tooltip__label-inner govuk-body-s">
+          {{ label }}
+      </div>
+  </div>
+</div>
+{% endmacro %}
