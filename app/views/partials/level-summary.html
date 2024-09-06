@@ -5,12 +5,12 @@
   <p class="defra-flood-meta defra-flood-meta--no-border govuk-!-margin-bottom-0"><strong>{{ trigger.elapsedTime }}</strong></p>
   <p>The {{ trigger.riverName }} level at {{ trigger.name }} was {{ trigger.latestHeight }} metres. Property flooding is possible when it goes above {{ trigger.threshold | toFixed(2) }} metres.
     {% if model.targetArea.triggerLevels.length > 1 %}
-    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}?tid={{ trigger.id }}">Monitor the {{ trigger.riverName }} level at {{ trigger.name }}</a>
+    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}/downstream{% endif %}?tid={{ trigger.id }}">Monitor the {{ trigger.riverName }} level at {{ trigger.name }}</a>
     {% endif %}
   </p>
   {% if model.targetArea.triggerLevels.length == 1 %}
   <p>
-    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}-downstage{% endif %}?tid={{ trigger.id }}">Monitor the latest{% if model.targetArea.triggerLevels > 1 %} {{ trigger.riverName }}{% endif %} level at {{ trigger.name }}</a>
+    <a href="/station/{{ trigger.rloiId }}{% if trigger.stage == 'd' %}/downstream{% endif %}?tid={{ trigger.id }}">Monitor the latest{% if model.targetArea.triggerLevels > 1 %} {{ trigger.riverName }}{% endif %} level at {{ trigger.name }}</a>
   </p>
   {% endif %}
   {% endfor %}

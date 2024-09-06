@@ -144,10 +144,10 @@ router.get('/service/stations-by-target-area-trigger/:id', async (req, res, next
 
 // Get thresholds for a station
 router.get('/service/thresholds/:id/:downstream?', async (req, res, next) => {
-  const isDownstage = req.params.downstream === 'downstream'
-  const rloiId = `${req.params.id}${isDownstage ? '-downstage' : ''}`
+  const stage = req.params.downstream === 'downstream' ? 'd' : 'u'
+  const rloiId = req.params.id
   try {
-    res.status(200).json(await thresholdServices.getThresholds(rloiId))
+    res.status(200).json(await thresholdServices.getThresholds(rloiId, stage))
   } catch (err) {
     res.status(500)
     console.log(err)
