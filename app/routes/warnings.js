@@ -10,7 +10,6 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 router.get('/flood-warnings-and-alerts', async (req, res) => {
   const cookie = req.headers.cookie || null
   const query = Object.assign({}, { searchType: 'place', place: '' }, req.query)
-  console.log(query)
   const places = []
   if (query.place !== '') {
     // Check places
