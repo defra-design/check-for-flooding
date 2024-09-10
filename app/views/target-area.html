@@ -107,7 +107,9 @@
     {% endif %}
 
     {# -- Trigger levels -- #}
+    {% if model.targetArea.type == 'warning' %}
     {% include "partials/level-summary.html" %}
+    {% endif %}
     <p>
       <a href="/river-sea-groundwater-rainfall-levels">
         {% if model.targetArea.triggerLevels | length %}
