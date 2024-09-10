@@ -9,11 +9,12 @@ const ViewModel = require('../models/views/flood-warnings-and-alerts')
 // Get warnings
 router.get('/flood-warnings-and-alerts', async (req, res) => {
   const cookie = req.headers.cookie || null
-  const query = Object.assign({}, { searchType: 'place', search: '' }, req.query)
+  const query = Object.assign({}, { searchType: 'place', place: '' }, req.query)
+  console.log(query)
   const places = []
-  if (query.search !== '') {
+  if (query.place !== '') {
     // Check places
-    const locationResponse = await locationServices.getLocationsByQuery(query.search, query.searchType === 'place')
+    const locationResponse = await locationServices.getLocationsByQuery(query.place, query.searchType === 'place')
     if (locationResponse.status === 200) {
       const results = locationResponse.data.results
       if (results && results.length) {
@@ -27,13 +28,13 @@ router.get('/flood-warnings-and-alerts', async (req, res) => {
   }
   const warningResponse = await warningServices.getWarningsWithin(cookie, places.length === 1 ? places[0].bboxBuffered : null)
   const warnings = new Warnings(warningResponse.data)
-  const model = new ViewModel(query.search, places, warnings)
+  const model = new ViewModel(query.place, places, warnings)
   res.render('warnings', { model })
 })
 
 // Search warnings
 router.post('/flood-warnings-and-alerts', async (req, res) => {
-  res.redirect(`/flood-warnings-and-alerts?search=${encodeURI(req.body.search)}`)
+  res.redirect(`/flood-warnings-and-alerts?place=${encodeURI(req.body.search)}`)
 })
 
 module.exports = router
