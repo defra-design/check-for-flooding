@@ -9,8 +9,9 @@ class Threshold {
     // Merge high with any alerts at the same level
     const firstAlert = this.getFirstAlert(thresholds)
     const high = thresholds.find(t => t.type === 'high')
-    const hasSameAlert = high.value === firstAlert?.value
+    let hasSameAlert
     if (high) {
+      hasSameAlert = high.value === firstAlert?.value
       high.hasSameAlert = hasSameAlert
       high.hasDiffAlert = firstAlert && !hasSameAlert
     }
