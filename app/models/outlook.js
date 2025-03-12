@@ -369,8 +369,9 @@ const createText = (matrix, offset = 0) => {
   }
  
   return {
-    summary: html[0],
-    more: html.length > 1 ? html.slice(1).join('') : null
+    summary: html.join('')
+    // summary: html[0],
+    // more: html.length > 1 ? html.slice(1).join('') : null
   }
 
 }
