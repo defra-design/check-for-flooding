@@ -129,7 +129,7 @@ function OutlookMap (mapId, options) {
     areasOfConcern.getSource().forEachFeatureIntersectingExtent(extent, (feature) => {
       if (!feature.get('isVisible')) { return false }
       let labelPosition = getCenter(feature.getGeometry().getExtent())
-      if (feature.get('labelPosition').length) {
+      if (feature.get('labelPosition')?.length) {
         labelPosition = new Point(transform(feature.get('labelPosition'), 'EPSG:4326', 'EPSG:3857')).getCoordinates()
       }
       features.push({
@@ -211,6 +211,7 @@ function OutlookMap (mapId, options) {
 
   // Set feature overlay html
   const setFeatureHtml = (feature) => {
+    console.log(feature)
     const model = feature.getProperties()
     model.id = feature.getId()
     const html = window.nunjucks.render('info-outlook.html', { model: model })

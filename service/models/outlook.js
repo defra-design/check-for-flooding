@@ -113,8 +113,8 @@ class OutlookGeoJSON {
     const expandedSource = [
       'overflowing rivers',
       'runoff from rainfall or blocked drains',
-      'a high water table',
-      'high tides or large waves'
+      'high tides or large waves',
+      'a high water table'
     ]
 
     const keyArr = [rKey, sKey, cKey, gKey]
