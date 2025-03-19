@@ -327,7 +327,7 @@ const createFirstSentence = (data, source, l) => {
       sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
     }
   }
-  return sentence.trim()
+  return sentence.trim() + '.'
 }
 
 const createSecondSentence = (data, l) => {
@@ -342,7 +342,7 @@ const createSecondSentence = (data, l) => {
     }
     sentence += joinList(p, ',')
   }
-  return sentence.trim()
+  return sentence.trim() + '.'
 }
 
 const createText = (matrix, offset = 0) => {
@@ -359,13 +359,18 @@ const createText = (matrix, offset = 0) => {
   const groups = groupByMatrix(m, l)
   const html = []
 
-  for (let i = 0; i < groups.length; i++ ) {
-    const date = `${groups[i].start}${groups[i].join}${groups[i].end}` 
-    const group = groupByImpactLikelihood(groups[i], l)
-    const data = sortArray(group, l)
-    const split = splitData(data)
-    let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low' + '.' 
-    html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p}</p>`)
+  if (groups.length === 1 && !groups[0].where.flat().some(n => n !== 0)) {
+    const date = `${groups[0].start}${groups[0].join}${groups[0].end}`
+    html.push(`<p>${date} the flood risk is very low.</p>`)
+  } else {
+    for (let i = 0; i < groups.length; i++ ) {
+      const date = `${groups[i].start}${groups[i].join}${groups[i].end}` 
+      const group = groupByImpactLikelihood(groups[i], l)
+      const data = sortArray(group, l)
+      const split = splitData(data)
+      let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low.' 
+      html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p}</p>`)
+    }
   }
  
   return {
