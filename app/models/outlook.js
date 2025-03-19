@@ -327,7 +327,7 @@ const createFirstSentence = (data, source, l) => {
       sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
     }
   }
-  return sentence.trim() + '.'
+  return sentence.trim()
 }
 
 const createSecondSentence = (data, l) => {
@@ -342,7 +342,7 @@ const createSecondSentence = (data, l) => {
     }
     sentence += joinList(p, ',')
   }
-  return sentence.trim() + '.'
+  return sentence.trim()
 }
 
 const createText = (matrix, offset = 0) => {
