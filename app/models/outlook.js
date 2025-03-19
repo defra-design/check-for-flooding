@@ -412,6 +412,7 @@ class Outlook {
     if (!place) return
     const matrix = buildMatrix(data, place)
     const offset = moment().startOf('day').diff(moment(data.last_modified_at).startOf('day'), 'days')
+    this.hasRegionalConcern = !!matrix.flat(3).find(n => n > 0)
     this.regional = offset <= 1 ? createText(matrix, offset) : null
     this.isError = offset > 1
   }

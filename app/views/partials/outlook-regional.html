@@ -16,6 +16,8 @@
   </div>
 </details>
 {% endif %}
+{% if model.outlook.hasRegionalConcern %}
 <span id="map-outlook"></span>
+{% endif %}
 <div class="defra-flood-meta">Updated <time datetime="{{ model.outlook.outlookUTC }}">{{ model.outlook.outlookTimestamp }}</time>.</br>Produced by the Met Office and Environment Agency</div>
 {% endif %}
