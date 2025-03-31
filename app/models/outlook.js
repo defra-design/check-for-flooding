@@ -374,7 +374,7 @@ const createText = (matrix, offset = 0) => {
   }
  
   return {
-    summary: html.join('').replace('and T', 'and t')
+    summary: html.join('').replace('and Tomorrow', 'and tomorrow')
     // summary: html[0],
     // more: html.length > 1 ? html.slice(1).join('') : null
   }
