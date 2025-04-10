@@ -182,8 +182,8 @@ const buildMatrix = (data, place) => {
     ...groups, [item.day]: [...(groups[item.day] || []), item]
   }), {})
 
-  // Build output
-  const matrix = [
+  // Build output [rivers], [sea], [surface water], [groundwater]
+  let matrix = [
     [[0,0],[0,0],[0,0],[0,0]],
     [[0,0],[0,0],[0,0],[0,0]],
     [[0,0],[0,0],[0,0],[0,0]],
@@ -199,6 +199,14 @@ const buildMatrix = (data, place) => {
       matrix[Number(key) -1][poly.source][1] = poly.likelihood > likelihood ? poly.likelihood : likelihood
     }
   }
+
+  // matrix = [
+  //   [[2,4],[2,4],[2,2],[2,2]],
+  //   [[0,0],[0,0],[0,0],[0,0]],
+  //   [[0,0],[0,0],[0,0],[0,0]],
+  //   [[0,0],[0,0],[0,0],[0,0]],
+  //   [[0,0],[0,0],[0,0],[0,0]]
+  // ]
 
   return matrix
 }
@@ -255,7 +263,7 @@ const listWhere = (a, l) => {
 
 const splitData = (a) => {
   const l = a.length ? a[0][1].flat(2).length : 0
-  if (l <= 4) return [a]
+  if (l <= 3) return [a]
   const f = JSON.parse(JSON.stringify(a))
   f[0][1] = f[0][1].slice(0, 1)
   const s = JSON.parse(JSON.stringify(a))
