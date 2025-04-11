@@ -201,11 +201,11 @@ const buildMatrix = (data, place) => {
   }
 
   // matrix = [
-  //   [[2,4],[2,4],[2,2],[2,2]],
-  //   [[0,0],[0,0],[0,0],[0,0]],
-  //   [[0,0],[0,0],[0,0],[0,0]],
-  //   [[0,0],[0,0],[0,0],[0,0]],
-  //   [[0,0],[0,0],[0,0],[0,0]]
+  //   [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 2, 4 ] ],
+  //   [ [ 2, 2 ], [ 2, 3 ], [ 2, 2 ], [ 2, 4 ] ],
+  //   [ [ 2, 2 ], [ 2, 2 ], [ 2, 2 ], [ 2, 4 ] ],
+  //   [ [ 0, 0 ], [ 2, 2 ], [ 0, 0 ], [ 2, 4 ] ],
+  //   [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 2, 4 ] ]
   // ]
 
   return matrix
@@ -263,11 +263,19 @@ const listWhere = (a, l) => {
 
 const splitData = (a) => {
   const l = a.length ? a[0][1].flat(2).length : 0
-  if (l <= 3) return [a]
+  // console.log(a[0][1].flat(2))
+  if (l <= 3) {
+    // console.log('first: ', JSON.stringify(a))
+    // console.log('=========')
+    return [a]
+  }
   const f = JSON.parse(JSON.stringify(a))
   f[0][1] = f[0][1].slice(0, 1)
   const s = JSON.parse(JSON.stringify(a))
   s[0][1] = s[0][1].splice(1)
+  // console.log('first: ', JSON.stringify(f))
+  // console.log('second: ', JSON.stringify(s))
+  // console.log('=========')
   return [f, s]
 }
 
@@ -359,7 +367,8 @@ const createText = (matrix, offset = 0) => {
   const l = {
     day: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     likelihood: ['possible but not expected', 'possible', 'likely', 'expected'],
-    impact: ['flooding of low-lying land', 'isolated property flooding and travel disruption', 'property flooding and travel disruption', 'severe or widespread property flooding and travel disruption'],
+    // impact: ['flooding of low-lying land', 'isolated property flooding and travel disruption', 'property flooding and travel disruption', 'severe or widespread property flooding and travel disruption'],
+    impact: ['flooding of low-lying land', 'some property risk and minor road disruption', 'property flooding and travel disruption', 'severe or widespread flooding'],
     where: ['riverside', 'coastal', 'across the region'],
     source: ['river', 'sea', 'surface water', 'groundwater']
   }
@@ -381,6 +390,7 @@ const createText = (matrix, offset = 0) => {
     }
   }
  
+  console.log('**********')
   return {
     summary: html.join('').replace('and Tomorrow', 'and tomorrow')
     // summary: html[0],
