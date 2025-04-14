@@ -263,19 +263,13 @@ const listWhere = (a, l) => {
 
 const splitData = (a) => {
   const l = a.length ? a[0][1].flat(2).length : 0
-  // console.log(a[0][1].flat(2))
   if (l <= 3) {
-    // console.log('first: ', JSON.stringify(a))
-    // console.log('=========')
     return [a]
   }
   const f = JSON.parse(JSON.stringify(a))
   f[0][1] = f[0][1].slice(0, 1)
   const s = JSON.parse(JSON.stringify(a))
   s[0][1] = s[0][1].splice(1)
-  // console.log('first: ', JSON.stringify(f))
-  // console.log('second: ', JSON.stringify(s))
-  // console.log('=========')
   return [f, s]
 }
 
@@ -358,7 +352,7 @@ const createSecondSentence = (data, l) => {
     }
     sentence += joinList(p, ',')
   }
-  return sentence.trim()
+  return sentence.trim() + '. '
 }
 
 const createText = (matrix, offset = 0) => {
@@ -390,7 +384,6 @@ const createText = (matrix, offset = 0) => {
     }
   }
  
-  console.log('**********')
   return {
     summary: html.join('').replace('and Tomorrow', 'and tomorrow')
     // summary: html[0],
