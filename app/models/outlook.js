@@ -362,7 +362,7 @@ const createText = (matrix, offset = 0) => {
     day: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     likelihood: ['possible but not expected', 'possible', 'likely', 'expected'],
     // impact: ['flooding of low-lying land', 'isolated property flooding and travel disruption', 'property flooding and travel disruption', 'severe or widespread property flooding and travel disruption'],
-    impact: ['flooding of low-lying land', 'some risk to property and minor road disruption', 'property flooding and travel disruption', 'severe or widespread flooding'],
+    impact: ['flooding of low-lying land and roads', 'localised property flooding and travel disruptionn', 'property flooding and significant travel disruption', 'severe or widespread flooding'],
     where: ['riverside', 'coastal', 'across the region'],
     source: ['river', 'sea', 'surface water', 'groundwater']
   }
