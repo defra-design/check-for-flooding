@@ -1,4 +1,5 @@
 {#- We can't mount GOV.UK Frontend's assets at root as it's done automatically by the extensions framework. -#}
+{% set govukRebrand = true %}
 {%- set assetPath = '/govuk/assets' -%}
 
 {% extends "govuk/template.njk" %}
@@ -30,6 +31,7 @@
 {% from "govuk/components/tag/macro.njk"                 import govukTag %}
 {% from "govuk/components/textarea/macro.njk"            import govukTextarea %}
 {% from "govuk/components/warning-text/macro.njk"        import govukWarningText %}
+{% from "govuk/components/service-navigation/macro.njk"  import govukServiceNavigation %}
 
 {% block head %}
   {% include "includes/head.html" %}
@@ -40,12 +42,13 @@
 {% endblock %}
 
 {% block header %}
-  {# Set serviceName in config.js. #}
   {{ govukHeader({
     homepageUrl: "/",
-    serviceName: serviceName,
-    serviceUrl: "/",
-    containerClasses: "govuk-width-container"
+    rebrand: true 
+  }) }}
+  {{ govukServiceNavigation({
+    serviceName: "Check for flooding",
+    serviceUrl: "/"
   }) }}
 {% endblock %}
 

@@ -1,6 +1,6 @@
 'use strict'
 import 'elm-pep'
-import { SkipLink, ErrorSummary, Button, Tabs } from 'govuk-frontend'
+import { SkipLink, ErrorSummary, Button } from 'govuk-frontend'
 import './utils'
 import './build/templates'
 import './components/nunjucks'
@@ -18,19 +18,15 @@ document.addEventListener('readystatechange', () => {
     // Initialise govuk components
     const skipLink = document.querySelector('[data-module="govuk-skip-link"]')
     if (skipLink) {
-      new SkipLink(skipLink).init()
+      new SkipLink(skipLink)
     }
     const errorSummary = document.querySelector('[data-module="govuk-error-summary"]')
     if (errorSummary) {
-      new ErrorSummary(errorSummary).init()
+      new ErrorSummary(errorSummary)
     }
     const button = document.querySelector('[data-module="govuk-button"]')
     if (button) {
-      new Button(button).init()
-    }
-    const tabs = document.querySelector('[data-module="govuk-tabs"]')
-    if (tabs) {
-      new Tabs(tabs).init()
+      new Button(button)
     }
     const model = window.flood.model
 
