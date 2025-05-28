@@ -1,15 +1,10 @@
 'use strict'
 import 'elm-pep'
 import { SkipLink, ErrorSummary, Button } from 'govuk-frontend'
+import { createLiveMap, createOutlookMap } from './components/maps'
 import './utils'
 import './build/templates'
 import './components/nunjucks'
-import './components/map/maps'
-import './components/map/styles'
-import './components/map/layers'
-import './components/map/container'
-import './components/map/live'
-import './components/map/outlook'
 import './components/levels-table'
 
 document.addEventListener('readystatechange', () => {
@@ -32,7 +27,7 @@ document.addEventListener('readystatechange', () => {
 
     // Initialise live map
     if (document.getElementById('map-live')) {
-      window.flood.maps.createLiveMap('map-live', {
+      createLiveMap('map-live', {
         btnText: model.mapButtonText,
         btnClass: model.mapButtonClass,
         btnType: model.mapButtonType || null,
@@ -48,7 +43,7 @@ document.addEventListener('readystatechange', () => {
 
     // Initialise outlook map
     if (document.getElementById('map-outlook')) {
-      window.flood.maps.createOutlookMap('map-outlook', {
+      createOutlookMap('map-outlook', {
         btnText: 'View map showing flood risk areas',
         btnClass: 'defra-button-secondary defra-button-secondary--icon',
         days: model.outlookDays
