@@ -23,7 +23,9 @@ gulp.task('generate-assets', gulp.series(
   gulp.parallel(
     'webpack',
     'sass',
-    'copy-assets'
+    'copy-assets',
+    'copy-map-js',
+    'copy-map-css'
   )
 ))
 gulp.task('default', gulp.series(

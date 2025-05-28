@@ -1,5 +1,5 @@
 export const createLiveMap = (mapId, options = {}) => {
-  console.log('Creating live map')
+  console.log(defra.FloodMap)
 }
 
 export const createOutlookMap = (mapId, options = {}) => {
