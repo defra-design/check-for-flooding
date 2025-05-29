@@ -1,6 +1,9 @@
 export const createLiveMap = (mapId, options = {}) => {
+  const { btnText } = options
+  console.log(options)
   const fm = new defra.FloodMap(mapId, {
-    behaviour: 'hybrid', // 'buttonFirst | inline',
+    behaviour: 'buttonFirst',
+    buttonText: btnText,
     place: 'Carlisle',
     zoom: 14,
     minZoom: 6,

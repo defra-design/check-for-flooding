@@ -51,11 +51,6 @@ $govuk-assets-path: '/govuk/assets/';
 @import "components/flood-meta";
 @import "components/context-footer";
 @import "components/flood-tabs";
-@import "components/map/ol";
-@import "components/map/map";
-@import "components/map/map-key";
-@import "components/map/map-info";
-@import "components/map/map-days";
 @import "components/flood-statistics";
 @import "components/line-chart";
 @import "components/bar-chart";
@@ -66,6 +61,7 @@ $govuk-assets-path: '/govuk/assets/';
 @import "components/flood-impact-list";
 @import "components/social";
 @import "components/service-error";
+@import "components/map";
 @import "components/webchat";
 
 // Tools

@@ -25,6 +25,15 @@ document.addEventListener('readystatechange', () => {
     }
     const model = window.flood.model
 
+    // Toggle keyboard focus
+    window.addEventListener('focusin', (e) => {
+      e.target.setAttribute('keyboard-focus', '')
+    })
+
+    window.addEventListener('focusout', (e) => {
+      e.target.removeAttribute('keyboard-focus')
+    })
+
     // Initialise live map
     if (document.getElementById('map-live')) {
       createLiveMap('map-live', {
@@ -43,11 +52,11 @@ document.addEventListener('readystatechange', () => {
 
     // Initialise outlook map
     if (document.getElementById('map-outlook')) {
-      createOutlookMap('map-outlook', {
-        btnText: 'View map showing flood risk areas',
-        btnClass: 'defra-button-secondary defra-button-secondary--icon',
-        days: model.outlookDays
-      })
+      // createOutlookMap('map-outlook', {
+      //   btnText: 'View map showing flood risk areas',
+      //   btnClass: 'defra-button-secondary defra-button-secondary--icon',
+      //   days: model.outlookDays
+      // })
     }
  
     // Add category tabs progressive enhancement

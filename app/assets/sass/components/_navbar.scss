@@ -75,22 +75,27 @@
     text-decoration: underline;
   }
   // Overides
-  .defra-link-icon-s {
+  .fm-c-btn-tertiary {
     @include govuk-font($size: 19);
     @include mq ($from: tablet) {
       @include govuk-font($size: 16);
     }
+    display: inline-flex;
     float: left;
     margin-right: 10px;
-    &:not([keyboard-focus]):focus {
-      background-color: white;
-      border: 0px;
-      color: govuk-colour('black');
-      box-shadow: none;
+    span {
       text-decoration: underline;
     }
-    &:hover {
+    &:focus span {
+      text-decoration: none;
+    }
+    &:hover:not([aria-disabled=true]) {
+      background-color: transparent;
       color: govuk-colour('black');
+    }
+    &:hover span {
+      text-decoration: underline;
+      text-decoration-thickness: max(3px, .1875rem, .12em);
     }
   }
   // Modifiers
@@ -126,7 +131,7 @@
     .defra-navbar__item {
       margin: 0px;
     }
-    .defra-button-secondary {
+    .fm-c-btn-tertiary {
       @include govuk-font($size: 19);
       @include mq ($from: tablet) {
         @include govuk-font($size: 16);
@@ -158,6 +163,11 @@
       }
       &:after {
         content: 'Map';
+        // Overide component styling
+        position: static;
+        color: inherit;
+        border: 0;
+        outline: 0;
       }
       svg {
         position: relative;
@@ -165,13 +175,10 @@
         color: currentColor;
         vertical-align: top;
         left: 0px;
-        margin: 0px 7px -3px 1px;
+        margin: 0px 3px -3px 1px;
         top: -1px;
       }
-      .defra-button-secondary__icon {
-        color: govuk-colour('black');
-      }
-      .defra-button-secondary__text {
+      span {
         @include defra-visually-hidden();
       }
     }
