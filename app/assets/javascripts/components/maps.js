@@ -1,3 +1,39 @@
+const isBoundsWithin = (inner, outer) => {
+  if (!(inner && outer)) {
+    return false
+  }
+
+  const innerSW = inner.getSouthWest()
+  const innerNE = inner.getNorthEast()
+  const outerSW = outer.getSouthWest()
+  const outerNE = outer.getNorthEast()
+
+  const isWithin =
+    innerSW.lng >= outerSW.lng &&
+    innerSW.lat >= outerSW.lat &&
+    innerNE.lng <= outerNE.lng &&
+    innerNE.lat <= outerNE.lat
+
+  return isWithin
+}
+
+const createTileRequest = (getMap) => { // Factory function to pass a reference to the map instance
+  return (url, resourceType) => {
+    const headers = {}
+
+    if (resourceType === 'Source' && url.includes('/service/geojson/warning-polygons')) {
+      const map = getMap()
+      const bounds = map.getBounds()
+      const bbox = [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()].join(',')
+      url += `?bbox=${bbox}`
+    }
+
+    return {
+      url, headers
+    }
+  }
+}
+
 const addSources = (map) => {
   // GeoJSON sources
   map.addSource('warning-polygons', {
@@ -124,7 +160,7 @@ const addLayers = (map, basemap) => {
   })
 }
 
-export const toggleVisibility = (map, detail) => {
+const toggleVisibility = (map, detail) => {
   // Toggle layers
   map.setLayoutProperty('warning-fill', 'visibility', 'visible')
   map.setLayoutProperty('warning-symbol', 'visibility', 'visible')
@@ -138,7 +174,7 @@ export const toggleVisibility = (map, detail) => {
   // map.setFilter('stations-small', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
 }
 
-export const toggleSelected = (map, id = '') => {
+const toggleSelected = (map, id = '') => {
   map.setFilter('warning-fill-selected', ['==', 'id', id])
   map.setFilter('warning-symbol-selected', ['==', 'id', id])
   // map.setFilter('stations-selected', ['==', 'id', id])
@@ -189,6 +225,7 @@ export const createLiveMap = (mapId, options = {}) => {
     buttonText: btnText,
     // place: 'Carlisle',
     symbols,
+    transformRequest: createTileRequest(() => map),
     zoom: zoom || undefined,
     minZoom: 5,
     maxZoom: 18,
@@ -310,6 +347,18 @@ export const createLiveMap = (mapId, options = {}) => {
         }
       ]
     },
+    queryFeature: {
+      layers: ['warning-fill', 'warning-symbol']
+    }
+  }, (provider) => {
+    // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
+    const { map } = provider
+    map.on('moveend', () => {
+      if (map.getZoom() >= 12 && !isBoundsWithin(map.getBounds(), bounds)) {
+        bounds = map.getBounds()
+        map.getSource('warning-polygons')?.setData('/service/geojson/warning-polygons')
+      }
+    })
   })
 
   fm.addEventListener('ready', e => {
@@ -327,6 +376,24 @@ export const createLiveMap = (mapId, options = {}) => {
       addLayers(fm.map, e.detail.style)
     }
     toggleVisibility(fm.map, e.detail)
+  })
+
+  // Listen to map queries
+  fm.addEventListener('query', e => {
+    // Show info panel for feature query
+    if (e.detail.resultType === 'feature') {
+      const feature = e.detail.features.items[0]
+      fm.setInfo({
+        width: '360px',
+        label: feature.name,
+        html: `<p class="govuk-body-s">id: ${feature.id}</p>`
+      })
+    }
+
+    // Hide info panel and clear selected feature
+    if (!e.detail.resultType) {
+      fm.setInfo(null)
+    }
   })
 }
 

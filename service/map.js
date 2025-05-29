@@ -19,7 +19,7 @@ module.exports = {
     SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, concat(CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state
     FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
     UNION
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, concat(CASE WHEN warning.severity = 3 THEN 'Flood alert' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state
     FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)) u
     ORDER BY CASE state WHEN 'severe' THEN 1 WHEN 'warning' THEN 2 WHEN 'alert' THEN 3 ELSE 4 END DESC;
     `)
@@ -27,9 +27,9 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
+          id: item.id.toLowerCase(),
           name: item.name,
           state: item.state,
           date: item.raised_date
@@ -117,11 +117,11 @@ module.exports = {
     const response = await db.query(`
     WITH bbox AS (SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom)
     SELECT * FROM (
-    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat( CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state,  geom
+    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat(CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state,  geom
     FROM warning
     JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
     UNION
-    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, warning.name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state, geom
+    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat(CASE WHEN warning.severity = 3 THEN 'Flood alert' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state, geom
     FROM warning
     JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)) u, bbox
     WHERE ST_Intersects(u.geom, bbox.geom)
@@ -131,9 +131,9 @@ module.exports = {
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
+          id: item.id.toLowerCase(),
           name: item.name,
           state: item.state,
           date: item.raised_date
