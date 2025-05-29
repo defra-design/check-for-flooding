@@ -205,11 +205,15 @@ router.get('/service/outlook', async (req, res, next) => {
 // GeoJSON layers
 router.get('/service/geojson/:type', async (req, res, next) => {
   const type = req.params.type
+  const bbox = req.query.bbox ? req.query.bbox.split(',').map(n => Number(n)) : null
+
   try {
     if (['river', 'sea', 'groundwater', 'rainfall'].includes(type)) {
       res.status(200).json(await mapServices.getStationsGeoJSON(type))
-    } else if (type === 'warnings') {
+    } else if (type === 'warning-centroids') {
       res.status(200).json(await mapServices.getWarningsGeoJSON())
+    } else if (type === 'warning-polygons') {
+      res.status(200).json(await mapServices.getTargetAreasGeoJSON(bbox))
     } else if (type === 'outlook') {
       res.status(200).json(await mapServices.getOutlookGeoJSON())
     } else if (type === 'places') {

@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const fs = require('fs')
+const path = require('path')
 const warningServices = require('../services/warning')
 const outlookServices = require('../services/outlook')
 const locationServices = require('../services/location')
@@ -55,6 +57,18 @@ router.post('/', async (req, res) => {
   } else {
     res.render('location-not-found', { model })
   }
+})
+
+// Map styles
+router.get('/styles/esri-world-imagery-hybrid.json', async (req, res) => {
+  fs.readFile(path.resolve(__dirname, '../styles/esri-world-imagery-hybrid.json'), (err, result) => {
+    if (err) {
+      throw err
+    }
+    const jsonData = JSON.parse(result)
+    res.setHeader('Content-Type', 'application/json')
+    res.json(jsonData)
+  })
 })
 
 // PWA Offline

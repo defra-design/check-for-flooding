@@ -56,6 +56,11 @@
 
 {% block bodyStart %}
 <script>
+  /* Avoid flicker - need to be very careful */
+  if (['map-live', 'map-outlook'].includes((new URLSearchParams(window.location.search)).get('view'))) {
+    document.body.classList.add('fm-js-hidden')
+  }
+  /* Avoid flicker webchat */
   if (window.location.hash === '#webchat' && window.matchMedia('(max-width: 640px)').matches) {
     document.body.classList.add('wc-hidden')
   }
@@ -81,7 +86,7 @@
     <script src="/public/javascripts/flood-map.js"></script>
     <script src="/public/javascripts/core.js"></script>
     <script type="module" src="/public/javascripts/webchat.js"></script>
-    <script>
+    <!-- <script>
       if ('serviceWorker' in navigator) {
         if (!navigator.serviceWorker.controller) {
             navigator.serviceWorker.register('/sw.js').then(function(reg) {
@@ -89,7 +94,7 @@
             });
         }
       }
-    </script>
+    </script> -->
   {% endblock %}
   <!-- GOV.UK Prototype Kit {{releaseVersion}} -->
 {% endblock %}

@@ -15,12 +15,13 @@ module.exports = {
   },
   getWarningsGeoJSON: async () => {
     const response = await db.query(`
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
+    SELECT * FROM (
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, concat(CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state
     FROM warning JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
     UNION
-    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.severity, warning.raised_date AT TIME ZONE '+00' AS raised_date, warning.severity_changed_date AT TIME ZONE '+00' AS severity_changed_date
-    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)
-    ORDER BY severity DESC;
+    SELECT warning.id, ST_AsGeoJSON(ST_Centroid(geom))::JSONB AS geometry, warning.name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state
+    FROM warning JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)) u
+    ORDER BY CASE state WHEN 'severe' THEN 1 WHEN 'warning' THEN 2 WHEN 'alert' THEN 3 ELSE 4 END DESC;
     `)
     const features = []
     response.forEach(item => {
@@ -30,10 +31,8 @@ module.exports = {
         geometry: item.geometry,
         properties: {
           name: item.name,
-          severity: Number(item.severity),
-          issuedDate: item.raised_date,
-          severityChangedDate: item.severity_changed_date,
-          type: 'TA'
+          state: item.state,
+          date: item.raised_date
         }
       })
     })
@@ -113,14 +112,21 @@ module.exports = {
     }
     return geoJSON
   },
-  getTargetAreasGeoJSON: async () => {
+  getTargetAreasGeoJSON: async (bbox) => {
+    const [xmin, ymin, xmax, ymax] = bbox
     const response = await db.query(`
-      SELECT 5000 + id AS id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
-      FROM flood_alert_areas
-      UNION ALL
-      SELECT id, ST_AsGeoJSON(geom)::JSONB AS geometry, fws_tacode
-      FROM flood_warning_areas
-    `)
+    WITH bbox AS (SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom)
+    SELECT * FROM (
+    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat( CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state,  geom
+    FROM warning
+    JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
+    UNION
+    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, warning.name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state, geom
+    FROM warning
+    JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)) u, bbox
+    WHERE ST_Intersects(u.geom, bbox.geom)
+    ORDER BY CASE state WHEN 'severe' THEN 1 WHEN 'warning' THEN 2 WHEN 'alert' THEN 3 ELSE 4 END DESC
+  `, [xmin, ymin, xmax, ymax])
     const features = []
     response.forEach(item => {
       features.push({
@@ -128,7 +134,9 @@ module.exports = {
         id: item.id.toLowerCase(),
         geometry: item.geometry,
         properties: {
-          fws_tacode: item.fws_tacode.toLowerCase()
+          name: item.name,
+          state: item.state,
+          date: item.raised_date
         }
       })
     })

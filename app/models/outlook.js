@@ -208,6 +208,22 @@ const buildMatrix = (data, place) => {
   //   [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 2, 4 ] ]
   // ]
 
+  matrix = [
+    [ [2,0], [3,3], [3,1], [2,4] ],
+    [ [0,1], [2,4], [1,1], [0,0] ],
+    [ [3,1], [0,0], [0,1], [2,1] ],
+    [ [0,0], [1,1], [0,1], [1,4] ],
+    [ [2,2], [1,0], [2,4], [0,0] ]
+  ]
+
+  /*
+  Property flooding and significant travel disruption is expected across the region due to surface water and groundwater.
+  Localised property flooding and travel disruption is null in riverside areas.
+  In coastal areas, property flooding and significant travel disruption is likely
+  */
+
+  // In riverside areas, localised property flooding and travel disruption is null.
+
   return matrix
 }
 
