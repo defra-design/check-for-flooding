@@ -42,66 +42,44 @@ module.exports = {
     }
     return geoJSON
   },
-  getStationsGeoJSON: async (type) => {
+  getStationsGeoJSON: async () => {
     const response = await db.query(`
-      SELECT station_id, rloi_id, lon, lat,
-      CASE
-      WHEN type = 'river' AND is_multi_stage THEN 'M'
-      WHEN type = 'river' AND NOT is_multi_stage THEN 'S'
-      WHEN type = 'groundwater' THEN 'G'
-      WHEN type = 'tide' THEN 'C'
-      WHEN type = 'rainfall' THEN 'R'
-      ELSE NULL END AS type,
-      CASE
-      WHEN type = 'river' AND status != 'active' AND status != 'ukcmf' THEN 'riverError'
-      WHEN type = 'river' AND latest_state = 'high' THEN 'riverHigh'
-      WHEN type = 'river' OR (type = 'tide' AND river_id IS NOT NULL) THEN 'river'
-      WHEN type = 'groundwater' AND status != 'active' THEN 'groundError'
-      WHEN type = 'groundwater' AND latest_state = 'high' THEN 'groundHigh'
-      WHEN type = 'groundwater' THEN 'ground'
-      WHEN type = 'tide' AND status != 'active' THEN 'seaError'
-      WHEN type = 'tide' THEN 'sea'
-      WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'rain'
-      WHEN type = 'rainfall' THEN 'rainDry' END AS state,
-      is_wales, initcap(latest_state) AS latest_state, status, name, river_id, river_name, hydrological_catchment_id, hydrological_catchment_name, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down,
-      CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
-      CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage
-      FROM measure_with_latest
-      WHERE CASE WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' AND river_id IS NULL THEN 'sea' ELSE type END = $1
-      ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
-    `, type)
+    SELECT
+    CASE
+    WHEN type = 'rainfall' THEN concat('r', station_id) ELSE rloi_id END AS id,
+    lon, lat,
+    CASE
+    WHEN type = 'tide' AND river_id IS NOT NULL THEN 'river' WHEN type = 'tide' THEN 'sea' ELSE type END AS type,
+    CASE
+    WHEN type = 'river' AND status != 'active' AND status != 'ukcmf' THEN 'error'
+    WHEN type = 'river' AND latest_state = 'high' THEN 'high'
+    WHEN type = 'river' OR (type = 'tide' AND river_id IS NOT NULL) THEN 'normal'
+    WHEN type = 'groundwater' AND status != 'active' THEN 'error'
+    WHEN type = 'groundwater' AND latest_state = 'high' THEN 'high'
+    WHEN type = 'groundwater' THEN 'normal'
+    WHEN type = 'tide' AND status != 'active' THEN 'error'
+    WHEN type = 'tide' THEN 'normal'
+    WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'wet'
+    WHEN type = 'rainfall' THEN 'dry' END AS state,
+    is_wales, initcap(latest_state) AS latest_state, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down,
+    CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
+    CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage
+    FROM measure_with_latest
+    ORDER BY array_position(array[null,'low','normal','high'], measure_with_latest.latest_state);
+    `)
     // Build GeoJSON
     const features = []
     response.forEach(item => {
       features.push({
         type: 'Feature',
-        id: item.type === 'R' ? `r${item.station_id}` : `s${item.rloi_id}`,
         geometry: {
           type: 'Point',
           coordinates: [item.lon, item.lat]
         },
         properties: {
-          type: item.type,
-          name: item.name,
-          riverId: item.river_id,
-          riverName: item.river_name,
-          // catchmentId: item.hydrological_catchment_id,
-          // catchmentName: item.hydrological_catchment_name,
-          status: item.status,
-          value: item.latest_height ? Math.round(Number(item.latest_height) * 100) / 100 : null,
-          value1hr: item.rainfall_1hr,
-          value6hr: item.rainfall_6hr,
-          value24hr: item.rainfall_24hr,
-          trend: item.latest_trend,
-          valueDate: item.latest_datetime,
-          percentile5: item.level_high,
-          percentile95: item.level_low,
-          up: item.station_up,
-          down: item.station_down,
-          isDownstage: item.is_downstage,
-          isUpstage: item.is_upstage,
-          atrisk: item.latest_state === 'High',
-          iswales: item.is_wales,
+          id: item.id,
+          name: 'Test name',
+          category: item.type,
           state: item.state
         }
       })
@@ -115,17 +93,64 @@ module.exports = {
   getTargetAreasGeoJSON: async (bbox) => {
     const [xmin, ymin, xmax, ymax] = bbox
     const response = await db.query(`
-    WITH bbox AS (SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom)
-    SELECT * FROM (
-    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat(CASE WHEN warning.severity = 1 THEN 'Severe flood warning' WHEN warning.severity = 2 THEN 'Flood warning' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 1 THEN 'severe' WHEN warning.severity = 2 THEN 'warning' ELSE 'removed' END AS state,  geom
-    FROM warning
-    JOIN flood_warning_areas ON LOWER(flood_warning_areas.fws_tacode) = LOWER(warning.id)
-    UNION
-    SELECT warning.id, ST_AsGeoJSON(geom)::JSONB AS geometry, concat(CASE WHEN warning.severity = 3 THEN 'Flood alert' ELSE 'Flood warning removed' END, ' for ', warning.name) AS name, warning.raised_date AT TIME ZONE '+00' AS raised_date, CASE WHEN warning.severity = 3 THEN 'alert' ELSE 'removed' END AS state, geom
-    FROM warning
-    JOIN flood_alert_areas ON LOWER(flood_alert_areas.fws_tacode) = LOWER(warning.id)) u, bbox
-    WHERE ST_Intersects(u.geom, bbox.geom)
-    ORDER BY CASE state WHEN 'severe' THEN 1 WHEN 'warning' THEN 2 WHEN 'alert' THEN 3 ELSE 4 END DESC
+WITH bbox AS (
+  SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom
+)
+
+SELECT *
+FROM (
+  -- Flood warning areas
+  SELECT
+    w.id,
+    ST_AsGeoJSON(wfa.geom)::JSONB AS geometry,
+    CONCAT(
+      CASE
+        WHEN w.severity = 1 THEN 'Severe flood warning'
+        WHEN w.severity = 2 THEN 'Flood warning'
+        ELSE 'Flood warning removed'
+      END,
+      ' for ', w.name
+    ) AS name,
+    w.raised_date AT TIME ZONE '+00' AS raised_date,
+    CASE
+      WHEN w.severity = 1 THEN 'severe'
+      WHEN w.severity = 2 THEN 'warning'
+      ELSE 'removed'
+    END AS state
+  FROM flood_warning_areas wfa
+  JOIN bbox ON ST_Intersects(wfa.geom, bbox.geom)
+  JOIN warning w ON wfa.fws_tacode = w.id
+
+  UNION ALL
+
+  -- Flood alert areas
+  SELECT
+    w.id,
+    ST_AsGeoJSON(faa.geom)::JSONB AS geometry,
+    CONCAT(
+      CASE
+        WHEN w.severity = 3 THEN 'Flood alert'
+        ELSE 'Flood warning removed'
+      END,
+      ' for ', w.name
+    ) AS name,
+    w.raised_date AT TIME ZONE '+00' AS raised_date,
+    CASE
+      WHEN w.severity = 3 THEN 'alert'
+      ELSE 'removed'
+    END AS state
+  FROM flood_alert_areas faa
+  JOIN bbox ON ST_Intersects(faa.geom, bbox.geom)
+  JOIN warning w ON faa.fws_tacode = w.id
+) u
+
+ORDER BY
+  CASE state
+    WHEN 'severe' THEN 1
+    WHEN 'warning' THEN 2
+    WHEN 'alert' THEN 3
+    ELSE 4
+  END DESC
   `, [xmin, ymin, xmax, ymax])
     const features = []
     response.forEach(item => {

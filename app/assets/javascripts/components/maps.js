@@ -1,3 +1,7 @@
+const FEATURE_ZOOM = 12
+
+let map, bounds
+
 const isBoundsWithin = (inner, outer) => {
   if (!(inner && outer)) {
     return false
@@ -38,20 +42,16 @@ const addSources = (map) => {
   // GeoJSON sources
   map.addSource('warning-polygons', {
     type: 'geojson',
-    data: '/service/geojson/warning-polygons'
+    data: {type: 'FeatureCollection', features: []} // Empty source, setData on ready and moveend
   })
   map.addSource('warning-centroids', {
     type: 'geojson',
     data: '/service/geojson/warning-centroids'
   })
-  // map.addSource('station-centroids', {
-  //   type: 'geojson',
-  //   data: process.env.CFF_STATION_CENTROIDS
-  // })
-  // map.addSource('rainfall-centroids', {
-  //   type: 'geojson',
-  //   data: process.env.CFF_RAINFALL_CENTROIDS
-  // })
+  map.addSource('station-centroids', {
+    type: 'geojson',
+    data: '/service/geojson/stations'
+  })
 }
 
 const addLayers = (map, basemap) => {
@@ -87,57 +87,57 @@ const addLayers = (map, basemap) => {
       ],
       'fill-opacity': 0.75
     },
-    minzoom: 12
+    minzoom: FEATURE_ZOOM
   }, position)
 
-  // map.addLayer({
-  //   id: 'stations',
-  //   type: 'symbol',
-  //   source: 'station-centroids',
-  //   layout: {
-  //     'icon-image': ['concat', ['get', 'category'], '-', ['get', 'state']],
-  //     'icon-size': 0.5,
-  //     'icon-allow-overlap': true,
-  //     'icon-ignore-placement': true,
-  //     'symbol-z-order': 'source',
-  //     'symbol-sort-key': ['match', ['get', 'state'],
-  //       'high', 5,
-  //       'wet', 4,
-  //       'normal', 3,
-  //       'dry', 2,
-  //       1
-  //     ]
-  //   },
-  //   minzoom: 12
-  // })
+  map.addLayer({
+    id: 'stations',
+    type: 'symbol',
+    source: 'station-centroids',
+    layout: {
+      'icon-image': ['concat', ['get', 'category'], '-', ['get', 'state']],
+      'icon-size': 0.5,
+      'icon-allow-overlap': true,
+      'icon-ignore-placement': true,
+      'symbol-z-order': 'source',
+      'symbol-sort-key': ['match', ['get', 'state'],
+        'high', 5,
+        'wet', 4,
+        'normal', 3,
+        'dry', 2,
+        1
+      ]
+    },
+    minzoom: 12
+  })
 
-  // map.addLayer({
-  //   id: 'stations-small',
-  //   type: 'symbol',
-  //   source: 'station-centroids',
-  //   layout: {
-  //     'icon-image': ['concat', 'station-', ['match', ['get', 'state'],
-  //       'high', 'alert',
-  //       'wet', 'normal',
-  //       'normal', 'normal',
-  //       'dry', 'low',
-  //       'low', 'low',
-  //       'error'
-  //     ]],
-  //     'icon-size': 0.5,
-  //     'icon-allow-overlap': true,
-  //     'icon-ignore-placement': true,
-  //     'symbol-z-order': 'source',
-  //     'symbol-sort-key': ['match', ['get', 'state'],
-  //       'high', 5,
-  //       'wet', 4,
-  //       'normal', 3,
-  //       'dry', 2,
-  //       1
-  //     ]
-  //   },
-  //   maxzoom: 12
-  // })
+  map.addLayer({
+    id: 'stations-small',
+    type: 'symbol',
+    source: 'station-centroids',
+    layout: {
+      'icon-image': ['concat', 'station-', ['match', ['get', 'state'],
+        'high', 'alert',
+        'wet', 'normal',
+        'normal', 'normal',
+        'dry', 'low',
+        'low', 'low',
+        'error'
+      ]],
+      'icon-size': 0.5,
+      'icon-allow-overlap': true,
+      'icon-ignore-placement': true,
+      'symbol-z-order': 'source',
+      'symbol-sort-key': ['match', ['get', 'state'],
+        'high', 5,
+        'wet', 4,
+        'normal', 3,
+        'dry', 2,
+        1
+      ]
+    },
+    maxzoom: 12
+  })
 
   map.addLayer({
     id: 'warning-symbol',
@@ -156,7 +156,7 @@ const addLayers = (map, basemap) => {
         1
       ]
     },
-    maxzoom: 12
+    maxzoom: FEATURE_ZOOM
   })
 }
 
@@ -164,21 +164,21 @@ const toggleVisibility = (map, detail) => {
   // Toggle layers
   map.setLayoutProperty('warning-fill', 'visibility', 'visible')
   map.setLayoutProperty('warning-symbol', 'visibility', 'visible')
-  // map.setLayoutProperty('stations', 'visibility', detail.segments.includes('li') ? 'visible' : 'none')
-  // map.setLayoutProperty('stations-small', 'visibility', detail.segments.includes('li') ? 'visible' : 'none')
+  map.setLayoutProperty('stations', 'visibility', 'visible')
+  map.setLayoutProperty('stations-small', 'visibility', 'visible')
   // Filter features
   const layers = (Object.keys(queryMap).filter(k => detail.layers?.includes(queryMap[k])))
   map.setFilter('warning-fill', ['match', ['get', 'state'], layers.length ? layers : '', true, false])
   map.setFilter('warning-symbol', ['match', ['get', 'state'], layers.length ? layers : '', true, false])
-  // map.setFilter('stations', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
-  // map.setFilter('stations-small', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
+  map.setFilter('stations', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
+  map.setFilter('stations-small', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
 }
 
-const toggleSelected = (map, id = '') => {
-  map.setFilter('warning-fill-selected', ['==', 'id', id])
-  map.setFilter('warning-symbol-selected', ['==', 'id', id])
-  // map.setFilter('stations-selected', ['==', 'id', id])
-  // map.setFilter('stations-small-selected', ['==', 'id', id])
+const setData = (map) => {
+  if (map.getZoom() >= FEATURE_ZOOM && !isBoundsWithin(map.getBounds(), bounds)) {
+    bounds = map.getBounds()
+    map.getSource('warning-polygons')?.setData('/service/geojson/warning-polygons')
+  }
 }
 
 const symbols = [
@@ -213,8 +213,6 @@ const queryMap = {
   groundwater: 'gr',
   rainfall: 'ra'
 }
-
-let map, bounds
 
 export const createLiveMap = (mapId, options = {}) => {
   const { btnText, extent, centre, zoom } = options
@@ -254,7 +252,7 @@ export const createLiveMap = (mapId, options = {}) => {
       url: process.env.TRITANOPIA_URL
     }],
     legend: {
-      title: 'Menu',
+      title: 'Legend',
       width: '360px',
       display: 'inset',
       isVisible: true,
@@ -264,7 +262,7 @@ export const createLiveMap = (mapId, options = {}) => {
         {
           heading: 'Flood warnings and alerts',
           layout: 'column',
-          minZoom: 12,
+          minZoom: FEATURE_ZOOM,
           items: [
             {
               id: queryMap.severe,
@@ -294,7 +292,7 @@ export const createLiveMap = (mapId, options = {}) => {
         {
           heading: 'Flood warnings and alerts',
           layout: 'column',
-          maxZoom: 12,
+          maxZoom: FEATURE_ZOOM,
           items: [
             {
               id: queryMap.severe,
@@ -348,23 +346,19 @@ export const createLiveMap = (mapId, options = {}) => {
       ]
     },
     queryFeature: {
-      layers: ['warning-fill', 'warning-symbol']
+      layers: ['warning-fill', 'warning-symbol', 'stations', 'stations-small']
     }
   }, (provider) => {
     // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
     const { map } = provider
-    map.on('moveend', () => {
-      if (map.getZoom() >= 12 && !isBoundsWithin(map.getBounds(), bounds)) {
-        bounds = map.getBounds()
-        map.getSource('warning-polygons')?.setData('/service/geojson/warning-polygons')
-      }
-    })
+    map.on('moveend', () => setData(map))
   })
 
   fm.addEventListener('ready', e => {
     map = fm.map
 
     addSources(map)
+    setData(map) // Conditionally set polygon data
     addLayers(map, e.detail.style)
     toggleVisibility(map, e.detail)
   })
@@ -373,6 +367,7 @@ export const createLiveMap = (mapId, options = {}) => {
   fm.addEventListener('change', e => {
     if (e.detail.type === 'style') {
       addSources(map)
+      setData(map) // Conditionally set polygon data
       addLayers(fm.map, e.detail.style)
     }
     toggleVisibility(fm.map, e.detail)

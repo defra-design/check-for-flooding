@@ -208,7 +208,7 @@ router.get('/service/geojson/:type', async (req, res, next) => {
   const bbox = req.query.bbox ? req.query.bbox.split(',').map(n => Number(n)) : null
 
   try {
-    if (['river', 'sea', 'groundwater', 'rainfall'].includes(type)) {
+    if (type === 'stations') {
       res.status(200).json(await mapServices.getStationsGeoJSON(type))
     } else if (type === 'warning-centroids') {
       res.status(200).json(await mapServices.getWarningsGeoJSON())
