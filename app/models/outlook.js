@@ -29,37 +29,6 @@ const FLOOD_SOURCE_LABELS = {
 }
 
 /**
- * Risk level constants (0-4 scale)
- */
-const RISK_LEVELS = {
-  VERY_LOW: 0,
-  LOW: 1,
-  MEDIUM: 2,
-  HIGH: 3,
-  SEVERE: 4
-}
-
-/**
- * Impact level constants (1-4 scale)
- */
-const IMPACT_LEVELS = {
-  MINIMAL: 1,
-  MINOR: 2,
-  SIGNIFICANT: 3,
-  SEVERE: 4
-}
-
-/**
- * Likelihood level constants (1-4 scale)
- */
-const LIKELIHOOD_LEVELS = {
-  NOT_EXPECTED: 1,
-  POSSIBLE: 2,
-  LIKELY: 3,
-  EXPECTED: 4
-}
-
-/**
  * Polygon geometry types
  */
 const POLYGON_TYPES = {
