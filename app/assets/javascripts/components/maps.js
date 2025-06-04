@@ -1,3 +1,5 @@
+import { formatDay, formatDate } from './dates'
+
 const FEATURE_ZOOM = 12
 
 let map, bounds
@@ -38,7 +40,7 @@ const createTileRequest = (getMap) => { // Factory function to pass a reference 
   }
 }
 
-const addSources = (map) => {
+const addLiveSources = (map) => {
   // GeoJSON sources
   map.addSource('warning-polygons', {
     type: 'geojson',
@@ -54,7 +56,7 @@ const addSources = (map) => {
   })
 }
 
-const addLayers = (map, basemap) => {
+const addLiveLayers = (map, basemap) => {
   const position = map.getLayer('small settlement names')
     ? 'small settlement names'
     : map.getLayer('Road labels')
@@ -160,7 +162,7 @@ const addLayers = (map, basemap) => {
   })
 }
 
-const toggleVisibility = (map, detail) => {
+const toggleLiveVisibility = (map, detail) => {
   // Toggle layers
   map.setLayoutProperty('warning-fill', 'visibility', 'visible')
   map.setLayoutProperty('warning-symbol', 'visibility', 'visible')
@@ -172,6 +174,47 @@ const toggleVisibility = (map, detail) => {
   map.setFilter('warning-symbol', ['match', ['get', 'state'], layers.length ? layers : '', true, false])
   map.setFilter('stations', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
   map.setFilter('stations-small', ['match', ['get', 'category'], layers.length ? layers : '', true, false])
+}
+
+const addOutlookSource = (map) => {
+  map.addSource('outlook', {
+    type: 'geojson',
+    data: '/service/geojson/outlook'
+  })
+}
+
+const addOutlookLayer = (map, basemap) => {
+  const position = map.getLayer('small settlement names')
+    ? 'small settlement names'
+    : map.getLayer('Road labels')
+      ? 'Road labels'
+      : null
+
+  map.addLayer({
+    id: 'outlook',
+    type: 'fill',
+    source: 'outlook',
+    paint: {
+      'fill-color': ['match',
+        ['get', 'risk-level'],
+        4,
+        '#d4351c',
+        3,
+        '#f47738',
+        2,
+        '#ffdd00',
+        '#00703c'
+      ],
+      'fill-opacity': 0.75
+    },
+    filter: ['==', 'id', '']
+  }, position)
+}
+
+const toggleOutlookVisibility = (map, detail) => {
+  // Filter features
+  const day = detail.segments.filter(s => ['d1', 'd2', 'd3', 'd4', 'd5'].includes(s)).map(s => s.charAt(1))[0] || ''
+  map.setFilter('outlook', ['==', ['get', `is-day-${day}`], true])
 }
 
 const setData = (map) => {
@@ -211,12 +254,16 @@ const queryMap = {
   river: 'ri',
   sea: 'se',
   groundwater: 'gr',
-  rainfall: 'ra'
+  rainfall: 'ra',
+  day1: 'd1',
+  day2: 'd2',
+  day3: 'd3',
+  day4: 'd4',
+  day5: 'd5',
 }
 
 export const createLiveMap = (mapId, options = {}) => {
   const { btnText, extent, centre, zoom } = options
-  console.log(options)
 
   const fm = new defra.FloodMap(mapId, {
     behaviour: 'buttonFirst',
@@ -252,11 +299,10 @@ export const createLiveMap = (mapId, options = {}) => {
       url: process.env.TRITANOPIA_URL
     }],
     legend: {
-      title: 'Legend',
+      title: 'Live flood risk',
       width: '360px',
       display: 'inset',
       isVisible: true,
-      keyDisplay: 'min', // 'all'
       isPersistInUrl: true,
       key: [
         {
@@ -320,6 +366,7 @@ export const createLiveMap = (mapId, options = {}) => {
         {
           heading: 'Water level measuring stations',
           layout: 'column',
+          isHidden: true,
           items: [
             {
               id: queryMap.river,
@@ -357,20 +404,20 @@ export const createLiveMap = (mapId, options = {}) => {
   fm.addEventListener('ready', e => {
     map = fm.map
 
-    addSources(map)
+    addLiveSources(map)
     setData(map) // Conditionally set polygon data
-    addLayers(map, e.detail.style)
-    toggleVisibility(map, e.detail)
+    addLiveLayers(map, e.detail.style)
+    toggleLiveVisibility(map, e.detail)
   })
 
   // Listen for segments, layers or style changes
   fm.addEventListener('change', e => {
     if (e.detail.type === 'style') {
-      addSources(map)
+      addLiveSources(map)
       setData(map) // Conditionally set polygon data
-      addLayers(fm.map, e.detail.style)
+      addLiveLayers(fm.map, e.detail.style)
     }
-    toggleVisibility(fm.map, e.detail)
+    toggleLiveVisibility(fm.map, e.detail)
   })
 
   // Listen to map queries
@@ -393,5 +440,121 @@ export const createLiveMap = (mapId, options = {}) => {
 }
 
 export const createOutlookMap = (mapId, options = {}) => {
-  console.log('Creating outlook map')
+  const { btnText, extent, days } = options
+  const items = days.map((day, i) => { return {
+    id: queryMap[`day${i + 1}`],
+    label: `<strong>${formatDay(new Date(day.date))}</strong>${formatDate(new Date(day.date))}`
+  }})
+
+  const fm = new defra.FloodMap(mapId, {
+    behaviour: 'buttonFirst',
+    buttonText: btnText,
+    // place: 'Carlisle',
+    symbols,
+    transformRequest: createTileRequest(() => map),
+    minZoom: 6,
+    maxZoom: 9,
+    bounds: extent,
+    maxBounds: [-5.719993, 49.955638, 1.794689, 55.825973],
+    styles: [{
+      name: 'default',
+      attribution: `Contains OS data ${String.fromCharCode(169)} Crown copyright and database rights ${(new Date()).getFullYear()}`,
+      url: process.env.DEFAULT_URL
+    }, {
+      name: 'dark',
+      attribution: 'Test',
+      url: process.env.DARK_URL
+    },{
+      name: 'aerial',
+      url: process.env.AERIAL_URL,
+      logo: null
+    },{
+      name: 'deuteranopia',
+      attribution: 'Test',
+      url: process.env.DEUTERANOPIA_URL
+    },{
+      name: 'tritanopia',
+      attribution: 'Test',
+      url: process.env.TRITANOPIA_URL
+    }],
+    legend: {
+      title: '5 day flood forecast',
+      width: '360px',
+      display: 'inset',
+      isVisible: true,
+      isPersistInUrl: true,
+      segments: [
+        {
+          display: 'segmented',
+          items
+        }
+      ],
+      key: [
+        {
+          heading: 'Risk areas',
+          layout: 'column',
+          display: 'ramp',
+          items: [
+            {
+              label: 'Very low',
+              fill: '#00703c'
+            },
+            {
+              label: 'Low',
+              fill: '#ffdd00'
+            },
+            {
+              label: 'Medium',
+              fill: '#f47738'
+            },
+            {
+              label: 'High',
+              fill: '#d4351c'
+            }
+          ]
+        },
+      ]
+    },
+    queryFeature: {
+      layers: ['outlook']
+    }
+  }, (provider) => {
+    // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
+    const { map } = provider
+    map.on('moveend', () => setData(map))
+  })
+
+  fm.addEventListener('ready', e => {
+    map = fm.map
+    addOutlookSource(map)
+    addOutlookLayer(map, e.detail.style)
+    toggleOutlookVisibility(map, e.detail)
+  })
+
+  // Listen for segments, layers or style changes
+  fm.addEventListener('change', e => {
+    if (e.detail.type === 'style') {
+      addOutlookSource(map)
+      addOutlookLayer(fm.map, e.detail.style)
+    }
+    toggleOutlookVisibility(fm.map, e.detail)
+  })
+
+  // Listen to map queries
+  fm.addEventListener('query', e => {
+    // Show info panel for feature query
+    if (e.detail.resultType === 'feature') {
+      const feature = e.detail.features.items[0]
+      fm.setInfo({
+        width: '360px',
+        label: feature.name,
+        html: `<p class="govuk-body-s">id: ${feature.id}</p>`
+      })
+    }
+
+    // Hide info panel and clear selected feature
+    if (!e.detail.resultType) {
+      fm.setInfo(null)
+    }
+  })
 }

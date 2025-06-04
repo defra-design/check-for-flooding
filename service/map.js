@@ -93,64 +93,64 @@ module.exports = {
   getTargetAreasGeoJSON: async (bbox) => {
     const [xmin, ymin, xmax, ymax] = bbox
     const response = await db.query(`
-WITH bbox AS (
-  SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom
-)
+      WITH bbox AS (
+        SELECT ST_MakeEnvelope($1, $2, $3, $4, 4326) AS geom
+      )
 
-SELECT *
-FROM (
-  -- Flood warning areas
-  SELECT
-    w.id,
-    ST_AsGeoJSON(wfa.geom)::JSONB AS geometry,
-    CONCAT(
-      CASE
-        WHEN w.severity = 1 THEN 'Severe flood warning'
-        WHEN w.severity = 2 THEN 'Flood warning'
-        ELSE 'Flood warning removed'
-      END,
-      ' for ', w.name
-    ) AS name,
-    w.raised_date AT TIME ZONE '+00' AS raised_date,
-    CASE
-      WHEN w.severity = 1 THEN 'severe'
-      WHEN w.severity = 2 THEN 'warning'
-      ELSE 'removed'
-    END AS state
-  FROM flood_warning_areas wfa
-  JOIN bbox ON ST_Intersects(wfa.geom, bbox.geom)
-  JOIN warning w ON wfa.fws_tacode = w.id
+      SELECT *
+      FROM (
+        -- Flood warning areas
+        SELECT
+          w.id,
+          ST_AsGeoJSON(wfa.geom)::JSONB AS geometry,
+          CONCAT(
+            CASE
+              WHEN w.severity = 1 THEN 'Severe flood warning'
+              WHEN w.severity = 2 THEN 'Flood warning'
+              ELSE 'Flood warning removed'
+            END,
+            ' for ', w.name
+          ) AS name,
+          w.raised_date AT TIME ZONE '+00' AS raised_date,
+          CASE
+            WHEN w.severity = 1 THEN 'severe'
+            WHEN w.severity = 2 THEN 'warning'
+            ELSE 'removed'
+          END AS state
+        FROM flood_warning_areas wfa
+        JOIN bbox ON ST_Intersects(wfa.geom, bbox.geom)
+        JOIN warning w ON wfa.fws_tacode = w.id
 
-  UNION ALL
+        UNION ALL
 
-  -- Flood alert areas
-  SELECT
-    w.id,
-    ST_AsGeoJSON(faa.geom)::JSONB AS geometry,
-    CONCAT(
-      CASE
-        WHEN w.severity = 3 THEN 'Flood alert'
-        ELSE 'Flood warning removed'
-      END,
-      ' for ', w.name
-    ) AS name,
-    w.raised_date AT TIME ZONE '+00' AS raised_date,
-    CASE
-      WHEN w.severity = 3 THEN 'alert'
-      ELSE 'removed'
-    END AS state
-  FROM flood_alert_areas faa
-  JOIN bbox ON ST_Intersects(faa.geom, bbox.geom)
-  JOIN warning w ON faa.fws_tacode = w.id
-) u
+        -- Flood alert areas
+        SELECT
+          w.id,
+          ST_AsGeoJSON(faa.geom)::JSONB AS geometry,
+          CONCAT(
+            CASE
+              WHEN w.severity = 3 THEN 'Flood alert'
+              ELSE 'Flood warning removed'
+            END,
+            ' for ', w.name
+          ) AS name,
+          w.raised_date AT TIME ZONE '+00' AS raised_date,
+          CASE
+            WHEN w.severity = 3 THEN 'alert'
+            ELSE 'removed'
+          END AS state
+        FROM flood_alert_areas faa
+        JOIN bbox ON ST_Intersects(faa.geom, bbox.geom)
+        JOIN warning w ON faa.fws_tacode = w.id
+      ) u
 
-ORDER BY
-  CASE state
-    WHEN 'severe' THEN 1
-    WHEN 'warning' THEN 2
-    WHEN 'alert' THEN 3
-    ELSE 4
-  END DESC
+      ORDER BY
+        CASE state
+          WHEN 'severe' THEN 1
+          WHEN 'warning' THEN 2
+          WHEN 'alert' THEN 3
+          ELSE 4
+        END DESC
   `, [xmin, ymin, xmax, ymax])
     const features = []
     response.forEach(item => {

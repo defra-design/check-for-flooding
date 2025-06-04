@@ -42,6 +42,9 @@ class OutlookGeoJSON {
         feature.geometry.coordinates = coordinates
       }
     })
+
+    // Sort order for rendering
+    this.features.sort((a, b) => a.properties['risk-level'] - b.properties['risk-level'])
   }
 
   outlookRiskAreas (outlook, riskMatrix, riskBands) {
@@ -139,13 +142,15 @@ class OutlookGeoJSON {
   }
 
   generatePolyFeature (riskAreaBlock, featureName, messageGroupObj, riskLevel, impactLevel, likelihoodLevel) {
+    const days = Object.fromEntries(riskAreaBlock.days.map(d => [`is-day-${d}`, true]))
+
     riskAreaBlock.polys.forEach(poly => {
       const feature = {
         type: 'Feature',
-        id: poly.id,
         properties: {
+          id: poly.id,
           type: 'concernArea',
-          days: riskAreaBlock.days,
+          ...days,
           labelPosition: poly.label_position,
           name: featureName,
           message: messageGroupObj,

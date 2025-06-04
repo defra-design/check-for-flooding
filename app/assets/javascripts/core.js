@@ -52,11 +52,12 @@ document.addEventListener('readystatechange', () => {
 
     // Initialise outlook map
     if (document.getElementById('map-outlook')) {
-      // createOutlookMap('map-outlook', {
-      //   btnText: 'View map showing flood risk areas',
-      //   btnClass: 'defra-button-secondary defra-button-secondary--icon',
-      //   days: model.outlookDays
-      // })
+      createOutlookMap('map-outlook', {
+        btnText: 'View map showing flood risk areas',
+        btnClass: 'defra-button-secondary defra-button-secondary--icon',
+        days: model.outlookDays,
+        extent: model.extent
+      })
     }
  
     // Add category tabs progressive enhancement
