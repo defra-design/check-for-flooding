@@ -200,13 +200,13 @@ const buildMatrix = (data, place) => {
     }
   }
 
-  // matrix = [
-  //   [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 2, 4 ] ],
-  //   [ [ 2, 2 ], [ 2, 3 ], [ 2, 2 ], [ 2, 4 ] ],
-  //   [ [ 2, 2 ], [ 2, 2 ], [ 2, 2 ], [ 2, 4 ] ],
-  //   [ [ 0, 0 ], [ 2, 2 ], [ 0, 0 ], [ 2, 4 ] ],
-  //   [ [ 0, 0 ], [ 0, 0 ], [ 0, 0 ], [ 2, 4 ] ]
-  // ]
+  matrix = [
+    [ [2,2], [3,3], [3,1], [2,4] ],
+    [ [1,1], [3,3], [3,1], [2,4] ],
+    [ [1,1], [3,3], [3,1], [2,4] ],
+    [ [1,1], [3,3], [3,1], [2,4] ],
+    [ [0,1], [3,3], [3,1], [2,4] ],
+  ]
 
   return matrix
 }
@@ -327,14 +327,25 @@ const sortArray = (g, l) => {
 
 const createFirstSentence = (data, source, l) => {
   let sentence = ''
-  for (let i = 0; i < data.length; i++ ) {
+  for (let i = 0; i < data.length; i++) {
     const g = data[i]
-    sentence += `${g[0].charAt(0).toUpperCase() + g[0].slice(1)} is `
-    for (let j = 0; j < g[1].length; j++ ) {
-      const d = data[i][1][j]
+    // Skip if impact is empty or null
+    if (!g[0] || g[0] === 'null') continue
+    let inner = []
+    for (let j = 0; j < g[1].length; j++) {
+      const d = g[1][j]
+      // Skip if likelihood is empty/null or where is empty/null
+      if (!d[0] || d[0] === 'null' || !d[1] || d[1].length === 0) continue
       const w = listWhere(d[1], l)
-      //g[0]: impact, d[0]: liklihood, w: loation 
-      sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
+      if (!w || w === 'null' || w === '') continue
+      let phrase = `${d[0]} in ${w}`
+      if (d[1][0] && d[1][0].startsWith('a')) {
+        phrase = `${d[0]} ${w} due to ${source}`
+      }
+      inner.push(phrase)
+    }
+    if (inner.length) {
+      sentence += `${g[0].charAt(0).toUpperCase() + g[0].slice(1)} is ${inner.join(' and ')}. `
     }
   }
   return sentence.trim()
@@ -344,19 +355,55 @@ const createSecondSentence = (data, l) => {
   let sentence = ''
   for (let i = 0; i < data.length; i++ ) {
     const g = data[i]
+    if (!g[0] || g[0] === 'null') continue
     const p = []
     for (let j = 0; j < g[1].length; j++ ) {
-      const d = data[i][1][j]
+      const d = g[1][j]
+      if (!d[0] || d[0] === 'null' || !d[1] || d[1].length === 0) continue
       const w = listWhere(d[1], l)
-      p.push(`${j === 0 ? (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0] : d[0] + ' in ' + w}`)
+      if (!w || w === 'null' || w === '') continue
+      let phrase = ''
+      if (j === 0) {
+        phrase = (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0]
+      } else {
+        phrase = d[0] + ' in ' + w
+      }
+      p.push(phrase)
     }
-    sentence += joinList(p, ',')
+    if (p.length) {
+      sentence += joinList(p, ',') + '. '
+    }
   }
-  return sentence.trim() + '. '
+  return sentence.trim()
+}
+
+const filterGreens = (matrix) => {
+  // Only keep [2,2] (likelihood=low, impact=minor), set all other green cells to [0,0]
+  // Matrix is [day][source][impact, likelihood]
+  // Green cells: (1,1), (1,2), (2,1), (2,2) (1-based)
+  // Only keep (2,2)
+  for (let day = 0; day < matrix.length; day++) {
+    for (let src = 0; src < matrix[day].length; src++) {
+      const impact = matrix[day][src][0]
+      const likelihood = matrix[day][src][1]
+      // If green and not (2,2), set to [0,0]
+      if (
+        ((impact === 1 && likelihood === 1) ||
+         (impact === 1 && likelihood === 2) ||
+         (impact === 2 && likelihood === 1))
+      ) {
+        matrix[day][src][0] = 0
+        matrix[day][src][1] = 0
+      }
+    }
+  }
+  return matrix
 }
 
 const createText = (matrix, offset = 0) => {
-  const m = matrix.slice(offset)
+  // Filter greens except [2,2]
+  const filteredMatrix = filterGreens(matrix.slice(offset))
+  const m = filteredMatrix
 
   const l = {
     day: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
