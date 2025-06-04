@@ -1055,6 +1055,9 @@ class Outlook {
     // Generate regional outlook text if data is recent enough
     this.regional = dayOffset <= 1 ? generateOutlookText(riskMatrix, dayOffset) : null
     this.isError = dayOffset > 1
+
+    // Log the full riskData object for debugging
+    console.log('Full riskData object:', riskData);
   }
 }
 
