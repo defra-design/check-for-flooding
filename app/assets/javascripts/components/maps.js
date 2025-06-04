@@ -441,6 +441,7 @@ export const createLiveMap = (mapId, options = {}) => {
 
 export const createOutlookMap = (mapId, options = {}) => {
   const { btnText, extent, days } = options
+  const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
   const items = days.map((day, i) => { return {
     id: queryMap[`day${i + 1}`],
     label: `<strong>${formatDay(new Date(day.date))}</strong>${formatDate(new Date(day.date))}`
@@ -454,7 +455,7 @@ export const createOutlookMap = (mapId, options = {}) => {
     transformRequest: createTileRequest(() => map),
     minZoom: 6,
     maxZoom: 9,
-    bounds: extent,
+    bounds: extent || DEFAULT_BOUNDS,
     maxBounds: [-5.719993, 49.955638, 1.794689, 55.825973],
     styles: [{
       name: 'default',
