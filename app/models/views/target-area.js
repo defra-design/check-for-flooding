@@ -32,7 +32,7 @@ class ViewModel {
     // Needs to mirror GeoJSON properties
     this.mapFeature = isRiverSea ? {
       id: targetArea.id,
-      name: isActive ? titleActive :titleInActive,
+      name: isActive ? titleActive : titleInActive,
       state: targetArea.severity.id >= 1 ? states[targetArea.severity.id] : states[0],
       date: targetArea.date
     } : null

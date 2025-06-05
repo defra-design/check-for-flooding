@@ -1,4 +1,4 @@
-import { formatDay, formatDate } from './dates'
+import { formatTime, formatDayMonth, formatDayName, formatDayNumber } from './dates'
 
 const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
 const TARGET_AREAS = ['inactive', 'removed', 'alert', 'warning', 'severe']
@@ -256,12 +256,15 @@ const queryMap = {
 }
 
 const createInfo = (props) => {
+  console.log(props)
   let html
-  let label
+  let link
+  const date = `${formatTime(new Date(props.date))}, ${formatDayMonth(new Date(props.date))}`
+
   if (TARGET_AREAS.includes(props.state)) {
-    label = props.name.replace(/^(Flood (warning|alert)( removed)? for)/, '<span class="defra-info-caption">$1</span>')
+    link = `/target-area/${props.id}`
     html = `
-      <p class="govuk-body-s">Issued: ${props.date}</p>
+      <p class="govuk-body-s">Issued: ${date}</p>
     `
   }
   if (!TARGET_AREAS.includes(props.state)) {
@@ -273,14 +276,14 @@ const createInfo = (props) => {
   return {
     featureId: props.id || undefined,
     width: '360px',
-    label: label || props.name,
+    link: link,
+    label: props.name,
     html
   }
 }
 
 export const createLiveMap = (mapId, options = {}) => {
   // One live map per page
-  console.log(options)
   let map, bounds
   const { btnText, extent, centre, zoom, layers, selectedFeature } = options
   const isStationLegend = ['ri','se','gr','ra'].some(l => layers.includes(l))
@@ -483,7 +486,7 @@ export const createOutlookMap = (mapId, options = {}) => {
 
   const items = days.map((day, i) => { return {
     id: queryMap[`day${i + 1}`],
-    label: `<strong>${formatDay(new Date(day.date))}</strong>${formatDate(new Date(day.date))}`
+    label: `<strong>${formatDayName(new Date(day.date))}</strong>${formatDayNumber(new Date(day.date))}`
   }})
 
   const fm = new defra.FloodMap(mapId, {

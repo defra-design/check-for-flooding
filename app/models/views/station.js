@@ -42,20 +42,50 @@ class ViewModel {
     }
     this.infoTrend = 'The last 2 readings indicate the trend.'
 
+    const { type, status, latestDatetime, riverId, latestHeight, latestState, latestTrend, rainfall1hr, rainfall6hr, rainfall24hr, upStationId, downStationId, isUpstage, isDownstage } = station
+
+    let state
+    if (type === 'river' && status !== 'active' && status !== 'ukcmf') {
+      state = 'error'
+    } else if (type === 'river' && latestState === 'high') {
+      state = 'high'
+    } else if (type === 'river' || (type === 'tide' && !!riverId)) {
+      state = 'normal'
+    } else if (type === 'groundwater' && status !== 'active') {
+      state = 'error'
+    } else if (type === 'groundwater' && latestState === 'high') {
+      state = 'high'
+    } else if (type === 'groundwater') {
+      state = 'normal'
+    } else if (type === 'tide' && status !== 'active') {
+      state = 'error'
+    } else if (type === 'tide') {
+      state = 'normal'
+    } else if (type === 'rainfall' && rainfall1hr > 0) {
+      state = 'wet'
+    } else if (type === 'rainfall') {
+      state = 'dry'
+    }
+
     // Map
     this.mapButtonText = 'Map'
-    this.mapButtonClass = 'defra-link-icon-s'
-    this.mapLayers = 'mv,ri,se,gr,rl'
+    this.mapLayers = 'ri,se,gr,rl'
     this.centre = station.centroid
     this.zoom = 14
-    this.riverId = station.riverId
-    this.selectedId = (() => {
-      if (station.type === 'rainfall') {
-        return `r${station.id}`
-      } else {
-        return station.rloiId
-      }
-    })()
+    this.selectedFeature = {
+      id: station.type === 'rainfall' ? `r${station.id}` : station.rloiId,
+      name: this.title + (isUpstage ? ' (upstream)' : isDownstage ? ' (downstream)' : ''),
+      state,
+      date: latestDatetime,
+      station_up: upStationId,
+      station_down: downStationId,
+      latest_height: latestHeight,
+      latest_trend: latestTrend,
+      latest_state: latestState,
+      rainfall_1hr: rainfall1hr,
+      rainfall_6hr: rainfall6hr,
+      rainfall_24hr: rainfall24hr
+    }
   }
 }
 module.exports = ViewModel
