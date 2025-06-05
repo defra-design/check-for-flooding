@@ -247,7 +247,7 @@ const queryMap = {
   river: 'ri',
   sea: 'se',
   groundwater: 'gr',
-  rainfall: 'ra',
+  rainfall: 'rf',
   day1: 'd1',
   day2: 'd2',
   day3: 'd3',
@@ -286,7 +286,7 @@ export const createLiveMap = (mapId, options = {}) => {
   // One live map per page
   let map, bounds
   const { btnText, extent, centre, zoom, layers, selectedFeature } = options
-  const isStationLegend = ['ri','se','gr','ra'].some(l => layers.includes(l))
+  const isStationLegend = ['ri','se','gr','rf'].some(l => layers.includes(l))
 
   const info = selectedFeature?.id ? createInfo(selectedFeature) : null
 
