@@ -6,7 +6,7 @@ class ViewModel {
     this.querySearch = query ? decodeURI(query.search) : null
     this.querySearchType = query?.searchType
     this.queryType = levels ? levels.type : 'river'
-    this.extent = levels ? levels.bbox : []
+    this.extent = levels ? levels.bbox : null // MC
     this.place = places?.length ? places[0] : null
     this.places = places
     this.river = rivers?.length ? rivers[0] : null

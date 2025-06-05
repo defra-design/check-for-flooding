@@ -12,6 +12,7 @@ const twitterAccount = {
 class ViewModel {
   constructor (targetArea) {
     // console.log(Object.keys(twitterAccount).find(t => twitterAccount[t].includes(targetArea.area)))
+    const states = ['inactive', 'removed', 'alert', 'warning', 'severe']
     const titleInActive = `${targetArea.name} flood ${targetArea.type} area`
     const titleActive = `Flood ${targetArea.type} for ${targetArea.name}`
     const isActive = targetArea.severity && targetArea.severity.id !== 4
@@ -28,10 +29,12 @@ class ViewModel {
     this.mapLayers = `mv,ts,tw,ta${!isActive ? ',tr' : ''}`
     this.isParentActive = targetArea.parentSeverity && targetArea.parentSeverity.id === 3
     this.bingApiKey = bingApiKey
+    // Needs to mirror GeoJSON properties
     this.mapFeature = isRiverSea ? {
       id: targetArea.id,
-      name: targetArea.name,
-      centre: targetArea.centroid
+      name: isActive ? titleActive :titleInActive,
+      state: targetArea.severity.id >= 1 ? states[targetArea.severity.id] : states[0],
+      date: targetArea.date
     } : null
   }
 }

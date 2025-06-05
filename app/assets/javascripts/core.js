@@ -38,15 +38,12 @@ document.addEventListener('readystatechange', () => {
     if (document.getElementById('map-live')) {
       createLiveMap('map-live', {
         btnText: model.mapButtonText,
-        btnClass: model.mapButtonClass,
         btnType: model.mapButtonType || null,
         layers: model.mapLayers,
         extent: model.extent || null,
-        riverId: model.riverId || null,
         centre: model.centre || null,
         zoom: model.zoom || null,
-        selectedId: model.selectedId || null,
-        targetArea: model.targetArea || null
+        selectedFeature: model.selectedFeature
       })
     }
 
@@ -54,7 +51,6 @@ document.addEventListener('readystatechange', () => {
     if (document.getElementById('map-outlook')) {
       createOutlookMap('map-outlook', {
         btnText: 'View map showing flood risk areas',
-        btnClass: 'defra-button-secondary defra-button-secondary--icon',
         days: model.outlookDays,
         extent: model.extent
       })

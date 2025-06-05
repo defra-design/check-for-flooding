@@ -195,10 +195,8 @@ Find river, sea, groundwater and rainfall levels - GOV.UK
   window.flood = {
     model: {
       mapButtonText: 'View map of levels',
-      mapButtonClass: 'defra-button-secondary defra-button-secondary--icon',
-      mapLayers: 'mv,ri,ti,gr,rf,rl',
-      extent: {{ model.extent | dump | safe }},
-      riverId: {{ model.riverId | dump | safe }}
+      mapLayers: 'ri,se,gr,rf',
+      extent: {{ model.extent | dump | safe }}
     }
   }
 </script>

@@ -61,6 +61,11 @@ module.exports = {
     WHEN type = 'tide' THEN 'normal'
     WHEN type = 'rainfall' AND rainfall_1hr > 0 THEN 'wet'
     WHEN type = 'rainfall' THEN 'dry' END AS state,
+    CASE
+    WHEN type = 'tide' AND river_id IS NOT NULL THEN concat('Sea level at ', name)
+    WHEN type = 'rainfall' THEN concat('Rainfall at ', name)
+    WHEN type = 'groundwater' THEN concat('Groundwater level at ', name)
+    ELSE concat(river_name, ' at ', name) END AS name, 
     is_wales, initcap(latest_state) AS latest_state, initcap(latest_trend) AS latest_trend, latest_height, rainfall_1hr, rainfall_6hr, rainfall_24hr, latest_datetime AT TIME ZONE '+00' AS latest_datetime, level_high, level_low, station_up, station_down,
     CASE WHEN measure_type = 'downstage' THEN true ELSE false END AS is_downstage,
     CASE WHEN is_multi_stage AND measure_type != 'downstage' THEN true ELSE false END AS is_upstage
@@ -78,9 +83,16 @@ module.exports = {
         },
         properties: {
           id: item.id,
-          name: 'Test name',
+          name: item.name,
           category: item.type,
-          state: item.state
+          state: item.state,
+          latest_datetime: item.latest_datetime,
+          latest_height: item.latest_height,
+          latest_trend: item.latest_trend,
+          latest_state: item.latest_state,
+          rainfall_1hr: item.rainfall_1hr,
+          rainfall_6hr: item.rainfall_6hr,
+          rainfall_24hr: item.rainfall_24hr
         }
       })
     })

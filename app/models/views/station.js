@@ -53,7 +53,7 @@ class ViewModel {
       if (station.type === 'rainfall') {
         return `r${station.id}`
       } else {
-        return `s${station.rloiId}`
+        return station.rloiId
       }
     })()
   }

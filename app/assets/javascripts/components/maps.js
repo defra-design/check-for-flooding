@@ -1,8 +1,8 @@
 import { formatDay, formatDate } from './dates'
 
+const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
+const TARGET_AREAS = ['inactive', 'removed', 'alert', 'warning', 'severe']
 const FEATURE_ZOOM = 12
-
-let map, bounds
 
 const isBoundsWithin = (inner, outer) => {
   if (!(inner && outer)) {
@@ -56,7 +56,7 @@ const addLiveSources = (map) => {
   })
 }
 
-const addLiveLayers = (map, basemap) => {
+const addLiveLayers = (map) => {
   const position = map.getLayer('small settlement names')
     ? 'small settlement names'
     : map.getLayer('Road labels')
@@ -183,7 +183,7 @@ const addOutlookSource = (map) => {
   })
 }
 
-const addOutlookLayer = (map, basemap) => {
+const addOutlookLayer = (map) => {
   const position = map.getLayer('small settlement names')
     ? 'small settlement names'
     : map.getLayer('Road labels')
@@ -215,13 +215,6 @@ const toggleOutlookVisibility = (map, detail) => {
   // Filter features
   const day = detail.segments.filter(s => ['d1', 'd2', 'd3', 'd4', 'd5'].includes(s)).map(s => s.charAt(1))[0] || ''
   map.setFilter('outlook', ['==', ['get', `is-day-${day}`], true])
-}
-
-const setData = (map) => {
-  if (map.getZoom() >= FEATURE_ZOOM && !isBoundsWithin(map.getBounds(), bounds)) {
-    bounds = map.getBounds()
-    map.getSource('warning-polygons')?.setData('/service/geojson/warning-polygons')
-  }
 }
 
 const symbols = [
@@ -262,8 +255,44 @@ const queryMap = {
   day5: 'd5',
 }
 
+const createInfo = (props) => {
+  let html
+  let label
+  if (TARGET_AREAS.includes(props.state)) {
+    label = props.name.replace(/^(Flood (warning|alert)( removed)? for)/, '<span class="defra-info-caption">$1</span>')
+    html = `
+      <p class="govuk-body-s">Issued: ${props.date}</p>
+    `
+  }
+  if (!TARGET_AREAS.includes(props.state)) {
+    html = `
+      <p class="govuk-body-s">Station body</p>
+    `
+  }
+
+  return {
+    featureId: props.id || undefined,
+    width: '360px',
+    label: label || props.name,
+    html
+  }
+}
+
 export const createLiveMap = (mapId, options = {}) => {
-  const { btnText, extent, centre, zoom } = options
+  // One live map per page
+  console.log(options)
+  let map, bounds
+  const { btnText, extent, centre, zoom, layers, selectedFeature } = options
+  const isStationLegend = ['ri','se','gr','ra'].some(l => layers.includes(l))
+
+  const info = selectedFeature?.id ? createInfo(selectedFeature) : null
+
+  const setData = () => {
+    if (map.getZoom() >= FEATURE_ZOOM && !isBoundsWithin(map.getBounds(), bounds)) {
+      bounds = map.getBounds()
+      map.getSource('warning-polygons')?.setData('/service/geojson/warning-polygons')
+    }
+  }
 
   const fm = new defra.FloodMap(mapId, {
     behaviour: 'buttonFirst',
@@ -274,9 +303,10 @@ export const createLiveMap = (mapId, options = {}) => {
     zoom: zoom || undefined,
     minZoom: 5,
     maxZoom: 18,
-    bounds: extent || undefined,
+    bounds: extent || DEFAULT_BOUNDS || undefined,
     center: centre || undefined,
     maxBounds: [-5.719993, 49.955638, 1.794689, 55.825973],
+    info,
     styles: [{
       name: 'default',
       attribution: `Contains OS data ${String.fromCharCode(169)} Crown copyright and database rights ${(new Date()).getFullYear()}`,
@@ -303,35 +333,37 @@ export const createLiveMap = (mapId, options = {}) => {
       width: '360px',
       display: 'inset',
       isVisible: true,
-      isPersistInUrl: true,
+      // isPersistInUrl: true,
       key: [
         {
           heading: 'Flood warnings and alerts',
           layout: 'column',
           minZoom: FEATURE_ZOOM,
+          isHidden: isStationLegend,
           items: [
             {
               id: queryMap.severe,
               label: 'Severe',
               fill: '#811418',
-              isSelected: true
+              isSelected: layers.includes(queryMap.severe)
             },
             {
               id: queryMap.warning,
               label: 'Warning',
               fill: '#E54048',
-              isSelected: true
+              isSelected: layers.includes(queryMap.warning)
             },
             {
               id: queryMap.alert,
               label: 'Alert',
               fill: '#F09D3E',
-              isSelected: true
+              isSelected: layers.includes(queryMap.alert)
             },
             {
               id: queryMap.removed,
               label: 'Removed',
-              fill: '#778C9D'
+              fill: '#778C9D',
+              isSelected: layers.includes(queryMap.removed)
             }
           ]
         },
@@ -339,54 +371,62 @@ export const createLiveMap = (mapId, options = {}) => {
           heading: 'Flood warnings and alerts',
           layout: 'column',
           maxZoom: FEATURE_ZOOM,
+          isHidden: isStationLegend,
           items: [
             {
               id: queryMap.severe,
               label: 'Severe',
               icon: symbols[0],
-              isSelected: true
+              isSelected: layers.includes(queryMap.severe)
             },
             {
               id: queryMap.warning,
               label: 'Warning',
-              icon: symbols[1]
+              icon: symbols[1],
+              isSelected: layers.includes(queryMap.warning)
             },
             {
               id: queryMap.alert,
               label: 'Alert',
-              icon: symbols[2]
+              icon: symbols[2],
+              isSelected: layers.includes(queryMap.alert)
             },
             {
               id: queryMap.removed,
               label: 'Removed',
-              icon: symbols[3]
+              icon: symbols[3],
+              isSelected: layers.includes(queryMap.removed)
             }
           ]
         },
         {
           heading: 'Water level measuring stations',
           layout: 'column',
-          isHidden: true,
+          isHidden: !isStationLegend,
           items: [
             {
               id: queryMap.river,
               label: 'River',
-              icon: symbols[5]
+              icon: symbols[5],
+              isSelected: layers.includes(queryMap.river)
             },
             {
               id: queryMap.sea,
               label: 'Sea',
-              icon: symbols[7]
+              icon: symbols[7],
+              isSelected: layers.includes(queryMap.sea)
             },
             {
               id: queryMap.groundwater,
               label: 'Groundwater',
-              icon: symbols[10]
+              icon: symbols[10],
+              isSelected: layers.includes(queryMap.groundwater)
             },
             {
               id: queryMap.rainfall,
               label: 'Rainfall',
-              icon: symbols[12]
+              icon: symbols[12],
+              isSelected: layers.includes(queryMap.rainfall)
             }
           ]
         }
@@ -396,16 +436,18 @@ export const createLiveMap = (mapId, options = {}) => {
       layers: ['warning-fill', 'warning-symbol', 'stations', 'stations-small']
     }
   }, (provider) => {
-    // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
+    // This callback is run within the component immediately after the MapLibre map has been instatiated
     const { map } = provider
+
+    // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
     map.on('moveend', () => setData(map))
   })
 
   fm.addEventListener('ready', e => {
+    bounds = null // Need to reset
     map = fm.map
-
     addLiveSources(map)
-    setData(map) // Conditionally set polygon data
+    setData() // Conditionally set polygon data
     addLiveLayers(map, e.detail.style)
     toggleLiveVisibility(map, e.detail)
   })
@@ -414,7 +456,7 @@ export const createLiveMap = (mapId, options = {}) => {
   fm.addEventListener('change', e => {
     if (e.detail.type === 'style') {
       addLiveSources(map)
-      setData(map) // Conditionally set polygon data
+      setData() // Conditionally set polygon data
       addLiveLayers(fm.map, e.detail.style)
     }
     toggleLiveVisibility(fm.map, e.detail)
@@ -425,11 +467,7 @@ export const createLiveMap = (mapId, options = {}) => {
     // Show info panel for feature query
     if (e.detail.resultType === 'feature') {
       const feature = e.detail.features.items[0]
-      fm.setInfo({
-        width: '360px',
-        label: feature.name,
-        html: `<p class="govuk-body-s">id: ${feature.id}</p>`
-      })
+      fm.setInfo(createInfo(feature))
     }
 
     // Hide info panel and clear selected feature
@@ -442,6 +480,7 @@ export const createLiveMap = (mapId, options = {}) => {
 export const createOutlookMap = (mapId, options = {}) => {
   const { btnText, extent, days } = options
   const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
+
   const items = days.map((day, i) => { return {
     id: queryMap[`day${i + 1}`],
     label: `<strong>${formatDay(new Date(day.date))}</strong>${formatDate(new Date(day.date))}`
