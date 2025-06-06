@@ -94,7 +94,8 @@ module.exports = {
           latest_state: item.latest_state,
           rainfall_1hr: item.rainfall_1hr,
           rainfall_6hr: item.rainfall_6hr,
-          rainfall_24hr: item.rainfall_24hr
+          rainfall_24hr: item.rainfall_24hr,
+          is_wales: item.is_wales
         }
       })
     })

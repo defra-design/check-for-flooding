@@ -1,3 +1,13 @@
+:root {
+  --foreground-colour: #0b0c0c;
+  --secondary-text-colour: #505a5f;
+}
+
+:root .fm-o-container--dark {
+  --foreground-colour: #ffffff;
+  --secondary-text-colour:#b1b4b6;
+}
+
 .fm-c-btn-tertiary {
   margin-bottom: 20px;
 }
@@ -8,7 +18,71 @@
   }
 }
 
-.defra-info-caption {
+// Data list
+.fm-c-panel .defra-map-info-data-list {
+  margin: 0;
+  @include govuk-font($size: 16);
+  width: 100%;
+  &__column {
+      display: block;
+      dd {
+          margin: 0px;
+      }
+      float:left;
+      width: 33.33%;
+  }
+  &__column-full {
+      display: block;
+      dd {
+          margin: 0px;
+      }
+      float:left;
+  }
+  &__value {
+      display: block;
+      position: relative;
+      @include govuk-font($size: 19);
+      color: var(--foreground-colour);
+  }
+  &__description {
+      display: block;
+      @include govuk-font($size: 16);
+      color: var(--secondary-text-colour);
+  }
+  &:after {
+      content: '';
+      display: block;
+      clear: both;
+  }
+}
+
+// Caption
+.defra-map-info-caption {
   font-weight: normal;
   display: block;
+}
+
+// Dates
+.fm-c-panel__body .defra-map-info-meta {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  color: var(--secondary-text-colour);
+}
+
+// Buttons
+.defra-map-info-buttons {
+  margin-top: 15px;
+  .fm-c-btn-tertiary {
+    padding-left: 7px;
+    margin-bottom: 0;
+  }
+  svg {
+    margin-right: 5px;
+  }
+}
+
+// Overides
+.defra-navbar .fm-c-panel a {
+  padding-top: 0;
+  padding-bottom: 0;
 }

@@ -75,7 +75,7 @@
     text-decoration: underline;
   }
   // Overides
-  .fm-c-btn-tertiary {
+  &__inner > .fm-c-btn-tertiary {
     @include govuk-font($size: 19);
     @include mq ($from: tablet) {
       @include govuk-font($size: 16);
@@ -131,7 +131,7 @@
     .defra-navbar__item {
       margin: 0px;
     }
-    .fm-c-btn-tertiary {
+    &_inner > .fm-c-btn-tertiary {
       @include govuk-font($size: 19);
       @include mq ($from: tablet) {
         @include govuk-font($size: 16);

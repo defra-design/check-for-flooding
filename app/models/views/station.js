@@ -42,7 +42,7 @@ class ViewModel {
     }
     this.infoTrend = 'The last 2 readings indicate the trend.'
 
-    const { type, status, latestDatetime, riverId, latestHeight, latestState, latestTrend, rainfall1hr, rainfall6hr, rainfall24hr, upStationId, downStationId, isUpstage, isDownstage } = station
+    const { type, status, latestDatetime, riverId, latestHeight, latestState, latestTrend, rainfall1hr, rainfall6hr, rainfall24hr, upStationId, downStationId, isUpstage, isDownstage, isWales } = station
 
     let state
     if (type === 'river' && status !== 'active' && status !== 'ukcmf') {
@@ -75,6 +75,7 @@ class ViewModel {
     this.selectedFeature = {
       id: station.type === 'rainfall' ? `r${station.id}` : station.rloiId,
       name: this.title + (isUpstage ? ' (upstream)' : isDownstage ? ' (downstream)' : ''),
+      category: station.type,
       state,
       date: latestDatetime,
       station_up: upStationId,
@@ -84,7 +85,8 @@ class ViewModel {
       latest_state: latestState,
       rainfall_1hr: rainfall1hr,
       rainfall_6hr: rainfall6hr,
-      rainfall_24hr: rainfall24hr
+      rainfall_24hr: rainfall24hr,
+      is_wales: isWales
     }
   }
 }

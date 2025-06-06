@@ -261,21 +261,61 @@ const createInfo = (props) => {
   let link
   const date = `${formatTime(new Date(props.date))}, ${formatDayMonth(new Date(props.date))}`
 
+  const body = (isStation) => `
+    <dl class="defra-map-info-data-list">
+      <div class="defra-map-info-data-list__column">
+        <dt class="defra-map-info-data-list__description">${isStation ? 'Height' : '1 hour'}</dt>
+        <dd class="defra-map-info-data-list__value">${isStation ? (Math.round(Number.parseFloat(props.latest_height) * 100 ) / 100).toFixed(2) + 'm' : props.rainfall_1hr + 'mm'}</dd>
+      </div>
+      <div class="defra-map-info-data-list__column">
+        <dt class="defra-map-info-data-list__description">${isStation ? 'Trend' : '6 hours'}</dt>
+        <dd class="defra-map-info-data-list__value">${isStation ? props.latest_trend : props.rainfall_6hr + 'mm'}</dd>
+      </div>
+      <div class="defra-map-info-data-list__column">
+        <dt class="defra-map-info-data-list__description">${isStation ? 'State' : '24 hours'}</dt>
+        <dd class="defra-map-info-data-list__value">${isStation ? props.latest_state : props.rainfall_24hr + 'mm'}</dd>
+      </div>
+    </dl>
+    <p class="defra-map-info-meta">${isStation ? 'Latest at' : 'Totals up to'} ${date}</p>
+  `
+
+  const buttons = (upId, downId) => {
+    return `
+      <div class="defra-map-info-buttons" aria-controls="map-live-viewport">
+        ${upId ? `<button class="fm-c-btn-tertiary" data-id="${upId}">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd">
+          <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 7.828l2.356 2.357L14.77 8.77 10 4 5.23 8.77l1.414 1.415L9 7.828V15h2V7.828z" fill="currentColor"/>
+        </svg>
+        Upstream
+        </button>` : ''}
+        ${downId ? `<button class="fm-c-btn-tertiary" data-id="${downId}">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd">
+          <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M11 12.172l2.356-2.357 1.414 1.415L10 16l-4.77-4.77 1.414-1.415L9 12.172V5h2v7.172z" fill="currentColor"/>
+        </svg>
+        Downstream
+        </button>` : ''}
+      </div>
+    `
+  }
+
   if (TARGET_AREAS.includes(props.state)) {
     link = `/target-area/${props.id}`
     html = `
-      <p class="govuk-body-s">Issued: ${date}</p>
+      <p class="defra-map-info-meta">Issued: ${date}</p>
     `
-  }
-  if (!TARGET_AREAS.includes(props.state)) {
-    html = `
-      <p class="govuk-body-s">Station body</p>
-    `
+  } else if (props.category === 'rainfall') {
+    link = `/rainfall-station/${props.id.substring(1)}`
+    html = body(false)
+  } else {
+    link = `/station/${props.id}`
+    html = body(true) + buttons(props.station_up, props.station_down)
   }
 
   return {
     featureId: props.id || undefined,
-    width: '360px',
+    width: '378px',
     link: link,
     label: props.name,
     html
@@ -443,7 +483,7 @@ export const createLiveMap = (mapId, options = {}) => {
     const { map } = provider
 
     // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
-    map.on('moveend', () => setData(map))
+    map.on('moveend', () => setData())
   })
 
   fm.addEventListener('ready', e => {
@@ -483,10 +523,12 @@ export const createLiveMap = (mapId, options = {}) => {
 export const createOutlookMap = (mapId, options = {}) => {
   const { btnText, extent, days } = options
   const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
+  let map
 
   const items = days.map((day, i) => { return {
     id: queryMap[`day${i + 1}`],
-    label: `<strong>${formatDayName(new Date(day.date))}</strong>${formatDayNumber(new Date(day.date))}`
+    label: `<strong>${formatDayName(new Date(day.date))}</strong>${formatDayNumber(new Date(day.date))}`,
+    isSelected: (new Date()).toDateString() === (new Date(day.date)).toDateString()
   }})
 
   const fm = new defra.FloodMap(mapId, {
@@ -561,10 +603,6 @@ export const createOutlookMap = (mapId, options = {}) => {
     queryFeature: {
       layers: ['outlook']
     }
-  }, (provider) => {
-    // Call GeoJSON source with new bbox on map move end if zoom is greater than layer minzoom
-    const { map } = provider
-    map.on('moveend', () => setData(map))
   })
 
   fm.addEventListener('ready', e => {
