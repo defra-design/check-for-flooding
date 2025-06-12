@@ -4,6 +4,8 @@ const DEFAULT_BOUNDS = [-5.75447, 49.93027, 1.799683, 55.84093]
 const TARGET_AREAS = ['inactive', 'removed', 'alert', 'warning', 'severe']
 const FEATURE_ZOOM = 12
 
+let stationData
+
 const isBoundsWithin = (inner, outer) => {
   if (!(inner && outer)) {
     return false
@@ -40,8 +42,34 @@ const createTileRequest = (getMap) => { // Factory function to pass a reference 
   }
 }
 
-const addLiveSources = (map) => {
-  // GeoJSON sources
+const createGeocodeRequest = async (url) => {
+  let options = {}
+
+  // OS Open Names
+  if (url.startsWith('https://api.os.uk')) {
+    // const token = (await getOsToken()).token
+    // options = {headers: { Authorization: 'Bearer ' + token }}
+
+    // Need to use OAuth here
+    url += `&key=${process.env.OS_API_KEY}`
+    options = {}
+  }
+
+  return new Request(url, options)
+}
+
+const addLiveSources = async (map) => {
+  // Fetch station geojson for use in nav buttons
+  if (!stationData) {
+    const response = await fetch('/service/geojson/stations')
+    stationData = await response.json()
+  }
+  // Stations loaded seperatly
+  map.addSource('station-centroids', {
+    type: 'geojson',
+    data: stationData
+  })
+  // Warnings loaded directly
   map.addSource('warning-polygons', {
     type: 'geojson',
     data: {type: 'FeatureCollection', features: []} // Empty source, setData on ready and moveend
@@ -49,10 +77,6 @@ const addLiveSources = (map) => {
   map.addSource('warning-centroids', {
     type: 'geojson',
     data: '/service/geojson/warning-centroids'
-  })
-  map.addSource('station-centroids', {
-    type: 'geojson',
-    data: '/service/geojson/stations'
   })
 }
 
@@ -255,8 +279,13 @@ const queryMap = {
   day5: 'd5',
 }
 
+const goToStation = (fm, id) => {
+  const station = stationData.features.find(feature => feature.properties.id === id)
+  fm.map.panTo(station.geometry.coordinates)
+  fm.setInfo(createInfo(station.properties))
+}
+
 const createInfo = (props) => {
-  console.log(props)
   let html
   let link
   const date = `${formatTime(new Date(props.date))}, ${formatDayMonth(new Date(props.date))}`
@@ -282,14 +311,14 @@ const createInfo = (props) => {
   const buttons = (upId, downId) => {
     return `
       <div class="defra-map-info-buttons" aria-controls="map-live-viewport">
-        ${upId ? `<button class="fm-c-btn-tertiary" data-id="${upId}">
+        ${upId ? `<button class="fm-c-btn-tertiary" data-station-id="${upId}">
         <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd">
           <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
           <path d="M11 7.828l2.356 2.357L14.77 8.77 10 4 5.23 8.77l1.414 1.415L9 7.828V15h2V7.828z" fill="currentColor"/>
         </svg>
         Upstream
         </button>` : ''}
-        ${downId ? `<button class="fm-c-btn-tertiary" data-id="${downId}">
+        ${downId ? `<button class="fm-c-btn-tertiary" data-station-id="${downId}">
         <svg width="20" height="20" viewBox="0 0 20 20" fill-rule="evenodd">
           <circle cx="10" cy="10" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
           <path d="M11 12.172l2.356-2.357 1.414 1.415L10 16l-4.77-4.77 1.414-1.415L9 12.172V5h2v7.172z" fill="currentColor"/>
@@ -343,6 +372,7 @@ export const createLiveMap = (mapId, options = {}) => {
     // place: 'Carlisle',
     symbols,
     transformRequest: createTileRequest(() => map),
+    transformGeocodeRequest: createGeocodeRequest,
     zoom: zoom || undefined,
     minZoom: 5,
     maxZoom: 18,
@@ -486,19 +516,27 @@ export const createLiveMap = (mapId, options = {}) => {
     map.on('moveend', () => setData())
   })
 
-  fm.addEventListener('ready', e => {
+  fm.addEventListener('ready', async e => {
     bounds = null // Need to reset
     map = fm.map
-    addLiveSources(map)
+    await addLiveSources(map)
     setData() // Conditionally set polygon data
     addLiveLayers(map, e.detail.style)
     toggleLiveVisibility(map, e.detail)
+
+    // Add click station navigation
+    fm.el.addEventListener('click', e => {
+      const id = e.target.dataset?.stationId
+      if (id) {
+        goToStation(fm, id)
+      }
+    })
   })
 
   // Listen for segments, layers or style changes
-  fm.addEventListener('change', e => {
+  fm.addEventListener('change', async e => {
     if (e.detail.type === 'style') {
-      addLiveSources(map)
+      await addLiveSources(map)
       setData() // Conditionally set polygon data
       addLiveLayers(fm.map, e.detail.style)
     }
