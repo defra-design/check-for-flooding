@@ -13,7 +13,7 @@ const moment = require('moment-timezone')
  */
 const FLOOD_SOURCES = {
   RIVER: 'river',
-  COASTAL: 'coastal', 
+  COASTAL: 'coastal',
   SURFACE: 'surface',
   GROUND: 'ground'
 }
@@ -42,9 +42,9 @@ const POLYGON_TYPES = {
  */
 const RISK_MATRIX = [
   [1, 1, 1, 1], // Minimal impact
-  [1, 1, 2, 2], // Minor impact  
+  [1, 1, 2, 2], // Minor impact
   [2, 2, 3, 3], // Significant impact
-  [2, 3, 3, 4]  // Severe impact
+  [2, 3, 3, 4] // Severe impact
 ]
 
 /**
@@ -60,7 +60,7 @@ const TEXT_LABELS = {
   likelihood: ['possible but not expected', 'possible', 'likely', 'expected'],
   impact: [
     'flooding of low-lying land and roads',
-    'localised property flooding and travel disruption', 
+    'localised property flooding and travel disruption',
     'property flooding and significant travel disruption',
     'severe or widespread property flooding and travel disruption'
   ],
@@ -71,14 +71,14 @@ const TEXT_LABELS = {
 /**
  * Development matrix override (hardcoded for testing)
  * Format: [day][source][impact, likelihood]
- * Sources: [river, coastal, surface, ground]
+ * Sources: [river, coastal, surface, ground].....
  */
 const DEV_MATRIX_OVERRIDE = [
-  [[2,2], [3,3], [3,1], [2,4]], // Day 1
-  [[1,1], [3,3], [3,1], [2,4]], // Day 2  
-  [[1,1], [3,3], [3,1], [2,4]], // Day 3
-  [[1,1], [3,3], [3,1], [2,4]], // Day 4
-  [[0,1], [3,3], [3,1], [2,4]]  // Day 5
+  [[3, 4], [3, 3], [3, 4], [3, 4]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
+  [[1, 1], [3, 3], [3, 1], [2, 4]], // Day 2
+  [[1, 1], [3, 3], [3, 1], [2, 4]], // Day 3
+  [[4, 4], [3, 3], [3, 1], [2, 4]], // Day 4
+  [[0, 1], [3, 3], [3, 1], [2, 4]] // Day 5
 ]
 
 /**
@@ -90,7 +90,7 @@ const COASTAL_BUFFER_MILES = 1
 
 /**
  * Initialize empty risk levels structure for all flood sources
- * @returns {Object} Risk levels object with zero values
+ * @returns {Object} Risk levels object with zero values for all flood sources
  */
 const initializeRiskLevels = () => ({
   [FLOOD_SOURCES.RIVER]: { impact: 0, likelihood: 0, risk: 0 },
@@ -100,42 +100,43 @@ const initializeRiskLevels = () => ({
 })
 
 /**
- * Check if two arrays/objects are identical
- * @param {*} arrayA - First array or object
- * @param {*} arrayB - Second array or object  
- * @returns {boolean} True if identical
+ * Check if two arrays or objects are deeply equal
+ * @param {*} arrayA - First array or object to compare
+ * @param {*} arrayB - Second array or object to compare
+ * @returns {boolean} True if both are deeply equal, false otherwise
  */
 const areIdentical = (arrayA, arrayB) => {
   return JSON.stringify(arrayA) === JSON.stringify(arrayB)
 }
 
 /**
- * Group array of objects by a specified property
+ * Group an array of objects by a specified property value
  * @param {Array} objectArray - Array of objects to group
  * @param {string} property - Property name to group by
- * @returns {Object} Grouped objects
+ * @returns {Object} Object with grouped arrays keyed by property values
  */
 const groupByProperty = (objectArray, property) => {
   return objectArray.reduce((accumulator, object) => {
-    if (!accumulator[object[property]]) {
-      accumulator[object[property]] = []
+    const key = object[property]
+    if (!accumulator[key]) {
+      accumulator[key] = []
     }
-    accumulator[object[property]].push(object)
+    accumulator[key].push(object)
     return accumulator
   }, {})
 }
 
 /**
- * Join array elements with proper punctuation and 'and' for last item
- * @param {Array} array - Array of strings to join
- * @param {string} separator - Separator character (default: ',')
- * @returns {string} Properly formatted list
+ * Join array elements with proper punctuation, using 'and' before the last item
+ * @param {Array<string>} array - Array of strings to join
+ * @param {string} separator - Separator character for all but last item (default: ',')
+ * @returns {string} Properly formatted list (e.g., "A, B, and C")
  */
 const joinWithAndSeparator = (array, separator = ',') => {
   if (!array || array.length === 0) return ''
   if (array.length === 1) return array[0]
   if (array.length === 2) return array.join(' and ')
-  
+
   const pattern = new RegExp(';(?=[^;]+$)')
   return array.join('; ').replace(pattern, ' and').replace(';', separator)
 }
@@ -148,14 +149,14 @@ const joinWithAndSeparator = (array, separator = ',') => {
  */
 const getDayDisplayName = (dayOffset, labels) => {
   const currentDayIndex = (new Date()).getDay() === 0 ? 6 : (new Date()).getDay() - 1
-  
+
   if (dayOffset === 0) return 'Today'
   if (dayOffset === 1) return 'Tomorrow'
-  
-  const targetDayIndex = currentDayIndex + dayOffset > 6 
-    ? currentDayIndex + dayOffset - 7 
+
+  const targetDayIndex = currentDayIndex + dayOffset > 6
+    ? currentDayIndex + dayOffset - 7
     : currentDayIndex + dayOffset
-    
+
   return labels.day[targetDayIndex]
 }
 
@@ -164,7 +165,7 @@ const getDayDisplayName = (dayOffset, labels) => {
 /**
  * Calculate risk level from impact and likelihood using the risk matrix
  * @param {number} impact - Impact level (1-4)
- * @param {number} likelihood - Likelihood level (1-4) 
+ * @param {number} likelihood - Likelihood level (1-4)
  * @returns {number} Risk level (1-4)
  */
 const calculateRiskLevel = (impact, likelihood) => {
@@ -185,7 +186,7 @@ const processFloodSource = (riskAreaBlock, sourceType, activeSources, riskLevels
 
   const [impact, likelihood] = riskData
   const risk = calculateRiskLevel(impact, likelihood)
-  
+
   riskLevels[sourceType] = { impact, likelihood, risk }
   activeSources.push(sourceType)
 }
@@ -202,7 +203,7 @@ const createGeoJsonFeature = (polygon, riskAreaBlock, riskLevel, activeSources) 
   const riskDescription = RISK_BANDS[riskLevel - 1]
   const sourceLabels = activeSources.map(source => FLOOD_SOURCE_LABELS[source] || source)
   const featureName = `${riskDescription} risk of ${sourceLabels.join(', ')} flooding`
-  
+
   const baseProperties = {
     type: 'concernArea',
     days: riskAreaBlock.days,
@@ -224,10 +225,10 @@ const createGeoJsonFeature = (polygon, riskAreaBlock, riskLevel, activeSources) 
     }
   } else if (polygon.poly_type === POLYGON_TYPES.COASTAL) {
     return {
-      type: 'Feature', 
+      type: 'Feature',
       id: polygon.id,
-      properties: { 
-        ...baseProperties, 
+      properties: {
+        ...baseProperties,
         polyType: POLYGON_TYPES.COASTAL,
         'z-index': baseProperties['z-index'] + 1 // Coastal areas on top
       },
@@ -260,18 +261,18 @@ const buildGeoJsonFeatures = (riskData) => {
       // Calculate overall risk levels
       const overallRiskLevel = Math.max(
         riskLevels[FLOOD_SOURCES.RIVER].risk,
-        riskLevels[FLOOD_SOURCES.SURFACE].risk, 
+        riskLevels[FLOOD_SOURCES.SURFACE].risk,
         riskLevels[FLOOD_SOURCES.COASTAL].risk,
         riskLevels[FLOOD_SOURCES.GROUND].risk
       )
-      
+
       const maxImpactLevel = Math.max(
         riskLevels[FLOOD_SOURCES.RIVER].impact,
         riskLevels[FLOOD_SOURCES.SURFACE].impact,
-        riskLevels[FLOOD_SOURCES.COASTAL].impact, 
+        riskLevels[FLOOD_SOURCES.COASTAL].impact,
         riskLevels[FLOOD_SOURCES.GROUND].impact
       )
-      
+
       const maxLikelihoodLevel = Math.max(
         riskLevels[FLOOD_SOURCES.RIVER].likelihood,
         riskLevels[FLOOD_SOURCES.SURFACE].likelihood,
@@ -282,7 +283,7 @@ const buildGeoJsonFeatures = (riskData) => {
       // Create features for each polygon in this risk area block
       riskAreaBlock.polys.forEach(polygon => {
         const feature = createGeoJsonFeature(polygon, riskAreaBlock, overallRiskLevel, activeSources)
-        
+
         // Apply filtering logic: exclude green cells except [2,2] (minor impact + possible likelihood)
         if (maxImpactLevel > 1 && !(maxImpactLevel === 2 && maxLikelihoodLevel === 1)) {
           features.push(feature)
@@ -320,7 +321,7 @@ const extractRiskLevels = (geoJsonData) => {
  */
 const buildGeoJson = (riskData) => {
   const features = buildGeoJsonFeatures(riskData)
-  
+
   return {
     type: 'FeatureCollection',
     features: features
@@ -346,7 +347,7 @@ const createCoastalBuffer = (polygon) => {
 
   const bufferedFeature = turf.buffer(lineStringFeature, COASTAL_BUFFER_MILES, { units: 'miles' })
   polygon.coordinates = bufferedFeature.geometry.coordinates
-  
+
   return polygon
 }
 
@@ -370,7 +371,7 @@ const testPolygonIntersection = (polygon, locationBounds) => {
 const createLocationBounds = (place) => {
   return turf.polygon([[
     [place.bbox2k[0], place.bbox2k[1]],
-    [place.bbox2k[0], place.bbox2k[3]], 
+    [place.bbox2k[0], place.bbox2k[3]],
     [place.bbox2k[2], place.bbox2k[3]],
     [place.bbox2k[2], place.bbox2k[1]],
     [place.bbox2k[0], place.bbox2k[1]]
@@ -384,7 +385,7 @@ const createLocationBounds = (place) => {
  * @returns {Array} 5x4 matrix [day][source][impact, likelihood]
  */
 const buildRiskMatrix = (riskData, place) => {
-  let intersectingPolygons = []
+  const intersectingPolygons = []
   const locationBounds = createLocationBounds(place)
 
   // Find all polygons that intersect with the location
@@ -405,13 +406,13 @@ const buildRiskMatrix = (riskData, place) => {
             Object.keys(riskLevels).forEach(sourceKey => {
               const [impact, likelihood] = riskLevels[sourceKey]
               const sourceIndex = Object.values(FLOOD_SOURCES).indexOf(sourceKey)
-              
+
               if (sourceIndex !== -1) {
-                intersectingPolygons.push({ 
-                  impact, 
-                  likelihood, 
-                  day: dayNumber, 
-                  source: sourceIndex 
+                intersectingPolygons.push({
+                  impact,
+                  likelihood,
+                  day: dayNumber,
+                  source: sourceIndex
                 })
               }
             })
@@ -425,23 +426,23 @@ const buildRiskMatrix = (riskData, place) => {
   const polygonsByDay = groupByProperty(intersectingPolygons, 'day')
 
   // Initialize 5x4 matrix with zero values [day][source][impact, likelihood]
-  let riskMatrix = Array(5).fill().map(() => 
+  const riskMatrix = Array(5).fill().map(() =>
     Array(4).fill().map(() => [0, 0])
   )
 
   // Populate matrix with maximum risk values
   Object.entries(polygonsByDay).forEach(([dayKey, polygonsForDay]) => {
     const dayIndex = Number(dayKey) - 1
-    
+
     polygonsForDay.forEach(polygonData => {
       const sourceIndex = polygonData.source
       const currentImpact = riskMatrix[dayIndex][sourceIndex][0]
       const currentLikelihood = riskMatrix[dayIndex][sourceIndex][1]
-      
+
       // Take maximum values
-      riskMatrix[dayIndex][sourceIndex][0] = polygonData.impact > currentImpact 
+      riskMatrix[dayIndex][sourceIndex][0] = polygonData.impact > currentImpact
         ? polygonData.impact : currentImpact
-      riskMatrix[dayIndex][sourceIndex][1] = polygonData.likelihood > currentLikelihood 
+      riskMatrix[dayIndex][sourceIndex][1] = polygonData.likelihood > currentLikelihood
         ? polygonData.likelihood : currentLikelihood
     })
   })
@@ -454,16 +455,36 @@ const buildRiskMatrix = (riskData, place) => {
 
 /**
  * Extract where/location information from risk matrix for a specific day
+ * Apply filtering rules directly in this function to ensure proper handling of values
  * @param {Array} dayMatrix - Risk matrix for a single day [source][impact, likelihood]
  * @returns {Array} Location array [riverside, coastal, inland] with max values
  */
 const extractLocationInfo = (dayMatrix) => {
+  // Apply filtering to individual cells first
+  const applyFiltering = (sourceData) => {
+    const [impact, likelihood] = sourceData
+    const isGreenCellToRemove = (
+      impact === 0 ||
+      likelihood === 0 ||
+      (impact === 1 && likelihood === 1) ||
+      (impact === 1 && likelihood === 2) ||
+      (impact === 2 && likelihood === 1)
+    )
+    return isGreenCellToRemove ? [0, 0] : sourceData
+  }
+
+  // Filter the cells from each source
+  const filteredRiver = applyFiltering(dayMatrix[0])
+  const filteredCoastal = applyFiltering(dayMatrix[1])
+  const filteredSurface = applyFiltering(dayMatrix[2])
+  const filteredGround = applyFiltering(dayMatrix[3])
+
   return [
-    dayMatrix[0], // river (riverside)
-    dayMatrix[1], // coastal
+    filteredRiver, // river (riverside)
+    filteredCoastal, // coastal
     [
-      Math.max(dayMatrix[2][0], dayMatrix[3][0]), // surface + ground (inland areas)
-      Math.max(dayMatrix[2][1], dayMatrix[3][1])
+      Math.max(filteredSurface[0], filteredGround[0]), // surface + ground (inland areas)
+      Math.max(filteredSurface[1], filteredGround[1])
     ]
   ]
 }
@@ -492,16 +513,36 @@ const getActiveFloodSources = (dayMatrix, labels) => {
  */
 const groupConsecutiveDays = (riskMatrix, labels) => {
   const dayGroups = []
-  
+
+  // Apply filtering to each day's matrix for comparison
+  const filteredMatrix = riskMatrix.map(dayMatrix =>
+    dayMatrix.map(sourceData => {
+      const [impact, likelihood] = sourceData
+
+      // Same filtering logic as in applyGreenCellFiltering
+      const isGreenCellToRemove = (
+        impact === 0 ||
+        likelihood === 0 ||
+        (impact === 1 && likelihood === 1) ||
+        (impact === 1 && likelihood === 2) ||
+        (impact === 2 && likelihood === 1)
+      )
+
+      return isGreenCellToRemove ? [0, 0] : sourceData
+    })
+  )
+
   riskMatrix.forEach((dayMatrix, dayIndex) => {
-    const isIdenticalToPrevious = dayIndex > 0 && areIdentical(riskMatrix[dayIndex - 1], dayMatrix)
-    
+    // Compare filtered matrices instead of raw matrices
+    const isIdenticalToPrevious = dayIndex > 0 &&
+      areIdentical(filteredMatrix[dayIndex - 1], filteredMatrix[dayIndex])
+
     if (isIdenticalToPrevious) {
       const currentGroup = dayGroups[dayGroups.length - 1]
       currentGroup.endDay = getDayDisplayName(dayIndex, labels)
       currentGroup.dayCount += 1
-      currentGroup.dateRange = currentGroup.dayCount === 2 
-        ? ' and ' 
+      currentGroup.dateRange = currentGroup.dayCount === 2
+        ? ' and '
         : ' through to '
     } else {
       dayGroups.push({
@@ -526,45 +567,97 @@ const groupConsecutiveDays = (riskMatrix, labels) => {
 const groupByImpactAndLikelihood = (dayGroup) => {
   const riskByLocation = dayGroup.locationInfo.map((locationData, locationIndex) => ({
     impact: locationData[0],
-    likelihood: locationData[1], 
+    likelihood: locationData[1],
     location: locationIndex + 1
   }))
-  
-  let impactGroups = groupByProperty(riskByLocation, 'impact')
-  
+
+  const impactGroups = groupByProperty(riskByLocation, 'impact')
+
   Object.keys(impactGroups).forEach(impactLevel => {
     impactGroups[impactLevel] = groupByProperty(impactGroups[impactLevel], 'likelihood')
-    
+
     Object.keys(impactGroups[impactLevel]).forEach(likelihoodLevel => {
       impactGroups[impactLevel][likelihoodLevel] = impactGroups[impactLevel][likelihoodLevel].map(item => item.location)
     })
   })
-  
+
   // Remove zero impact entries
   delete impactGroups['0']
   return impactGroups
 }
 
 /**
- * Sort grouped risk data by impact and likelihood levels (highest first)
+ * Sort grouped risk data by overall risk level (highest first)
  * @param {Object} groupedData - Risk data grouped by impact/likelihood
  * @param {Object} labels - Text labels object
  * @returns {Array} Sorted array of [impact, [likelihood, locations]] pairs
  */
 const sortByRiskLevels = (groupedData, labels) => {
-  return Object.keys(groupedData)
-    .sort((a, b) => b - a) // Sort impact levels descending
-    .map(impactKey => [
-      labels.impact[impactKey - 1], // Get impact description
-      Object.keys(groupedData[impactKey])
-        .sort((a, b) => b - a) // Sort likelihood levels descending  
-        .map(likelihoodKey => [
-          labels.likelihood[likelihoodKey - 1], // Get likelihood description
-          groupedData[impactKey][likelihoodKey]
-            .sort((a, b) => a - b) // Sort locations ascending
-            .map(locationIndex => labels.where[locationIndex - 1]) // Get location descriptions
-        ])
-    ])
+  // Create an array to hold all impact/likelihood combinations with calculated risk scores
+  const riskScores = []
+
+  // Calculate risk scores for each impact/likelihood combination
+  Object.keys(groupedData).forEach(impactKey => {
+    Object.keys(groupedData[impactKey]).forEach(likelihoodKey => {
+      const impact = parseInt(impactKey)
+      const likelihood = parseInt(likelihoodKey)
+
+      // Calculate risk score using centralized function
+      const riskScore = calculateRiskScore(impact, likelihood)
+
+      // Get locations and calculate risk score for each location
+      const locations = groupedData[impactKey][likelihoodKey].map(locationIndex => ({
+        index: locationIndex,
+        name: labels.where[locationIndex - 1],
+        // Use centralized risk scoring function
+        priority: calculateRiskScore(impact, likelihood)
+      })).sort((a, b) => b.priority - a.priority)
+
+      riskScores.push({
+        impact,
+        likelihood,
+        impactKey,
+        likelihoodKey,
+        riskScore,
+        impactDesc: labels.impact[impact - 1],
+        // Always ensure the locations are sorted by priority in the final output
+        likelihoodGroups: [
+          [
+            labels.likelihood[likelihood - 1],
+            locations.map(loc => loc.name)
+          ]
+        ],
+        // Store highest location priority for sorting
+        locationPriority: locations.length > 0 ? locations[0].priority : 0
+      })
+    })
+  })
+
+  // Sort solely by risk score (impact × likelihood), then by impact if scores are equal
+  riskScores.sort((a, b) => {
+    if (b.riskScore !== a.riskScore) {
+      return b.riskScore - a.riskScore
+    }
+    // If risk scores are equal, sort by impact
+    return b.impact - a.impact
+  })
+
+  // Group by impact for the final structure
+  const result = []
+  const impactGroups = {}
+
+  riskScores.forEach(item => {
+    if (!impactGroups[item.impact]) {
+      impactGroups[item.impact] = {
+        impactDesc: item.impactDesc,
+        likelihoodGroups: []
+      }
+      result.push([item.impactDesc, impactGroups[item.impact].likelihoodGroups])
+    }
+    impactGroups[item.impact].likelihoodGroups.push(item.likelihoodGroups[0])
+  })
+
+  return result
 }
 
 /**
@@ -574,15 +667,17 @@ const sortByRiskLevels = (groupedData, labels) => {
  * @returns {string} Formatted location string
  */
 const formatLocationList = (locations, labels) => {
-  let specificAreas = locations.filter(location => 
+  // Get specific areas without prioritizing location types
+  const specificAreas = locations.filter(location =>
     [labels.where[0], labels.where[1]].includes(location) // riverside, coastal
   )
-  let generalArea = locations.find(location => location === labels.where[2]) || '' // across the region
-  
-  const formattedSpecific = specificAreas.length 
+
+  const generalArea = locations.find(location => location === labels.where[2]) || '' // across the region
+
+  const formattedSpecific = specificAreas.length
     ? `${specificAreas.join(' and ')} areas${locations.length === 3 ? ',' : ''}`
     : ''
-    
+
   return joinWithAndSeparator([formattedSpecific, generalArea].filter(area => area.length > 0), ',')
 }
 
@@ -593,39 +688,39 @@ const formatLocationList = (locations, labels) => {
  */
 const splitComplexData = (sortedData) => {
   const totalLocations = sortedData.length ? sortedData[0][1].flat(2).length : 0
-  
+
   if (totalLocations <= 3) {
     return [sortedData]
   }
-  
+
   // Instead of splitting by likelihood groups, split by location types to avoid duplication
   const firstChunk = JSON.parse(JSON.stringify(sortedData))
   const secondChunk = JSON.parse(JSON.stringify(sortedData))
-  
+
   // Collect all unique locations from all likelihood groups
   const allLocations = new Set()
   sortedData[0][1].forEach(likelihoodGroup => {
     likelihoodGroup[1].forEach(location => allLocations.add(location))
   })
-  
+
   const locationArray = Array.from(allLocations)
   const midPoint = Math.ceil(locationArray.length / 2)
-  
+
   // Split locations into two groups
   const firstLocations = new Set(locationArray.slice(0, midPoint))
   const secondLocations = new Set(locationArray.slice(midPoint))
-  
+
   // Filter likelihood groups to only include relevant locations
   firstChunk[0][1] = firstChunk[0][1].map(likelihoodGroup => [
     likelihoodGroup[0],
     likelihoodGroup[1].filter(location => firstLocations.has(location))
   ]).filter(likelihoodGroup => likelihoodGroup[1].length > 0)
-  
+
   secondChunk[0][1] = secondChunk[0][1].map(likelihoodGroup => [
-    likelihoodGroup[0], 
+    likelihoodGroup[0],
     likelihoodGroup[1].filter(location => secondLocations.has(location))
   ]).filter(likelihoodGroup => likelihoodGroup[1].length > 0)
-  
+
   // Return only chunks that have content
   return [firstChunk, secondChunk].filter(chunk => chunk[0][1].length > 0)
 }
@@ -638,88 +733,277 @@ const splitComplexData = (sortedData) => {
  * @returns {string} Formatted sentence
  */
 const buildPrimarySentence = (riskDataChunks, activeSources, labels) => {
-  let sentence = ''
-  
+  // Group locations by their impact and likelihood combination
+  const sentenceGroups = new Map()
+
+  // Process each impact group
   riskDataChunks.forEach(impactGroup => {
     const [impactDescription, likelihoodGroups] = impactGroup
-    
+
     // Skip if impact description is empty or null
     if (!impactDescription || impactDescription === 'null') return
-    
-    const validClauses = []
-    
-    likelihoodGroups.forEach(likelihoodGroup => {
-      const [likelihoodDescription, locations] = likelihoodGroup
+
+    // Process each likelihood group
+    likelihoodGroups.forEach(([likelihood, locations]) => {
+      if (!likelihood || likelihood === 'null' || !locations || locations.length === 0) return
+
+      // Create a key for grouping by impact and likelihood
+      const groupKey = `${impactDescription}|${likelihood}`
       
-      // Skip if likelihood or locations are empty/null
-      if (!likelihoodDescription || likelihoodDescription === 'null' || 
-          !locations || locations.length === 0) return
-          
-      const formattedLocations = formatLocationList(locations, labels)
-      if (!formattedLocations || formattedLocations === 'null' || formattedLocations === '') return
-      
-      let clause = `${likelihoodDescription} in ${formattedLocations}`
-      
-      // Special formatting for location descriptions starting with 'a'
-      if (locations[0] && locations[0].startsWith('a')) {
-        clause = `${likelihoodDescription} ${formattedLocations} due to ${activeSources}`
+      if (!sentenceGroups.has(groupKey)) {
+        sentenceGroups.set(groupKey, {
+          impact: impactDescription,
+          likelihood: likelihood,
+          locations: [],
+          riskScore: 0
+        })
       }
-      
-      validClauses.push(clause)
+
+      // Add locations to this group
+      const group = sentenceGroups.get(groupKey)
+      group.locations.push(...locations)
+
+      // Calculate risk score for sorting
+      const impact = getImpactLevelFromSentence(impactDescription)
+      const likelihoodLevel = getLikelihoodLevelFromSentence(likelihood)
+      group.riskScore = calculateRiskScore(impact, likelihoodLevel)
     })
-    
-    if (validClauses.length > 0) {
-      const capitalizedImpact = impactDescription.charAt(0).toUpperCase() + impactDescription.slice(1)
-      sentence += `${capitalizedImpact} is ${validClauses.join(' and ')}. `
-    }
   })
-  
-  return sentence.trim()
+
+  // Convert groups to sentences
+  const sentences = []
+  for (const [key, group] of sentenceGroups) {
+    if (group.locations.length === 0) continue
+
+    // Remove duplicates and sort locations for consistent output
+    const uniqueLocations = [...new Set(group.locations)]
+    
+    // Separate specific areas from general areas
+    const specificAreas = uniqueLocations.filter(loc => 
+      loc === 'riverside' || loc === 'coastal'
+    ).map(loc => `${loc} areas`)
+    
+    const generalAreas = uniqueLocations.filter(loc => 
+      loc === 'across the region'
+    )
+
+    // Build location phrase
+    let locationPhrase = ''
+    if (specificAreas.length > 0 && generalAreas.length > 0) {
+      // Combine specific and general areas: "in riverside areas and across the region"
+      locationPhrase = `in ${specificAreas.join(' and ')} and ${generalAreas[0]}`
+    } else if (specificAreas.length > 0) {
+      // Only specific areas: "in riverside areas"
+      locationPhrase = `in ${specificAreas.join(' and ')}`
+    } else if (generalAreas.length > 0) {
+      // Only general areas: "across the region"
+      locationPhrase = generalAreas[0]
+    }
+
+    // Add source information for regional flooding
+    let sourceInfo = ''
+    if (generalAreas.length > 0 && activeSources) {
+      sourceInfo = ` due to ${activeSources}`
+    }
+
+    // Build the sentence
+    const capitalizedImpact = group.impact.charAt(0).toUpperCase() + group.impact.slice(1)
+    
+    if (specificAreas.length > 0 && generalAreas.length > 0) {
+      // Combined sentence: "Property flooding is expected in riverside areas and across the region due to surface water."
+      sentences.push({
+        text: `${capitalizedImpact} is ${group.likelihood} ${locationPhrase}${sourceInfo}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    } else if (generalAreas.length > 0) {
+      // Region only: "Property flooding is expected across the region due to surface water."
+      sentences.push({
+        text: `${capitalizedImpact} is ${group.likelihood} ${locationPhrase}${sourceInfo}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    } else {
+      // Specific areas only: "In coastal areas, property flooding is likely."
+      sentences.push({
+        text: `In ${specificAreas.join(' and ')}, ${group.impact} is ${group.likelihood}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    }
+  }
+
+  // Sort sentences by risk score (highest first), with stable sort for equal scores
+  sentences.sort((a, b) => {
+    if (b.riskScore !== a.riskScore) {
+      return b.riskScore - a.riskScore
+    }
+    // If risk scores are equal, maintain original order (stable sort)
+    return a.originalIndex - b.originalIndex
+  })
+
+  // Return combined sentences
+  return sentences.map(s => s.text).join(' ')
+}
+
+// ==================== RISK SCORING FUNCTIONS ====================
+
+/**
+ * Extract impact level from a sentence based on keyword analysis
+ * @param {string} sentence - Sentence to analyze for impact keywords
+ * @returns {number} Impact level (1-5, default 3)
+ */
+const getImpactLevelFromSentence = (sentence) => {
+  if (!sentence) return 3
+
+  const normalizedSentence = sentence.toLowerCase()
+
+  // Check impact level keywords in order of severity
+  if (normalizedSentence.includes('significant') || normalizedSentence.includes('severe')) {
+    return 5
+  } else if (normalizedSentence.includes('substantial')) {
+    return 4
+  } else if (normalizedSentence.includes('minor') || normalizedSentence.includes('minimal')) {
+    return 2
+  } else if (normalizedSentence.includes('negligible')) {
+    return 1
+  }
+
+  return 3 // Default to moderate impact
 }
 
 /**
+ * Extract likelihood level from a sentence based on keyword analysis
+ * @param {string} sentence - Sentence to analyze for likelihood keywords
+ * @returns {number} Likelihood level (1-5, default 3)
+ */
+const getLikelihoodLevelFromSentence = (sentence) => {
+  if (!sentence) return 3
+
+  const normalizedSentence = sentence.toLowerCase()
+
+  // Check likelihood level keywords in order of probability
+  if (normalizedSentence.includes('expected')) {
+    return 5
+  } else if (normalizedSentence.includes('likely')) {
+    return 4
+  } else if (normalizedSentence.includes('possible')) {
+    return 3
+  } else if (normalizedSentence.includes('unlikely')) {
+    return 2
+  } else if (normalizedSentence.includes('very unlikely')) {
+    return 1
+  }
+
+  return 3 // Default to possible likelihood
+}
+
+/**
+ /**
+ * Calculate risk score from impact and likelihood levels
+ * @param {number} impact - Impact level (1-5)
+ * @param {number} likelihood - Likelihood level (1-5)
+ * @returns {number} Risk score (impact × likelihood)
+ */
+const calculateRiskScore = (impact, likelihood) => {
+  return impact * likelihood
+}
+
+// ==================== SENTENCE GENERATION FUNCTIONS ====================
+
+/**
  * Create the secondary sentence with alternative phrasing
- * @param {Array} riskDataChunks - Array of risk data chunks  
+ * @param {Array} riskDataChunks - Array of risk data chunks
  * @param {Object} labels - Text labels object
  * @returns {string} Formatted sentence
  */
 const buildSecondarySentence = (riskDataChunks, labels) => {
   let sentence = ''
-  
+
   riskDataChunks.forEach(impactGroup => {
     const [impactDescription, likelihoodGroups] = impactGroup
-    
+
     if (!impactDescription || impactDescription === 'null') return
-    
+
+    // Sort likelihood groups by risk level (highest first)
+    const sortedLikelihoodGroups = [...likelihoodGroups].sort((a, b) => {
+      const [aLikelihood, aLocations] = a
+      const [bLikelihood, bLocations] = b
+
+      // Get the likelihood level (higher index = higher likelihood)
+      const aLikelihoodLevel = TEXT_LABELS.likelihood.indexOf(aLikelihood)
+      const bLikelihoodLevel = TEXT_LABELS.likelihood.indexOf(bLikelihood)
+
+      // Calculate risk scores using the centralized function
+      // Use the impact index from the current impact group
+      const impactIndex = TEXT_LABELS.impact.indexOf(impactDescription)
+      const aRiskScore = calculateRiskScore(impactIndex + 1, aLikelihoodLevel + 1)
+      const bRiskScore = calculateRiskScore(impactIndex + 1, bLikelihoodLevel + 1)
+
+      // Sort by risk score first (higher is better)
+      if (aRiskScore !== bRiskScore) {
+        return bRiskScore - aRiskScore
+      }
+
+      // If risk scores are equal, use likelihood level as a tiebreaker
+      if (aLikelihoodLevel !== bLikelihoodLevel) {
+        return bLikelihoodLevel - aLikelihoodLevel
+      }
+
+      // If likelihood levels are equal, prioritize by location types
+      const aHasRiverside = aLocations.includes('riverside')
+      const bHasRiverside = bLocations.includes('riverside')
+
+      // If one has riverside and the other doesn't, prioritize riverside
+      if (aHasRiverside && !bHasRiverside) return -1
+      if (!aHasRiverside && bHasRiverside) return 1
+
+      // If riverside is equal, use coastal as a tiebreaker
+      const aHasCoastal = aLocations.includes('coastal')
+      const bHasCoastal = bLocations.includes('coastal')
+
+      if (aHasCoastal && !bHasCoastal) return -1
+      if (!aHasCoastal && bHasCoastal) return 1
+
+      // If coastal is equal, use region as a final tiebreaker
+      const aHasRegion = aLocations.includes('across the region')
+      const bHasRegion = bLocations.includes('across the region')
+
+      if (aHasRegion && !bHasRegion) return -1
+      if (!aHasRegion && bHasRegion) return 1
+
+      return 0
+    })
+
     const validPhrases = []
-    
-    likelihoodGroups.forEach((likelihoodGroup, groupIndex) => {
+
+    sortedLikelihoodGroups.forEach((likelihoodGroup, groupIndex) => {
       const [likelihoodDescription, locations] = likelihoodGroup
-      
-      if (!likelihoodDescription || likelihoodDescription === 'null' || 
+
+      if (!likelihoodDescription || likelihoodDescription === 'null' ||
           !locations || locations.length === 0) return
-          
+
       const formattedLocations = formatLocationList(locations, labels)
       if (!formattedLocations || formattedLocations === 'null' || formattedLocations === '') return
-      
+
       let phrase = ''
       if (groupIndex === 0) {
-        const locationPrefix = formattedLocations.startsWith('a') 
+        const locationPrefix = formattedLocations.startsWith('a')
           ? formattedLocations.charAt(0).toUpperCase() + formattedLocations.slice(1)
           : 'In ' + formattedLocations
         phrase = `${locationPrefix}, ${impactDescription} is ${likelihoodDescription}`
       } else {
         phrase = `${likelihoodDescription} in ${formattedLocations}`
       }
-      
+
       validPhrases.push(phrase)
     })
-    
+
     if (validPhrases.length > 0) {
       sentence += joinWithAndSeparator(validPhrases, ',') + '. '
     }
   })
-  
+
   return sentence.trim()
 }
 
@@ -731,11 +1015,11 @@ const buildSecondarySentence = (riskDataChunks, labels) => {
  */
 const filterDuplicateLocationInfo = (primarySentence, secondarySentence) => {
   if (!primarySentence || !secondarySentence) return secondarySentence
-  
+
   // Extract location types and their associated content from sentences
   const extractLocationInfo = (str) => {
     const locations = new Map()
-    
+
     // Match "In X areas, Y" patterns
     const inAreaMatches = str.match(/in\s+(riverside|coastal|inland|rural|urban)\s+areas?,\s*([^.]+)/gi)
     if (inAreaMatches) {
@@ -744,7 +1028,7 @@ const filterDuplicateLocationInfo = (primarySentence, secondarySentence) => {
         locations.set(locationType.toLowerCase(), content.toLowerCase().trim())
       })
     }
-    
+
     // Match "Y in X areas" patterns
     const areaInMatches = str.match(/([^.]+)\s+in\s+(riverside|coastal|inland|rural|urban)\s+areas?/gi)
     if (areaInMatches) {
@@ -753,42 +1037,42 @@ const filterDuplicateLocationInfo = (primarySentence, secondarySentence) => {
         locations.set(locationType.toLowerCase(), content.toLowerCase().trim())
       })
     }
-    
+
     return locations
   }
-  
+
   const primaryLocations = extractLocationInfo(primarySentence)
-  
+
   // Split secondary sentence into individual statements
   const secondaryStatements = secondarySentence.split('.').map(s => s.trim()).filter(s => s.length > 0)
   const filteredStatements = []
-  
+
   for (const statement of secondaryStatements) {
     let shouldInclude = true
     const statementLocation = extractLocationInfo(statement + '.')
-    
+
     // Check if this statement's location info is already covered in primary
     for (const [locType, content] of statementLocation) {
       if (primaryLocations.has(locType)) {
         const primaryContent = primaryLocations.get(locType)
-        
+
         // Normalize content for comparison
         const normalize = (str) => str
           .replace(/\s+/g, ' ')
           .replace(/[^\w\s]/g, '')
           .trim()
-          
+
         const normStatement = normalize(content)
         const normPrimary = normalize(primaryContent)
-        
+
         // Check for significant content overlap
         const words1 = new Set(normStatement.split(' ').filter(w => w.length > 2))
         const words2 = new Set(normPrimary.split(' ').filter(w => w.length > 2))
-        
+
         if (words1.size > 0 && words2.size > 0) {
           const intersection = new Set([...words1].filter(x => words2.has(x)))
           const similarity = intersection.size / Math.min(words1.size, words2.size)
-          
+
           if (similarity > 0.6) { // Lower threshold for more aggressive filtering
             shouldInclude = false
             break
@@ -796,12 +1080,12 @@ const filterDuplicateLocationInfo = (primarySentence, secondarySentence) => {
         }
       }
     }
-    
+
     if (shouldInclude && statement) {
       filteredStatements.push(statement)
     }
   }
-  
+
   const result = filteredStatements.join('. ').trim()
   return result ? result + '.' : ''
 }
@@ -814,26 +1098,26 @@ const filterDuplicateLocationInfo = (primarySentence, secondarySentence) => {
  */
 const areContentDuplicates = (sentence1, sentence2) => {
   if (!sentence1 || !sentence2) return false
-  
+
   // Extract location-specific patterns that commonly duplicate
   const extractLocationPatterns = (str) => {
     const patterns = []
-    
+
     // Match patterns like "In riverside areas, X is Y"
     const locationMatch = str.match(/in (riverside|coastal|inland|rural|urban) areas?,\s*([^.]+)/gi)
     if (locationMatch) {
       patterns.push(...locationMatch.map(m => m.toLowerCase().trim()))
     }
-    
+
     // Match patterns like "X is Y in Z areas"
     const reverseLocationMatch = str.match(/([^.]+)\s+in (riverside|coastal|inland|rural|urban) areas?/gi)
     if (reverseLocationMatch) {
       patterns.push(...reverseLocationMatch.map(m => m.toLowerCase().trim()))
     }
-    
+
     return patterns
   }
-  
+
   // Extract unique location types from patterns
   const extractLocationTypes = (patterns) => {
     const types = new Set()
@@ -845,20 +1129,20 @@ const areContentDuplicates = (sentence1, sentence2) => {
     })
     return types
   }
-  
+
   const patterns1 = extractLocationPatterns(sentence1)
   const patterns2 = extractLocationPatterns(sentence2)
-  
+
   // Check if secondary sentence contains unique location information
   const locations1 = extractLocationTypes(patterns1)
   const locations2 = extractLocationTypes(patterns2)
-  
+
   // If secondary sentence has unique location types, don't consider it duplicate
   const uniqueLocations = new Set([...locations2].filter(loc => !locations1.has(loc)))
   if (uniqueLocations.size > 0) {
     return false
   }
-  
+
   // Check for location-specific duplicates (existing logic)
   for (const pattern1 of patterns1) {
     for (const pattern2 of patterns2) {
@@ -869,26 +1153,26 @@ const areContentDuplicates = (sentence1, sentence2) => {
         .replace(/\s+areas?,?\s*/, ' ')
         .replace(/\s+/g, ' ')
         .trim()
-      
+
       const norm1 = normalize(pattern1)
       const norm2 = normalize(pattern2)
-      
+
       // Check if the core content (without location prefix) is very similar
       const words1 = new Set(norm1.split(' ').filter(w => w.length > 2))
       const words2 = new Set(norm2.split(' ').filter(w => w.length > 2))
-      
+
       if (words1.size > 0 && words2.size > 0) {
         const intersection = new Set([...words1].filter(x => words2.has(x)))
         const union = new Set([...words1, ...words2])
         const similarity = intersection.size / union.size
-        
+
         if (similarity > 0.7) {
           return true
         }
       }
     }
   }
-  
+
   // Fallback to general similarity check
   const normalize = (str) => {
     return str.toLowerCase()
@@ -897,43 +1181,49 @@ const areContentDuplicates = (sentence1, sentence2) => {
       .replace(/\s+/g, ' ')
       .trim()
   }
-  
+
   const norm1 = normalize(sentence1)
   const norm2 = normalize(sentence2)
-  
+
   // Check for exact matches after normalization
   if (norm1 === norm2) return true
-  
+
   // Check for high similarity (>80% common words)
   const words1 = new Set(norm1.split(' ').filter(w => w.length > 2))
   const words2 = new Set(norm2.split(' ').filter(w => w.length > 2))
-  
+
   if (words1.size === 0 || words2.size === 0) return false
-  
+
   const intersection = new Set([...words1].filter(x => words2.has(x)))
   const union = new Set([...words1, ...words2])
   const similarity = intersection.size / union.size
-  
+
   return similarity > 0.8
 }
 
 /**
  * Apply green cell filtering - remove all green cells except [2,2] (minor impact + possible likelihood)
- * @param {Array} riskMatrix - 5x4 risk matrix [day][source][impact, likelihood]  
+ * @param {Array} riskMatrix - 5x4 risk matrix [day][source][impact, likelihood]
  * @returns {Array} Filtered matrix
  */
 const applyGreenCellFiltering = (riskMatrix) => {
-  return riskMatrix.map(dayMatrix => 
+  return riskMatrix.map(dayMatrix =>
     dayMatrix.map(sourceData => {
       const [impact, likelihood] = sourceData
-      
-      // Green cells to filter out: (1,1), (1,2), (2,1) - keep only (2,2)
+
+      // Green cells to filter out:
+      // 1. Any cell where impact or likelihood is 0
+      // 2. Low impact combinations: (1,1), (1,2), (2,1)
+      // 3. Very low/minimal impact: (1,0) [filtered by first rule]
+      // Keep only (2,2) and higher risk combinations
       const isGreenCellToRemove = (
+        impact === 0 ||
+        likelihood === 0 ||
         (impact === 1 && likelihood === 1) ||
         (impact === 1 && likelihood === 2) ||
         (impact === 2 && likelihood === 1)
       )
-      
+
       return isGreenCellToRemove ? [0, 0] : sourceData
     })
   )
@@ -946,11 +1236,12 @@ const applyGreenCellFiltering = (riskMatrix) => {
  * @returns {Object} Object containing HTML summary text
  */
 const generateOutlookText = (riskMatrix, dayOffset = 0) => {
-  // Apply offset and green cell filtering
-  const filteredMatrix = applyGreenCellFiltering(riskMatrix.slice(dayOffset))
-  
-  const dayGroups = groupConsecutiveDays(filteredMatrix, TEXT_LABELS)
-  
+  // Apply offset first
+  const offsetMatrix = riskMatrix.slice(dayOffset)
+
+  // Group days based on the offset matrix - groupConsecutiveDays will handle filtering for comparison internally
+  const dayGroups = groupConsecutiveDays(offsetMatrix, TEXT_LABELS)
+
   const htmlContent = []
 
   // Handle case where there's no significant flood risk
@@ -964,32 +1255,89 @@ const generateOutlookText = (riskMatrix, dayOffset = 0) => {
       const groupedRiskData = groupByImpactAndLikelihood(dayGroup)
       const sortedRiskData = sortByRiskLevels(groupedRiskData, TEXT_LABELS)
       const dataChunks = splitComplexData(sortedRiskData)
-      
+
       let paragraphText = ''
       if (dataChunks[0].length > 0) {
         const primarySentence = buildPrimarySentence(dataChunks[0], dayGroup.activeSources, TEXT_LABELS)
-        
-        paragraphText = primarySentence
-        
+
+        // Function to reorder sentences based purely on risk scores
+        const reorderSentencesByPriority = (text) => {
+          if (!text) return text
+
+          // Split into sentences
+          const sentences = text.match(/[^.!?]+[.!?]/g) || []
+          if (sentences.length <= 1) return text
+
+          // Calculate risk score for each sentence
+          const scoredSentences = sentences.map(sentence => {
+            const normalized = sentence.trim()
+            let locationType = 'other'
+
+            // Determine location type
+            if (normalized.match(/across the region/i)) {
+              locationType = 'region'
+            } else if (normalized.match(/coastal areas/i) || normalized.match(/in coastal/i)) {
+              locationType = 'coastal'
+            } else if (normalized.match(/riverside areas/i) || normalized.match(/in riverside/i)) {
+              locationType = 'riverside'
+            }
+
+            // Calculate impact and likelihood using centralized functions
+            const impact = getImpactLevelFromSentence(normalized)
+            const likelihood = getLikelihoodLevelFromSentence(normalized)
+
+            // Calculate risk score using centralized function
+            const riskScore = calculateRiskScore(impact, likelihood)
+
+            return {
+              sentence: normalized,
+              type: locationType,
+              riskScore
+            }
+          })
+
+          // Create a stable sort using the original index to maintain original ordering when risk scores are equal
+          // This ensures no implicit location type prioritization
+          const indexedSentences = scoredSentences.map((sentence, index) => ({ ...sentence, originalIndex: index }))
+
+          // Sort by risk score (highest first) with stable order for equal scores
+          indexedSentences.sort((a, b) => {
+            if (b.riskScore !== a.riskScore) {
+              return b.riskScore - a.riskScore
+            }
+            // If risk scores are equal, maintain original order (stable sort)
+            return a.originalIndex - b.originalIndex
+          })
+
+          // Get ordered sentences
+          const ordered = indexedSentences.map(item => item.sentence)
+
+          return ordered.join(' ')
+        }
+
+        // Apply reordering to primary sentence
+        paragraphText = reorderSentencesByPriority(primarySentence)
+
         if (dataChunks.length === 2) {
           const secondarySentence = buildSecondarySentence(dataChunks[1], TEXT_LABELS)
-          
+
           // Filter out parts of secondary sentence that duplicate primary sentence
           const filteredSecondarySentence = filterDuplicateLocationInfo(primarySentence, secondarySentence)
-          
+
           // Advanced deduplication: Check for semantic similarity between sentences
           if (filteredSecondarySentence && !areContentDuplicates(primarySentence, filteredSecondarySentence)) {
-            paragraphText += ' ' + filteredSecondarySentence
+            // Apply reordering to combined text
+            paragraphText = reorderSentencesByPriority(paragraphText + ' ' + filteredSecondarySentence)
           }
         }
       } else {
         paragraphText = 'The flood risk is very low.'
       }
-      
+
       htmlContent.push(`<h3 class="govuk-heading-s">${dateRange}</h3><p>${paragraphText}</p>`)
     })
   }
-  
+
   return {
     summary: htmlContent.join('').replace('and Tomorrow', 'and tomorrow')
   }
@@ -1007,7 +1355,7 @@ class Outlook {
    * @param {Object} riskData - Complete flood risk dataset
    * @param {Object} place - Location data with bounding box (optional)
    */
-  constructor(riskData, place) {
+  constructor (riskData, place) {
     // Generate GeoJSON representation
     const geoJsonData = buildGeoJson(riskData)
     this.geoJson = geoJsonData
@@ -1045,19 +1393,16 @@ class Outlook {
 
     // Process location-specific information if place is provided
     if (!place) return
-    
+
     const riskMatrix = buildRiskMatrix(riskData, place)
     const dayOffset = moment().startOf('day').diff(moment(riskData.last_modified_at).startOf('day'), 'days')
-    
+
     // Check if there are any regional concerns
     this.hasRegionalConcern = !!riskMatrix.flat(3).find(value => value > 0)
-    
+
     // Generate regional outlook text if data is recent enough
     this.regional = dayOffset <= 1 ? generateOutlookText(riskMatrix, dayOffset) : null
     this.isError = dayOffset > 1
-
-    // Log the full riskData object for debugging
-    console.log('Full riskData object:', riskData);
   }
 }
 
