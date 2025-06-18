@@ -388,11 +388,13 @@ export const createLiveMap = (mapId, options = {}) => {
       name: 'dark',
       attribution: 'Test',
       url: process.env.DARK_URL
-    },{
-      name: 'aerial',
-      url: process.env.AERIAL_URL,
-      logo: null
-    },{
+    },
+    // {
+    //   name: 'aerial',
+    //   url: process.env.AERIAL_URL,
+    //   logo: null
+    // },
+    {
       name: 'deuteranopia',
       attribution: 'Test',
       url: process.env.DEUTERANOPIA_URL
@@ -587,15 +589,18 @@ export const createOutlookMap = (mapId, options = {}) => {
       name: 'dark',
       attribution: 'Test',
       url: process.env.DARK_URL
-    },{
-      name: 'aerial',
-      url: process.env.AERIAL_URL,
-      logo: null
-    },{
+    },
+    // {
+    //   name: 'aerial',
+    //   url: process.env.AERIAL_URL,
+    //   logo: null
+    // },
+    {
       name: 'deuteranopia',
       attribution: 'Test',
       url: process.env.DEUTERANOPIA_URL
-    },{
+    },
+    {
       name: 'tritanopia',
       attribution: 'Test',
       url: process.env.TRITANOPIA_URL
