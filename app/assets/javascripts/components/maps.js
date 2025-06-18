@@ -352,7 +352,7 @@ const createInfo = (props) => {
 }
 
 export const createLiveMap = (mapId, options = {}) => {
-  // One live map per page
+  // Only one live map per page
   let map, bounds
   const { btnText, extent, centre, zoom, layers, selectedFeature } = options
   const isStationLegend = ['ri','se','gr','rf'].some(l => layers.includes(l))
