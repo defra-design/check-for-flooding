@@ -74,11 +74,11 @@ const TEXT_LABELS = {
  * Sources: [river, coastal, surface, ground].....
  */
 const DEV_MATRIX_OVERRIDE = [
-  [[3, 4], [3, 3], [3, 4], [3, 4]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
-  [[1, 1], [3, 3], [3, 1], [2, 4]], // Day 2
-  [[1, 1], [3, 3], [3, 1], [2, 4]], // Day 3
-  [[4, 4], [3, 3], [3, 1], [2, 4]], // Day 4
-  [[0, 1], [3, 3], [3, 1], [2, 4]] // Day 5
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 2
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 3
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 4
+  [[3, 3], [3, 3], [3, 3], [3, 3]] // Day 5
 ]
 
 /**

@@ -1,9 +1,9 @@
 {
   "id": 1364,
-  "issued_at": "2025-06-09T10:30:00Z",
-  "pdf_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-09_1030/fgs.pdf",
-  "detailed_csv_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-09_1030/detailed.csv",
-  "area_of_concern_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-09_1030/areaofconcern.jpg",
+  "issued_at": "2025-06-24T13:00:00Z",
+  "pdf_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-24_1030/fgs.pdf",
+  "detailed_csv_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-24_1030/detailed.csv",
+  "area_of_concern_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-24_1030/areaofconcern.jpg",
   "flood_risk_trend": {
     "day1": "stable",
     "day2": "increasing",
@@ -28,14 +28,14 @@
   "headline": "Ongoing severe flooding impacts on the River Severn today becoming significant from Friday. Ongoing significant flooding impacts on the lower River Aire. Further rain from Friday may lead to new flooding impacts. The overall flood risk is HIGH.",
   "amendments": "",
   "future_forecast": "Flooding impacts on the River Severn and other larger rivers will likely continue into the first week of March. Weather remaining unsettled giving the risk of renewed flooding impacts.",
-  "last_modified_at": "2025-06-09T11:00:03Z",
-  "next_issue_due_at": "2025-06-09T15:00:00Z",
-  "png_thumbnails_with_days_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-09_1030/FGSthumbnails-with-days.png",
+  "last_modified_at": "2025-06-24T11:00:03Z",
+  "next_issue_due_at": "2025-06-24T15:00:00Z",
+  "png_thumbnails_with_days_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-24_1030/FGSthumbnails-with-days.png",
   "risk_areas": [
     {
       "id": 3671,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:34Z",
+      "updated_at": "2025-06-24T10:20:34Z",
       "beyond_five_days": true,
       "ordering": 2,
       "risk_area_blocks": [
@@ -699,7 +699,7 @@
     {
       "id": 3667,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:34:14Z",
+      "updated_at": "2025-06-24T10:34:14Z",
       "beyond_five_days": false,
       "ordering": 13,
       "risk_area_blocks": [
@@ -1623,7 +1623,7 @@
     {
       "id": 3662,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:55:57Z",
+      "updated_at": "2025-06-24T10:55:57Z",
       "beyond_five_days": false,
       "ordering": 11,
       "risk_area_blocks": [
@@ -2466,7 +2466,7 @@
     {
       "id": 3660,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:21:34Z",
+      "updated_at": "2025-06-24T10:21:34Z",
       "beyond_five_days": false,
       "ordering": 6,
       "risk_area_blocks": [
@@ -3986,7 +3986,7 @@
     {
       "id": 3657,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:04Z",
+      "updated_at": "2025-06-24T10:20:04Z",
       "beyond_five_days": false,
       "ordering": 3,
       "risk_area_blocks": [
@@ -6741,7 +6741,7 @@
     {
       "id": 3670,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:33:27Z",
+      "updated_at": "2025-06-24T10:33:27Z",
       "beyond_five_days": false,
       "ordering": 8,
       "risk_area_blocks": [
@@ -7314,7 +7314,7 @@
     {
       "id": 3669,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:34:34Z",
+      "updated_at": "2025-06-24T10:34:34Z",
       "beyond_five_days": false,
       "ordering": 10,
       "risk_area_blocks": [
@@ -7912,7 +7912,7 @@
     {
       "id": 3665,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:04Z",
+      "updated_at": "2025-06-24T10:20:04Z",
       "beyond_five_days": false,
       "ordering": 5,
       "risk_area_blocks": [
@@ -8605,7 +8605,7 @@
     {
       "id": 3663,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:34:44Z",
+      "updated_at": "2025-06-24T10:34:44Z",
       "beyond_five_days": true,
       "ordering": 12,
       "risk_area_blocks": [
@@ -10052,7 +10052,7 @@
     {
       "id": 3661,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:33:27Z",
+      "updated_at": "2025-06-24T10:33:27Z",
       "beyond_five_days": false,
       "ordering": 9,
       "risk_area_blocks": [
@@ -10793,7 +10793,7 @@
     {
       "id": 3659,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:04Z",
+      "updated_at": "2025-06-24T10:20:04Z",
       "beyond_five_days": false,
       "ordering": 7,
       "risk_area_blocks": [
@@ -11378,7 +11378,7 @@
     {
       "id": 3658,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:04Z",
+      "updated_at": "2025-06-24T10:20:04Z",
       "beyond_five_days": true,
       "ordering": 4,
       "risk_area_blocks": [
@@ -11926,7 +11926,7 @@
     {
       "id": 3656,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T10:20:35Z",
+      "updated_at": "2025-06-24T10:20:35Z",
       "beyond_five_days": true,
       "ordering": 1,
       "risk_area_blocks": [
@@ -12268,7 +12268,7 @@
     {
       "id": 3655,
       "statement_id": 1364,
-      "updated_at": "2025-06-09T01:31:47Z",
+      "updated_at": "2025-06-24T01:31:47Z",
       "beyond_five_days": false,
       "ordering": 0,
       "risk_area_blocks": [
