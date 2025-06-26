@@ -74,7 +74,7 @@ const TEXT_LABELS = {
  * Sources: [river, coastal, surface, ground].....
  */
 const DEV_MATRIX_OVERRIDE = [
-  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
+  [[1, 3], [2, 4], [3, 3], [4, 2]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 2
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 3
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 4
@@ -460,24 +460,11 @@ const buildRiskMatrix = (riskData, place) => {
  * @returns {Array} Location array [riverside, coastal, inland] with max values
  */
 const extractLocationInfo = (dayMatrix) => {
-  // Apply filtering to individual cells first
-  const applyFiltering = (sourceData) => {
-    const [impact, likelihood] = sourceData
-    const isGreenCellToRemove = (
-      impact === 0 ||
-      likelihood === 0 ||
-      (impact === 1 && likelihood === 1) ||
-      (impact === 1 && likelihood === 2) ||
-      (impact === 2 && likelihood === 1)
-    )
-    return isGreenCellToRemove ? [0, 0] : sourceData
-  }
-
-  // Filter the cells from each source
-  const filteredRiver = applyFiltering(dayMatrix[0])
-  const filteredCoastal = applyFiltering(dayMatrix[1])
-  const filteredSurface = applyFiltering(dayMatrix[2])
-  const filteredGround = applyFiltering(dayMatrix[3])
+  // Filter the cells from each source using centralized filtering
+  const filteredRiver = applyRiskFiltering(dayMatrix[0])
+  const filteredCoastal = applyRiskFiltering(dayMatrix[1])
+  const filteredSurface = applyRiskFiltering(dayMatrix[2])
+  const filteredGround = applyRiskFiltering(dayMatrix[3])
 
   return [
     filteredRiver, // river (riverside)
@@ -516,20 +503,7 @@ const groupConsecutiveDays = (riskMatrix, labels) => {
 
   // Apply filtering to each day's matrix for comparison
   const filteredMatrix = riskMatrix.map(dayMatrix =>
-    dayMatrix.map(sourceData => {
-      const [impact, likelihood] = sourceData
-
-      // Same filtering logic as in applyGreenCellFiltering
-      const isGreenCellToRemove = (
-        impact === 0 ||
-        likelihood === 0 ||
-        (impact === 1 && likelihood === 1) ||
-        (impact === 1 && likelihood === 2) ||
-        (impact === 2 && likelihood === 1)
-      )
-
-      return isGreenCellToRemove ? [0, 0] : sourceData
-    })
+    dayMatrix.map(sourceData => applyRiskFiltering(sourceData))
   )
 
   riskMatrix.forEach((dayMatrix, dayIndex) => {
@@ -1202,31 +1176,17 @@ const areContentDuplicates = (sentence1, sentence2) => {
 }
 
 /**
- * Apply green cell filtering - remove all green cells except [2,2] (minor impact + possible likelihood)
- * @param {Array} riskMatrix - 5x4 risk matrix [day][source][impact, likelihood]
- * @returns {Array} Filtered matrix
+ * Apply filtering to remove green cells (low risk combinations)
+ * @param {Array} sourceData - [impact, likelihood] pair
+ * @returns {Array} Filtered [impact, likelihood] pair or [0, 0] if filtered out
  */
-const applyGreenCellFiltering = (riskMatrix) => {
-  return riskMatrix.map(dayMatrix =>
-    dayMatrix.map(sourceData => {
-      const [impact, likelihood] = sourceData
-
-      // Green cells to filter out:
-      // 1. Any cell where impact or likelihood is 0
-      // 2. Low impact combinations: (1,1), (1,2), (2,1)
-      // 3. Very low/minimal impact: (1,0) [filtered by first rule]
-      // Keep only (2,2) and higher risk combinations
-      const isGreenCellToRemove = (
-        impact === 0 ||
-        likelihood === 0 ||
-        (impact === 1 && likelihood === 1) ||
-        (impact === 1 && likelihood === 2) ||
-        (impact === 2 && likelihood === 1)
-      )
-
-      return isGreenCellToRemove ? [0, 0] : sourceData
-    })
+const applyRiskFiltering = (sourceData) => {
+  const [impact, likelihood] = sourceData
+  // Only show cells with impact >= 2 AND likelihood >= 2
+  const isGreenCellToRemove = (
+    impact < 2 || likelihood < 2
   )
+  return isGreenCellToRemove ? [0, 0] : sourceData
 }
 
 /**
