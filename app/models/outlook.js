@@ -448,7 +448,9 @@ const buildRiskMatrix = (riskData, place) => {
   })
 
   // Apply development matrix override for testing
-  return DEV_MATRIX_OVERRIDE
+  // TODO: For production, comment out the next line to use real calculated matrix
+  // return DEV_MATRIX_OVERRIDE
+  return riskMatrix
 }
 
 // ==================== TEXT GENERATION ====================
@@ -534,6 +536,21 @@ const groupConsecutiveDays = (riskMatrix, labels) => {
 }
 
 /**
+ * Calculate location priority for source ordering (AC 5DF-L10)
+ * @param {string} locationName - Location name (riverside, coastal, across the region)
+ * @returns {number} Priority score (lower = higher priority)
+ */
+const calculateLocationPriority = (locationName) => {
+  // AC 5DF-L10: River > Sea > Surface > Groundwater
+  switch (locationName) {
+    case 'riverside': return 1 // River flooding
+    case 'coastal': return 2   // Sea flooding  
+    case 'across the region': return 3 // Surface water + Groundwater (inland)
+    default: return 4
+  }
+}
+
+/**
  * Group risk data by impact and likelihood levels
  * @param {Object} dayGroup - Day group with location info
  * @returns {Object} Nested object grouped by impact then likelihood
@@ -579,13 +596,22 @@ const sortByRiskLevels = (groupedData, labels) => {
       // Calculate risk score using centralized function
       const riskScore = calculateRiskScore(impact, likelihood)
 
-      // Get locations and calculate risk score for each location
+      // Get locations and calculate priority for each location
       const locations = groupedData[impactKey][likelihoodKey].map(locationIndex => ({
         index: locationIndex,
         name: labels.where[locationIndex - 1],
         // Use centralized risk scoring function
-        priority: calculateRiskScore(impact, likelihood)
-      })).sort((a, b) => b.priority - a.priority)
+        riskScore: calculateRiskScore(impact, likelihood),
+        // AC 5DF-L10: Add source priority for tie-breaking
+        sourcePriority: calculateLocationPriority(labels.where[locationIndex - 1])
+      })).sort((a, b) => {
+        // Primary sort: by risk score
+        if (b.riskScore !== a.riskScore) {
+          return b.riskScore - a.riskScore
+        }
+        // Secondary sort: by source priority (AC 5DF-L10)
+        return a.sourcePriority - b.sourcePriority
+      })
 
       riskScores.push({
         impact,
@@ -601,8 +627,8 @@ const sortByRiskLevels = (groupedData, labels) => {
             locations.map(loc => loc.name)
           ]
         ],
-        // Store highest location priority for sorting
-        locationPriority: locations.length > 0 ? locations[0].priority : 0
+        // Store highest location priority for sorting (AC 5DF-L10)
+        locationPriority: locations.length > 0 ? locations[0].sourcePriority : 4
       })
     })
   })
@@ -613,7 +639,12 @@ const sortByRiskLevels = (groupedData, labels) => {
       return b.riskScore - a.riskScore
     }
     // If risk scores are equal, sort by impact
-    return b.impact - a.impact
+    if (b.impact !== a.impact) {
+      return b.impact - a.impact
+    }
+    // AC 5DF-L10: If risk levels are equal, apply source priority order
+    // River > Sea > Surface > Groundwater
+    return a.locationPriority - b.locationPriority
   })
 
   // Group by impact for the final structure
@@ -656,47 +687,68 @@ const formatLocationList = (locations, labels) => {
 }
 
 /**
- * Split complex risk data into smaller chunks for better readability
+ * Split complex risk data according to AC 5DF-L4 and 5DF-L5
  * @param {Array} sortedData - Sorted risk data array
  * @returns {Array} Array of data chunks
  */
 const splitComplexData = (sortedData) => {
-  const totalLocations = sortedData.length ? sortedData[0][1].flat(2).length : 0
-
-  if (totalLocations <= 3) {
+  if (!sortedData || sortedData.length === 0) {
     return [sortedData]
   }
 
-  // Instead of splitting by likelihood groups, split by location types to avoid duplication
-  const firstChunk = JSON.parse(JSON.stringify(sortedData))
-  const secondChunk = JSON.parse(JSON.stringify(sortedData))
-
-  // Collect all unique locations from all likelihood groups
-  const allLocations = new Set()
-  sortedData[0][1].forEach(likelihoodGroup => {
-    likelihoodGroup[1].forEach(location => allLocations.add(location))
+  // Calculate total number of likelihood and location combinations
+  // Count surface water and groundwater as one (inland areas)
+  let totalCombinations = 0
+  
+  sortedData.forEach(([impactDesc, likelihoodGroups]) => {
+    likelihoodGroups.forEach(([likelihood, locations]) => {
+      // Count each likelihood-location combination
+      // Note: locations already accounts for surface+ground being combined as 'across the region'
+      totalCombinations += locations.length
+    })
   })
 
-  const locationArray = Array.from(allLocations)
-  const midPoint = Math.ceil(locationArray.length / 2)
+  // AC 5DF-L4: If total combinations <= 3, use first sentence logic only
+  if (totalCombinations <= 3) {
+    return [sortedData]
+  }
 
-  // Split locations into two groups
-  const firstLocations = new Set(locationArray.slice(0, midPoint))
-  const secondLocations = new Set(locationArray.slice(midPoint))
+  // AC 5DF-L5: If total combinations > 3, split into two groups
+  // First group: Contains highest likelihood items
+  // Second group: Contains remaining likelihoods
 
-  // Filter likelihood groups to only include relevant locations
-  firstChunk[0][1] = firstChunk[0][1].map(likelihoodGroup => [
-    likelihoodGroup[0],
-    likelihoodGroup[1].filter(location => firstLocations.has(location))
-  ]).filter(likelihoodGroup => likelihoodGroup[1].length > 0)
+  const firstChunk = []
+  const secondChunk = []
 
-  secondChunk[0][1] = secondChunk[0][1].map(likelihoodGroup => [
-    likelihoodGroup[0],
-    likelihoodGroup[1].filter(location => secondLocations.has(location))
-  ]).filter(likelihoodGroup => likelihoodGroup[1].length > 0)
+  sortedData.forEach(([impactDesc, likelihoodGroups]) => {
+    if (likelihoodGroups.length === 0) return
+
+    // Sort likelihood groups by likelihood level (highest first)
+    const sortedLikelihoodGroups = [...likelihoodGroups].sort((a, b) => {
+      const aLikelihoodLevel = TEXT_LABELS.likelihood.indexOf(a[0])
+      const bLikelihoodLevel = TEXT_LABELS.likelihood.indexOf(b[0])
+      return bLikelihoodLevel - aLikelihoodLevel // Highest likelihood first
+    })
+
+    // First chunk gets the highest likelihood group
+    const highestLikelihoodGroup = sortedLikelihoodGroups[0]
+    if (highestLikelihoodGroup) {
+      firstChunk.push([impactDesc, [highestLikelihoodGroup]])
+    }
+
+    // Second chunk gets the remaining likelihood groups
+    const remainingGroups = sortedLikelihoodGroups.slice(1)
+    if (remainingGroups.length > 0) {
+      secondChunk.push([impactDesc, remainingGroups])
+    }
+  })
 
   // Return only chunks that have content
-  return [firstChunk, secondChunk].filter(chunk => chunk[0][1].length > 0)
+  const result = []
+  if (firstChunk.length > 0) result.push(firstChunk)
+  if (secondChunk.length > 0) result.push(secondChunk)
+  
+  return result.length > 0 ? result : [sortedData]
 }
 
 /**
@@ -1204,10 +1256,44 @@ const generateOutlookText = (riskMatrix, dayOffset = 0) => {
 
   const htmlContent = []
 
-  // Handle case where there's no significant flood risk
-  if (dayGroups.length === 1 && !dayGroups[0].locationInfo.flat().some(value => value !== 0)) {
-    const dateRange = `${dayGroups[0].startDay}${dayGroups[0].dateRange}${dayGroups[0].endDay}`
-    htmlContent.push(`<p>${dateRange} the flood risk is very low.</p>`)
+  // Handle case where there's no significant flood risk (AC 5DF-L9)
+  // Check if all location info values are zero after filtering
+  const hasAnySignificantRisk = dayGroups.some(dayGroup => 
+    dayGroup.locationInfo.flat().some(value => value !== 0)
+  )
+
+  if (!hasAnySignificantRisk) {
+    // Apply AC 5DF-L1 to 5DF-L3 for very low risk scenario
+    if (dayGroups.length === 1) {
+      const dateRange = `${dayGroups[0].startDay}${dayGroups[0].dateRange}${dayGroups[0].endDay}`
+      htmlContent.push(`<p>${dateRange} the flood risk is very low.</p>`)
+    } else {
+      // Group consecutive days even for very low risk
+      let currentGroup = null
+      dayGroups.forEach((dayGroup, index) => {
+        if (!currentGroup) {
+          currentGroup = {
+            startDay: dayGroup.startDay,
+            endDay: dayGroup.startDay,
+            dayCount: 1
+          }
+        } else {
+          currentGroup.endDay = dayGroup.startDay
+          currentGroup.dayCount += 1
+        }
+
+        // If this is the last group or next group is different, output the range
+        if (index === dayGroups.length - 1) {
+          const dateRange = currentGroup.dayCount === 1 
+            ? currentGroup.startDay
+            : currentGroup.dayCount === 2
+              ? `${currentGroup.startDay} and ${currentGroup.endDay}`
+              : `${currentGroup.startDay} through to ${currentGroup.endDay}`
+          
+          htmlContent.push(`<p>${dateRange} the flood risk is very low.</p>`)
+        }
+      })
+    }
   } else {
     // Generate content for each day group
     dayGroups.forEach(dayGroup => {
