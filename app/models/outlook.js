@@ -70,15 +70,19 @@ const TEXT_LABELS = {
 
 /**
  * Development matrix override (hardcoded for testing)
+ * This matrix is used BY DEFAULT when it exists
+ * To use real calculated matrix instead, comment out this entire constant definition
  * Format: [day][source][impact, likelihood]
- * Sources: [river, coastal, surface, ground].....
+ * Sources: [river, coastal, surface, ground]
  */
 const DEV_MATRIX_OVERRIDE = [
-  [[1, 3], [2, 4], [3, 3], [4, 2]], // Day 1: River and Region both [3,4] "expected", Coastal [3,3] "likely"
+  // [impact, likelihood]
+  // [river, coastal, surface, groundwater]
+  [[1, 3], [2, 4], [3, 3], [4, 2]], // Day 1
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 2
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 3
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 4
-  [[3, 3], [3, 3], [3, 3], [3, 3]] // Day 5
+  [[3, 3], [3, 3], [3, 3], [3, 3]]  // Day 5
 ]
 
 /**
@@ -448,8 +452,13 @@ const buildRiskMatrix = (riskData, place) => {
   })
 
   // Apply development matrix override for testing
-  // TODO: For production, comment out the next line to use real calculated matrix
-  // return DEV_MATRIX_OVERRIDE
+  // DEV_MATRIX_OVERRIDE is used by default when it exists
+  // To use real calculated matrix, comment out the DEV_MATRIX_OVERRIDE constant above
+  if (typeof DEV_MATRIX_OVERRIDE !== 'undefined') {
+    console.log('🔧 Using DEV_MATRIX_OVERRIDE for testing')
+    return DEV_MATRIX_OVERRIDE
+  }
+  
   return riskMatrix
 }
 
