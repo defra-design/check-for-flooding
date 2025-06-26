@@ -78,12 +78,13 @@ const TEXT_LABELS = {
 const DEV_MATRIX_OVERRIDE = [
   // [impact, likelihood]
   // [river, coastal, surface, groundwater]
-   [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 1
-  [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 2
-  [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 3
+  [[1, 3], [2, 4], [3, 3], [4, 2]], // Day 1: Original problematic case
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 2
+  [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 3
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 4
   [[3, 3], [3, 3], [3, 3], [3, 3]]  // Day 5
 ]
+
 /**
  * Coastal buffer distance for intersection calculations
  */
@@ -704,21 +705,32 @@ const splitComplexData = (sortedData) => {
     return [sortedData]
   }
 
+  // DEBUG: Log the input data
+  console.log('🔍 DEBUG: splitComplexData input:', JSON.stringify(sortedData, null, 2))
+
   // Calculate total number of likelihood and location combinations
   // Count surface water and groundwater as one (inland areas)
   let totalCombinations = 0
   
   sortedData.forEach(([impactDesc, likelihoodGroups]) => {
+    console.log('🔍 DEBUG: Processing impact group:', impactDesc)
     likelihoodGroups.forEach(([likelihood, locations]) => {
+      console.log('🔍 DEBUG:   Likelihood group:', likelihood, 'Locations:', locations)
       // Count each likelihood-location combination
       // Note: locations already accounts for surface+ground being combined as 'across the region'
       totalCombinations += locations.length
+      console.log('🔍 DEBUG:   Added', locations.length, 'combinations, total now:', totalCombinations)
     })
   })
 
+  console.log('🔍 DEBUG: Final totalCombinations:', totalCombinations)
+
   // AC 5DF-L4: If total combinations <= 3, use first sentence logic only
   if (totalCombinations <= 3) {
+    console.log('🔍 DEBUG: Using single sentence logic (totalCombinations <= 3)')
     return [sortedData]
+  } else {
+    console.log('🔍 DEBUG: Using split sentence logic (totalCombinations > 3)')
   }
 
   // AC 5DF-L5: If total combinations > 3, split into two groups
@@ -767,9 +779,10 @@ const splitComplexData = (sortedData) => {
  * @returns {string} Formatted sentence
  */
 const buildPrimarySentence = (riskDataChunks, activeSources, labels) => {
-  // Process each impact group
-  const sentences = []
+  // Group locations by their impact and likelihood combination
+  const sentenceGroups = new Map()
 
+  // Process each impact group
   riskDataChunks.forEach(impactGroup => {
     const [impactDescription, likelihoodGroups] = impactGroup
 
@@ -780,97 +793,98 @@ const buildPrimarySentence = (riskDataChunks, activeSources, labels) => {
     likelihoodGroups.forEach(([likelihood, locations]) => {
       if (!likelihood || likelihood === 'null' || !locations || locations.length === 0) return
 
-      // Remove duplicates
-      const uniqueLocations = [...new Set(locations)]
+      // Create a key for grouping by impact and likelihood
+      const groupKey = `${impactDescription}|${likelihood}`
       
+      if (!sentenceGroups.has(groupKey)) {
+        sentenceGroups.set(groupKey, {
+          impact: impactDescription,
+          likelihood: likelihood,
+          locations: [],
+          riskScore: 0
+        })
+      }
+
+      // Add locations to this group
+      const group = sentenceGroups.get(groupKey)
+      group.locations.push(...locations)
+
       // Calculate risk score for sorting
       const impact = getImpactLevelFromSentence(impactDescription)
       const likelihoodLevel = getLikelihoodLevelFromSentence(likelihood)
-      const riskScore = calculateRiskScore(impact, likelihoodLevel)
-      
-      const capitalizedImpact = impactDescription.charAt(0).toUpperCase() + impactDescription.slice(1)
-
-      // Check if we have all location types (indicating all sources are active)
-      const hasRiverside = uniqueLocations.includes('riverside')
-      const hasCoastal = uniqueLocations.includes('coastal')
-      const hasRegion = uniqueLocations.includes('across the region')
-      
-      // If all location types are present with same impact/likelihood, combine into one sentence
-      if (hasRiverside && hasCoastal && hasRegion) {
-        // All sources are active - create comprehensive sentence with all flood sources
-        const allSources = ['river', 'sea', 'surface water', 'groundwater']
-        const sourceText = allSources.slice(0, -1).join(', ') + ' and ' + allSources.slice(-1)
-        
-        sentences.push({
-          text: `${capitalizedImpact} is ${likelihood} across the region due to ${sourceText} flooding.`,
-          riskScore: riskScore,
-          originalIndex: sentences.length,
-          locationType: 'comprehensive'
-        })
-      } else {
-        // Not all sources active - create separate sentences for each location type
-        const specificAreas = uniqueLocations.filter(loc => 
-          loc === 'riverside' || loc === 'coastal'
-        )
-        
-        const generalAreas = uniqueLocations.filter(loc => 
-          loc === 'across the region'
-        )
-
-        // Create separate sentences for specific areas (riverside, coastal)
-        specificAreas.forEach(area => {
-          // Add appropriate source information for specific areas
-          let areaSourceInfo = ''
-          if (area === 'riverside') {
-            areaSourceInfo = ' due to river flooding'
-          } else if (area === 'coastal') {
-            areaSourceInfo = ' due to sea flooding'
-          }
-          
-          sentences.push({
-            text: `In ${area} areas, ${impactDescription} is ${likelihood}${areaSourceInfo}.`,
-            riskScore: riskScore,
-            originalIndex: sentences.length,
-            locationType: area
-          })
-        })
-
-        // Create sentence for general areas (across the region) with inland source info
-        if (generalAreas.length > 0) {
-          const sourceInfo = activeSources ? ` due to ${activeSources} flooding` : ''
-          sentences.push({
-            text: `${capitalizedImpact} is ${likelihood} across the region${sourceInfo}.`,
-            riskScore: riskScore,
-            originalIndex: sentences.length,
-            locationType: 'region'
-          })
-        }
-      }
+      group.riskScore = calculateRiskScore(impact, likelihoodLevel)
     })
   })
 
-  // Sort sentences by risk score (highest first), then by location priority
+  // Convert groups to sentences
+  const sentences = []
+  for (const [key, group] of sentenceGroups) {
+    if (group.locations.length === 0) continue
+
+    // Remove duplicates and sort locations for consistent output
+    const uniqueLocations = [...new Set(group.locations)]
+    
+    // Separate specific areas from general areas
+    const specificAreas = uniqueLocations.filter(loc => 
+      loc === 'riverside' || loc === 'coastal'
+    ).map(loc => `${loc} areas`)
+    
+    const generalAreas = uniqueLocations.filter(loc => 
+      loc === 'across the region'
+    )
+
+    // Build location phrase
+    let locationPhrase = ''
+    if (specificAreas.length > 0 && generalAreas.length > 0) {
+      // Combine specific and general areas: "in riverside areas and across the region"
+      locationPhrase = `in ${specificAreas.join(' and ')} and ${generalAreas[0]}`
+    } else if (specificAreas.length > 0) {
+      // Only specific areas: "in riverside areas"
+      locationPhrase = `in ${specificAreas.join(' and ')}`
+    } else if (generalAreas.length > 0) {
+      // Only general areas: "across the region"
+      locationPhrase = generalAreas[0]
+    }
+
+    // Add source information for regional flooding
+    let sourceInfo = ''
+    if (generalAreas.length > 0 && activeSources) {
+      sourceInfo = ` due to ${activeSources}`
+    }
+
+    // Build the sentence
+    const capitalizedImpact = group.impact.charAt(0).toUpperCase() + group.impact.slice(1)
+    
+    if (specificAreas.length > 0 && generalAreas.length > 0) {
+      // Combined sentence: "Property flooding is expected in riverside areas and across the region due to surface water."
+      sentences.push({
+        text: `${capitalizedImpact} is ${group.likelihood} ${locationPhrase}${sourceInfo}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    } else if (generalAreas.length > 0) {
+      // Region only: "Property flooding is expected across the region due to surface water."
+      sentences.push({
+        text: `${capitalizedImpact} is ${group.likelihood} ${locationPhrase}${sourceInfo}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    } else {
+      // Specific areas only: "In coastal areas, property flooding is likely."
+      sentences.push({
+        text: `In ${specificAreas.join(' and ')}, ${group.impact} is ${group.likelihood}.`,
+        riskScore: group.riskScore,
+        originalIndex: sentences.length
+      })
+    }
+  }
+
+  // Sort sentences by risk score (highest first), with stable sort for equal scores
   sentences.sort((a, b) => {
     if (b.riskScore !== a.riskScore) {
       return b.riskScore - a.riskScore
     }
-    
-    // If risk scores are equal, prioritize by location type
-    const locationPriority = {
-      'comprehensive': 1, // Comprehensive (all sources) first
-      'region': 2,        // Regional flooding second
-      'riverside': 3,     // River flooding
-      'coastal': 4        // Coastal flooding
-    }
-    
-    const aPriority = locationPriority[a.locationType] || 5
-    const bPriority = locationPriority[b.locationType] || 5
-    
-    if (aPriority !== bPriority) {
-      return aPriority - bPriority
-    }
-    
-    // If everything is equal, maintain original order (stable sort)
+    // If risk scores are equal, maintain original order (stable sort)
     return a.originalIndex - b.originalIndex
   })
 
