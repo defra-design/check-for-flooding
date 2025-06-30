@@ -287,8 +287,8 @@ const buildGeoJsonFeatures = (riskData) => {
       riskAreaBlock.polys.forEach(polygon => {
         const feature = createGeoJsonFeature(polygon, riskAreaBlock, overallRiskLevel, activeSources)
 
-        // Apply filtering logic: exclude green cells except [2,2] (minor impact + possible likelihood)
-        if (maxImpactLevel > 1 && !(maxImpactLevel === 2 && maxLikelihoodLevel === 1)) {
+        // AC 5DF-L7 & 5DF-L8: Only show cells with impact >= 2 AND likelihood >= 2
+        if (maxImpactLevel >= 2 && maxLikelihoodLevel >= 2) {
           features.push(feature)
         }
       })
@@ -641,14 +641,15 @@ const sortByRiskLevels = (groupedData, labels) => {
     })
   })
 
-  // Sort solely by risk score (impact × likelihood), then by impact if scores are equal
+  // AC 5DF-L6: Sort primarily by impact level (highest first), then by likelihood
   riskScores.sort((a, b) => {
-    if (b.riskScore !== a.riskScore) {
-      return b.riskScore - a.riskScore
-    }
-    // If risk scores are equal, sort by impact
+    // Primary sort: by impact level (highest first)
     if (b.impact !== a.impact) {
       return b.impact - a.impact
+    }
+    // Secondary sort: by likelihood level (highest first)
+    if (b.likelihood !== a.likelihood) {
+      return b.likelihood - a.likelihood
     }
     // AC 5DF-L10: If risk levels are equal, apply source priority order
     // River > Sea > Surface > Groundwater
@@ -1235,6 +1236,7 @@ const areContentDuplicates = (sentence1, sentence2) => {
 
 /**
  * Apply filtering to remove green cells (low risk combinations)
+ * According to AC 5DF-L7 and 5DF-L8: exclude impact 0/1 and likelihood 0/1
  * @param {Array} sourceData - [impact, likelihood] pair
  * @returns {Array} Filtered [impact, likelihood] pair or [0, 0] if filtered out
  */
@@ -1250,14 +1252,10 @@ const applyRiskFiltering = (sourceData) => {
   const safeImpact = impact ?? 0
   const safeLikelihood = likelihood ?? 0
   
-  // Show cells with:
-  // - Impact 2 AND likelihood >= 2: [2,2], [2,3], [2,4]
-  // - Impact 3 AND any likelihood: [3,1], [3,2], [3,3], [3,4]
-  // - Impact 4 AND any likelihood: [4,1], [4,2], [4,3], [4,4]
-  const shouldShow = (
-    (safeImpact === 2 && safeLikelihood >= 2) ||
-    (safeImpact >= 3)
-  )
+  // AC 5DF-L7: Exclude impact 0/1 (only show impact >= 2)
+  // AC 5DF-L8: Exclude likelihood 0/1 (only show likelihood >= 2)
+  // Show cells with BOTH impact >= 2 AND likelihood >= 2
+  const shouldShow = (safeImpact >= 2 && safeLikelihood >= 2)
   
   return shouldShow ? [safeImpact, safeLikelihood] : [0, 0]
 }
