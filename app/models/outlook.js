@@ -78,7 +78,7 @@ const TEXT_LABELS = {
 const DEV_MATRIX_OVERRIDE = [
   // [impact, likelihood]
   // [river, coastal, surface, groundwater]
-   [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 1
+  [[1, 3], [2, 2], [0, 0], [0, 0]], // Day 1
   [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 2
   [[2, 4], [2, 2], [0, 0], [0, 0]], // Day 3
   [[3, 3], [3, 3], [3, 3], [3, 3]], // Day 4
@@ -1239,12 +1239,27 @@ const areContentDuplicates = (sentence1, sentence2) => {
  * @returns {Array} Filtered [impact, likelihood] pair or [0, 0] if filtered out
  */
 const applyRiskFiltering = (sourceData) => {
+  // Handle null/undefined input
+  if (!sourceData || !Array.isArray(sourceData) || sourceData.length < 2) {
+    return [0, 0]
+  }
+  
   const [impact, likelihood] = sourceData
-  // Only show cells with impact >= 2 AND likelihood >= 2
-  const isGreenCellToRemove = (
-    impact < 2 || likelihood < 2
+  
+  // Handle null/undefined values
+  const safeImpact = impact ?? 0
+  const safeLikelihood = likelihood ?? 0
+  
+  // Show cells with:
+  // - Impact 2 AND likelihood >= 2: [2,2], [2,3], [2,4]
+  // - Impact 3 AND any likelihood: [3,1], [3,2], [3,3], [3,4]
+  // - Impact 4 AND any likelihood: [4,1], [4,2], [4,3], [4,4]
+  const shouldShow = (
+    (safeImpact === 2 && safeLikelihood >= 2) ||
+    (safeImpact >= 3)
   )
-  return isGreenCellToRemove ? [0, 0] : sourceData
+  
+  return shouldShow ? [safeImpact, safeLikelihood] : [0, 0]
 }
 
 /**
