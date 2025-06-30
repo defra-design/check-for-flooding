@@ -1,6 +1,6 @@
 {
   "id": 1364,
-  "issued_at": "2025-06-30T13:00:00Z",
+  "issued_at": "2025-06-30T10:30:00Z",
   "pdf_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-30_1030/fgs.pdf",
   "detailed_csv_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-30_1030/detailed.csv",
   "area_of_concern_url": "https://assets.ffc-environment-agency.fgs.metoffice.gov.uk/fgs-statements/01364-2025-06-30_1030/areaofconcern.jpg",
@@ -56528,9 +56528,9 @@
     "id": 1364,
     "english_forecast": "Flooding that is dangerous to life will continue for parts of the River Severn in Telford and Wrekin, Shropshire and Worcestershire today (Wednesday) and Thursday. Further properties could flood and disruption to travel and essential services is expected.\n\nFlooding on the lower River Aire in Yorkshire is now expected to continue for the next five days. Property flooding and disruption to travel is expected.\n\nFlooding from rivers also continues through this week, particularly along other parts of the River Severn and other slower responding rivers such as the Rivers Ouse, Aire, and Trent. \n\nGroundwater flooding is expected to be ongoing over parts of the south of England for at least the next five days.\n\nNew flooding from surface water and rivers is probable from Friday afternoon into Saturday, and is also possible on Sunday, for parts of the north of England and Wales due to further heavy rain. Land, roads and some properties could flood and there could be travel disruption.",
     "welsh_forecast": "Fe fydd llifogydd sy’n beryglus i fywyd yn parhau i rannau o Afon Hafren yn Telford a Wrekin, Sir Amwythig a Sir Gaerwrangon heddiw (dydd Mercher) a dydd Iau. Gallai eiddo pellach orlifo a disgwylir tarfu ar deithio a disgwylir gwasanaethau hanfodol.\n\nBellach mae disgwyl i lifogydd ar yr Afon Aire isaf yn Sir Efrog barhau am y pum niwrnod nesaf. Disgwylir llifogydd eiddo ac aflonyddwch i deithio.\n\nMae llifogydd o afonydd hefyd yn parhau trwy'r wythnos hon, yn enwedig ar hyd rhannau eraill o Afon Hafren ac afonydd eraill sy'n ymateb yn arafach fel Afonydd Ouse, Aire, a Trent.\n\nDisgwylir y bydd llifogydd dŵr daear yn parhau dros rannau o dde Lloegr am y pum niwrnod nesaf o leiaf.\n\nMae llifogydd newydd o ddŵr wyneb ac afonydd yn debygol o brynhawn dydd Gwener i ddydd Sadwrn, ac mae hefyd yn bosibl ddydd Sul, ar gyfer rhannau o ogledd Cymru a Lloegr oherwydd glaw trwm pellach. Gallai tir, ffyrdd a rhai eiddo orlifo a gallai aflonyddwch teithio.\n\n",
-    "england_forecast": "This service is currently not available.",
-    "wales_forecast_english": "This service is currently not available.",
-    "wales_forecast_welsh": "This service is currently not available.",
-    "published_at": null
+    "england_forecast": "Local flooding is possible but not expected from surface water and rivers across parts of England on Thursday. Land, roads and some properties may flood and there may be travel disruption.",
+    "wales_forecast_english": "The forecast flood risk across Wales for today and the next four days is very low.",
+    "wales_forecast_welsh": "Rhagwelir fod y perygl llifogydd ar draws Cymru ar gyfer heddiw a'r pedwar diwrnod nesaf yn isel iawn.",
+    "published_at": "2025-06-30T10:30:00Z"
   }
 }
