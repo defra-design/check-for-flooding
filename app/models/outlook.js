@@ -200,11 +200,28 @@ const buildMatrix = (data, place) => {
     }
   }
 
-  // matrix = [[[ [2,2], [3,3], [3,1], [2,4] ],
-  //     [ [1,1], [3,3], [3,1], [2,4] ],
-  //     [ [1,0], [3,3], [3,1], [2,4] ],
-  //     [ [1,1], [3,3], [3,1], [2,4] ],
-  //     [ [0,1], [3,3], [3,1], [2,4] ]
+  matrix = [
+    [ [2,3], [1,1], [3,1], [3,1] ],
+    [ [1,1], [1,1], [1,1], [1,1] ],
+    [ [1,1], [1,1], [1,1], [1,1] ],
+    [ [1,1], [2,2], [1,1], [1,1] ],
+    [ [0,0], [0,0], [0,0], [0,0] ]
+  ]
+
+  // matrix = [
+  //   [ [2,2], [1,1], [3,1], [1,1] ],
+  //   [ [1,1], [2,1], [1,1], [1,1] ],
+  //   [ [1,1], [2,1], [1,1], [1,1] ],
+  //   [ [1,1], [2,1], [1,1], [1,1] ],
+  //   [ [1,1], [2,1], [1,1], [1,1] ]
+  // ]
+
+  // matrix = [
+  //   [ [2,2], [3,3], [3,1], [2,4] ],
+  //   [ [1,1], [3,3], [3,1], [2,4] ],
+  //   [ [1,0], [3,3], [3,1], [2,4] ],
+  //   [ [1,1], [3,3], [3,1], [2,4] ],
+  //   [ [0,1], [3,3], [3,1], [2,4] ]
   // ]
 
   // matrix = [
@@ -214,6 +231,9 @@ const buildMatrix = (data, place) => {
   //   [ [0,0], [1,1], [0,1], [1,4] ],
   //   [ [2,2], [1,0], [2,4], [0,0] ]
   // ]
+
+  // Remove any that are impact 1 or impact 2 and likelihood 1
+  matrix = matrix.map(d => d.map(s => { return s[0] === 1 || (s[0] === 2 && s[1] === 1) ? [0,0] : s }))
 
   /*
   Property flooding and significant travel disruption is expected across the region due to surface water and groundwater.
@@ -245,6 +265,7 @@ const where = (m) => {
 const source = (m, l) => {
   const sources = []
   for (let i = 0; i < m.length; i++ ) {
+    // Require a matrix where invalid sources are set to 0,0
     m[i][0] > 0 && i > 1 ? sources.push(l.source[i]) : null
   }
   return sources
@@ -276,16 +297,61 @@ const listWhere = (a, l) => {
   return joinList([s, r].filter(w => w.length > 0), ',')
 }
 
-const splitData = (a) => {
-  const l = a.length ? a[0][1].flat(2).length : 0
-  if (l <= 3) {
-    return [a]
+const splitData = (source) => {
+  // const l = source.length ? source[0][1].flat(2).length : 0
+
+  const riskProfiles = new Set()
+  const locations = new Set()
+
+  for (const [impact, likelihoods] of source) {
+    for (const [likelihood, locs] of likelihoods) {
+      riskProfiles.add(`${impact}||${likelihood}`)
+      locs.forEach(loc => locations.add(loc))
+    }
   }
-  const f = JSON.parse(JSON.stringify(a))
-  f[0][1] = f[0][1].slice(0, 1)
-  const s = JSON.parse(JSON.stringify(a))
-  s[0][1] = s[0][1].splice(1)
-  return [f, s]
+
+  const total = riskProfiles.size + locations.size
+
+  if (total <= 3) {
+    return [source]
+  }
+
+  // Case A: multiple source entries
+  if (source.length > 1) {
+    const group1 = [source[0]]
+    const group2 = source.slice(1)
+    return [group1, group2]
+  }
+
+  // Case B: single entry with many locations
+  const [impact, likelihoods] = source[0]
+  const [likelihood, locs] = likelihoods[0]
+
+  const group1Locs = locs.slice(0, 2)
+  const group2Locs = locs.slice(2)
+
+  const group1 = [[impact, [[likelihood, group1Locs]]]]
+  const group2 = group2Locs.length
+    ? [[impact, [[likelihood, group2Locs]]]]
+    : []
+
+  return [group1, group2]
+
+  // [["severe or widespread property flooding and travel disruption",[["expected",["riverside","across the region"]]]],["property flooding and significant travel disruption",[["likely",["coastal"]]]]]
+
+  // [["severe or widespread property flooding and travel disruption",[["expected",["riverside","across the region"]]]]]
+  // [["property flooding and significant travel disruption",[["likely",["coastal"]]]]]
+
+  // [["severe or widespread property flooding and travel disruption",[["expected",["riverside", "coastal", "across the region"]]]]]
+
+  // [["severe or widespread property flooding and travel disruption",[["expected",["riverside", "coastal"]]]]]
+  // [["severe or widespread property flooding and travel disruption",[["expected",["across the region"]]]]]
+
+  // const f = JSON.parse(JSON.stringify(a))
+  // f[0][1] = f[0][1].slice(0, 1)
+  // const s = JSON.parse(JSON.stringify(a))
+  // s[0][1] = s[0][1].splice(1)
+  // return [f, s]
 }
 
 const groupByMatrix = (m, l) => {
@@ -348,14 +414,14 @@ const createFirstSentence = (data, source, l) => {
     for (let j = 0; j < g[1].length; j++ ) {
       const d = data[i][1][j]
       const w = listWhere(d[1], l)
-      //g[0]: impact, d[0]: liklihood, w: loation 
-      sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${d[1][0].startsWith('a') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
+      //g[0]: impact, d[0]: liklihood, w: loation
+      sentence += `${j > 0 ? 'and ' : ''}${d[0]}${d[1][0].startsWith('a') ? ' ' : ' in '}${w}${w.endsWith('n') ? ' due to ' + source : ''}${g[1].length <= 1 ? '. ' : ' '}`
     }
   }
   return sentence.trim()
 }
 
-const createSecondSentence = (data, l) => {
+const createSecondSentence = (data, source, l) => {
   let sentence = ''
   for (let i = 0; i < data.length; i++ ) {
     const g = data[i]
@@ -363,7 +429,8 @@ const createSecondSentence = (data, l) => {
     for (let j = 0; j < g[1].length; j++ ) {
       const d = data[i][1][j]
       const w = listWhere(d[1], l)
-      p.push(`${j === 0 ? (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0] : d[0] + ' in ' + w}`)
+      console.log('second sentence', source)
+      p.push(`${j === 0 ? (w.startsWith('a') ? w.charAt(0).toUpperCase() + w.slice(1) : 'In ' + w) + ', ' + g[0] + ' is ' + d[0] : d[0] + ' in ' + w}${w.startsWith('a') ? ' due to ' + source : ''}`)
     }
     sentence += joinList(p, ',')
   }
@@ -394,11 +461,11 @@ const createText = (matrix, offset = 0) => {
       const group = groupByImpactLikelihood(groups[i], l)
       const data = sortArray(group, l)
       const split = splitData(data)
-      let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], l) : '') : 'The flood risk is very low.' 
-      html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p}</p>`)
+      let p = split[0].length ? createFirstSentence(split[0], groups[i].source, l) + (split.length === 2 ? ' ' + createSecondSentence(split[1], groups[i].source, l) : '') : 'The flood risk is very low.' 
+      html.push(`<h3 class="govuk-heading-s">${date}</h3><p>${p.replace(' . ', '')}</p>`)
     }
   }
- 
+
   return {
     summary: html.join('').replace('and Tomorrow', 'and tomorrow')
     // summary: html[0],
